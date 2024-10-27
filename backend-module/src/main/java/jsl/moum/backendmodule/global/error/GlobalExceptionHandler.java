@@ -19,7 +19,6 @@ import static jsl.moum.backendmodule.global.error.ErrorCode.*;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
     @ExceptionHandler
     protected ResponseEntity<ErrorResponse> handleBadCredentialException(BadCredentialsException e) {
         final ErrorResponse response = ErrorResponse.of(BAD_CREDENTIALS);
