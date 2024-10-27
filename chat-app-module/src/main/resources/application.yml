@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: chat-app-module
+  r2dbc:
+    url: r2dbc:mysql://localhost:3306/platform
+    host: localhost
+    port: 3306
+    database: platform
+    username: platform
+    password: allofhealth!234
+    driver: mysql
+    pool:
+      enabled: true

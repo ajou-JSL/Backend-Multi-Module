@@ -1,0 +1,68 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: backend-module
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/moum?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8&allowPublicKeyRetrieval=true
+    #url: jdbc:mysql://{공인IP}:{원격서버mysql포트}/test0831?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8&allowPublicKeyRetrieval=true
+    username: root
+    password: zpzzgjdg@$^1
+
+  jpa:
+    open-in-view: true
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate.transaction.jta.platform: org.hibernate.service.jta.JtaPlatform
+      hibernate:
+        format_sql: true
+        highlight_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+        # dialect: org.hibernate.dialect.MySQL8InnoDBDialect
+        boot:
+          allow_jdbc_metadata_access: false
+
+  jwt:
+    secret: "vmfhaltmskdlstkfkdgodyroqkfwkdbalroqkfwkdbalaaaaaaaaaaaaaaaabbbbb"
+
+  mail:
+    host: smtp.naver.com #smtp ?? ??
+    port: 465 # ?? ???? ??
+    username: swo98@naver.com #??? ???
+    password: zpzzgjdg2461 #??? ????
+    properties:
+      mail:
+        smtp:
+          auth: true # SMTP 인증 사용
+          ssl:
+            enable: true # SSL 사용
+          starttls:
+            enable: true # STARTTLS 사용
+            # required: true # 필요한 경우 사용
+          connection timeout: 5000 # 연결 타임아웃(ms)
+          timeout: 5000 # 응답 대기 시간(ms)
+          write timeout: 5000 # 쓰기 타임아웃(ms)
+
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      repositories:
+        enabled: false
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+
+ncp:
+  object-storage:
+    endpoint: https://kr.object.ncloudstorage.com
+    region: kr-standard
+    access-key: ncp_iam_BPAMKR2MhBwOgB3j1oI5
+    secret-key: ncp_iam_BPKMKRCDtYOBhPsxfs0g1Rtl1OV6bBsPtG
+    bucket: moumstorage
+
