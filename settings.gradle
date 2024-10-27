@@ -1,4 +1,4 @@
 rootProject.name = 'Backend-Multi-Module'
 
-include(':chat-app-module')
-include(':backend-module')
+include 'chat-app-module'
+include 'backend-module'
