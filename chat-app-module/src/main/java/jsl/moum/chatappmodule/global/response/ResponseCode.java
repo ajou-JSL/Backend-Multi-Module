@@ -1,4 +1,4 @@
-package jsl.moum.backendmodule.global.response;
+package jsl.moum.chatappmodule.global.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -46,7 +46,10 @@ public enum ResponseCode {
 
     // Likes
     LIKES_CREATE_SUCCESS(201,"L001","좋아요 등록 성공"),
-    LIKES_DELETE_SUCCESS(200,"L002","좋아요 삭제 성공");
+    LIKES_DELETE_SUCCESS(200,"L002","좋아요 삭제 성공"),
+
+    // Test
+    TEST_SUCCESS(200, "T001", "테스트 성공");
 
 
     private final int status;

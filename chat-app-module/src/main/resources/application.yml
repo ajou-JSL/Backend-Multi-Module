@@ -1,16 +1,54 @@
 server:
   port: 8070
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
 
 spring:
   application:
     name: chat-app-module
+  main:
+    web-application-type: reactive
+    allow-bean-definition-overriding: true
   r2dbc:
-    url: r2dbc:mysql://localhost:3306/platform
+    url: r2dbc:mysql://localhost:3306/moum?useSSL=false&characterEncoding=UTF-8&allowPublicKeyRetrieval=true
     host: localhost
     port: 3306
-    database: platform
-    username: platform
-    password: allofhealth!234
+    database: moum
+    username: root
+    password: zpzzgjdg@$^1
     driver: mysql
     pool:
       enabled: true
+  sql:
+    init:
+      platform: mysql
+  jwt:
+    secret: "vmfhaltmskdlstkfkdgodyroqkfwkdbalroqkfwkdbalaaaaaaaaaaaaaaaabbbbb"
+  data:
+    mongodb:
+      host: chatdb.f9mra.mongodb.net
+      port: 27017
+      database: chatdb
+      username: cjaehyuk4zed
+      password: ChatDB2024
+      authentication-database: admin
+      options: ?retryWrites=true&w=majority&appName=ChatDB
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 60000
+      lettuce:
+        pool:
+          max-active: 10
+          max-idle: 10
+          min-idle: 2
+          max-wait: 3000
+          shutdown-timeout: 100
+
+# Debug log configs, change as needed when logging or debugging
+logging:
+  level:
+    org.springframework.web: TRACE
