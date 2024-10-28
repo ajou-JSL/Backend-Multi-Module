@@ -38,6 +38,9 @@ dependencies {
 	testImplementation 'io.projectreactor:reactor-test'
 //	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// Firebase Admin SDK
+	implementation 'com.google.firebase:firebase-admin:9.4.1'
 }
 
 tasks.named('test') {
