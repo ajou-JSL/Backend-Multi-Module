@@ -55,6 +55,7 @@ public class RedisService {
                 .doOnNext(connectedUsers -> log.info("RedisService getConnectedUsers connectedUsers : {} | {}", key, connectedUsers));
     }
 
+
     // Remove a user from a room
     // This method removes a user from the Redis set representing the room they were connected to.
     public Mono<Long> removeConnectedUser(ConnectedUser connectedUser) {
