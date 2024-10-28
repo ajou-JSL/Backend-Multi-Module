@@ -26,7 +26,7 @@ public class RedisService {
         String key = "room:" + connectedUser.getRoomNum();
         return redisTemplate.opsForSet()
                 .add(key, connectedUser)
-                .map(result -> result > 0)
+                .map(result -> (Boolean) (result > 0))
                 .doFirst(() -> log.info("RedisService saveConnectedUser key : {} | {}", key, connectedUser))
 //                .doOnNext(value -> log.info("RedisService saveConnectedUser result : {} | {}", key, value))
                 .doOnError(error -> log.error("RedisService saveConnectedUser error : {}", error));
@@ -78,7 +78,7 @@ public class RedisService {
     // This method deletes the entire room key from Redis, effectively removing all users from the room.
     public Mono<Boolean> removeAllUsersFromRoom(Long roomNum) {
         String key = "room:" + roomNum;
-        return redisTemplate.delete(key).map(deleted -> deleted > 0);
+        return redisTemplate.delete(key).map(deleted -> (Boolean) (deleted > 0));
     }
 
 }
