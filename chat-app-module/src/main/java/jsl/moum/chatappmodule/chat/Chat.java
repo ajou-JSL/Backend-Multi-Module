@@ -18,11 +18,11 @@ public class Chat {
      * Edit parameters as needed
      */
 
+    private String sender;
+    private String receiver;
     private String message;
-    private String sender; // 보내는 사람
-    private String receiver; // 받는 사람
-    private Long roomNum; // 방 번호
-    private LocalDateTime createdAt;
+    private int chatroomId;
+    private LocalDateTime timestamp;
 
     /**
      * Minimize the amount of data sent over the request
@@ -30,7 +30,14 @@ public class Chat {
      */
     @Data
     public static class Request{
+        private String receiver;
         private String message;
-        private String receiver; // 받는 사람
+    }
+
+    @Data
+    public static class TestRequest{
+        private String sender;
+        private String receiver;
+        private String message;
     }
 }
