@@ -3,7 +3,6 @@ package jsl.moum.backendmodule.chatroom.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Builder
 @Data
 @RequiredArgsConstructor
 @Entity
