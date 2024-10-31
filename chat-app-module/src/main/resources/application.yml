@@ -5,6 +5,7 @@ server:
       charset: UTF-8
       enabled: true
       force: true
+  address: 0.0.0.0
 
 spring:
   application:
