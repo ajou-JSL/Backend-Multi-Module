@@ -9,7 +9,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static study.moum.moum.team.domain.QTeamMemberEntity.teamMemberEntity;
+import static jsl.moum.moum.team.domain.QTeamMemberEntity.teamMemberEntity;
+
 
 @Repository
 @RequiredArgsConstructor

@@ -10,7 +10,7 @@ import jsl.moum.community.article.domain.article.ArticleEntity;
 import java.util.List;
 
 import static io.jsonwebtoken.lang.Strings.hasText;
-import static study.moum.community.article.domain.article.QArticleEntity.articleEntity;
+import static jsl.moum.community.article.domain.article.QArticleEntity.articleEntity;
 
 @Repository
 @RequiredArgsConstructor
