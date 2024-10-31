@@ -2,10 +2,12 @@ package jsl.moum.backendmodule.chatroom.service;
 
 import jsl.moum.backendmodule.chatroom.domain.Chatroom;
 import jsl.moum.backendmodule.chatroom.domain.ChatroomRepository;
+import jsl.moum.backendmodule.chatroom.dto.ChatroomDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -15,9 +17,16 @@ public class ChatroomService {
 
     private final ChatroomRepository chatroomRepository;
 
-    public List<Chatroom> getChatroomListByMemberId(Integer memberId) {
+    public List<ChatroomDto> getChatroomListByMemberId(Integer memberId) {
         // Add method for sorting, etc later on
-        return chatroomRepository.findByMemberId(memberId);
+
+        List<ChatroomDto> chatroomList = new ArrayList<>();
+
+        for(Chatroom chatroom : chatroomRepository.findByMemberId(memberId)){
+            chatroomList.add(new ChatroomDto(chatroom));
+        }
+
+        return chatroomList;
     }
 
 }
