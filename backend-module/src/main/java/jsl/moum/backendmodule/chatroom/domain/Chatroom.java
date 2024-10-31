@@ -1,4 +1,4 @@
-package jsl.moum.backendmodule.chat.domain;
+package jsl.moum.backendmodule.chatroom.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -13,6 +13,9 @@ public class Chatroom {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @Column(name = "chatroom_name")
+    private String chatroomName;
 
     @Column(name = "chatroom_id")
     private int chatroomId;
