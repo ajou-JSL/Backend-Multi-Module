@@ -56,7 +56,10 @@ public enum ResponseCode {
 
     // Profiles
     GET_PROFILE_SUCCESS(200,"P001","프로필 조회 성공"),
-    UPDATE_PROFILE_SUCCESS(201,"P002","프로필 업데이트 성공");
+    UPDATE_PROFILE_SUCCESS(201,"P002","프로필 업데이트 성공"),
+
+    // Chatroom
+    CHATROOM_LIST_GET_SUCCESS(200, "S-CH001", "채팅방 목록 호출 성공");
 
 
     private final int status;
