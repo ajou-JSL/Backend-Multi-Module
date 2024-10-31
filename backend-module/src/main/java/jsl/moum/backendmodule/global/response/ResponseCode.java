@@ -49,7 +49,7 @@ public enum ResponseCode {
     LIKES_DELETE_SUCCESS(200,"L002","좋아요 삭제 성공"),
 
     // Chatroom
-    CHATROOM_LIST_GET_SUCCESS(200, "CH001", "채팅방 목록 호출 성공");
+    CHATROOM_LIST_GET_SUCCESS(200, "S-CH001", "채팅방 목록 호출 성공");
 
     private final int status;
     private final String code;
