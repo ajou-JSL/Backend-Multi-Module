@@ -1,10 +1,10 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.3.5'
+    id 'org.springframework.boot' version '3.3.4'
     id 'io.spring.dependency-management' version '1.1.6'
 }
 
-group = 'jsl.moum'
+group = 'study'
 version = '0.0.1-SNAPSHOT'
 
 java {
@@ -13,19 +13,13 @@ java {
     }
 }
 
-configurations {
-    compileOnly {
-        extendsFrom annotationProcessor
-    }
-}
-
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.mysql:mysql-connector-j'
@@ -55,11 +49,13 @@ dependencies {
 
     // NCP object storage 사용을 위한 의존성. aws s3에서 제공하는 java용 SDK
     implementation 'software.amazon.awssdk:s3:2.20.56'
+
 }
 
 tasks.named('test') {
     useJUnitPlatform()
 }
+
 
 // Querydsl 설정부
 def generated = 'src/main/generated'
