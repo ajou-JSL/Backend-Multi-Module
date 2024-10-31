@@ -1,6 +1,7 @@
 package study.moum.email.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jsl.moum.email.controller.EmailController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,12 +11,12 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import study.moum.email.dto.EmailDto;
-import study.moum.email.dto.VerifyDto;
-import study.moum.email.service.EmailService;
-import study.moum.global.error.ErrorCode;
-import study.moum.global.response.ResponseCode;
-import study.moum.config.redis.util.RedisUtil;
+import jsl.moum.email.dto.EmailDto;
+import jsl.moum.email.dto.VerifyDto;
+import jsl.moum.email.service.EmailService;
+import jsl.moum.global.error.ErrorCode;
+import jsl.moum.global.response.ResponseCode;
+import jsl.moum.config.redis.util.RedisUtil;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;

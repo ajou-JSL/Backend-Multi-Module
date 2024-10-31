@@ -1,5 +1,6 @@
 package study.moum.community.article.service;
 
+import jsl.moum.community.article.service.ArticleService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,18 +11,18 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.multipart.MultipartFile;
-import study.moum.auth.domain.entity.MemberEntity;
-import study.moum.auth.domain.repository.MemberRepository;
-import study.moum.community.article.domain.article.ArticleEntity;
-import study.moum.community.article.domain.article.ArticleRepository;
-import study.moum.community.article.domain.article_details.ArticleDetailsEntity;
-import study.moum.community.article.domain.article_details.ArticleDetailsRepository;
-import study.moum.community.article.domain.article_details.ArticleRepositoryCustom;
-import study.moum.community.article.dto.ArticleDetailsDto;
-import study.moum.community.article.dto.ArticleDto;
-import study.moum.objectstorage.StorageService;
-import study.moum.global.error.exception.NeedLoginException;
-import study.moum.global.error.exception.NoAuthorityException;
+import jsl.moum.auth.domain.entity.MemberEntity;
+import jsl.moum.auth.domain.repository.MemberRepository;
+import jsl.moum.community.article.domain.article.ArticleEntity;
+import jsl.moum.community.article.domain.article.ArticleRepository;
+import jsl.moum.community.article.domain.article_details.ArticleDetailsEntity;
+import jsl.moum.community.article.domain.article_details.ArticleDetailsRepository;
+import jsl.moum.community.article.domain.article_details.ArticleRepositoryCustom;
+import jsl.moum.community.article.dto.ArticleDetailsDto;
+import jsl.moum.community.article.dto.ArticleDto;
+import jsl.moum.objectstorage.StorageService;
+import jsl.moum.global.error.exception.NeedLoginException;
+import jsl.moum.global.error.exception.NoAuthorityException;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

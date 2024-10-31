@@ -1,5 +1,6 @@
 package study.moum.auth.service;
 
+import jsl.moum.auth.service.SignupService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,14 +10,14 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
-import study.moum.auth.domain.entity.MemberEntity;
-import study.moum.auth.domain.repository.MemberRepository;
-import study.moum.auth.dto.MemberDto;
-import study.moum.objectstorage.StorageService;
-import study.moum.global.error.ErrorCode;
-import study.moum.global.error.exception.CustomException;
-import study.moum.global.error.exception.DuplicateUsernameException;
-import study.moum.config.redis.util.RedisUtil;
+import jsl.moum.auth.domain.entity.MemberEntity;
+import jsl.moum.auth.domain.repository.MemberRepository;
+import jsl.moum.auth.dto.MemberDto;
+import jsl.moum.objectstorage.StorageService;
+import jsl.moum.global.error.ErrorCode;
+import jsl.moum.global.error.exception.CustomException;
+import jsl.moum.global.error.exception.DuplicateUsernameException;
+import jsl.moum.config.redis.util.RedisUtil;
 
 import java.io.IOException;
 

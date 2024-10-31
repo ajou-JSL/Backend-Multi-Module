@@ -1,6 +1,7 @@
 package study.moum.moum.moum.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jsl.moum.moum.moum.controller.LifecycleController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,7 +13,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import study.moum.custom.WithAuthUser;
-import study.moum.moum.moum.service.LifecycleService;
+import jsl.moum.moum.moum.service.LifecycleService;
 
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;

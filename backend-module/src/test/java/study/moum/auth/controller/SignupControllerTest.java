@@ -1,6 +1,7 @@
 package study.moum.auth.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jsl.moum.auth.controller.SignupController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,15 +13,10 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.web.multipart.MultipartFile;
-import study.moum.auth.domain.entity.MemberEntity;
-import study.moum.auth.dto.MemberDto;
-import study.moum.auth.service.SignupService;
-import study.moum.global.error.ErrorCode;
-import study.moum.global.error.exception.DuplicateUsernameException;
-import study.moum.global.response.ResponseCode;
-import study.moum.moum.team.dto.TeamDto;
+import jsl.moum.auth.dto.MemberDto;
+import jsl.moum.auth.service.SignupService;
+import jsl.moum.global.error.ErrorCode;
+import jsl.moum.global.response.ResponseCode;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;

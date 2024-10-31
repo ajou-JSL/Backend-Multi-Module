@@ -15,12 +15,12 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
-import study.moum.auth.domain.entity.MemberEntity;
-import study.moum.member_profile.controller.ProfileController;
-import study.moum.member_profile.dto.ProfileDto;
-import study.moum.member_profile.service.ProfileService;
+import jsl.moum.auth.domain.entity.MemberEntity;
+import jsl.moum.member_profile.controller.ProfileController;
+import jsl.moum.member_profile.dto.ProfileDto;
+import jsl.moum.member_profile.service.ProfileService;
 import study.moum.custom.WithAuthUser;
-import study.moum.global.response.ResponseCode;
+import jsl.moum.global.response.ResponseCode;
 
 import java.util.ArrayList;
 

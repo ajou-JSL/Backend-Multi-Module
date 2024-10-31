@@ -4,8 +4,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithSecurityContextFactory;
-import study.moum.auth.domain.CustomUserDetails;
-import study.moum.auth.domain.entity.MemberEntity;
+import jsl.moum.auth.domain.CustomUserDetails;
+import jsl.moum.auth.domain.entity.MemberEntity;
 
 public class WithAuthUserSecurityContextFactory implements WithSecurityContextFactory<WithAuthUser> {
 

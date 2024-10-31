@@ -2,48 +2,35 @@ package study.moum.community.comment.controller;
 
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.validation.Valid;
+import jsl.moum.community.comment.controller.CommentController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
-import study.moum.auth.domain.CustomUserDetails;
-import study.moum.auth.domain.entity.MemberEntity;
-import study.moum.community.article.domain.article.ArticleEntity;
-import study.moum.community.article.domain.article_details.ArticleDetailsEntity;
-import study.moum.community.article.dto.ArticleDto;
-import study.moum.community.comment.domain.CommentEntity;
-import study.moum.community.comment.dto.CommentDto;
-import study.moum.community.comment.service.CommentService;
+import jsl.moum.auth.domain.entity.MemberEntity;
+import jsl.moum.community.article.domain.article_details.ArticleDetailsEntity;
+import jsl.moum.community.comment.domain.CommentEntity;
+import jsl.moum.community.comment.dto.CommentDto;
+import jsl.moum.community.comment.service.CommentService;
 import study.moum.custom.WithAuthUser;
-import study.moum.global.error.exception.NoAuthorityException;
-import study.moum.global.response.ResponseCode;
-import study.moum.global.response.ResultResponse;
+import jsl.moum.global.response.ResponseCode;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;

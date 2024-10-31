@@ -1,6 +1,7 @@
 package study.moum.moum.team.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jsl.moum.moum.team.controller.TeamController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,24 +14,18 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
-import study.moum.auth.domain.entity.MemberEntity;
-import study.moum.auth.dto.MemberDto;
-import study.moum.community.article.domain.article_details.ArticleDetailsEntity;
-import study.moum.community.comment.controller.CommentController;
-import study.moum.community.comment.domain.CommentEntity;
-import study.moum.community.comment.dto.CommentDto;
-import study.moum.community.comment.service.CommentService;
+import jsl.moum.auth.domain.entity.MemberEntity;
+import jsl.moum.auth.dto.MemberDto;
 import study.moum.custom.WithAuthUser;
-import study.moum.global.response.ResponseCode;
-import study.moum.moum.team.domain.TeamEntity;
-import study.moum.moum.team.domain.TeamMemberEntity;
-import study.moum.moum.team.dto.TeamDto;
-import study.moum.moum.team.service.TeamService;
+import jsl.moum.global.response.ResponseCode;
+import jsl.moum.moum.team.domain.TeamEntity;
+import jsl.moum.moum.team.domain.TeamMemberEntity;
+import jsl.moum.moum.team.dto.TeamDto;
+import jsl.moum.moum.team.service.TeamService;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;

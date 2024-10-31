@@ -1,35 +1,26 @@
 package study.moum.community.likes.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jsl.moum.community.likes.controller.LikesController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import study.moum.auth.domain.entity.MemberEntity;
-import study.moum.community.article.domain.article.ArticleEntity;
-import study.moum.community.likes.domain.LikesEntity;
-import study.moum.community.likes.dto.LikesDto;
-import study.moum.community.likes.service.LikesService;
-import study.moum.custom.WithAuthUser;
-import study.moum.global.error.ErrorCode;
-import study.moum.global.error.exception.CustomException;
-import study.moum.global.response.ResponseCode;
+import jsl.moum.auth.domain.entity.MemberEntity;
+import jsl.moum.community.article.domain.article.ArticleEntity;
+import jsl.moum.community.likes.service.LikesService;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class LikesControllerTest {
 

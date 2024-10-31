@@ -1,6 +1,7 @@
 package study.moum.email.service;
 
 import jakarta.mail.internet.MimeMessage;
+import jsl.moum.email.service.EmailService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -8,12 +9,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.mail.javamail.JavaMailSender;
-import study.moum.auth.domain.repository.MemberRepository;
-import study.moum.email.dto.EmailDto;
-import study.moum.email.dto.VerifyDto;
-import study.moum.global.error.exception.AlreadyVerifiedEmailException;
-import study.moum.global.error.exception.CustomException;
-import study.moum.config.redis.util.RedisUtil;
+import jsl.moum.auth.domain.repository.MemberRepository;
+import jsl.moum.email.dto.EmailDto;
+import jsl.moum.email.dto.VerifyDto;
+import jsl.moum.global.error.exception.AlreadyVerifiedEmailException;
+import jsl.moum.global.error.exception.CustomException;
+import jsl.moum.config.redis.util.RedisUtil;
 
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;

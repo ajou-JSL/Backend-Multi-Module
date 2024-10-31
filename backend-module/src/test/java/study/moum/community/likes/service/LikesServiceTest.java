@@ -1,20 +1,21 @@
 package study.moum.community.likes.service;
 
+import jsl.moum.community.likes.service.LikesService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import study.moum.auth.domain.entity.MemberEntity;
-import study.moum.auth.domain.repository.MemberRepository;
-import study.moum.community.article.domain.article.ArticleEntity;
-import study.moum.community.article.domain.article.ArticleRepository;
-import study.moum.community.likes.domain.LikesEntity;
-import study.moum.community.likes.domain.LikesRepository;
-import study.moum.community.likes.dto.LikesDto;
-import study.moum.global.error.ErrorCode;
-import study.moum.global.error.exception.CustomException;
+import jsl.moum.auth.domain.entity.MemberEntity;
+import jsl.moum.auth.domain.repository.MemberRepository;
+import jsl.moum.community.article.domain.article.ArticleEntity;
+import jsl.moum.community.article.domain.article.ArticleRepository;
+import jsl.moum.community.likes.domain.LikesEntity;
+import jsl.moum.community.likes.domain.LikesRepository;
+import jsl.moum.community.likes.dto.LikesDto;
+import jsl.moum.global.error.ErrorCode;
+import jsl.moum.global.error.exception.CustomException;
 
 import java.util.Optional;
 

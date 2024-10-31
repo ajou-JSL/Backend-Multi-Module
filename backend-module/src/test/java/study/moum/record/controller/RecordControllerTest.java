@@ -1,6 +1,7 @@
 package study.moum.record.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jsl.moum.record.controller.RecordController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,12 +14,12 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
-import study.moum.auth.domain.entity.MemberEntity;
+import jsl.moum.auth.domain.entity.MemberEntity;
 import study.moum.custom.WithAuthUser;
-import study.moum.global.response.ResponseCode;
-import study.moum.record.domain.RecordEntity;
-import study.moum.record.dto.RecordDto;
-import study.moum.record.service.RecordService;
+import jsl.moum.global.response.ResponseCode;
+import jsl.moum.record.domain.RecordEntity;
+import jsl.moum.record.dto.RecordDto;
+import jsl.moum.record.service.RecordService;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

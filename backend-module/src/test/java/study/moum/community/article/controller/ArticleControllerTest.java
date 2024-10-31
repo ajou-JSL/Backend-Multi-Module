@@ -1,10 +1,10 @@
 package study.moum.community.article.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jsl.moum.community.article.controller.ArticleController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -15,14 +15,13 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
-import study.moum.auth.domain.entity.MemberEntity;
-import study.moum.community.article.domain.article.ArticleEntity;
-import study.moum.community.article.dto.ArticleDetailsDto;
-import study.moum.community.article.dto.ArticleDto;
-import study.moum.community.article.service.ArticleService;
+import jsl.moum.auth.domain.entity.MemberEntity;
+import jsl.moum.community.article.domain.article.ArticleEntity;
+import jsl.moum.community.article.dto.ArticleDto;
+import jsl.moum.community.article.service.ArticleService;
 import study.moum.custom.WithAuthUser;
 
-import study.moum.global.response.ResponseCode;
+import jsl.moum.global.response.ResponseCode;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;

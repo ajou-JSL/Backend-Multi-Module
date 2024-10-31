@@ -1,5 +1,6 @@
 package study.moum.record.service;
 
+import jsl.moum.record.service.RecordService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -7,14 +8,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
-import study.moum.auth.domain.entity.MemberEntity;
-import study.moum.auth.domain.repository.MemberRepository;
-import study.moum.record.controller.RecordController;
-import study.moum.record.domain.MemberRecordEntity;
-import study.moum.record.domain.RecordEntity;
-import study.moum.record.dto.RecordDto;
-import study.moum.record.repository.MemberRecordRepository;
-import study.moum.record.repository.RecordRepository;
+import jsl.moum.auth.domain.entity.MemberEntity;
+import jsl.moum.auth.domain.repository.MemberRepository;
+import jsl.moum.record.controller.RecordController;
+import jsl.moum.record.domain.MemberRecordEntity;
+import jsl.moum.record.domain.RecordEntity;
+import jsl.moum.record.dto.RecordDto;
+import jsl.moum.record.repository.MemberRecordRepository;
+import jsl.moum.record.repository.RecordRepository;
 
 import java.time.LocalDate;
 import java.util.List;

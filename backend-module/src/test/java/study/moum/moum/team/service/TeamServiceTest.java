@@ -1,5 +1,7 @@
 package study.moum.moum.team.service;
 
+import jsl.moum.moum.team.domain.*;
+import jsl.moum.moum.team.service.TeamService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -10,22 +12,19 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import study.moum.auth.domain.entity.MemberEntity;
-import study.moum.auth.domain.repository.MemberRepository;
-import study.moum.auth.dto.MemberDto;
-import study.moum.global.error.ErrorCode;
-import study.moum.global.error.exception.CustomException;
-import study.moum.moum.team.domain.*;
-import study.moum.moum.team.dto.TeamDto;
+import jsl.moum.auth.domain.entity.MemberEntity;
+import jsl.moum.auth.domain.repository.MemberRepository;
+import jsl.moum.auth.dto.MemberDto;
+import jsl.moum.global.error.ErrorCode;
+import jsl.moum.global.error.exception.CustomException;
+import jsl.moum.moum.team.dto.TeamDto;
 
-import java.lang.reflect.Member;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
