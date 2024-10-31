@@ -24,10 +24,6 @@ public class TeamController {
 
     /**
      * 팀 조회 API
-     *
-     * @param customUserDetails 현재 인증된 사용자 정보 (CustomUserDetails 객체에서 사용자 정보 추출)
-     * @param 팀 ID
-     *
      */
     @GetMapping("/api/teams/{teamId}")
     public ResponseEntity<ResultResponse> getTeamById(@AuthenticationPrincipal CustomUserDetails customUserDetails,
@@ -42,10 +38,6 @@ public class TeamController {
 
     /**
      * 팀 목록 조회 API
-     *
-     * @param customUserDetails 현재 인증된 사용자 정보 (CustomUserDetails 객체에서 사용자 정보 추출)
-     * @param 팀 ID
-     *
      */
     @GetMapping("/api/teams-all")
     public ResponseEntity<ResultResponse> getTeamList(@AuthenticationPrincipal CustomUserDetails customUserDetails,
@@ -60,10 +52,6 @@ public class TeamController {
 
     /**
      * 팀 생성 API
-     *
-     * @param customUserDetails 현재 인증된 사용자 정보 (CustomUserDetails 객체에서 사용자 정보 추출)
-     * @param 팀 생성 요청 DTO
-     *
      */
     @PostMapping("/api/teams")
     public ResponseEntity<ResultResponse> createTeam(@AuthenticationPrincipal CustomUserDetails customUserDetails,
@@ -77,10 +65,6 @@ public class TeamController {
 
     /**
      * 팀 정보 수정 API
-     *
-     * @param customUserDetails 현재 인증된 사용자 정보 (CustomUserDetails 객체에서 사용자 정보 추출)
-     * @param 팀 ID
-     * @param 팀 생성 요청 DTO
      */
     @PatchMapping("/api/teams/{teamId}")
     public ResponseEntity<ResultResponse> updateTeam(@AuthenticationPrincipal CustomUserDetails customUserDetails,
@@ -98,10 +82,6 @@ public class TeamController {
     // todo : 멤버 초대하기 -> 알람발송, 팀 가입요청 수락 -> 가입성공 으로 로직 변경
     /**
      * 팀에 멤버 초대 API
-     *
-     * @param customUserDetails 현재 인증된 사용자 정보 (CustomUserDetails 객체에서 사용자 정보 추출)
-     * @param 팀 ID
-     * @param 멤버 ID
      */
     // 초대 요청 보내기가 아니고 초대 하기임. 이거 요청보내면 타겟멤버가 팀이 되는거임
     @PostMapping("/api/teams/{teamId}/invite/{memberId}")
@@ -117,10 +97,6 @@ public class TeamController {
 
     /**
      * 팀 해체 API
-     *
-     * @param customUserDetails 현재 인증된 사용자 정보 (CustomUserDetails 객체에서 사용자 정보 추출)
-     * @param 삭제할 팀 ID
-     *
      */
     @DeleteMapping("/api/teams/{teamId}")
     public ResponseEntity<ResultResponse> deleteTeamById(@AuthenticationPrincipal CustomUserDetails customUserDetails,
@@ -134,10 +110,6 @@ public class TeamController {
 
     /**
      * 유저로부터 온 초대 요청 수락 API
-     *
-     * @param customUserDetails 현재 인증된 사용자 정보 (CustomUserDetails 객체에서 사용자 정보 추출)
-     * @param
-     *
      */
     @PostMapping("/api/teams/{teamId}/accept/{memberId}")
     public void 초대요청수락(){
@@ -156,10 +128,6 @@ public class TeamController {
 
     /**
      * 팀에서 멤버 강퇴 API
-     *
-     * @param customUserDetails 현재 인증된 사용자 정보 (CustomUserDetails 객체에서 사용자 정보 추출)
-     * @param
-     *
      */
     @DeleteMapping("/api/teams/{teamId}/kick/{memberId}")
     public ResponseEntity<ResultResponse> kickMemberFromTeam(@AuthenticationPrincipal CustomUserDetails customUserDetails,
@@ -174,10 +142,6 @@ public class TeamController {
 
     /**
      * 팀에서 탈퇴 API
-     *
-     * @param customUserDetails 현재 인증된 사용자 정보 (CustomUserDetails 객체에서 사용자 정보 추출)
-     * @param
-     *
      */
     @DeleteMapping("/api/teams/leave/{teamId}")
     public ResponseEntity<ResultResponse> leaveTeam(@AuthenticationPrincipal CustomUserDetails customUserDetails,
@@ -191,10 +155,6 @@ public class TeamController {
 
     /**
      * 팀 리더 양도 API
-     *
-     * @param customUserDetails 현재 인증된 사용자 정보 (CustomUserDetails 객체에서 사용자 정보 추출)
-     * @param
-     *
      */
     @PatchMapping("/api/teams/change-leader/{memberId}")
     public void 팀리더넘기기(){

@@ -1,11 +1,13 @@
 package jsl.moum.backendmodule.auth.domain.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+import lombok.*;
+import jsl.moum.backendmodule.community.record.domain.MemberRecordEntity;
+import jsl.moum.backendmodule.community.record.domain.RecordEntity;
 import jsl.moum.backendmodule.moum.team.domain.TeamEntity;
 import jsl.moum.backendmodule.moum.team.domain.TeamMemberEntity;
-import lombok.*;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,29 +19,28 @@ import java.util.List;
 @Getter
 @Setter
 @Table(name = "member")
-public class MemberEntity { // todo : userdetails implement 여기다가 + db column 에 안넣게하기
+public class MemberEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @NotEmpty
-    @NotNull
+    @Column(name = "name", nullable = false)
+    @Pattern(regexp = "^[a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ]{2,10}$")
+    private String name;
+
     @Size(min = 3, max = 10)
     @Column(name = "user_name", nullable = false)
     private String username;
 
-    @NotEmpty
-    @NotNull
     @Column(name = "password", nullable = false)
+    @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*?_]).{8,20}$")
     private String password;
 
-    @Column(name = "description", nullable = true)
-    private String description;
+    @Column(name = "profile_description", nullable = true)
+    private String profileDescription;
 
-    @NotEmpty
-    @NotNull
-    @Pattern(regexp = "^[\\w!#$%&'*+/=?`{|}~^.-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$", message = "이메일 형식이 올바르지 않습니다.")
+    @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$", message = "이메일 형식이 올바르지 않습니다.")
     @Column(name = "email", nullable = false)
     private String email;
 
@@ -51,15 +52,48 @@ public class MemberEntity { // todo : userdetails implement 여기다가 + db co
     @Column(name = "role", nullable = true)
     private String role;
 
-    @Column(name = "profile_image_url")
+    @Column(name = "profile_image_url", nullable = true)
     private String profileImageUrl;
 
-    @Embedded
-    // todo : 필수항목으로 바꿀거임
-    private Address address;
+    @Column(name = "proficiency", nullable = true)
+    private String proficiency;
+
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MemberRecordEntity> records = new ArrayList<>();
+
+    @Column(name = "instrument", nullable = true)
+    private String instrument;
+
+    // todo : 필수항목으로
+    @Column(name = "address", nullable = true)
+    private String address;
 
     public void removeTeamFromMember(TeamEntity team) {
         teams.removeIf(teamMemberEntity -> teamMemberEntity.getTeam().equals(team));
     }
 
+    public void removeRecordFromMember(RecordEntity record) {
+        records.removeIf(memberRecordEntity -> memberRecordEntity.getRecord().equals(record));
+    }
+
+    public void updateProfileImage(String newUrl){
+        this.profileImageUrl = newUrl;
+    }
+
+    public void updateMemberInfo(       String name,
+                                        String username,
+                                        String profileDescription,
+                                        String email,
+                                        String proficiency,
+                                        String instrument,
+                                        String address){
+
+        this.name = name;
+        this.username = username;
+        this.profileDescription = profileDescription;
+        this.email = email;
+        this.proficiency = proficiency;
+        this.instrument = instrument;
+        this.address = address;
+    }
 }

@@ -46,7 +46,7 @@ public class QTeamMemberEntity extends EntityPathBase<TeamMemberEntity> {
 
     public QTeamMemberEntity(Class<? extends TeamMemberEntity> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.member = inits.isInitialized("member") ? new jsl.moum.backendmodule.auth.domain.entity.QMemberEntity(forProperty("member"), inits.get("member")) : null;
+        this.member = inits.isInitialized("member") ? new jsl.moum.backendmodule.auth.domain.entity.QMemberEntity(forProperty("member")) : null;
         this.team = inits.isInitialized("team") ? new QTeamEntity(forProperty("team")) : null;
     }
 

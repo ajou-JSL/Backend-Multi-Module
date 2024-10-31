@@ -15,11 +15,11 @@ import jsl.moum.backendmodule.community.article.domain.article_details.ArticleDe
 import jsl.moum.backendmodule.community.article.domain.article_details.ArticleRepositoryCustom;
 import jsl.moum.backendmodule.community.article.dto.ArticleDetailsDto;
 import jsl.moum.backendmodule.community.article.dto.ArticleDto;
-import jsl.moum.backendmodule.community.article.objectstorage.StorageService;
 import jsl.moum.backendmodule.global.error.ErrorCode;
 import jsl.moum.backendmodule.global.error.exception.CustomException;
 import jsl.moum.backendmodule.global.error.exception.NeedLoginException;
 import jsl.moum.backendmodule.global.error.exception.NoAuthorityException;
+import jsl.moum.backendmodule.objectstorage.StorageService;
 
 import java.io.IOException;
 import java.net.URLDecoder;
@@ -172,7 +172,7 @@ public class ArticleService {
             // 새로운 파일 업로드
             String newFileName = "articles/" + articleDetailsId + "/" + file.getOriginalFilename(); // 폴더 구조에 맞게 설정
             String newFileUrl = storageService.uploadFile(newFileName, file); // S3에 파일 업로드
-            articleDetails.setFileUrl(newFileUrl); // 새 파일 URL 설정
+            articleDetails.updateArticleImage(newFileUrl);
         }
 
         // article_details, article 둘 다 update

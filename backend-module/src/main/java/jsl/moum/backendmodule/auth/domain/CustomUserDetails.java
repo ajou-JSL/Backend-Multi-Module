@@ -1,10 +1,9 @@
 package jsl.moum.backendmodule.auth.domain;
 
-import jsl.moum.backendmodule.auth.domain.entity.MemberEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
+import jsl.moum.backendmodule.auth.domain.entity.MemberEntity;
 
 import java.util.ArrayList;
 import java.util.Collection;

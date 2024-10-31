@@ -39,7 +39,7 @@ public enum ResponseCode {
     EMAIL_SEND_SUCCESS(200,"E001","인증 이메일 발송 성공하였습니다."),
     EMAIL_VERIFY_SUCCESS(200,"E001","이메일 인증 성공하였습니다."),
 
-    // Comment
+    // Commenet
     COMMENT_CREATE_SUCCESS(201,"C001","댓글 작성 성공"),
     COMMENT_UPDATE_SUCCESS(201,"C002","댓글 수정 성공"),
     COMMENT_DELETE_SUCCESS(200,"C003","댓글 삭제 성공"),
@@ -47,6 +47,16 @@ public enum ResponseCode {
     // Likes
     LIKES_CREATE_SUCCESS(201,"L001","좋아요 등록 성공"),
     LIKES_DELETE_SUCCESS(200,"L002","좋아요 삭제 성공"),
+
+    // Records
+    RECORD_ADD_SUCCESS(201,"R001","이력 등록 성공"),
+    RECORD_DELETE_SUCCESS(200,"R002","이력 삭제 성공"),
+    RECORD_GET_SUCCESS(200,"R003","이력 조회 성공"),
+    RECORD_LIST_GET_SUCCESS(200,"R004","이력 목록 조회 성공"),
+
+    // Profiles
+    GET_PROFILE_SUCCESS(200,"P001","프로필 조회 성공"),
+    UPDATE_PROFILE_SUCCESS(201,"P002","프로필 업데이트 성공"),
 
     // Chatroom
     CHATROOM_LIST_GET_SUCCESS(200, "S-CH001", "채팅방 목록 호출 성공");

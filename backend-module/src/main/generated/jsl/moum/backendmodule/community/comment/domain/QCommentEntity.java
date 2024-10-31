@@ -51,7 +51,7 @@ public class QCommentEntity extends EntityPathBase<CommentEntity> {
     public QCommentEntity(Class<? extends CommentEntity> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.articleDetails = inits.isInitialized("articleDetails") ? new jsl.moum.backendmodule.community.article.domain.article_details.QArticleDetailsEntity(forProperty("articleDetails")) : null;
-        this.author = inits.isInitialized("author") ? new jsl.moum.backendmodule.auth.domain.entity.QMemberEntity(forProperty("author"), inits.get("author")) : null;
+        this.author = inits.isInitialized("author") ? new jsl.moum.backendmodule.auth.domain.entity.QMemberEntity(forProperty("author")) : null;
     }
 
 }

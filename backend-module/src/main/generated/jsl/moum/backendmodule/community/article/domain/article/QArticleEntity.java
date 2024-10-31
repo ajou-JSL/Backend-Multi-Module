@@ -58,7 +58,7 @@ public class QArticleEntity extends EntityPathBase<ArticleEntity> {
 
     public QArticleEntity(Class<? extends ArticleEntity> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.author = inits.isInitialized("author") ? new jsl.moum.backendmodule.auth.domain.entity.QMemberEntity(forProperty("author"), inits.get("author")) : null;
+        this.author = inits.isInitialized("author") ? new jsl.moum.backendmodule.auth.domain.entity.QMemberEntity(forProperty("author")) : null;
     }
 
 }

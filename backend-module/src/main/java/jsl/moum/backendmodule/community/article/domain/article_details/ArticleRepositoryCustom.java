@@ -2,7 +2,6 @@ package jsl.moum.backendmodule.community.article.domain.article_details;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import jsl.moum.backendmodule.community.article.domain.article.QArticleEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import jsl.moum.backendmodule.community.article.domain.article.ArticleEntity;
