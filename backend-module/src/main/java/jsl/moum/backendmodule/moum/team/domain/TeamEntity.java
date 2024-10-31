@@ -29,6 +29,9 @@ public class TeamEntity {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "chatroom_id")
+    private Long chatroomId;
+
     @OneToMany(mappedBy = "team", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<TeamMemberEntity> members = new ArrayList<>();
 

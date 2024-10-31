@@ -46,8 +46,10 @@ public enum ResponseCode {
 
     // Likes
     LIKES_CREATE_SUCCESS(201,"L001","좋아요 등록 성공"),
-    LIKES_DELETE_SUCCESS(200,"L002","좋아요 삭제 성공");
+    LIKES_DELETE_SUCCESS(200,"L002","좋아요 삭제 성공"),
 
+    // Chatroom
+    CHATROOM_LIST_GET_SUCCESS(200, "S-CH001", "채팅방 목록 호출 성공");
 
     private final int status;
     private final String code;

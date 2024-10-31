@@ -1,8 +1,12 @@
 package jsl.moum.chatappmodule.config;
 
+import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.config.CorsRegistry;
+import org.springframework.web.reactive.config.EnableWebFlux;
 import org.springframework.web.reactive.config.WebFluxConfigurer;
 
+@Configuration
+@EnableWebFlux
 public class CorsWebFluxConfig implements WebFluxConfigurer {
 
     //CorsRegistry object is provided as a parameter to the addCorsMappings method. It is used to configure CORS settings.
