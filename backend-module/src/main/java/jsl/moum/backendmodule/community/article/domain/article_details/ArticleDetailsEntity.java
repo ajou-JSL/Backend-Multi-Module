@@ -33,6 +33,10 @@ public class ArticleDetailsEntity {
     @OneToMany(mappedBy = "articleDetails", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<CommentEntity> comments = new ArrayList<>();
 
+    public void updateArticleImage(String newUrl){
+        this.fileUrl = newUrl;
+    }
+
     public void updateArticleDetails(String newContent){
 
         this.content = newContent;

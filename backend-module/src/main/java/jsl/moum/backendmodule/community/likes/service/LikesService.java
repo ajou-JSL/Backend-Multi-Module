@@ -21,6 +21,9 @@ public class LikesService {
     private final MemberRepository memberRepository;
     private final ArticleRepository articleRepository;
 
+    /**
+     좋아요 등록(생성)
+     */
     @Transactional
     public LikesDto.Response createLikes(String memberName, int articleId) {
 
@@ -47,6 +50,9 @@ public class LikesService {
         return new LikesDto.Response(newLikes);
     }
 
+    /**
+     좋아요 삭제
+     */
     @Transactional
     public LikesDto.Response deleteLikes(int articleId, String memberName) {
 

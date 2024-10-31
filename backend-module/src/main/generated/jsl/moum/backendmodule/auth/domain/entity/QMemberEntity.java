@@ -18,21 +18,27 @@ public class QMemberEntity extends EntityPathBase<MemberEntity> {
 
     private static final long serialVersionUID = 1273738157L;
 
-    private static final PathInits INITS = PathInits.DIRECT2;
-
     public static final QMemberEntity memberEntity = new QMemberEntity("memberEntity");
 
-    public final QAddress address;
-
-    public final StringPath description = createString("description");
+    public final StringPath address = createString("address");
 
     public final StringPath email = createString("email");
 
     public final NumberPath<Integer> id = createNumber("id", Integer.class);
 
+    public final StringPath instrument = createString("instrument");
+
+    public final StringPath name = createString("name");
+
     public final StringPath password = createString("password");
 
+    public final StringPath proficiency = createString("proficiency");
+
+    public final StringPath profileDescription = createString("profileDescription");
+
     public final StringPath profileImageUrl = createString("profileImageUrl");
+
+    public final ListPath<jsl.moum.backendmodule.community.record.domain.MemberRecordEntity, jsl.moum.backendmodule.community.record.domain.QMemberRecordEntity> records = this.<jsl.moum.backendmodule.community.record.domain.MemberRecordEntity, jsl.moum.backendmodule.community.record.domain.QMemberRecordEntity>createList("records", jsl.moum.backendmodule.community.record.domain.MemberRecordEntity.class, jsl.moum.backendmodule.community.record.domain.QMemberRecordEntity.class, PathInits.DIRECT2);
 
     public final StringPath role = createString("role");
 
@@ -41,24 +47,15 @@ public class QMemberEntity extends EntityPathBase<MemberEntity> {
     public final StringPath username = createString("username");
 
     public QMemberEntity(String variable) {
-        this(MemberEntity.class, forVariable(variable), INITS);
+        super(MemberEntity.class, forVariable(variable));
     }
 
     public QMemberEntity(Path<? extends MemberEntity> path) {
-        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
+        super(path.getType(), path.getMetadata());
     }
 
     public QMemberEntity(PathMetadata metadata) {
-        this(metadata, PathInits.getFor(metadata, INITS));
-    }
-
-    public QMemberEntity(PathMetadata metadata, PathInits inits) {
-        this(MemberEntity.class, metadata, inits);
-    }
-
-    public QMemberEntity(Class<? extends MemberEntity> type, PathMetadata metadata, PathInits inits) {
-        super(type, metadata, inits);
-        this.address = inits.isInitialized("address") ? new QAddress(forProperty("address")) : null;
+        super(MemberEntity.class, metadata);
     }
 
 }

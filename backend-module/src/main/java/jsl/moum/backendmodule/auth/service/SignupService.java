@@ -7,11 +7,11 @@ import org.springframework.web.multipart.MultipartFile;
 import jsl.moum.backendmodule.auth.domain.entity.MemberEntity;
 import jsl.moum.backendmodule.auth.domain.repository.MemberRepository;
 import jsl.moum.backendmodule.auth.dto.MemberDto;
-import jsl.moum.backendmodule.community.article.objectstorage.StorageService;
 import jsl.moum.backendmodule.config.redis.util.RedisUtil;
 import jsl.moum.backendmodule.global.error.ErrorCode;
 import jsl.moum.backendmodule.global.error.exception.CustomException;
 import jsl.moum.backendmodule.global.error.exception.DuplicateUsernameException;
+import jsl.moum.backendmodule.objectstorage.StorageService;
 
 import java.io.IOException;
 

@@ -20,8 +20,6 @@ public class QTeamEntity extends EntityPathBase<TeamEntity> {
 
     public static final QTeamEntity teamEntity = new QTeamEntity("teamEntity");
 
-    public final NumberPath<Long> chatroomId = createNumber("chatroomId", Long.class);
-
     public final DateTimePath<java.time.LocalDateTime> createdAt = createDateTime("createdAt", java.time.LocalDateTime.class);
 
     public final StringPath description = createString("description");

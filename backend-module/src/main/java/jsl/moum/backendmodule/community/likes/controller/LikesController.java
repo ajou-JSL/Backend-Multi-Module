@@ -23,10 +23,6 @@ public class LikesController {
 
     /**
      * 좋아요 등록 API
-     *
-     * @param customUserDetails 현재 인증된 사용자 정보 (CustomUserDetails 객체에서 사용자 정보 추출)
-     * @param articleId 댓글을 달 게시글의 ID
-     * @return 생성한 좋아요 객체
      */
     @PostMapping("/api/likes/{articleId}")
     public ResponseEntity<ResultResponse> createLikes(@AuthenticationPrincipal CustomUserDetails customUserDetails,
@@ -42,10 +38,6 @@ public class LikesController {
 
     /**
      * 좋아요 삭제 API
-     *
-     * @param customUserDetails 현재 인증된 사용자 정보 (CustomUserDetails 객체에서 사용자 정보 추출)
-     * @param articleId 게시글 ID
-     * @return 삭제한 좋아요 객체
      */
     @DeleteMapping("/api/likes/{articleId}")
     public ResponseEntity<ResultResponse> deleteLikes(@AuthenticationPrincipal CustomUserDetails customUserDetails,

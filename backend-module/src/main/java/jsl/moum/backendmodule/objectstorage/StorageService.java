@@ -1,4 +1,4 @@
-package jsl.moum.backendmodule.community.article.objectstorage;
+package jsl.moum.backendmodule.objectstorage;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

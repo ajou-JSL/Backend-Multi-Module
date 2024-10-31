@@ -47,7 +47,7 @@ public class QLikesEntity extends EntityPathBase<LikesEntity> {
     public QLikesEntity(Class<? extends LikesEntity> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.article = inits.isInitialized("article") ? new jsl.moum.backendmodule.community.article.domain.article.QArticleEntity(forProperty("article"), inits.get("article")) : null;
-        this.member = inits.isInitialized("member") ? new jsl.moum.backendmodule.auth.domain.entity.QMemberEntity(forProperty("member"), inits.get("member")) : null;
+        this.member = inits.isInitialized("member") ? new jsl.moum.backendmodule.auth.domain.entity.QMemberEntity(forProperty("member")) : null;
     }
 
 }
