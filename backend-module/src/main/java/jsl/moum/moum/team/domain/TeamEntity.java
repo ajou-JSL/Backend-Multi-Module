@@ -35,6 +35,9 @@ public class TeamEntity {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @Column(name = "file_url")
+    private String fileUrl;
+
     @PrePersist
     public void createDate(){
         this.createdAt = LocalDateTime.now();
@@ -42,5 +45,8 @@ public class TeamEntity {
 
     public void removeMemberFromTeam(TeamMemberEntity teamMember) {
         this.members.remove(teamMember);
+    }
+    public void updateProfileImage(String newUrl){
+        this.fileUrl = newUrl;
     }
 }

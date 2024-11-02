@@ -21,6 +21,7 @@ public class TeamDto {
         private String description;
         private int leaderId;
         private List<TeamMemberEntity> members;
+        private String fileUrl;
 
         public TeamEntity toEntity(){
             return TeamEntity.builder()
@@ -28,6 +29,7 @@ public class TeamDto {
                     .teamname(teamname)
                     .description(description)
                     .leaderId(leaderId)
+                    .fileUrl(fileUrl)
                     .build();
         }
     }
@@ -41,6 +43,7 @@ public class TeamDto {
         private final String description;
         private List<MemberDto.Response> members = new ArrayList<>();
         private LocalDateTime createdAt;
+        private String fileUrl;
 
         public Response(TeamEntity teamEntity){
             this.teamId = teamEntity.getId();
@@ -52,8 +55,11 @@ public class TeamDto {
                     .map(MemberDto.Response::new) // MemberEntity를 MemberDto.Response로 변환
                     .collect(Collectors.toList());
             this.createdAt = teamEntity.getCreatedAt();
+            this.fileUrl = teamEntity.getFileUrl();
         }
     }
+
+
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
@@ -61,11 +67,13 @@ public class TeamDto {
     public static class UpdateRequest{
         private String teamname;
         private String description;
+        private String fileUrl;
 
         public TeamEntity toEntity(){
             return TeamEntity.builder()
                     .teamname(teamname)
                     .description(description)
+                    .fileUrl(fileUrl)
                     .build();
         }
     }
@@ -78,6 +86,7 @@ public class TeamDto {
         private final String teamName;
         private final String description;
         private LocalDateTime createdAt;
+        private String fileUrl;
 
         public UpdateResponse(TeamEntity teamEntity){
             this.teamId = teamEntity.getId();
@@ -85,6 +94,7 @@ public class TeamDto {
             this.teamName = teamEntity.getTeamname();
             this.description = teamEntity.getDescription();
             this.createdAt = teamEntity.getCreatedAt();
+            this.fileUrl = teamEntity.getFileUrl();
         }
     }
 }

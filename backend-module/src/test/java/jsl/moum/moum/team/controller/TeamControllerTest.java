@@ -7,7 +7,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -84,6 +86,7 @@ class TeamControllerTest {
 
         teamRequestDto = TeamDto.Request.builder()
                 .leaderId(mockLeader.getId())
+                .fileUrl("fileUrl")
                 .teamname("mock team")
                 .description("mock description")
                 .members(new ArrayList<>())
@@ -102,18 +105,27 @@ class TeamControllerTest {
         TeamDto.Response response = new TeamDto.Response(mockTeamEntity);
 
         // when
-        when(teamService.createTeam(any(TeamDto.Request.class),any(String.class))).thenReturn(response);
-        //when(teamService.createTeam(any(),anyString())).thenReturn(response);
+       // when(teamService.createTeam(any(TeamDto.Request.class),any(String.class), any())).thenReturn(response);
+        when(teamService.createTeam(any(),anyString(), any())).thenReturn(response);
 
+        MockMultipartFile file = new MockMultipartFile("file", "testfile.jpg", MediaType.IMAGE_JPEG_VALUE, "test file content".getBytes());
+
+        MockMultipartFile teamRequestDtoFile = new MockMultipartFile("teamRequestDto",
+                "",
+                MediaType.APPLICATION_JSON_VALUE,
+                objectMapper.writeValueAsString(teamRequestDto).getBytes());
 
         // then
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/teams")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(teamRequestDto))
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/teams")
+                        .file(file)
+                        .file(teamRequestDtoFile)
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
                         .with(csrf()))
                 .andExpect(jsonPath("$.status").value(201))
                 .andExpect(jsonPath("$.message").value(ResponseCode.CREATE_TEAM_SUCCESS.getMessage()))
-                .andExpect(jsonPath("$.data.teamName").value("mock team"));
+                .andExpect(jsonPath("$.data.teamName").value("mock team"))
+                .andExpect(jsonPath("$.data.fileUrl").value("fileUrl"));
+
     }
 
     @Test
@@ -182,6 +194,7 @@ class TeamControllerTest {
         TeamDto.UpdateRequest updateRequest = TeamDto.UpdateRequest.builder()
                 .teamname("update team")
                 .description("update description")
+                .fileUrl("update fileUrl")
                 .build();
 
         TeamEntity updateMockTeam = updateRequest.toEntity();
@@ -189,17 +202,26 @@ class TeamControllerTest {
 
         // when
         //when(teamService.updateTeamInfo(mockTeam.getId(), updateRequest, mockLeader.getUsername())).thenReturn(response);
-        when(teamService.updateTeamInfo(anyInt(), any(), anyString())).thenReturn(response);
+        when(teamService.updateTeamInfo(anyInt(), any(), anyString(), any())).thenReturn(response);
+
+        MockMultipartFile file = new MockMultipartFile("file", "testfile.jpg", MediaType.IMAGE_JPEG_VALUE, "test file content".getBytes());
+
+        MockMultipartFile teamRequestDtoFile = new MockMultipartFile("updateRequestDto",
+                "",
+                MediaType.APPLICATION_JSON_VALUE,
+                objectMapper.writeValueAsString(teamRequestDto).getBytes());
 
         // then
-        mockMvc.perform(MockMvcRequestBuilders.patch("/api/teams/{teamId}", mockTeam.getId())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updateRequest))
+        mockMvc.perform(MockMvcRequestBuilders.multipart(HttpMethod.PATCH, "/api/teams/{teamId}", mockTeam.getId())
+                        .file(file)
+                        .file(teamRequestDtoFile)
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
                         .with(csrf()))
                 .andExpect(jsonPath("$.status").value(201))
                 .andExpect(jsonPath("$.message").value(ResponseCode.UPDATE_TEAM_SUCCESS.getMessage()))
                 .andExpect(jsonPath("$.data.teamName").value(updateRequest.getTeamname()))
-                .andExpect(jsonPath("$.data.description").value(updateRequest.getDescription()));
+                .andExpect(jsonPath("$.data.description").value(updateRequest.getDescription()))
+                .andExpect(jsonPath("$.data.fileUrl").value(updateRequest.getFileUrl()));
     }
 
     @Test

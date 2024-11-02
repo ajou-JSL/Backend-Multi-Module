@@ -103,7 +103,7 @@ class ProfileControllerTest {
         when(profileService.updateProfile(anyString(), anyInt(), any(), any())).thenReturn(response);
 
         MockMultipartFile file = new MockMultipartFile("file", "testfile.jpg", MediaType.IMAGE_JPEG_VALUE, "test file content".getBytes());
-        MockMultipartFile articleRequestDtoFile = new MockMultipartFile("updateProfileDto",
+        MockMultipartFile profileRequestDtoFile = new MockMultipartFile("updateProfileDto",
                 "",
                 MediaType.APPLICATION_JSON_VALUE,
                 objectMapper.writeValueAsString(updateRequestDto).getBytes());
@@ -112,7 +112,7 @@ class ProfileControllerTest {
         // MockMvcRequestBuilders.multipart 는 기본적으로 POST 요청이라 PATCH로 달아주고 요청보내야한다.
         mockMvc.perform(MockMvcRequestBuilders.multipart(HttpMethod.PATCH,"/api/profiles/{memberId}", mockMember.getId())
                         .file(file)
-                        .file(articleRequestDtoFile)
+                        .file(profileRequestDtoFile)
                         .contentType(MediaType.MULTIPART_FORM_DATA)
                         .with(csrf()))
                 .andDo(print())

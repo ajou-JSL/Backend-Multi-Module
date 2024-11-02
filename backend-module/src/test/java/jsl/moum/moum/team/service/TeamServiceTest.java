@@ -1,6 +1,7 @@
 package jsl.moum.moum.team.service;
 
 import jsl.moum.moum.team.domain.*;
+import jsl.moum.objectstorage.StorageService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -17,7 +18,9 @@ import jsl.moum.auth.dto.MemberDto;
 import jsl.moum.global.error.ErrorCode;
 import jsl.moum.global.error.exception.CustomException;
 import jsl.moum.moum.team.dto.TeamDto;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +36,9 @@ class TeamServiceTest {
     @Spy
     @InjectMocks
     private TeamService teamService;
+
+    @Mock
+    private StorageService storageService;
 
     @Mock
     private MemberRepository memberRepository;
@@ -134,22 +140,30 @@ class TeamServiceTest {
 
     @Test
     @DisplayName("팀 생성 성공")
-    void createTeam_Success() {
+    void createTeam_Success() throws IOException {
         // given
         TeamDto.Request teamRequestDto = TeamDto.Request.builder()
                 .teamname("New Team")
                 .description("New Team Description")
+                .fileUrl("New Team fileUrl")
                 .build();
+
+        MultipartFile file = mock(MultipartFile.class);
+        when(file.getOriginalFilename()).thenReturn("new.jpg");
+        when(file.isEmpty()).thenReturn(false);
 
         when(memberRepository.findByUsername(mockLeader.getUsername())).thenReturn(mockLeader);
         when(teamRepository.save(any(TeamEntity.class))).thenReturn(mockTeam);
+        when(storageService.uploadFile(anyString(), any(MultipartFile.class)))
+                .thenReturn("New Team fileUrl");
 
         // when
-        TeamDto.Response response = teamService.createTeam(teamRequestDto, mockLeader.getUsername());
+        TeamDto.Response response = teamService.createTeam(teamRequestDto, mockLeader.getUsername(), file);
 
         // then
         assertThat(response.getTeamName()).isEqualTo(teamRequestDto.getTeamname());
         assertThat(response.getDescription()).isEqualTo(teamRequestDto.getDescription());
+        assertThat(response.getFileUrl()).isEqualTo(teamRequestDto.getFileUrl());
     }
 
     @Test
@@ -198,11 +212,17 @@ class TeamServiceTest {
 
     @Test
     @DisplayName("팀 정보 수정 성공")
-    void updateTeamInfo_Success() {
+    void updateTeamInfo_Success() throws IOException {
         // given
+        MultipartFile file = mock(MultipartFile.class);
+        when(file.getOriginalFilename()).thenReturn("new.jpg");
+        when(file.isEmpty()).thenReturn(false);
+
         when(memberRepository.findByUsername(mockLeader.getUsername())).thenReturn(mockLeader);
         when(teamRepository.findById(mockTeam.getId())).thenReturn(Optional.of(mockTeam));
         when(teamRepository.save(any(TeamEntity.class))).thenReturn(mockTeam);
+        when(storageService.uploadFile(anyString(), any(MultipartFile.class)))
+                .thenReturn("new.jpg");
 
         doReturn(true).when(teamService).checkLeader(any(), any());
         doReturn(mockTeam).when(teamService).findTeam(anyInt());
@@ -210,20 +230,28 @@ class TeamServiceTest {
         TeamDto.UpdateRequest teamUpdateRequestDto = TeamDto.UpdateRequest.builder()
                 .teamname("Updated Team Name")
                 .description("Updated Description")
+                .fileUrl("Updated fileUrl")
                 .build();
 
         // when
-        TeamDto.UpdateResponse response = teamService.updateTeamInfo(mockTeam.getId(), teamUpdateRequestDto, mockLeader.getUsername());
+        TeamDto.UpdateResponse response = teamService.updateTeamInfo(mockTeam.getId(), teamUpdateRequestDto, mockLeader.getUsername(), file);
 
         // then
         assertThat(response.getTeamName()).isEqualTo("Updated Team Name");
         assertThat(response.getDescription()).isEqualTo("Updated Description");
+        assertThat(response.getFileUrl()).isEqualTo("Updated fileUrl");
     }
 
     @Test
     @DisplayName("팀 정보 수정 실패 - 존재하지 않는 팀")
-    void updateTeamInfo_Fail_TeamNotFound() {
+    void updateTeamInfo_Fail_TeamNotFound() throws IOException {
         // given
+        MultipartFile file = mock(MultipartFile.class);
+        when(file.getOriginalFilename()).thenReturn("new.jpg");
+        when(file.isEmpty()).thenReturn(false);
+        when(storageService.uploadFile(anyString(), any(MultipartFile.class)))
+                .thenReturn("new.jpg");
+
         when(memberRepository.findByUsername(mockLeader.getUsername())).thenReturn(mockLeader);
         when(teamRepository.findById(mockTeam.getId())).thenReturn(Optional.empty());
 
@@ -233,7 +261,7 @@ class TeamServiceTest {
                 .build();
 
         // when & then
-        assertThatThrownBy(() -> teamService.updateTeamInfo(mockTeam.getId(), teamUpdateRequestDto, mockLeader.getUsername()))
+        assertThatThrownBy(() -> teamService.updateTeamInfo(mockTeam.getId(), teamUpdateRequestDto, mockLeader.getUsername(), file))
                 .isInstanceOf(CustomException.class)
                 .hasMessage(ErrorCode.TEAM_NOT_FOUND.getMessage());
     }

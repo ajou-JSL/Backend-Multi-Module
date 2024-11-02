@@ -1,5 +1,7 @@
 package jsl.moum.record.service;
 
+import jsl.moum.global.error.ErrorCode;
+import jsl.moum.global.error.exception.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
@@ -121,23 +124,6 @@ class RecordServiceTest {
 
     }
 
-    @Test
-    public void testLoginCheck_Success() {
-        String username = "testUser";
 
-        // Mocking loginCheck 메서드
-        when(recordController.loginCheck(username)).thenReturn(username); // 서비스 계층을 Mock
-
-        // 실제 메서드 호출
-        String loginUserName = recordController.loginCheck(username);
-
-        // 검증
-        assertThat(loginUserName).isEqualTo(username);
-    }
-
-    @Test
-    public void testLoginCheck_Failure() {
-        // Similar to above but for failure case
-    }
 
 }

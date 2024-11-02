@@ -13,7 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import jsl.moum.moum.team.dto.TeamDto;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -55,10 +57,11 @@ public class TeamController {
      */
     @PostMapping("/api/teams")
     public ResponseEntity<ResultResponse> createTeam(@AuthenticationPrincipal CustomUserDetails customUserDetails,
-                                                     @Valid @RequestBody TeamDto.Request teamRequestDto){
+                                                     @Valid @RequestPart TeamDto.Request teamRequestDto,
+                                                     @RequestPart(value = "file", required = false)MultipartFile file) throws IOException {
 
         String loginUserName = loginCheck(customUserDetails.getUsername());
-        TeamDto.Response teamResponseDto = teamService.createTeam(teamRequestDto, loginUserName);
+        TeamDto.Response teamResponseDto = teamService.createTeam(teamRequestDto, loginUserName, file);
         ResultResponse response = ResultResponse.of(ResponseCode.CREATE_TEAM_SUCCESS, teamResponseDto);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
@@ -69,10 +72,11 @@ public class TeamController {
     @PatchMapping("/api/teams/{teamId}")
     public ResponseEntity<ResultResponse> updateTeam(@AuthenticationPrincipal CustomUserDetails customUserDetails,
                                                      @PathVariable int teamId,
-                                                     @RequestBody TeamDto.UpdateRequest updateRequestDto){
+                                                     @Valid @RequestPart TeamDto.UpdateRequest updateRequestDto,
+                                                     @PathVariable(value = "file", required = false)MultipartFile file) throws IOException {
 
         String loginUserName = loginCheck(customUserDetails.getUsername());
-        TeamDto.UpdateResponse responseDto = teamService.updateTeamInfo(teamId,updateRequestDto,loginUserName);
+        TeamDto.UpdateResponse responseDto = teamService.updateTeamInfo(teamId,updateRequestDto,loginUserName, file);
         ResultResponse response = ResultResponse.of(ResponseCode.UPDATE_TEAM_SUCCESS, responseDto);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
 

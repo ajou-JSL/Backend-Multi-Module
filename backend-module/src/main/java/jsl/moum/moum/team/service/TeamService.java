@@ -6,12 +6,18 @@ import jsl.moum.auth.dto.MemberDto;
 import jsl.moum.global.error.ErrorCode;
 import jsl.moum.global.error.exception.CustomException;
 import jsl.moum.moum.team.domain.*;
+import jsl.moum.objectstorage.StorageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import jsl.moum.moum.team.dto.TeamDto;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,6 +30,10 @@ public class TeamService {
     private final TeamRepository teamRepository;
     private final TeamMemberRepository teamMemberRepository;
     private final TeamMemberRepositoryCustom teamMemberRepositoryCustom;
+    private final StorageService storageService;
+
+    @Value("${ncp.object-storage.bucket}")
+    private String bucket;
 
     /**
         팀 정보 조회
@@ -56,15 +66,21 @@ public class TeamService {
      * 팀 생성
      */
     @Transactional
-    public TeamDto.Response createTeam(TeamDto.Request teamRequestDto, String username){
+    public TeamDto.Response createTeam(TeamDto.Request teamRequestDto, String username, MultipartFile file) throws IOException {
 
         MemberEntity loginUser = memberRepository.findByUsername(username);
+
+        // "profiles/{teamName}/{originalFileName}"
+        String originalFilename = file.getOriginalFilename();
+        String key = "teams/" + teamRequestDto.getTeamname() + "/" + originalFilename;
+        String fileUrl = storageService.uploadFile(key, file);
 
         TeamDto.Request request = TeamDto.Request.builder()
                 .members(new ArrayList<>())
                 .teamname(teamRequestDto.getTeamname())
                 .description(teamRequestDto.getDescription())
                 .leaderId(loginUser.getId())
+                .fileUrl(fileUrl)
                 .build();
 
         TeamEntity newTeam = request.toEntity();
@@ -121,7 +137,7 @@ public class TeamService {
      * 팀 정보 수정 메소드
      */
     @Transactional
-    public TeamDto.UpdateResponse updateTeamInfo(int teamId, TeamDto.UpdateRequest teamUpdateRequestDto, String username) {
+    public TeamDto.UpdateResponse updateTeamInfo(int teamId, TeamDto.UpdateRequest teamUpdateRequestDto, String username, MultipartFile file) throws IOException {
 
         MemberEntity leader = memberRepository.findByUsername(username);
         TeamEntity team = findTeam(teamId);
@@ -130,9 +146,24 @@ public class TeamService {
             throw new CustomException(ErrorCode.NO_AUTHORITY);
         }
 
+        String existingFileUrl = team.getFileUrl();
+
+        if (file != null && !file.isEmpty()) {
+            if (existingFileUrl != null && !existingFileUrl.isEmpty()) {
+                String existingFileName = existingFileUrl.replace("https://kr.object.ncloudstorage.com/" + bucket + "/", "");
+                storageService.deleteFile(existingFileName);
+            }
+
+            // 새로운 파일 업로드
+            String newFileName = "teams/" + team.getTeamname() + "/" + file.getOriginalFilename();
+            String newFileUrl = storageService.uploadFile(newFileName, file);
+            team.updateProfileImage(newFileUrl);
+        }
+
         TeamDto.UpdateRequest request = TeamDto.UpdateRequest.builder()
                 .teamname(teamUpdateRequestDto.getTeamname())
                 .description(teamUpdateRequestDto.getDescription())
+                .fileUrl(teamUpdateRequestDto.getFileUrl())
                 .build();
 
         TeamEntity updatedTeam = request.toEntity();
@@ -152,6 +183,13 @@ public class TeamService {
 
         if(!checkLeader(targetTeam, leader)){
             throw new CustomException(ErrorCode.NO_AUTHORITY);
+        }
+
+        String fileUrl = targetTeam.getFileUrl();
+        if (fileUrl != null && !fileUrl.isEmpty()) {
+            String fileName = fileUrl.replace("https://kr.object.ncloudstorage.com/" + bucket + "/", "");
+            fileName = URLDecoder.decode(fileName, StandardCharsets.UTF_8);
+            storageService.deleteFile(fileName);
         }
 
 //        // 팀의 멤버 목록을 가져와서 각 멤버의 팀 리스트에서 해당 팀을 삭제
