@@ -58,7 +58,7 @@ public class EmailService {
         String code = UUID.randomUUID().toString().substring(0, 6); //랜덤 인증번호 : uuid
         sendMail(emailDto,code);
 
-        redisUtil.setDataExpire(emailDto.getEmail(),code,60*1L); // {key,value} 1분동안 저장.
+        redisUtil.setDataExpire(emailDto.getEmail(),code,60*60*60*1L); // {key,value} 1시간동안 저장.
         return code;
     }
 

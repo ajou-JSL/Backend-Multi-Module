@@ -47,6 +47,5 @@ public class RecordDto {
             this.startDate = record.getStartDate();
             this.endDate = record.getEndDate();
         }
-
     }
 }

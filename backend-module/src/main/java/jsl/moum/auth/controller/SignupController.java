@@ -21,7 +21,7 @@ public class SignupController {
     private final SignupService signupService;
 
     @PostMapping("/join")
-    public ResponseEntity<ResultResponse> signupMember(@Valid @RequestPart MemberDto.Request memberRequestDto,
+    public ResponseEntity<ResultResponse> signupMember(@RequestPart MemberDto.Request memberRequestDto,
                                                        @RequestPart(value = "profileImage", required = false)MultipartFile file) throws IOException {
 
         signupService.signupMember(memberRequestDto, file);

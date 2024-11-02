@@ -1,6 +1,7 @@
 package jsl.moum.record.domain;
 
 import jakarta.persistence.*;
+import jsl.moum.moum.team.domain.TeamEntity;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -31,12 +32,17 @@ public class RecordEntity {
     @OneToMany(mappedBy = "record", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<MemberRecordEntity> members = new ArrayList<>();
 
+    @OneToMany(mappedBy = "record", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<TeamRecordEntity> teams = new ArrayList<>();
+
     @PrePersist
     public void createDate(){
         this.startDate = LocalDate.now();
     }
 
-    public void updateEndDate(LocalDate endTime) {
-        this.endDate = endTime;
+    public void updateTeamRecords(String recordName, LocalDate startDate, LocalDate endDate){
+        this.recordName = recordName;
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
 }

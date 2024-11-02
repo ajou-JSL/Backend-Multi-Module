@@ -77,10 +77,6 @@ public class ProfileDto {
                     .map(TeamMemberEntity::getTeam) // TeamEntity 추출
                     .map(TeamDto.Response::new)    // TeamDto.Response로 변환
                     .collect(Collectors.toList());
-            this.records = member.getRecords().stream() // MemberRecordEntity -> RecordEntity -> RecordDto.Response 변환
-                    .map(MemberRecordEntity::getRecord) // RecordEntity 추출
-                    .map(RecordDto.Response::new)       // RecordDto.Response로 변환
-                    .collect(Collectors.toList());
         }
     }
 }

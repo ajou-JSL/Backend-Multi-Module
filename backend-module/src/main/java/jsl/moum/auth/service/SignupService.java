@@ -47,11 +47,13 @@ public class SignupService {
 
         // dto -> entity
         MemberDto.Request joinRequestDto = MemberDto.Request.builder()
+                .name(memberRequestDto.getName())
                 .username(memberRequestDto.getUsername())
                 .email(memberRequestDto.getEmail())
                 .password(bCryptPasswordEncoder.encode(memberRequestDto.getPassword()))
                 .address(memberRequestDto.getAddress())
                 .profileImageUrl(fileUrl)
+                .records(memberRequestDto.getRecords())
                 .build();
 
 

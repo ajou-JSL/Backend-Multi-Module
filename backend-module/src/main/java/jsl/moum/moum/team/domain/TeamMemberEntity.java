@@ -15,6 +15,9 @@ public class TeamMemberEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Column(name = "leader_id", nullable = false)
+    private int leaderId;
+
     @ManyToOne
     @JoinColumn(name = "member_id")
     private MemberEntity member;
