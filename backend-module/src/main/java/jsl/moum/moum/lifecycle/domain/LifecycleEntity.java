@@ -58,4 +58,8 @@ public class LifecycleEntity {
         }
     }
 
+    public int getPercentage(){
+        return process.updateProcessPercentage();
+    }
+
 }

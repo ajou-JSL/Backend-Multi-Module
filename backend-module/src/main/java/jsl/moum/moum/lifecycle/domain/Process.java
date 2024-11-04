@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.PrePersist;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Embeddable
@@ -35,7 +36,7 @@ public class Process {
     @Column(name = "process_percentage")
     private int processPercentage;
 
-    public void updateProcessPercentage() {
+    public int updateProcessPercentage() {
         int completedSteps = 0;
         int totalSteps = 7;
 
@@ -48,5 +49,6 @@ public class Process {
         if (Boolean.TRUE.equals(finishStatus)) completedSteps++;
 
         this.processPercentage = (completedSteps * 100) / totalSteps;
+        return this.processPercentage;
     }
 }
