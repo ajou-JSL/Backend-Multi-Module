@@ -49,8 +49,8 @@ public class ArticleDetailsDto {
         private final int commentCounts;
         private final int likeCounts;
         private final String author;
-        private List<CommentDto.Response> comments = new ArrayList<>();
         private String fileUrl;
+        private List<CommentDto.Response> comments = new ArrayList<>();
 
         public Response(ArticleDetailsEntity articleDetails, ArticleEntity article){
             this.id = article.getId();
@@ -60,11 +60,11 @@ public class ArticleDetailsDto {
             this.viewCounts = article.getViewCount();
             this.commentCounts = article.getCommentCount();
             this.likeCounts = article.getLikesCount();
+            this.content = articleDetails.getContent();
+            this.fileUrl = articleDetails.getFileUrl();
             this.comments = articleDetails.getComments().stream()
                     .map(CommentDto.Response::new)
                     .collect(Collectors.toList());
-            this.content = articleDetails.getContent();
-            this.fileUrl = articleDetails.getFileUrl();
         }
     }
 

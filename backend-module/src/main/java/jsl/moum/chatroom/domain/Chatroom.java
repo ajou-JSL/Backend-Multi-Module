@@ -1,10 +1,12 @@
 package jsl.moum.chatroom.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Data
 @RequiredArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "chatroom")
 public class Chatroom {
@@ -21,4 +23,5 @@ public class Chatroom {
 
     @Column(name = "team_id")
     private int memberId;
+
 }

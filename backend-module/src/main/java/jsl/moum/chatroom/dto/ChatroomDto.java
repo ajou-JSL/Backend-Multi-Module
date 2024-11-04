@@ -1,12 +1,11 @@
 package jsl.moum.chatroom.dto;
 
 import jsl.moum.chatroom.domain.Chatroom;
-import lombok.Builder;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
-@Data
+@Getter
 @RequiredArgsConstructor
+@AllArgsConstructor
 public class ChatroomDto {
 
     private String chatroomName;
@@ -16,5 +15,6 @@ public class ChatroomDto {
         this.chatroomName = chatroom.getChatroomName();
         this.chatroomId = chatroom.getChatroomId();
     }
+
 
 }

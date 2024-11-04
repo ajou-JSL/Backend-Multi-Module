@@ -7,11 +7,6 @@ import jsl.moum.global.error.ErrorCode;
 import jsl.moum.global.error.exception.CustomException;
 import jsl.moum.moum.team.domain.*;
 import jsl.moum.objectstorage.StorageService;
-import jsl.moum.record.domain.RecordEntity;
-import jsl.moum.record.domain.TeamRecordEntity;
-import jsl.moum.record.dto.RecordDto;
-import jsl.moum.record.repository.RecordRepository;
-import jsl.moum.record.repository.TeamRecordRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
@@ -37,8 +32,7 @@ public class TeamService {
     private final TeamMemberRepository teamMemberRepository;
     private final TeamMemberRepositoryCustom teamMemberRepositoryCustom;
     private final StorageService storageService;
-    private final RecordRepository recordRepository;
-    private final TeamRecordRepository teamRecordRepository;
+
 
 
     @Value("${ncp.object-storage.bucket}")
@@ -90,25 +84,11 @@ public class TeamService {
                 .description(teamRequestDto.getDescription())
                 .leaderId(loginUser.getId())
                 .fileUrl(fileUrl)
-                .records(teamRequestDto.getRecords())
                 .build();
 
         TeamEntity newTeam = request.toEntity();
         teamRepository.save(newTeam);
 
-        RecordEntity newRecord = RecordEntity.builder()
-                .teams(null)
-                .recordName(null)
-                .endDate(null)
-                .startDate(null)
-                .build();
-        recordRepository.save(newRecord);
-
-        TeamRecordEntity newTeamRecordEntity = TeamRecordEntity.builder()
-                .record(newRecord)
-                .team(newTeam)
-                .build();
-        teamRecordRepository.save(newTeamRecordEntity);
 
         TeamMemberEntity teamMember = TeamMemberEntity.builder()
                 .team(newTeam)
@@ -164,7 +144,6 @@ public class TeamService {
     public TeamDto.UpdateResponse updateTeamInfo(int teamId, TeamDto.UpdateRequest teamUpdateRequestDto, String username, MultipartFile file) throws IOException {
 
         MemberEntity leader = memberRepository.findByUsername(username);
-        List<RecordEntity> records = recordRepository.findByTeamsId(teamId);
         TeamEntity team = findTeam(teamId);
 
         if(!checkLeader(team, leader)){

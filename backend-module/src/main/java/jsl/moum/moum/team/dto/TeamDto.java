@@ -3,7 +3,6 @@ package jsl.moum.moum.team.dto;
 import jsl.moum.auth.dto.MemberDto;
 import jsl.moum.moum.team.domain.TeamEntity;
 import jsl.moum.moum.team.domain.TeamMemberEntity;
-import jsl.moum.record.dto.RecordDto;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -24,8 +23,6 @@ public class TeamDto {
         private List<TeamMemberEntity> members;
         private String fileUrl;
 
-        // update용 dto필드. update는 entity 내부 메소드
-        private List<RecordDto.Request> records;
 
         public TeamEntity toEntity(){
             return TeamEntity.builder()
@@ -45,10 +42,9 @@ public class TeamDto {
         private final int leaderId;
         private final String teamName;
         private final String description;
-        private List<MemberDto.Response> members = new ArrayList<>();
         private LocalDateTime createdAt;
         private String fileUrl;
-        private List<RecordDto.Response> records = new ArrayList<>();
+        private List<MemberDto.Response> members = new ArrayList<>();
 
         public Response(TeamEntity teamEntity){
             this.teamId = teamEntity.getId();
@@ -75,7 +71,6 @@ public class TeamDto {
         private String teamname;
         private String description;
         private String fileUrl;
-        private List<RecordDto.Request> records;
 
         public TeamEntity toEntity(){
             return TeamEntity.builder()
@@ -95,7 +90,6 @@ public class TeamDto {
         private final String description;
         private LocalDateTime createdAt;
         private String fileUrl;
-        private List<RecordDto.Response> records = new ArrayList<>();
 
         public UpdateResponse(TeamEntity teamEntity){
             this.teamId = teamEntity.getId();

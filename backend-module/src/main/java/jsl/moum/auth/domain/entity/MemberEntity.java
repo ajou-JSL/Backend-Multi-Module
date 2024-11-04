@@ -5,8 +5,7 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 import jsl.moum.moum.team.domain.TeamEntity;
 import jsl.moum.moum.team.domain.TeamMemberEntity;
-import jsl.moum.record.domain.MemberRecordEntity;
-import jsl.moum.record.domain.RecordEntity;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,9 +56,6 @@ public class MemberEntity {
     @Column(name = "proficiency", nullable = true)
     private String proficiency;
 
-    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MemberRecordEntity> records = new ArrayList<>();
-
     @Column(name = "instrument", nullable = true)
     private String instrument;
 
@@ -71,9 +67,6 @@ public class MemberEntity {
         teams.removeIf(teamMemberEntity -> teamMemberEntity.getTeam().equals(team));
     }
 
-    public void removeRecordFromMember(RecordEntity record) {
-        records.removeIf(memberRecordEntity -> memberRecordEntity.getRecord().equals(record));
-    }
 
     public void updateProfileImage(String newUrl){
         this.profileImageUrl = newUrl;

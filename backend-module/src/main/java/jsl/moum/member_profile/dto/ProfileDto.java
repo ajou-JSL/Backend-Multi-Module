@@ -7,8 +7,6 @@ import lombok.Builder;
 import lombok.Getter;
 import jsl.moum.moum.team.domain.TeamMemberEntity;
 import jsl.moum.moum.team.dto.TeamDto;
-import jsl.moum.record.domain.MemberRecordEntity;
-import jsl.moum.record.dto.RecordDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,12 +54,11 @@ public class ProfileDto {
         private String username;
         private String profileDescription;
         private String email;
-        private List<TeamDto.Response> teams = new ArrayList<>();
         private String profileImageUrl;
         private String proficiency;
-        private List<RecordDto.Response> records = new ArrayList<>();
         private String instrument;
         private String address;
+        private List<TeamDto.Response> teams = new ArrayList<>();
 
         public Response(MemberEntity member){
             this.id = member.getId();

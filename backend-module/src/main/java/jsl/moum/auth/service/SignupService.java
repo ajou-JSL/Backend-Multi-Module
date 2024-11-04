@@ -53,7 +53,6 @@ public class SignupService {
                 .password(bCryptPasswordEncoder.encode(memberRequestDto.getPassword()))
                 .address(memberRequestDto.getAddress())
                 .profileImageUrl(fileUrl)
-                .records(memberRequestDto.getRecords())
                 .build();
 
 

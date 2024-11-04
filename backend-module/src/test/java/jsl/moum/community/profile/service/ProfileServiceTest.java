@@ -52,7 +52,7 @@ class ProfileServiceTest {
                 .password("zpzzgjdg@$^1")
                 .email("tester123@gmail.com")
                 .teams(new ArrayList<>())
-                .records(new ArrayList<>())
+                //.records(new ArrayList<>())
                 .profileImageUrl("old.jpg")
                 .build();
 

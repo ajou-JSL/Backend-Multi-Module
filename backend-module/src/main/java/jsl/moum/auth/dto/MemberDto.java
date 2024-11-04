@@ -3,7 +3,6 @@ package jsl.moum.auth.dto;
 
 import jakarta.validation.constraints.*;
 import jsl.moum.auth.domain.entity.MemberEntity;
-import jsl.moum.record.dto.RecordDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -48,7 +47,7 @@ public class MemberDto {
         private String proficiency;
         private String instrument;
 
-        private List<RecordDto.Request> records;
+
 
         // private String verifyCode;
 
