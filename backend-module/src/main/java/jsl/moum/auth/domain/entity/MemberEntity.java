@@ -24,7 +24,7 @@ public class MemberEntity {
     private int id;
 
     @Column(name = "name", nullable = false)
-    @Pattern(regexp = "^[a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ]{2,10}$")
+    @Pattern(regexp = "^[a-z0-9]{4,20}$")
     private String name;
 
     @Size(min = 3, max = 10)

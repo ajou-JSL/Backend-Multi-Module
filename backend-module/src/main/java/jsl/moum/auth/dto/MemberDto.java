@@ -19,7 +19,7 @@ public class MemberDto {
         private int id;
 
         @NotEmpty @NotNull
-        @Pattern(regexp = "^[a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ]{2,10}$")
+        @Pattern(regexp = "^[a-z0-9]{4,20}$")
         private String name;
 
         @NotEmpty @NotNull
@@ -71,12 +71,14 @@ public class MemberDto {
     @AllArgsConstructor
     public static class Response{
         private final int id;
+        private final String memberId;
         private final String username;
         private final String profileDescription;
         private final String profileImageUrl;
 
         public Response(MemberEntity member){
             this.id = member.getId();
+            this.memberId = member.getName();
             this.username = member.getUsername();
             this.profileDescription = member.getProfileDescription();
             this.profileImageUrl = member.getProfileImageUrl();
