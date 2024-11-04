@@ -1,4 +1,4 @@
-package jsl.moum.moum.moum.domain;
+package jsl.moum.moum.lifecycle.domain;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
