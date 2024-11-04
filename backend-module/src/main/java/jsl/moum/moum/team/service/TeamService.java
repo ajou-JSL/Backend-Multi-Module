@@ -73,7 +73,7 @@ public class TeamService {
 
         MemberEntity loginUser = memberRepository.findByUsername(username);
 
-        // "profiles/{teamName}/{originalFileName}"
+        // "teams/{teamName}/{originalFileName}"
         String originalFilename = file.getOriginalFilename();
         String key = "teams/" + teamRequestDto.getTeamname() + "/" + originalFilename;
         String fileUrl = storageService.uploadFile(key, file);
@@ -216,8 +216,8 @@ public class TeamService {
 //            member.removeTeamFromMember(targetTeam);
 //        }
 
-        teamRepository.deleteById(teamId);
         teamMemberRepositoryCustom.deleteTeamMemberTable(teamId);
+        teamRepository.deleteById(teamId);
 
         return new TeamDto.Response(targetTeam);
 

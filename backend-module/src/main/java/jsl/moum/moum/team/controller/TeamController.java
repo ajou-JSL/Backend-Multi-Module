@@ -57,7 +57,7 @@ public class TeamController {
      */
     @PostMapping("/api/teams")
     public ResponseEntity<ResultResponse> createTeam(@AuthenticationPrincipal CustomUserDetails customUserDetails,
-                                                     @Valid @RequestPart TeamDto.Request teamRequestDto,
+                                                         @Valid @RequestPart TeamDto.Request teamRequestDto,
                                                      @RequestPart(value = "file", required = false)MultipartFile file) throws IOException {
 
         String loginUserName = loginCheck(customUserDetails.getUsername());
