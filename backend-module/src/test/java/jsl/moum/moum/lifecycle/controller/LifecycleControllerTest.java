@@ -254,4 +254,9 @@ class LifecycleControllerTest {
 
         // then
     }
+
+    /**
+     * todo : 선택하면 진행률 관련한거 업데이트되는 로직 필요함
+     */
+
 }

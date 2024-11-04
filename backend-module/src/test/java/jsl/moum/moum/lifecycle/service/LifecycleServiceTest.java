@@ -34,6 +34,14 @@ class LifecycleServiceTest {
     }
 
     /**
+     * 모음 조회
+     */
+
+    /**
+     * 나의 모음 목록 조회
+     */
+
+    /**
      * 모음 생성
      */
 
@@ -51,6 +59,10 @@ class LifecycleServiceTest {
 
     /**
      * 모음 되살리기
+     */
+
+    /**
+     * todo : 선택하면 진행률 관련한거 업데이트되는 로직 필요함
      */
 
 }
