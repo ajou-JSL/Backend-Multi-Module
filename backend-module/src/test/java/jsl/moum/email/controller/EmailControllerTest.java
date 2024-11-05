@@ -1,6 +1,7 @@
 package jsl.moum.email.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jsl.moum.auth.dto.MemberDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -53,6 +54,7 @@ class EmailControllerTest {
         EmailDto.Request emailDto = new EmailDto.Request();
         emailDto.setEmail(validEmail);
 
+
         // when
         when(emailService.sendCertificationMail(emailDto)).thenReturn("123456");
 
@@ -76,8 +78,10 @@ class EmailControllerTest {
     void EmailSendFail_InvalidEmailForm() throws Exception {
         // given
         String invalidEmail = "invalid-email-form";
-        EmailDto.Request request = new EmailDto.Request();
-        request.setEmail(invalidEmail);
+        MemberDto.Request request = MemberDto.Request.builder()
+                .email(invalidEmail)
+                .build();
+
 
         // then
         mockMvc.perform(post("/send-mail")
@@ -92,8 +96,9 @@ class EmailControllerTest {
     void EmailSendFail_EmptyEmailForm() throws Exception {
         // given
         String emptyEmail = "";
-        EmailDto.Request request = new EmailDto.Request();
-        request.setEmail(emptyEmail);
+        MemberDto.Request request = MemberDto.Request.builder()
+                .email(emptyEmail)
+                .build();
 
         // when, then
         mockMvc.perform(post("/send-mail")
@@ -107,9 +112,10 @@ class EmailControllerTest {
     @DisplayName("인증 코드 검증 성공")
     void verifyCodeSuccess() throws Exception {
         // given
-        VerifyDto.Request request = new VerifyDto.Request();
-        request.setEmail("test@example.com");
-        request.setVerifyCode("123456");
+        MemberDto.Request request = MemberDto.Request.builder()
+                .email("test@example.com")
+                .verifyCode("123456")
+                .build();
 
         VerifyDto.Response response = new VerifyDto.Response();
         response.setResult(true);
@@ -130,9 +136,10 @@ class EmailControllerTest {
     @DisplayName("인증 코드가 일치하지 않는 경우 실패")
     void verifyCodeFail() throws Exception {
         // given
-        VerifyDto.Request request = new VerifyDto.Request();
-        request.setEmail("test@example.com");
-        request.setVerifyCode("wrong-code");
+        MemberDto.Request request = MemberDto.Request.builder()
+                .email("test@example.com")
+                .verifyCode("wrong-code")
+                .build();
 
         VerifyDto.Response response = new VerifyDto.Response();
         response.setResult(false);  // 인증 실패를 표현

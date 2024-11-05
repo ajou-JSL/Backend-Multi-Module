@@ -1,6 +1,7 @@
 package jsl.moum.email.controller;
 
 import jakarta.validation.Valid;
+import jsl.moum.auth.dto.MemberDto;
 import jsl.moum.email.service.EmailService;
 import jsl.moum.global.error.ErrorCode;
 import jsl.moum.global.error.ErrorResponse;

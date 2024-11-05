@@ -2,6 +2,7 @@ package jsl.moum.auth.service;
 
 import jsl.moum.auth.domain.entity.MemberEntity;
 import jsl.moum.auth.domain.repository.MemberRepository;
+import jsl.moum.email.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ public class SignupService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final RedisUtil redisUtil;
     private final StorageService storageService;
+    private final EmailService emailService;
 
     public void signupMember(MemberDto.Request memberRequestDto, MultipartFile file) throws IOException {
 
@@ -30,7 +32,6 @@ public class SignupService {
         if(isExist){
             throw new DuplicateUsernameException();
         }
-
 
         // 인증 코드 검증
         String verifyCode = redisUtil.getData(memberRequestDto.getEmail()); // Redis에서 이메일로 인증 코드 가져오기

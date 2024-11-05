@@ -3,6 +3,7 @@ package jsl.moum.email.service;
 import jakarta.mail.Message;
 import jakarta.mail.internet.MimeMessage;
 import jsl.moum.auth.domain.repository.MemberRepository;
+import jsl.moum.auth.dto.MemberDto;
 import jsl.moum.config.redis.util.RedisUtil;
 import jsl.moum.global.error.ErrorCode;
 import jsl.moum.global.error.exception.AlreadyVerifiedEmailException;
@@ -78,7 +79,7 @@ public class EmailService {
 
         if (isValid) {
             // 인증이 성공하면 해당 인증 코드를 삭제 (재사용 방지)
-            redisUtil.deleteData(verifyDto.getEmail());
+            //redisUtil.deleteData(verifyDto.getEmail());
             result.setResult(true);
         }else{
             result.setResult(false);

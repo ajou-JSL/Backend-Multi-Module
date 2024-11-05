@@ -243,33 +243,41 @@ class LifecycleControllerTest {
     @Test
     @DisplayName("모음 마감하기")
     @WithAuthUser
-    void finish_lifecycle(){
+    void finish_lifecycle() throws Exception {
         // given
         String loginUser = mockLeader.getUsername();
+        int targetId = mockLifecycle.getId();
+        LifecycleDto.Response responseDto = new LifecycleDto.Response(mockLifecycle);
+
+        // when
+        when(lifecycleService.finishMoum(anyString(), anyInt())).thenReturn(responseDto);
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.patch("/api/moum/finish/{moumId}", targetId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(csrf()))
+                .andExpect(jsonPath("$.status").value(200))
+                .andExpect(jsonPath("$.message").value(ResponseCode.FINISH_MOUM_SUCCESS.getMessage()));
+    }
+
+    @Test
+    @DisplayName("모음 되살리기")
+    @WithAuthUser
+    void reopen_lifecycle() throws Exception {
+// given
+        String loginUser = mockLeader.getUsername();
+        int targetId = mockLifecycle.getId();
         LifecycleDto.Response responseDto = new LifecycleDto.Response(mockLifecycle);
 
         // when
         when(lifecycleService.reopenMoum(anyString(), anyInt())).thenReturn(responseDto);
 
         // then
-//        mockMvc.perform(MockMvcRequestBuilders.delete("/api/moum/{moumId}", targetId)
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .with(csrf()))
-//                .andExpect(jsonPath("$.status").value(200))
-//                .andExpect(jsonPath("$.message").value(ResponseCode.DELETE_MOUM_SUCCESS.getMessage()))
-//                .andExpect(jsonPath("$.data.moumId").value(targetId))
-//                .andExpect(jsonPath("$.data.moumName").value("테스트 라이프사이클"));
-    }
-
-    @Test
-    @DisplayName("모음 되살리기")
-    @WithAuthUser
-    void reopen_lifecycle(){
-        // given
-
-        // when
-
-        // then
+        mockMvc.perform(MockMvcRequestBuilders.patch("/api/moum/reopen/{moumId}", targetId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(csrf()))
+                .andExpect(jsonPath("$.status").value(200))
+                .andExpect(jsonPath("$.message").value(ResponseCode.REOPEN_MOUM_SUCCESS.getMessage()));
     }
 
     /**
