@@ -30,8 +30,8 @@ public class Process {
     @Column(name = "payment_status")
     private Boolean paymentStatus;
 
-    @Column(name = "finish_status")
-    private Boolean finishStatus;
+    @Column(name = "actice_status")
+    private Boolean activeStatus;
 
     @Column(name = "process_percentage")
     private int processPercentage;
@@ -46,9 +46,17 @@ public class Process {
         if (Boolean.TRUE.equals(performLocationStatus)) completedSteps++;
         if (Boolean.TRUE.equals(promoteStatus)) completedSteps++;
         if (Boolean.TRUE.equals(paymentStatus)) completedSteps++;
-        if (Boolean.TRUE.equals(finishStatus)) completedSteps++;
+        if (Boolean.TRUE.equals(activeStatus)) completedSteps++;
 
         this.processPercentage = (completedSteps * 100) / totalSteps;
         return this.processPercentage;
+    }
+
+    public boolean changeActiceStatus(){
+        return !this.activeStatus;
+    }
+
+    public boolean getActiceStatus(){
+        return this.activeStatus;
     }
 }

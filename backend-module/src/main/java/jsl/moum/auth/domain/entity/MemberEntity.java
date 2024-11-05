@@ -35,7 +35,7 @@ public class MemberEntity {
     //@Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*?_]).{8,20}$")
     private String password;
 
-    @Column(name = "profile_description", nullable = true)
+    @Column(name = "profile_description", nullable = false)
     private String profileDescription;
 
     @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$", message = "이메일 형식이 올바르지 않습니다.")
@@ -53,14 +53,14 @@ public class MemberEntity {
     @Column(name = "profile_image_url", nullable = true)
     private String profileImageUrl;
 
-    @Column(name = "proficiency", nullable = true)
+    @Column(name = "proficiency", nullable = false)
     private String proficiency;
 
-    @Column(name = "instrument", nullable = true)
+    @Column(name = "instrument", nullable = false)
     private String instrument;
 
     // todo : 필수항목으로
-    @Column(name = "address", nullable = true)
+    @Column(name = "address", nullable = false)
     private String address;
 
     public void removeTeamFromMember(TeamEntity team) {

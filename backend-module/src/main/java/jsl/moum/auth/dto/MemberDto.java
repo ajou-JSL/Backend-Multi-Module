@@ -7,9 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class MemberDto {
 
     @Builder
@@ -34,17 +31,21 @@ public class MemberDto {
         @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$", message = "이메일 형식이 올바르지 않습니다.")
         private String email;
 
+        @NotEmpty @NotNull
         private String profileDescription;
 
         @NotEmpty @NotNull
         @Pattern(regexp = "^[0-9a-zA-Z]{6}$")
         private String verifyCode;
 
-        // todo : 필수항목으로 바꿀거임
+        @NotEmpty @NotNull
         private String address;
         private String profileImageUrl;
 
+        @NotEmpty @NotNull
         private String proficiency;
+
+        @NotEmpty @NotNull
         private String instrument;
 
 
@@ -71,14 +72,14 @@ public class MemberDto {
     @AllArgsConstructor
     public static class Response{
         private final int id;
-        private final String memberId;
+        private final String name;
         private final String username;
         private final String profileDescription;
         private final String profileImageUrl;
 
         public Response(MemberEntity member){
             this.id = member.getId();
-            this.memberId = member.getName();
+            this.name = member.getName();
             this.username = member.getUsername();
             this.profileDescription = member.getProfileDescription();
             this.profileImageUrl = member.getProfileImageUrl();

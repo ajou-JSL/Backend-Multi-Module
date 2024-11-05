@@ -2,8 +2,10 @@ package jsl.moum.moum.lifecycle.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jsl.moum.auth.domain.CustomUserDetails;
 import jsl.moum.auth.domain.entity.MemberEntity;
 import jsl.moum.global.response.ResponseCode;
+import jsl.moum.global.response.ResultResponse;
 import jsl.moum.moum.lifecycle.domain.LifecycleEntity;
 import jsl.moum.moum.lifecycle.domain.LifecycleTeamEntity;
 import jsl.moum.moum.lifecycle.dto.LifecycleDto;
@@ -16,11 +18,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import jsl.moum.custom.WithAuthUser;
@@ -238,10 +245,20 @@ class LifecycleControllerTest {
     @WithAuthUser
     void finish_lifecycle(){
         // given
+        String loginUser = mockLeader.getUsername();
+        LifecycleDto.Response responseDto = new LifecycleDto.Response(mockLifecycle);
 
         // when
+        when(lifecycleService.reopenMoum(anyString(), anyInt())).thenReturn(responseDto);
 
         // then
+//        mockMvc.perform(MockMvcRequestBuilders.delete("/api/moum/{moumId}", targetId)
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .with(csrf()))
+//                .andExpect(jsonPath("$.status").value(200))
+//                .andExpect(jsonPath("$.message").value(ResponseCode.DELETE_MOUM_SUCCESS.getMessage()))
+//                .andExpect(jsonPath("$.data.moumId").value(targetId))
+//                .andExpect(jsonPath("$.data.moumName").value("테스트 라이프사이클"));
     }
 
     @Test
@@ -258,5 +275,4 @@ class LifecycleControllerTest {
     /**
      * todo : 선택하면 진행률 관련한거 업데이트되는 로직 필요함
      */
-
 }

@@ -64,9 +64,8 @@ public class ProfileService {
             memberEntity.updateProfileImage(fileUrl);
         }
 
-        memberEntity.updateMemberInfo(request.getProficiency(), request.getInstrument(), request.getProfileDescription(), request.getEmail(),
-                request.getName(), request.getUsername(), request.getAddress());
-
+        memberEntity.updateMemberInfo(request.getName(), request.getUsername(), request.getProfileDescription(), request.getEmail(),
+                request.getProficiency(), request.getInstrument(), request.getAddress());
         memberRepository.save(memberEntity);
         return new ProfileDto.Response(memberEntity);
 

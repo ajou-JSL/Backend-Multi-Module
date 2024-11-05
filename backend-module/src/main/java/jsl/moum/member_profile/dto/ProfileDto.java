@@ -1,5 +1,7 @@
 package jsl.moum.member_profile.dto;
 
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jsl.moum.auth.domain.entity.MemberEntity;
 import lombok.AllArgsConstructor;
@@ -18,18 +20,29 @@ public class ProfileDto {
     @AllArgsConstructor
     @Getter
     public static class UpdateRequest{
+        @NotEmpty @NotNull
         @Pattern(regexp = "^[a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ]{2,10}$")
         private String name;
 
+        @NotEmpty @NotNull
         @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$", message = "이메일 형식이 올바르지 않습니다.")
         private String email;
 
+        @NotEmpty @NotNull
         private String username;
+
+        @NotEmpty @NotNull
         private String profileDescription;
 
         private String profileImageUrl;
+
+        @NotEmpty @NotNull
         private String proficiency;
+
+        @NotEmpty @NotNull
         private String instrument;
+
+        @NotEmpty @NotNull
         private String address;
 
         public MemberEntity toEntity(){

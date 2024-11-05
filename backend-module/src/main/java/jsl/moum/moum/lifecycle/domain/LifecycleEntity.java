@@ -61,5 +61,7 @@ public class LifecycleEntity {
     public int getPercentage(){
         return process.updateProcessPercentage();
     }
+    public boolean changeActiceStatus(){return process.changeActiceStatus();}
+    public boolean getActiceStatus(){return process.getActiceStatus();}
 
 }
