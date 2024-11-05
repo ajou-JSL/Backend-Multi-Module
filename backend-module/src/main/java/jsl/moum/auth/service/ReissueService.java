@@ -33,7 +33,7 @@ public class ReissueService {
         String role = jwtUtil.getRole(refresh);
 
         // Make new JWTs
-        String newAccess = jwtUtil.createJwt("access", username, role, 600000L); // 10m
+        String newAccess = jwtUtil.createJwt("access", username, role, 6*600000L); // 60m
         String newRefresh = jwtUtil.createJwt("refresh", username, role, 86400000L); // 24h
 
         // Save new refresh token to DB
