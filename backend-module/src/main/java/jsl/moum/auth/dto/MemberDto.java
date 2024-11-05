@@ -16,36 +16,35 @@ public class MemberDto {
         private int id;
 
         @NotEmpty @NotNull
-        @Pattern(regexp = "^[a-z0-9]{4,20}$")
         private String name;
 
         @NotEmpty @NotNull
         @Size(min=3, max=10)
         private String username;
 
-        @NotEmpty @NotNull
-        @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*?_]).{8,20}$")
+        @NotEmpty @NotNull(message = "비밀번호를 입력해주세요")
+        @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*?_]).{8,20}$", message = "비밀번호 형식에 맞게 입력해주세요")
         private String password;
 
-        @NotEmpty @NotNull @Email
+        @NotEmpty @NotNull(message = "이메일을 입력해주세요") @Email
         @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$", message = "이메일 형식이 올바르지 않습니다.")
         private String email;
 
-        @NotEmpty @NotNull
+        @NotEmpty @NotNull(message = "프로필 설명을 입력해주세요")
         private String profileDescription;
 
-        @NotEmpty @NotNull
+        @NotEmpty @NotNull(message = "인증코드를 입력해주세요")
         @Pattern(regexp = "^[0-9a-zA-Z]{6}$")
         private String verifyCode;
 
-        @NotEmpty @NotNull
+        @NotEmpty @NotNull(message = "주소를 입력해주세요")
         private String address;
         private String profileImageUrl;
 
-        @NotEmpty @NotNull
+        @NotEmpty @NotNull(message = "악기 숙련도를 입력해주세요")
         private String proficiency;
 
-        @NotEmpty @NotNull
+        @NotEmpty @NotNull(message = "사용 악기를 입력해주세요")
         private String instrument;
 
 

@@ -21,7 +21,6 @@ public class ProfileDto {
     @Getter
     public static class UpdateRequest{
         @NotEmpty @NotNull
-        @Pattern(regexp = "^[a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ]{2,10}$")
         private String name;
 
         @NotEmpty @NotNull
