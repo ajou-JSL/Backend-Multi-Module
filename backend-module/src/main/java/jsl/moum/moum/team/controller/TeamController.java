@@ -9,6 +9,7 @@ import jsl.moum.global.response.ResultResponse;
 import jsl.moum.moum.team.service.TeamService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -162,6 +163,21 @@ public class TeamController {
      */
     @PatchMapping("/api/teams/change-leader/{memberId}")
     public void 팀리더넘기기(){
+    }
+
+
+    /**
+     * 리더의 팀 리스트 찾기 API
+     */
+    @GetMapping("/api/teams-all/{memberId}")
+    public ResponseEntity<ResultResponse> getLeaderTeamList(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                                            @PathVariable int memberId)
+    {
+        loginCheck(customUserDetails.getUsername());
+        List<TeamDto.Response> responseDto = teamService.getTeamsByLeaderId(memberId);
+        ResultResponse response = ResultResponse.of(ResponseCode.GET_TEAM_LIST_SUCCESS,responseDto);
+        return new ResponseEntity<>(response, HttpStatusCode.valueOf(response.getStatus()));
+
     }
 
     public String loginCheck(String username){

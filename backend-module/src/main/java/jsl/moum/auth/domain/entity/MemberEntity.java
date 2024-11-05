@@ -31,7 +31,7 @@ public class MemberEntity {
     private String username;
 
     @Column(name = "password", nullable = false)
-    //@Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*?_]).{8,20}$")
+    @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*?_]).{8,20}$")
     private String password;
 
     @Column(name = "profile_description", nullable = false)

@@ -2,6 +2,7 @@ package jsl.moum.moum.team.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -224,13 +225,6 @@ class TeamControllerTest {
                 .andExpect(jsonPath("$.data.fileUrl").value(updateRequest.getFileUrl()));
     }
 
-    @Test
-    @DisplayName("나의 팀 리스트 조회 테스트")
-    @WithAuthUser
-    void get_my_team_list_success() throws Exception{
-
-    }
-
 
     @Test
     @DisplayName("팀 삭제 테스트")
@@ -316,6 +310,51 @@ class TeamControllerTest {
                 .andExpect(jsonPath("$.status").value(200))
                 .andExpect(jsonPath("$.message").value(ResponseCode.LEAVE_TEAM_SUCCESS.getMessage()));
     }
+
+    @Test
+    @DisplayName("리더가 속한 팀 리스트 조회 테스트")
+    @WithAuthUser
+    void get_teams_by_leader_success() throws Exception {
+        // given
+        TeamEntity mockTeam1 = TeamEntity.builder()
+                .id(1)
+                .leaderId(mockLeader.getId())
+                .teamname("team one")
+                .description("description one")
+                .members(new ArrayList<>())
+                .build();
+
+        TeamEntity mockTeam2 = TeamEntity.builder()
+                .id(2)
+                .leaderId(mockLeader.getId())
+                .teamname("team two")
+                .description("description two")
+                .members(new ArrayList<>())
+                .build();
+
+        List<TeamEntity> teams = List.of(mockTeam1, mockTeam2);
+
+        List<TeamDto.Response> responseList = new ArrayList<>();
+        for (TeamEntity team : teams) {
+            responseList.add(new TeamDto.Response(team));
+        }
+
+        // when
+        when(teamService.getTeamsByLeaderId(anyInt())).thenReturn(responseList);
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/teams-all/{memberId}", mockLeader.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status").value(200))
+                .andExpect(jsonPath("$.message").value(ResponseCode.GET_TEAM_LIST_SUCCESS.getMessage()))
+                .andExpect(jsonPath("$.data").isArray())
+                .andExpect(jsonPath("$.data.length()").value(responseList.size()))
+                .andExpect(jsonPath("$.data[0].teamName").value(mockTeam1.getTeamname()))
+                .andExpect(jsonPath("$.data[0].leaderId").value(mockTeam1.getLeaderId()))
+                .andExpect(jsonPath("$.data[1].teamName").value(mockTeam2.getTeamname()))
+                .andExpect(jsonPath("$.data[1].leaderId").value(mockTeam2.getLeaderId()));
+    }
+
 
 
 

@@ -4,10 +4,12 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jsl.moum.auth.domain.entity.MemberEntity;
 import jsl.moum.global.error.ErrorCode;
 import jsl.moum.global.error.exception.CustomException;
+import jsl.moum.moum.team.dto.TeamDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static jsl.moum.moum.team.domain.QTeamMemberEntity.teamMemberEntity;
 
@@ -92,5 +94,26 @@ public class TeamMemberRepositoryCustom {
         if (deletedCount == 0) {
             throw new CustomException(ErrorCode.ILLEGAL_ARGUMENT);
         }
+    }
+
+    /**
+     * select team
+     * from team_member
+     * where team_member.member_id=:memberId
+     * and team_member.leader_id=:memberId
+     */
+    public List<TeamDto.Response> findAllTeamsByLeaderId(int memberId) {
+        List<TeamEntity> teams = jpaQueryFactory
+                .select(teamMemberEntity.team)
+                .from(teamMemberEntity)
+                .where(
+                        teamMemberEntity.member.id.eq(memberId)
+                                .and(teamMemberEntity.leaderId.eq(memberId))
+                )
+                .fetch();
+
+        return teams.stream()
+                .map(TeamDto.Response::new)
+                .collect(Collectors.toList());
     }
 }

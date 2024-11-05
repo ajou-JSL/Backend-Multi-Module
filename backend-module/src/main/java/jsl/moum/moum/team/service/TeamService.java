@@ -300,6 +300,19 @@ public class TeamService {
         return new TeamDto.Response(team);
     }
 
+    /**
+     * 리더의 팀 리스트 조회
+     */
+    @Transactional
+    public List<TeamDto.Response> getTeamsByLeaderId(int memberId){
+
+        if(!isMemberExist(memberId)){
+            throw new CustomException(ErrorCode.MEMBER_NOT_EXIST);
+        }
+
+        return teamMemberRepositoryCustom.findAllTeamsByLeaderId(memberId);
+    }
+
 
     /**
      * 유저로부터 온 초대 요청 수락 API
