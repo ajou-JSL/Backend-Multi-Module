@@ -49,13 +49,13 @@ public class ChatService {
     }
 
     public Flux<ChatDto> getChatsRecentByChatroomId(int chatroomId){
-        PageRequest pageRequest = PageRequest.of(0, PAGE_SIZE, Sort.by(Sort.Direction.DESC ,"timestamp"));
+        PageRequest pageRequest = PageRequest.of(0, PAGE_SIZE, Sort.by(Sort.Direction.ASC ,"timestamp"));
         return chatRepository.findByChatroomId(chatroomId, pageRequest)
                 .map(chat -> new ChatDto(chat));
     }
 
     public Flux<ChatDto> getChatsBeforeTimestampByChatroomId(int chatroomId, LocalDateTime timestamp){
-        PageRequest pageRequest = PageRequest.of(0, PAGE_SIZE, Sort.by(Sort.Direction.DESC ,"timestamp"));
+        PageRequest pageRequest = PageRequest.of(0, PAGE_SIZE, Sort.by(Sort.Direction.ASC ,"timestamp"));
         return chatRepository.findChatsBeforeTimestampByChatroomId(chatroomId, timestamp, pageRequest)
                 .map(chat -> new ChatDto(chat));
     }
