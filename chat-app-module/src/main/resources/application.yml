@@ -13,6 +13,7 @@ spring:
   main:
     web-application-type: reactive
     allow-bean-definition-overriding: true
+
   r2dbc:
     url: r2dbc:mysql://localhost:3306/moum?useSSL=false&characterEncoding=UTF-8&allowPublicKeyRetrieval=true
     host: localhost
@@ -26,6 +27,7 @@ spring:
   sql:
     init:
       platform: mysql
+
   jwt:
     secret: "vmfhaltmskdlstkfkdgodyroqkfwkdbalroqkfwkdbalaaaaaaaaaaaaaaaabbbbb"
   data:
@@ -37,6 +39,17 @@ spring:
       password: ChatDB2024
       authentication-database: admin
       options: ?retryWrites=true&w=majority&appName=ChatDB
+      connection-timeout: 3000
+      max-wait-time: 10000
+      pool:
+#        By default, min-size = 0 and max-size = 100
+        min-size: 10
+#        max-size: 100
+        max-idle-time: 60000 # 60 seconds
+#        max-life-time: 60000
+        initial-size: 10
+        validate-query: { "ping": 1 }
+
     redis:
       host: localhost
       port: 6379
@@ -53,3 +66,4 @@ spring:
 logging:
   level:
     org.springframework.web: TRACE
+#    org.mongodb.driver: DEBUG

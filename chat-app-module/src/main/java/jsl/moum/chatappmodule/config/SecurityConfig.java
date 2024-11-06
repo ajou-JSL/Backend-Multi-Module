@@ -1,15 +1,19 @@
 package jsl.moum.chatappmodule.config;
 
+import jsl.moum.chatappmodule.auth.jwt.JwtReactiveFilter;
+import jsl.moum.chatappmodule.auth.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.RedirectServerAuthenticationEntryPoint;
 import org.springframework.security.web.server.context.WebSessionServerSecurityContextRepository;
+import org.springframework.web.cors.reactive.CorsConfigurationSource;
 
 @Configuration
 @RequiredArgsConstructor
@@ -17,40 +21,36 @@ import org.springframework.security.web.server.context.WebSessionServerSecurityC
 @Slf4j
 public class SecurityConfig {
 
-//    @Bean
-//    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http, ServerHttpSecurity httpSecurity) {
-//        log.info("SecurityConfig SecurityWebFilterChain : ____________________________________________");
-//        http.csrf(csrf -> csrf.disable())
-//                .cors(corsSpec -> corsSpec.disable());
-//
-//        http.httpBasic(httpBasicSpec -> httpBasicSpec.disable())
-//                .formLogin(formLoginSpec -> formLoginSpec.disable());
-//
-//        http.authorizeExchange(exchange -> exchange
-//                        .pathMatchers("/api/**").authenticated()
-//                        .anyExchange().permitAll())
-//                .addFilterAt(jwtAuthenticationFilter, SecurityWebFiltersOrder.AUTHENTICATION)
-//                .authenticationManager(authenticationManager)
-//                .securityContextRepository(new WebSessionServerSecurityContextRepository())
-//                .exceptionHandling(exceptionHandling ->
-//                        exceptionHandling.authenticationEntryPoint(new RedirectServerAuthenticationEntryPoint(LOGIN_REDIRECT_URI)))
-//                .logout(logoutSpec -> logoutSpec.disable());
-//
-//        log.info("SecurityConfig finish SecurityWebFilterChain");
-//        return http.build();
-//    }
+    private final JwtUtil jwtUtil;
+    private final JwtReactiveFilter jwtReactiveFilter;
+    private final CorsConfigurationSource corsConfigurationSource;
+    private final ReactiveAuthenticationManager authenticationManager;
 
     @Bean
-    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
-        http.csrf(csrf -> csrf.disable()) // Disable CSRF protection if not needed
-                .cors(corsSpec -> corsSpec.disable()); // Disable CORS if not needed
+    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http, ServerHttpSecurity httpSecurity) {
 
-        // Allow all requests without authentication
+        // Disable csrf, also CORS is defined in CorsWebFluxConfig.java
+        http.csrf(csrf -> csrf.disable())
+                .cors(corsSpec -> corsSpec.configurationSource(corsConfigurationSource));
+
+        http.httpBasic(httpBasicSpec -> httpBasicSpec.disable())
+                .formLogin(formLoginSpec -> formLoginSpec.disable());
+
         http.authorizeExchange(exchange -> exchange
-                        .pathMatchers("/api/**").permitAll()
-                        .anyExchange().permitAll());
+                .pathMatchers("/api/chat/test**").permitAll()
+                .pathMatchers("/api/**").authenticated()
+                .anyExchange().authenticated());
 
-        // Optional: Enable basic auth if needed for debugging
+        http.addFilterAt(jwtReactiveFilter, SecurityWebFiltersOrder.AUTHENTICATION)
+                .authenticationManager(authenticationManager)
+                .securityContextRepository(new WebSessionServerSecurityContextRepository());
+
+        /**
+         * Add exceptionHandling to redirect to login page if not authenticated
+         */
+//        http.exceptionHandling(exceptionHandling ->
+//                        exceptionHandling.authenticationEntryPoint(new RedirectServerAuthenticationEntryPoint(LOGIN_REDIRECT_URI)))
+        http.logout(logoutSpec -> logoutSpec.disable());
 
         return http.build();
     }

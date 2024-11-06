@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
-@Document(collection = "chat")
+@Document(collection = "chatcollection")
 public class Chat {
     @Id
     private String id;
