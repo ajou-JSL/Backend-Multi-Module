@@ -49,17 +49,4 @@ public class MongoCollectionConfig {
         return new ReactiveMongoTemplate(mongoClient, "chatdb");
     }
 
-    @Bean
-    public Mono<MongoCollection<Document>> initializeCappedCollection(ReactiveMongoTemplate reactiveMongoTemplate) {
-        return reactiveMongoTemplate.collectionExists(Chat.class)
-                .flatMap(exists -> {
-                    if (!exists) {
-                        CollectionOptions options = CollectionOptions.empty().capped().size(209715200); // Set your desired size - currently 200mb
-                        return reactiveMongoTemplate.createCollection(Chat.class, options);
-                    }
-                    return Mono.empty();
-                });
-    }
-    // Size of 1048576 bytes = 1MB
-
 }
