@@ -53,6 +53,10 @@ public class SignupService {
                 .email(memberRequestDto.getEmail())
                 .password(bCryptPasswordEncoder.encode(memberRequestDto.getPassword()))
                 .address(memberRequestDto.getAddress())
+                .instrument(memberRequestDto.getInstrument())
+                .proficiency(memberRequestDto.getProficiency())
+                .profileDescription(memberRequestDto.getProfileDescription())
+
                 .profileImageUrl(fileUrl)
                 .build();
 
