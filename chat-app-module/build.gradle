@@ -24,24 +24,42 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
-	implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
-	implementation 'io.asyncer:r2dbc-mysql:1.3.0'
-	implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
-	implementation 'mysql:mysql-connector-java:8.0.33'
-	runtimeOnly 'com.mysql:mysql-connector-j'
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'io.projectreactor:reactor-test'
-	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
+//	MongoDB Reactive
+	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive:3.3.5'
+	implementation 'org.mongodb:mongodb-driver-core:5.2.0'
+	implementation 'org.mongodb:mongodb-driver-reactivestreams:5.2.0'
+	implementation 'org.mongodb:bson:5.2.0'
+	runtimeOnly 'org.mongodb:bson-record-codec:5.2.0'
 
-	// Firebase Admin SDK
+//	MySQL R2DBC
+	implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
+	implementation 'io.asyncer:r2dbc-mysql:1.3.0'
+	implementation 'mysql:mysql-connector-java:8.0.33'
+	runtimeOnly 'com.mysql:mysql-connector-j'
+
+//	Redis Reactive
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
+
+//	Spring Security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	testImplementation 'org.springframework.security:spring-security-test'
+
+//	JWT
+	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+	implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
+
+//	Lombok
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+//	Firebase Admin SDK
 	implementation 'com.google.firebase:firebase-admin:9.4.1'
 }
 
