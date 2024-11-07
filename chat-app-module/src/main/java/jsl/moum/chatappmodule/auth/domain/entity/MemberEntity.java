@@ -24,7 +24,7 @@ public class MemberEntity {
     @Column
     private String name;
 
-    @Column
+    @Column("user_name")
     private String username;
 
     @Column

@@ -51,7 +51,7 @@ public class JwtReactiveFilter implements WebFilter {
         final String username;
         final String role;
         final String category;
-        final String accessToken = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+        final String accessToken = exchange.getRequest().getHeaders().getFirst("access");
 
         if(accessToken == null){
             return unauthorizedResponse(exchange);

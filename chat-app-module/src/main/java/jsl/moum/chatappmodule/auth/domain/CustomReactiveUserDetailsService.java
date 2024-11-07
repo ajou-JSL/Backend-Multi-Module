@@ -20,9 +20,14 @@ public class CustomReactiveUserDetailsService implements ReactiveUserDetailsServ
     @Override
     public Mono<UserDetails> findByUsername(String username) {
         log.info("CustomReactiveUserDetailsService : findByUsername : {}", username);
-        Mono<MemberEntity> memberEntityMono = memberRepository.findByUsername(username);
 
-        return memberEntityMono.map(userAuth -> (UserDetails) userAuth)
+
+        Mono<MemberEntity> memberEntityMono = memberRepository.findByUsername(username);
+        Mono<CustomUserDetails> customUserDetailsMono = memberEntityMono.map(
+                memberEntity -> new CustomUserDetails(memberEntity)
+        );
+
+        return customUserDetailsMono.map(userAuth -> (UserDetails) userAuth)
                 .switchIfEmpty(Mono.error(new UsernameNotFoundException("CustomReactiveUserDetailsService : User not found for username: " + username)))
                 .doOnNext(userDetails -> log.info("CustomReactiveUserDetailsService : doOnNext Found user : {}", userDetails))
                 .doOnError(error -> log.error("CustomReactiveUserDetailsService : doOnError : {} {}", error.getMessage(), error));

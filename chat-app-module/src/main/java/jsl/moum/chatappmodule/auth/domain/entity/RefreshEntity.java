@@ -15,7 +15,7 @@ public class RefreshEntity {
     @Column
     private Long id;
 
-    @Column
+    @Column("user_name")
     private String username;
 
     @Column
