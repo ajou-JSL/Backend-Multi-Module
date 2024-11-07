@@ -75,12 +75,12 @@ public class TeamService {
 
         // "teams/{teamName}/{originalFileName}"
         String originalFilename = file.getOriginalFilename();
-        String key = "teams/" + teamRequestDto.getTeamname() + "/" + originalFilename;
+        String key = "teams/" + teamRequestDto.getTeamName() + "/" + originalFilename;
         String fileUrl = storageService.uploadFile(key, file);
 
         TeamDto.Request request = TeamDto.Request.builder()
                 .members(new ArrayList<>())
-                .teamname(teamRequestDto.getTeamname())
+                .teamName(teamRequestDto.getTeamName())
                 .description(teamRequestDto.getDescription())
                 .leaderId(loginUser.getId())
                 .fileUrl(fileUrl)
@@ -159,35 +159,14 @@ public class TeamService {
             }
 
             // 새로운 파일 업로드
-            String newFileName = "teams/" + team.getTeamname() + "/" + file.getOriginalFilename();
+            String newFileName = "teams/" + team.getTeamName() + "/" + file.getOriginalFilename();
             String newFileUrl = storageService.uploadFile(newFileName, file);
             team.updateProfileImage(newFileUrl);
         }
 
-        TeamDto.UpdateRequest request = TeamDto.UpdateRequest.builder()
-                .teamname(teamUpdateRequestDto.getTeamname())
-                .description(teamUpdateRequestDto.getDescription())
-                .fileUrl(teamUpdateRequestDto.getFileUrl())
-                .build();
+        team.updateTeamInfo(teamUpdateRequestDto.getTeamName(), teamUpdateRequestDto.getDescription());
 
-//        List<RecordDto.Request> recordRequests = teamUpdateRequestDto.getRecords();
-//        String recordName = null;
-//        LocalDate startDate = null;
-//        LocalDate endDate = null;
-//        for (RecordDto.Request recordRequest : recordRequests) {
-//            recordName = recordRequest.getRecordName();
-//            startDate = recordRequest.getStartDate();
-//            endDate = recordRequest.getEndDate();
-//
-//        }
-//        RecordEntity updatedRecord = records.updateTeamRecords(recordName, startDate, endDate);
-//        recordRepository.save(updatedRecord);
-
-        TeamEntity updatedTeam = request.toEntity();
-        teamRepository.save(updatedTeam);
-
-
-        return new TeamDto.UpdateResponse(updatedTeam);
+        return new TeamDto.UpdateResponse(team);
 
     }
 
