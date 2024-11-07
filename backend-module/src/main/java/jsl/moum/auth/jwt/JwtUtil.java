@@ -36,7 +36,7 @@ public class JwtUtil {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
     }
 
-    public String createJwt(String category, String username, String role, Long expiredMs) {
+    public String createJwt(String category, String username, String role, long expiredMs) {
 
         return Jwts.builder()
                 .claim("category", category) // access? or refresh?

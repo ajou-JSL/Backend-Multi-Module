@@ -34,10 +34,10 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private final RefreshRepository refreshRepository;
 
     @Value("${spring.jwt.expiration}")
-    private Long tempExpiration;
+    private long tempExpiration;
 
     @Value("${spring.jwt.refresh-token.expiration}")
-    private Long tempExpirationRefresh;
+    private long tempExpirationRefresh;
 
 
 
@@ -69,7 +69,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     String role = auth.getAuthority();
 
     //토큰 생성
-    String access = jwtUtil.createJwt("access", username, role,tempExpiration);
+    String access = jwtUtil.createJwt("access", username, role, tempExpiration);
     String refresh = jwtUtil.createJwt("refresh", username, role, tempExpirationRefresh);
 
     // Refresh 토큰 저장
@@ -84,7 +84,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     response.getWriter().write(new ObjectMapper().writeValueAsString(resultResponse));
     }
 
-    private void addRefreshEntity(String username, String refresh, Long expiredMs) {
+    private void addRefreshEntity(String username, String refresh, long expiredMs) {
 
         Date date = new Date(System.currentTimeMillis() + expiredMs);
 

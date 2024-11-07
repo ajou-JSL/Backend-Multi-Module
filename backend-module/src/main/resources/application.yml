@@ -27,9 +27,9 @@ spring:
 
   jwt:
     secret: "vmfhaltmskdlstkfkdgodyroqkfwkdbalroqkfwkdbalaaaaaaaaaaaaaaaabbbbb"
-    expiration : 36000000
+    expiration : 3600000
     refresh-token:
-      expiration: 86400000
+      expiration: 8640000
 
   mail:
     host: smtp.naver.com #smtp ?? ??
