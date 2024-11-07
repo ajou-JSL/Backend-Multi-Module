@@ -80,7 +80,7 @@ class TeamControllerTest {
         mockTeam = TeamEntity.builder()
                 .id(1)
                 .leaderId(mockLeader.getId())
-                .teamname("mock team")
+                .teamName("mock team")
                 .description("mock description")
                 .members(new ArrayList<>())
                 .build();
@@ -88,7 +88,7 @@ class TeamControllerTest {
         teamRequestDto = TeamDto.Request.builder()
                 .leaderId(mockLeader.getId())
                 .fileUrl("fileUrl")
-                .teamname("mock team")
+                .teamName("mock team")
                 .description("mock description")
                 .members(new ArrayList<>())
                 .build();
@@ -156,7 +156,7 @@ class TeamControllerTest {
         TeamEntity mockTeam2 = TeamEntity.builder()
                 .id(2)
                 .leaderId(mockLeader.getId())
-                .teamname("another team")
+                .teamName("another team")
                 .description("another description")
                 .members(new ArrayList<>())
                 .build();
@@ -180,9 +180,9 @@ class TeamControllerTest {
                 .andExpect(jsonPath("$.message").value(ResponseCode.GET_TEAM_LIST_SUCCESS.getMessage()))
                 .andExpect(jsonPath("$.data").isArray())
                 .andExpect(jsonPath("$.data.length()").value(responseList.size()))
-                .andExpect(jsonPath("$.data[0].teamName").value(mockTeam.getTeamname()))
+                .andExpect(jsonPath("$.data[0].teamName").value(mockTeam.getTeamName()))
                 .andExpect(jsonPath("$.data[0].leaderId").value(mockTeam.getLeaderId()))
-                .andExpect(jsonPath("$.data[1].teamName").value(mockTeam2.getTeamname()))
+                .andExpect(jsonPath("$.data[1].teamName").value(mockTeam2.getTeamName()))
                 .andExpect(jsonPath("$.data[1].leaderId").value(mockTeam2.getLeaderId()));
     }
 
@@ -193,7 +193,7 @@ class TeamControllerTest {
     void update_team_info_success() throws Exception{
         // given
         TeamDto.UpdateRequest updateRequest = TeamDto.UpdateRequest.builder()
-                .teamname("update team")
+                .teamName("update team")
                 .description("update description")
                 .fileUrl("update fileUrl")
                 .build();
@@ -220,7 +220,7 @@ class TeamControllerTest {
                         .with(csrf()))
                 .andExpect(jsonPath("$.status").value(201))
                 .andExpect(jsonPath("$.message").value(ResponseCode.UPDATE_TEAM_SUCCESS.getMessage()))
-                .andExpect(jsonPath("$.data.teamName").value(updateRequest.getTeamname()))
+                .andExpect(jsonPath("$.data.teamName").value(updateRequest.getTeamName()))
                 .andExpect(jsonPath("$.data.description").value(updateRequest.getDescription()))
                 .andExpect(jsonPath("$.data.fileUrl").value(updateRequest.getFileUrl()));
     }
@@ -319,7 +319,7 @@ class TeamControllerTest {
         TeamEntity mockTeam1 = TeamEntity.builder()
                 .id(1)
                 .leaderId(mockLeader.getId())
-                .teamname("team one")
+                .teamName("team one")
                 .description("description one")
                 .members(new ArrayList<>())
                 .build();
@@ -327,7 +327,7 @@ class TeamControllerTest {
         TeamEntity mockTeam2 = TeamEntity.builder()
                 .id(2)
                 .leaderId(mockLeader.getId())
-                .teamname("team two")
+                .teamName("team two")
                 .description("description two")
                 .members(new ArrayList<>())
                 .build();
@@ -349,9 +349,9 @@ class TeamControllerTest {
                 .andExpect(jsonPath("$.message").value(ResponseCode.GET_TEAM_LIST_SUCCESS.getMessage()))
                 .andExpect(jsonPath("$.data").isArray())
                 .andExpect(jsonPath("$.data.length()").value(responseList.size()))
-                .andExpect(jsonPath("$.data[0].teamName").value(mockTeam1.getTeamname()))
+                .andExpect(jsonPath("$.data[0].teamName").value(mockTeam1.getTeamName()))
                 .andExpect(jsonPath("$.data[0].leaderId").value(mockTeam1.getLeaderId()))
-                .andExpect(jsonPath("$.data[1].teamName").value(mockTeam2.getTeamname()))
+                .andExpect(jsonPath("$.data[1].teamName").value(mockTeam2.getTeamName()))
                 .andExpect(jsonPath("$.data[1].leaderId").value(mockTeam2.getLeaderId()));
     }
 
