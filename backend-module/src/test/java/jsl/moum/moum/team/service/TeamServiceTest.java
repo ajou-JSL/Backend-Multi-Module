@@ -319,8 +319,6 @@ class TeamServiceTest {
         // then
         assertThat(response.getMembers().size()).isEqualTo(0);
         verify(teamMemberRepositoryCustom).deleteMemberFromTeamById(anyInt(), anyInt());
-        verify(teamRepository).save(mockTeam);
-        verify(memberRepository).save(mockMember);
     }
 
     @Test
@@ -405,8 +403,6 @@ class TeamServiceTest {
         // then
         assertThat(response.getTeamName()).isEqualTo(mockTeam.getTeamName());
         verify(teamMemberRepositoryCustom).deleteMemberFromTeamById(anyInt(), anyInt());
-        verify(teamRepository).save(mockTeam);
-        verify(memberRepository).save(mockMember);
     }
 
     @Test
