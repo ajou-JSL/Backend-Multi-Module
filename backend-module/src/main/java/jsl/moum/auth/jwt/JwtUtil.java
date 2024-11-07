@@ -48,6 +48,7 @@ public class JwtUtil {
                 .compact();
     }
 
+
     // 토큰 판단용 access? or refresh?
     public String getCategory(String token) {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("category", String.class);

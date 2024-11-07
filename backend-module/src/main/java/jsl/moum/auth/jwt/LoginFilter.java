@@ -73,7 +73,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     String refresh = jwtUtil.createJwt("refresh", username, role, tempExpirationRefresh);
 
     // Refresh 토큰 저장
-    addRefreshEntity(username, refresh, 86400000L); // 24h
+    addRefreshEntity(username, refresh, tempExpirationRefresh); // 24h
 
     //응답 설정
         ResultResponse resultResponse = ResultResponse.of(ResponseCode.LOGIN_SUCCESS, username);
