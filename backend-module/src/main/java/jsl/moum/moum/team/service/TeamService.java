@@ -33,8 +33,6 @@ public class TeamService {
     private final TeamMemberRepositoryCustom teamMemberRepositoryCustom;
     private final StorageService storageService;
 
-
-
     @Value("${ncp.object-storage.bucket}")
     private String bucket;
 
@@ -242,8 +240,8 @@ public class TeamService {
 
 
         teamMemberRepositoryCustom.deleteMemberFromTeamById(teamId, targetMemberId);
-        teamRepository.save(team);
-        memberRepository.save(targetMember);
+//        teamRepository.save(team);
+//        memberRepository.save(targetMember);
 
         return new TeamDto.Response(team);
     }
@@ -274,8 +272,8 @@ public class TeamService {
 
 
         teamMemberRepositoryCustom.deleteMemberFromTeamById(teamId, member.getId());
-        teamRepository.save(team);
-        memberRepository.save(member);
+//        teamRepository.save(team);
+//        memberRepository.save(member);
         return new TeamDto.Response(team);
     }
 
