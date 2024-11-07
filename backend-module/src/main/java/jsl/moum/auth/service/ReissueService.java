@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jsl.moum.auth.domain.entity.RefreshEntity;
 import jsl.moum.auth.domain.repository.RefreshRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import jsl.moum.auth.jwt.JwtUtil;
 import jsl.moum.global.response.ResponseCode;
@@ -20,6 +21,13 @@ public class ReissueService {
     private final JwtUtil jwtUtil;
     private final RefreshRepository refreshRepository;
 
+    @Value("${spring.jwt.expiration}")
+    private Long tempExpiration;
+
+    @Value("${spring.jwt.refresh-token.expiration}")
+    private Long tempExpirationRefresh;
+
+
     public ResultResponse reissue(HttpServletRequest request, HttpServletResponse response) {
         // Get refresh token from cookies
         String refresh = getRefreshTokenFromCookies(request);
@@ -33,12 +41,12 @@ public class ReissueService {
         String role = jwtUtil.getRole(refresh);
 
         // Make new JWTs
-        String newAccess = jwtUtil.createJwt("access", username, role, 6*600000L); // 60m
-        String newRefresh = jwtUtil.createJwt("refresh", username, role, 86400000L); // 24h
+        String newAccess = jwtUtil.createJwt("access", username, role, tempExpiration); // 60m
+        String newRefresh = jwtUtil.createJwt("refresh", username, role, tempExpirationRefresh); // 24h
 
         // Save new refresh token to DB
         refreshRepository.deleteByRefresh(refresh);
-        addRefreshEntity(username, newRefresh, 86400000L);
+        addRefreshEntity(username, newRefresh, tempExpirationRefresh);
 
         // Set response headers and cookies
         response.setHeader("access", newAccess);

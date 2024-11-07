@@ -26,7 +26,7 @@ public class TeamEntity {
     private int leaderId;
 
     @Column(name = "team_name")
-    private String teamname;
+    private String teamName;
 
     @Column(name = "description")
     private String description;
@@ -52,8 +52,15 @@ public class TeamEntity {
         this.members.remove(teamMember);
     }
 
+    public void updateTeamInfo(String teamName, String description) {
+        this.teamName = teamName;
+        this.description = description;
+    }
+
     public void updateProfileImage(String newUrl){
         this.fileUrl = newUrl;
     }
+
+
 
 }

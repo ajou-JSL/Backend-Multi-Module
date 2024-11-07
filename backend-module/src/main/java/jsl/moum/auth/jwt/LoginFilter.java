@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jsl.moum.auth.domain.entity.RefreshEntity;
 import jsl.moum.auth.domain.repository.RefreshRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,6 +32,14 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
     private final RefreshRepository refreshRepository;
+
+    @Value("${spring.jwt.expiration}")
+    private Long tempExpiration;
+
+    @Value("${spring.jwt.refresh-token.expiration}")
+    private Long tempExpirationRefresh;
+
+
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -60,8 +69,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     String role = auth.getAuthority();
 
     //토큰 생성
-    String access = jwtUtil.createJwt("access", username, role, 600000L);
-    String refresh = jwtUtil.createJwt("refresh", username, role, 86400000L);
+    String access = jwtUtil.createJwt("access", username, role,tempExpiration);
+    String refresh = jwtUtil.createJwt("refresh", username, role, tempExpirationRefresh);
 
     // Refresh 토큰 저장
     addRefreshEntity(username, refresh, 86400000L); // 24h

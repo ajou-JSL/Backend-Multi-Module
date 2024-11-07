@@ -82,7 +82,7 @@ class LifecycleControllerTest {
         mockTeam = TeamEntity.builder()
                 .id(1)
                 .lifecycles(new ArrayList<>())
-                .teamname("테스트 팀")
+                .teamName("테스트 팀")
                 .members(new ArrayList<>())
                 .build();
 
