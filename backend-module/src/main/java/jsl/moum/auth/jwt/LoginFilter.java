@@ -33,12 +33,12 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private final JwtUtil jwtUtil;
     private final RefreshRepository refreshRepository;
 
-    @Value("${spring.jwt.expiration}")
-    private Long tempExpiration;
-
-    @Value("${spring.jwt.refresh-token.expiration}")
-    private Long tempExpirationRefresh;
-
+//    @Value("${spring.jwt.expiration}")
+//    private long tempExpiration;
+//
+//    @Value("${spring.jwt.refresh-token.expiration}")
+//    private long tempExpirationRefresh;
+//
 
 
     @Override
@@ -69,11 +69,11 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     String role = auth.getAuthority();
 
     //토큰 생성
-    String access = jwtUtil.createJwt("access", username, role,tempExpiration);
-    String refresh = jwtUtil.createJwt("refresh", username, role, tempExpirationRefresh);
+    String access = jwtUtil.createJwt("access", username, role, 360000L);
+    String refresh = jwtUtil.createJwt("refresh", username, role, 842000L);
 
     // Refresh 토큰 저장
-    addRefreshEntity(username, refresh, 86400000L); // 24h
+    addRefreshEntity(username, refresh, 842000L); // 24h
 
     //응답 설정
         ResultResponse resultResponse = ResultResponse.of(ResponseCode.LOGIN_SUCCESS, username);
@@ -84,7 +84,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     response.getWriter().write(new ObjectMapper().writeValueAsString(resultResponse));
     }
 
-    private void addRefreshEntity(String username, String refresh, Long expiredMs) {
+    private void addRefreshEntity(String username, String refresh, long expiredMs) {
 
         Date date = new Date(System.currentTimeMillis() + expiredMs);
 

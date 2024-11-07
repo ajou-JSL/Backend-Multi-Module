@@ -14,9 +14,6 @@ public class JwtUtil {
 
     private final SecretKey secretKey;
 
-    @Value("${spring.jwt.expiration}")
-    private Long tempExpiration;
-
     public JwtUtil(@Value("${spring.jwt.secret}")String secret) {
         secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
     }
@@ -36,7 +33,7 @@ public class JwtUtil {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
     }
 
-    public String createJwt(String category, String username, String role, Long expiredMs) {
+    public String createJwt(String category, String username, String role, long expiredMs) {
 
         return Jwts.builder()
                 .claim("category", category) // access? or refresh?
@@ -47,6 +44,7 @@ public class JwtUtil {
                 .signWith(secretKey)
                 .compact();
     }
+
 
     // 토큰 판단용 access? or refresh?
     public String getCategory(String token) {
