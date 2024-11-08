@@ -106,8 +106,8 @@ class LifecycleServiceTest {
     void get_moum_byId_fail_no_team(){
         // given & when
         when(memberRepository.findByUsername(mockLeader.getUsername())).thenReturn(mockLeader);
-        doReturn(mockLifecycle).when(lifecycleService).findMoum(mockLifecycle.getId());
-        doReturn(false).when(lifecycleService).hasTeam(mockLeader.getUsername());
+        doReturn(mockLifecycle).when(lifecycleService).findMoum(anyInt());
+        doReturn(false).when(lifecycleService).hasTeam(anyString());
 
         // then
         assertThatThrownBy(() -> lifecycleService.getMoumById(mockLeader.getUsername(), mockLifecycle.getId()))
@@ -144,10 +144,12 @@ class LifecycleServiceTest {
         // given
         String imageUrl = "mockUrl";
 
+        doReturn(mockTeam).when(lifecycleService).findTeam(anyInt());
+        doReturn(true).when(lifecycleService).hasTeam(anyString());
+        doReturn(true).when(lifecycleService).isTeamLeader(anyString());
         when(memberRepository.findByUsername(mockLeader.getUsername())).thenReturn(mockLeader);
-        when(lifecycleService.hasTeam(mockLeader.getUsername())).thenReturn(true);
-        when(lifecycleService.isTeamLeader(mockLeader.getUsername())).thenReturn(true);
         when(storageService.uploadFile(anyString(), any(MultipartFile.class))).thenReturn(imageUrl);
+
         MultipartFile file = mock(MultipartFile.class);
         when(file.getOriginalFilename()).thenReturn(imageUrl);
         when(file.isEmpty()).thenReturn(false);
@@ -157,6 +159,7 @@ class LifecycleServiceTest {
                 .build();
         // when
         LifecycleDto.Response response = lifecycleService.addMoum(mockLeader.getUsername(), moumRequestDto, file);
+        mockLifecycle.assignTeam(mockTeam);
 
         // then
         assertThat(response.getMoumName()).isEqualTo(moumRequestDto.getMoumName());
@@ -169,10 +172,12 @@ class LifecycleServiceTest {
         // given & when
         String imageUrl = "mockUrl";
 
-        doReturn(mockLeader).when(lifecycleService).findLoginUser(mockLeader.getUsername());
-        doReturn(true).when(lifecycleService).hasTeam(mockLeader.getUsername());
-        doReturn(false).when(lifecycleService).isTeamLeader(mockLeader.getUsername());
+        doReturn(mockLeader).when(lifecycleService).findLoginUser(anyString());
+        doReturn(mockTeam).when(lifecycleService).findTeam(anyInt());
+        doReturn(true).when(lifecycleService).hasTeam(anyString());
+        doReturn(false).when(lifecycleService).isTeamLeader(anyString());
         when(memberRepository.findByUsername(mockLeader.getUsername())).thenReturn(mockLeader);
+
 
         when(storageService.uploadFile(anyString(), any(MultipartFile.class))).thenReturn(imageUrl);
         MultipartFile file = mock(MultipartFile.class);
@@ -187,7 +192,6 @@ class LifecycleServiceTest {
         assertThatThrownBy(() -> lifecycleService.addMoum(mockLeader.getUsername(), moumRequestDto, file))
                 .isInstanceOf(CustomException.class)
                 .hasMessage(ErrorCode.NO_AUTHORITY.getMessage());
-
     }
 
     @Test
@@ -196,13 +200,14 @@ class LifecycleServiceTest {
         // given & when
         String imageUrl = "mockUrl";
 
-        doReturn(mockLeader).when(lifecycleService).findLoginUser(mockLeader.getUsername());
-        doReturn(false).when(lifecycleService).hasTeam(mockLeader.getUsername());
-        doReturn(true).when(lifecycleService).isTeamLeader(mockLeader.getUsername());
+        doReturn(mockTeam).when(lifecycleService).findTeam(anyInt());
+        doReturn(mockLeader).when(lifecycleService).findLoginUser(anyString());
+        doReturn(false).when(lifecycleService).hasTeam(anyString());
+        doReturn(true).when(lifecycleService).isTeamLeader(anyString());
+
         when(memberRepository.findByUsername(mockLeader.getUsername())).thenReturn(mockLeader);
-
-
         when(storageService.uploadFile(anyString(), any(MultipartFile.class))).thenReturn(imageUrl);
+
         MultipartFile file = mock(MultipartFile.class);
         when(file.getOriginalFilename()).thenReturn(imageUrl);
         when(file.isEmpty()).thenReturn(false);
@@ -216,6 +221,54 @@ class LifecycleServiceTest {
                 .isInstanceOf(CustomException.class)
                 .hasMessage(ErrorCode.NEED_TEAM.getMessage());
     }
+
+
+    @Test
+    @DisplayName("모음 생성 실패 - 팀을 찾을 수 없음")
+    void create_moum_fail_team_not_found() throws IOException {
+        // given
+        int nonExistentTeamId = 999;
+        String imageUrl = "mockUrl";
+
+        doReturn(mockLeader).when(lifecycleService).findLoginUser(anyString());
+        doReturn(false).when(lifecycleService).hasTeam(anyString());
+
+        when(teamRepository.findById(nonExistentTeamId)).thenReturn(Optional.empty());
+
+        when(memberRepository.findByUsername(mockLeader.getUsername())).thenReturn(mockLeader);
+        when(storageService.uploadFile(anyString(), any(MultipartFile.class))).thenReturn(imageUrl);
+
+        MultipartFile file = mock(MultipartFile.class);
+        when(file.getOriginalFilename()).thenReturn(imageUrl);
+        when(file.isEmpty()).thenReturn(false);
+
+        LifecycleDto.Request moumRequestDto = LifecycleDto.Request.builder()
+                .moumName("test moum")
+                .build();
+
+        // when & then
+        assertThatThrownBy(() -> lifecycleService.addMoum(mockLeader.getUsername(), moumRequestDto, file))
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.TEAM_NOT_FOUND.getMessage());
+    }
+
+
+
+//    @Test
+//    @DisplayName("팀을 찾을 수 없음 메소드")
+//    void team_not_found_exception() throws IOException {
+//        // given
+//        int nonExistentTeamId = 999;
+//
+//        // when & then
+//        when(teamRepository.findById(nonExistentTeamId)).thenReturn(Optional.empty());
+//
+//        // 팀이 존재하지 않으면 CustomException이 발생해야 한다.
+//        assertThatThrownBy(() -> lifecycleService.findTeam(nonExistentTeamId))
+//                .isInstanceOf(CustomException.class)
+//                .hasMessage(ErrorCode.TEAM_NOT_FOUND.getMessage());
+//    }
+
 
     /**
      * 모음 정보 수정

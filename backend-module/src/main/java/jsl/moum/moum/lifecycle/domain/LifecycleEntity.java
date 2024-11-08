@@ -73,4 +73,10 @@ public class LifecycleEntity {
     public boolean changeActiceStatus(){return process.changeActiceStatus();}
     public boolean getActiceStatus(){return process.getActiceStatus();}
 
+    public void assignTeam(TeamEntity team) {
+        if (team != null) {
+            this.team = team;
+        }
+    }
+
 }

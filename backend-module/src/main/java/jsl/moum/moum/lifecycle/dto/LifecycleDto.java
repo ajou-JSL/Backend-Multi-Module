@@ -3,6 +3,7 @@ package jsl.moum.moum.lifecycle.dto;
 import jsl.moum.auth.dto.MemberDto;
 import jsl.moum.moum.lifecycle.domain.LifecycleEntity;
 import jsl.moum.moum.team.domain.TeamMemberEntity;
+import jsl.moum.moum.team.dto.TeamDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -57,6 +58,7 @@ public class LifecycleDto {
         private String imageUrl;
         private int leaderId;
         private String leaderName;
+        private int teamId;
         private List<MemberDto.Response> members = new ArrayList<>();
 
         public Response(LifecycleEntity lifecycle){
@@ -70,6 +72,7 @@ public class LifecycleDto {
             this.imageUrl = lifecycle.getImageUrl();
             this.leaderId = lifecycle.getLeaderId();
             this.leaderName = lifecycle.getLeaderName();
+            this.teamId = lifecycle.getTeam().getId();
 //            this.members = lifecycle.getTeam().getMembers().stream()
 //                    .map(TeamMemberEntity::getMember)
 //                    .map(MemberDto.Response::new)
@@ -77,10 +80,11 @@ public class LifecycleDto {
             // getMember랑 getTeam이 null이 아닐때만 하도록해서 테스트코드 넘길수있게끔
             this.members = (lifecycle.getTeam() != null && lifecycle.getTeam().getMembers() != null)
                     ? lifecycle.getTeam().getMembers().stream()
-                    .map(TeamMemberEntity::getMember)
-                    .map(MemberDto.Response::new)
+                    .map(TeamMemberEntity::getMember)  // TeamMemberEntity에서 MemberEntity로 변환
+                    .map(MemberDto.Response::new)     // MemberEntity를 MemberDto.Response로 변환
                     .collect(Collectors.toList())
-                    : null;
+                    : new ArrayList<>();  // 만약 team이나 members가 null이라면 빈 리스트로 초기화
+
 
         }
     }

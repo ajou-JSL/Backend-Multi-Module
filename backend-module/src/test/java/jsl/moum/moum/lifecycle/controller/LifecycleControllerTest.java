@@ -152,6 +152,7 @@ class LifecycleControllerTest {
                 .build();
         // then
         LifecycleEntity lifecycle = requestDto.toEntity();
+        lifecycle.assignTeam(mockTeam);
         LifecycleDto.Response response = new LifecycleDto.Response(lifecycle);
 
         // when
@@ -189,6 +190,7 @@ class LifecycleControllerTest {
                 .build();
 
         LifecycleEntity lifecycle = updateRequestDto.toEntity();
+        lifecycle.assignTeam(mockTeam);
         LifecycleDto.Response response = new LifecycleDto.Response(lifecycle);
 
         // when
