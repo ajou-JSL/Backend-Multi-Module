@@ -42,9 +42,7 @@ public class TeamService {
     @Transactional(readOnly = true)
     public TeamDto.Response getTeamById(int teamId){
 
-        TeamEntity team = teamRepository.findById(teamId)
-                .orElseThrow(()-> new CustomException(ErrorCode.ILLEGAL_ARGUMENT));
-
+        TeamEntity team = findTeam(teamId);
         return new TeamDto.Response(team);
     }
 

@@ -1,8 +1,6 @@
 package jsl.moum.moum.team.domain;
 
 import jakarta.persistence.*;
-import jsl.moum.moum.lifecycle.domain.LifecycleEntity;
-import jsl.moum.moum.lifecycle.domain.LifecycleTeamEntity;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -15,7 +13,12 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@Table(name = "team")
+@Table(
+        name = "team",
+        indexes = {
+                @Index(name = "idx_team_leader_id", columnList = "leader_id")
+        }
+)
 public class TeamEntity {
 
     @Id
@@ -33,9 +36,6 @@ public class TeamEntity {
 
     @OneToMany(mappedBy = "team", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TeamMemberEntity> members = new ArrayList<>();
-
-    @OneToMany(mappedBy = "team", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<LifecycleTeamEntity> lifecycles = new ArrayList<>();
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

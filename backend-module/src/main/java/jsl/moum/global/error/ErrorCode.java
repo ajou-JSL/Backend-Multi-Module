@@ -53,7 +53,8 @@ public enum ErrorCode {
     MEMBER_ALREADY_INVITED(400, "F-T001", "이미 초대된 멤버입니다."),
     TEAM_NOT_FOUND(404, "F-T002", "팀을 찾을 수 없습니다."),
     NOT_TEAM_MEMBER(404, "F-T003", "팀에 속한 멤버가 아닙니다."),
-    LEADER_CANNOT_LEAVE(401, "F-T004", "리더가 팀을 떠날 수 없습니다.");
+    LEADER_CANNOT_LEAVE(401, "F-T004", "리더가 팀을 떠날 수 없습니다."),
+    NEED_TEAM(401, "F-T005", "팀에 먼저 가입해야 합니다.");
 
 
     private final int status;

@@ -1,7 +1,9 @@
 package jsl.moum.moum.lifecycle.domain;
 
 import jakarta.persistence.*;
+import jsl.moum.auth.domain.entity.MemberEntity;
 import jsl.moum.auth.dto.MemberDto;
+import jsl.moum.moum.team.domain.TeamEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,6 +24,12 @@ public class LifecycleEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @Column(name = "leader_id")
+    private int leaderId;
+
+    @Column(name = "leader_name")
+    private String leaderName;
 
     @Column(name = "lifecycle_name")
     private String lifecycleName;
@@ -44,8 +52,9 @@ public class LifecycleEntity {
     @Column(name = "image_url")
     private String imageUrl;
 
-    @OneToMany(mappedBy = "lifecycle", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<LifecycleTeamEntity> teams = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "fk_team_id")
+    private TeamEntity team;
 
     @Embedded
     private Process process;

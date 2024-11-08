@@ -2,7 +2,6 @@ package jsl.moum.moum.lifecycle.dto;
 
 import jsl.moum.auth.dto.MemberDto;
 import jsl.moum.moum.lifecycle.domain.LifecycleEntity;
-import jsl.moum.moum.lifecycle.domain.LifecycleTeamEntity;
 import jsl.moum.moum.team.domain.TeamMemberEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,9 +10,7 @@ import lombok.Getter;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class LifecycleDto {
 
@@ -28,6 +25,9 @@ public class LifecycleDto {
         private LocalDate endDate;
         private int price;
         private String imageUrl;
+        private int leaderId;
+        private String leaderName;
+        private int teamId; // 어느 팀의 라이프사이클인지 알아야하니까
 
         public LifecycleEntity toEntity(){
             return LifecycleEntity.builder()
@@ -38,6 +38,8 @@ public class LifecycleDto {
                     .endDate(endDate)
                     .price(price)
                     .imageUrl(imageUrl)
+                    .leaderId(leaderId)
+                    .leaderName(leaderName)
                     .build();
         }
     }
@@ -53,6 +55,8 @@ public class LifecycleDto {
         private LocalDate endDate;
         private int price;
         private String imageUrl;
+        private int leaderId;
+        private String leaderName;
         private List<MemberDto.Response> members = new ArrayList<>();
 
         public Response(LifecycleEntity lifecycle){
@@ -64,16 +68,19 @@ public class LifecycleDto {
             this.endDate = lifecycle.getEndDate();
             this.price = lifecycle.getPrice();
             this.imageUrl = lifecycle.getImageUrl();
-            this.members = lifecycle.getTeams() == null
-                    ? null
-                    : lifecycle.getTeams().stream()
-                    .map(LifecycleTeamEntity::getTeam)
-                    .filter(Objects::nonNull) // team이 null이 아닌 경우만 처리
-                    .flatMap(team -> team.getMembers() == null ? Stream.empty() : team.getMembers().stream())
+            this.leaderId = lifecycle.getLeaderId();
+            this.leaderName = lifecycle.getLeaderName();
+//            this.members = lifecycle.getTeam().getMembers().stream()
+//                    .map(TeamMemberEntity::getMember)
+//                    .map(MemberDto.Response::new)
+//                    .collect(Collectors.toList());
+            // getMember랑 getTeam이 null이 아닐때만 하도록해서 테스트코드 넘길수있게끔
+            this.members = (lifecycle.getTeam() != null && lifecycle.getTeam().getMembers() != null)
+                    ? lifecycle.getTeam().getMembers().stream()
                     .map(TeamMemberEntity::getMember)
-                    .filter(Objects::nonNull) // member가 null이 아닌 경우만 처리
                     .map(MemberDto.Response::new)
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toList())
+                    : null;
 
         }
     }

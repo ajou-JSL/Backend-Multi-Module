@@ -22,7 +22,7 @@ public class TeamMemberRepositoryCustom {
     private final JPAQueryFactory jpaQueryFactory;
 
     /**
-     * 팀에 속한 멤버인지 여부를 확인하는 메소드
+     * 팀에 속한 멤버인지 여부
      **/
     public boolean existsByTeamAndMember(int teamId, int memberId) {
         long count = jpaQueryFactory
@@ -34,6 +34,18 @@ public class TeamMemberRepositoryCustom {
                 .fetch().size(); // 멤버의 개수를 가져옴
 
         return count > 0; // 멤버가 존재하면 true, 아니면 false
+    }
+
+    /**
+     * 팀을 가지고 있는 멤버인지 여부
+     **/
+    public boolean hasTeam(int memberId) {
+        long count = jpaQueryFactory
+                .selectFrom(teamMemberEntity)
+                .where(teamMemberEntity.member.id.eq(memberId))
+                .fetch().size();
+
+        return count > 0;
     }
 
 

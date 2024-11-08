@@ -1,42 +1,96 @@
 package jsl.moum.moum.lifecycle.service;
 
-import jsl.moum.moum.lifecycle.domain.LifecycleRepository;
-import jsl.moum.moum.lifecycle.domain.LifecycleTeamRepository;
+import jsl.moum.auth.domain.entity.MemberEntity;
+import jsl.moum.auth.domain.repository.MemberRepository;
+import jsl.moum.global.error.ErrorCode;
+import jsl.moum.global.error.exception.CustomException;
+import jsl.moum.moum.lifecycle.domain.*;
 import jsl.moum.moum.lifecycle.dto.LifecycleDto;
+import jsl.moum.moum.team.domain.*;
+import jsl.moum.moum.team.dto.TeamDto;
+import jsl.moum.objectstorage.StorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class LifecycleService {
 
     private final LifecycleRepository lifecycleRepository;
-    private final LifecycleTeamRepository lifecycleTeamRepository;
+    private final LifecycleRepositoryCustom lifecycleRepositoryCustom;
+    private final MemberRepository memberRepository;
+    private final TeamMemberRepositoryCustom teamMemberRepositoryCustom;
+    private final StorageService storageService;
 
 
     /**
      * 모음 단건 조회
      */
     public LifecycleDto.Response getMoumById(String username, int moumId){
-        return null;
+
+        LifecycleEntity moumEntity = findMoum(moumId);
+
+        if(!hasTeam(username)){
+            throw new CustomException(ErrorCode.NEED_TEAM);
+        }
+
+        return new LifecycleDto.Response(moumEntity);
     }
 
     /**
      * 나의 모음 리스트 조회
      */
     public List<LifecycleDto.Response> getMyMoumList(String username){
-        return null;
-    }
 
+        List<LifecycleEntity> lifecycles = lifecycleRepositoryCustom.findLifecyclesByUsername(username);
+
+        return lifecycles.stream()
+                .map(LifecycleDto.Response::new)
+                .collect(Collectors.toList());
+    }
 
     /**
      * 모음 생성
      */
-    public LifecycleDto.Response addMoum(String username, LifecycleDto.Request requestDto, MultipartFile file){
-        return null;
+    public LifecycleDto.Response addMoum(String username, LifecycleDto.Request requestDto, MultipartFile file) throws IOException {
+
+        MemberEntity loginUser = findLoginUser(username);
+
+        if(!hasTeam(username)){
+            throw new CustomException(ErrorCode.NEED_TEAM);
+        }
+
+        if(!isTeamLeader(username)){
+            throw new CustomException(ErrorCode.NO_AUTHORITY);
+        }
+
+        // "moums/{moumName}/{originalFileName}"
+        String originalFilename = file.getOriginalFilename();
+        String key = "moums/" + requestDto.getMoumName() + "/" + originalFilename;
+        String fileUrl = storageService.uploadFile(key, file);
+
+        LifecycleEntity newMoum = LifecycleDto.Request.builder()
+                .moumName(requestDto.getMoumName())
+                .price(requestDto.getPrice())
+                .moumDescription(requestDto.getMoumDescription())
+                .imageUrl(fileUrl)
+                .performLocation(requestDto.getPerformLocation())
+                .startDate(requestDto.getStartDate())
+                .endDate(requestDto.getEndDate())
+                .leaderId(loginUser.getId())
+                .leaderName(loginUser.getUsername())
+                .build().toEntity();
+
+       lifecycleRepository.save(newMoum);
+
+
+       return new LifecycleDto.Response(newMoum);
     }
 
     /**
@@ -67,4 +121,24 @@ public class LifecycleService {
     public LifecycleDto.Response reopenMoum(String username, int moumId){
         return null;
     }
+
+    public MemberEntity findLoginUser(String username){
+        return memberRepository.findByUsername(username);
+    }
+
+    public boolean hasTeam(String username){
+        int memberId = memberRepository.findByUsername(username).getId();
+        return teamMemberRepositoryCustom.hasTeam(memberId);
+    }
+
+    public LifecycleEntity findMoum(int moumId){
+        return lifecycleRepository.findById(moumId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ILLEGAL_ARGUMENT));
+
+    }
+
+    public boolean isTeamLeader(String username){
+        return lifecycleRepositoryCustom.isTeamLeaderByUsername(username);
+    }
+
 }

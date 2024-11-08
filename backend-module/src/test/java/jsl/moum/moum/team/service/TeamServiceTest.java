@@ -115,7 +115,7 @@ class TeamServiceTest {
         // when & then
         assertThatThrownBy(() -> teamService.getTeamById(mockTeam.getId()))
                 .isInstanceOf(CustomException.class)
-                .hasMessage(ErrorCode.ILLEGAL_ARGUMENT.getMessage());
+                .hasMessage(ErrorCode.TEAM_NOT_FOUND.getMessage());
     }
 
     @Test
