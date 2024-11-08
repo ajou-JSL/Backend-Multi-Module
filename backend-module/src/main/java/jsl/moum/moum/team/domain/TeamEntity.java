@@ -38,7 +38,7 @@ public class TeamEntity {
     @OneToMany(mappedBy = "team", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LifecycleTeamEntity> lifecycles = new ArrayList<>();
 
-    @OneToOne(mappedBy = "teamId", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "team", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Chatroom chatroom;
 
     @Column(name = "created_at")

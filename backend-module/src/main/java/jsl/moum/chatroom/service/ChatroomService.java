@@ -18,16 +18,16 @@ public class ChatroomService {
 
     private final ChatroomRepository chatroomRepository;
 
-    public List<ChatroomDto> getChatroomListByMemberId(Integer memberId) {
-        // Add method for sorting, etc later on
-
-        List<ChatroomDto> chatroomList = new ArrayList<>();
-
-        for(Chatroom chatroom : chatroomRepository.findByMemberId(memberId)){
-            chatroomList.add(new ChatroomDto(chatroom));
-        }
-
-        return chatroomList;
-    }
+//    public List<ChatroomDto> getChatroomListByMemberId(Integer memberId) {
+//        // Add method for sorting, etc later on
+//
+//        List<ChatroomDto> chatroomList = new ArrayList<>();
+//
+//        for(Chatroom chatroom : chatroomRepository.findByMemberId(memberId)){
+//            chatroomList.add(new ChatroomDto(chatroom));
+//        }
+//
+//        return chatroomList;
+//    }
 
 }

@@ -23,14 +23,14 @@ public class ChatroomController {
 
     private final ChatroomService chatroomService;
 
-    @GetMapping("/member/{memberId}")
-    public ResponseEntity<ResultResponse> getChatroomListByMemberId(@PathVariable(name = "memberId") Integer memberId) {
-        // Add method for sorting, etc later on in the Service class
-
-        List<ChatroomDto> chatroomList = chatroomService.getChatroomListByMemberId(memberId);
-
-        ResultResponse response = ResultResponse.of(ResponseCode.CHATROOM_LIST_GET_SUCCESS, chatroomList);
-        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
-    }
+//    @GetMapping("/member/{memberId}")
+//    public ResponseEntity<ResultResponse> getChatroomListByMemberId(@PathVariable(name = "memberId") Integer memberId) {
+//        // Add method for sorting, etc later on in the Service class
+//
+//        List<ChatroomDto> chatroomList = chatroomService.getChatroomListByMemberId(memberId);
+//
+//        ResultResponse response = ResultResponse.of(ResponseCode.CHATROOM_LIST_GET_SUCCESS, chatroomList);
+//        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+//    }
 
 }
