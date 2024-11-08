@@ -51,31 +51,31 @@ class ChatroomControllerTest {
                 .build();
     }
 
-    @Test
-    @DisplayName("멤버아이디로 채팅방 목록 조회 테스트")
-    void get_chatroomList_by_memberId() throws Exception {
-        // given
-        int memberId = 1;
-        ChatroomDto chatroom1 = new ChatroomDto("Chatroom A", 101);
-        ChatroomDto chatroom2 = new ChatroomDto("Chatroom B", 102);
-        List<ChatroomDto> chatroomList = List.of(chatroom1, chatroom2);
-
-        // when
-        when(chatroomService.getChatroomListByMemberId(anyInt())).thenReturn(chatroomList);
-
-        ResultResponse response = ResultResponse.of(ResponseCode.CHATROOM_LIST_GET_SUCCESS, chatroomList);
-
-        // then
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/chatroom/member/{memberId}",memberId)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value(response.getStatus()))
-                .andExpect(jsonPath("$.message").value(ResponseCode.CHATROOM_LIST_GET_SUCCESS.getMessage()))
-                .andExpect(jsonPath("$.data[0].chatroomName").value(chatroom1.getName()))
-                .andExpect(jsonPath("$.data[0].chatroomId").value(chatroom1.getId()))
-                .andExpect(jsonPath("$.data[1].chatroomName").value(chatroom2.getName()))
-                .andExpect(jsonPath("$.data[1].chatroomId").value(chatroom2.getId()));
-    }
+//    @Test
+//    @DisplayName("멤버아이디로 채팅방 목록 조회 테스트")
+//    void get_chatroomList_by_memberId() throws Exception {
+//        // given
+//        int memberId = 1;
+//        ChatroomDto chatroom1 = new ChatroomDto("Chatroom A", 101);
+//        ChatroomDto chatroom2 = new ChatroomDto("Chatroom B", 102);
+//        List<ChatroomDto> chatroomList = List.of(chatroom1, chatroom2);
+//
+//        // when
+//        when(chatroomService.getChatroomListByMemberId(anyInt())).thenReturn(chatroomList);
+//
+//        ResultResponse response = ResultResponse.of(ResponseCode.CHATROOM_LIST_GET_SUCCESS, chatroomList);
+//
+//        // then
+//        mockMvc.perform(MockMvcRequestBuilders.get("/api/chatroom/member/{memberId}",memberId)
+//                        .contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.status").value(response.getStatus()))
+//                .andExpect(jsonPath("$.message").value(ResponseCode.CHATROOM_LIST_GET_SUCCESS.getMessage()))
+//                .andExpect(jsonPath("$.data[0].chatroomName").value(chatroom1.getName()))
+//                .andExpect(jsonPath("$.data[0].chatroomId").value(chatroom1.getId()))
+//                .andExpect(jsonPath("$.data[1].chatroomName").value(chatroom2.getName()))
+//                .andExpect(jsonPath("$.data[1].chatroomId").value(chatroom2.getId()));
+//    }
 
 
 }

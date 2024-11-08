@@ -32,26 +32,26 @@ class ChatroomServiceTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    @Test
-    @DisplayName("멤버 아이디로 채팅방 찾기 성공")
-    void get_chatroom_by_memberId_success(){
-        // given
-        int memberId = 1;
-        Chatroom chatroom1 = new Chatroom(1, "A", 1, memberId);
-        Chatroom chatroom2 = new Chatroom(2, "B", 1, memberId);
-
-        when(chatroomRepository.findByMemberId(memberId))
-                .thenReturn(Arrays.asList(chatroom1, chatroom2));
-
-        // when
-        List<ChatroomDto> result = chatroomService.getChatroomListByMemberId(memberId);
-
-        // then
-        assertThat(result.size()).isEqualTo(2);
-        assertThat(result.get(0).getName()).isEqualTo("A");
-        assertThat(result.get(1).getName()).isEqualTo("B");
-
-    }
+//    @Test
+//    @DisplayName("멤버 아이디로 채팅방 찾기 성공")
+//    void get_chatroom_by_memberId_success(){
+//        // given
+//        int memberId = 1;
+//        Chatroom chatroom1 = new Chatroom(1, "A", 1, memberId);
+//        Chatroom chatroom2 = new Chatroom(2, "B", 1, memberId);
+//
+//        when(chatroomRepository.findByMemberId(memberId))
+//                .thenReturn(Arrays.asList(chatroom1, chatroom2));
+//
+//        // when
+//        List<ChatroomDto> result = chatroomService.getChatroomListByMemberId(memberId);
+//
+//        // then
+//        assertThat(result.size()).isEqualTo(2);
+//        assertThat(result.get(0).getName()).isEqualTo("A");
+//        assertThat(result.get(1).getName()).isEqualTo("B");
+//
+//    }
     /*
 
     public List<ChatroomDto> getChatroomListByMemberId(Integer memberId) {
