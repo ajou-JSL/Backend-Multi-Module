@@ -311,7 +311,6 @@ class TeamServiceTest {
         when(teamRepository.findById(mockTeam.getId())).thenReturn(Optional.of(mockTeam));
         when(teamMemberRepositoryCustom.existsByTeamAndMember(mockTeam.getId(), mockMember.getId())).thenReturn(true);
         doReturn(true).when(teamService).checkLeader(any(), any());
-        when(teamMemberRepositoryCustom.findMemberInTeamById(anyInt(), anyInt())).thenReturn(mockTeamMember);
 
         // when
         TeamDto.Response response = teamService.kickMemberById(mockMember.getId(), mockTeam.getId(), mockLeader.getUsername());
@@ -392,7 +391,6 @@ class TeamServiceTest {
         when(memberRepository.findByUsername(mockLeader.getUsername())).thenReturn(mockLeader);
         when(memberRepository.findByUsername(mockMember.getUsername())).thenReturn(mockMember);
         when(teamRepository.findById(mockTeam.getId())).thenReturn(Optional.of(mockTeam));
-        when(teamMemberRepositoryCustom.findMemberInTeamById(anyInt(), anyInt())).thenReturn(mockTeamMember);
 
         doReturn(false).when(teamService).checkLeader(any(), any());
         doReturn(true).when(teamService).isTeamMember(anyInt(), anyInt());

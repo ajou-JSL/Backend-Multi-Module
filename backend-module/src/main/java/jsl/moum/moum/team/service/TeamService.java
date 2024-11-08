@@ -123,6 +123,7 @@ public class TeamService {
         // 팀 멤버 초대 로직
         TeamMemberEntity teamMember = TeamMemberEntity.builder()
                 .member(targetMember)
+                .leaderId(loginUser.getId())
                 .team(team)
                 .build();
 
@@ -229,17 +230,7 @@ public class TeamService {
         }
 
         // 강퇴 대상 멤버가 팀의 멤버인지 확인
-        TeamMemberEntity teamMember = teamMemberRepositoryCustom.findMemberInTeamById(teamId, targetMemberId);
-
-        // 팀에서 멤버 제거
-        team.removeMemberFromTeam(teamMember);
-        // 멤버에서 팀 제거
-        targetMember.removeTeamFromMember(team);
-
-
         teamMemberRepositoryCustom.deleteMemberFromTeamById(teamId, targetMemberId);
-//        teamRepository.save(team);
-//        memberRepository.save(targetMember);
 
         return new TeamDto.Response(team);
     }
@@ -260,18 +251,7 @@ public class TeamService {
             throw new CustomException(ErrorCode.NOT_TEAM_MEMBER);
         }
 
-
-        TeamMemberEntity teamMember = teamMemberRepositoryCustom.findMemberInTeamById(teamId, member.getId());
-
-        // 팀에서 멤버 제거
-        team.removeMemberFromTeam(teamMember);
-        // 멤버에서 팀 제거
-        member.removeTeamFromMember(team);
-
-
         teamMemberRepositoryCustom.deleteMemberFromTeamById(teamId, member.getId());
-//        teamRepository.save(team);
-//        memberRepository.save(member);
         return new TeamDto.Response(team);
     }
 

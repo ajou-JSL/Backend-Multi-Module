@@ -88,7 +88,6 @@ public class LifecycleService {
                 .imageUrl(fileUrl)
                 .performLocation(requestDto.getPerformLocation())
                 .startDate(requestDto.getStartDate())
-                .endDate(requestDto.getEndDate())
                 .leaderId(loginUser.getId())
                 .leaderName(loginUser.getUsername())
                 .build().toEntity();
