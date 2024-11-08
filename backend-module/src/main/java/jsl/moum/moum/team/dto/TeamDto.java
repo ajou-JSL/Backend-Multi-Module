@@ -59,7 +59,6 @@ public class TeamDto {
                     .map(MemberDto.Response::new) // MemberEntity를 MemberDto.Response로 변환
                     .collect(Collectors.toList());
         }
-
     }
 
 

@@ -4,6 +4,7 @@ import jsl.moum.chatroom.domain.Chatroom;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Builder
@@ -32,5 +33,14 @@ public class ChatroomDto {
         this.fileUrl = chatroom.getFileUrl();
     }
 
-
+    @Getter
+    @Setter
+    @RequiredArgsConstructor
+    public static class Request{
+        private String name;
+        private int type;
+        private int teamId;
+        private int leaderId;
+        private List<Integer> memberIds;
+    }
 }
