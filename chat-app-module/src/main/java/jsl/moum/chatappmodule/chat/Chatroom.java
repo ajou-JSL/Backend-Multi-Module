@@ -32,6 +32,9 @@ public class Chatroom {
     @Column("team_id")
     private int teamId;
 
+    @Column("leader_id")
+    private int leaderId;
+
     @Column("created_at")
     private LocalDateTime createdAt;
 
