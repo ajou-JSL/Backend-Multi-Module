@@ -15,8 +15,8 @@ public class ChatroomDto {
     private int id;
     private String name;
     private int type;
-    private int teamId;
-    private int leaderId;
+    private Integer teamId;
+    private Integer leaderId;
     private String lastChat;
     private LocalDateTime lastTimestamp;
     private String fileUrl;
@@ -39,8 +39,8 @@ public class ChatroomDto {
     public static class Request{
         private String name;
         private int type;
-        private int teamId;
-        private int leaderId;
+        private Integer teamId;
+        private Integer leaderId;
         private List<Integer> memberIds;
     }
 }

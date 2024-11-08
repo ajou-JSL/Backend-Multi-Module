@@ -9,10 +9,12 @@ import jsl.moum.chatroom.domain.ChatroomRepository;
 import jsl.moum.chatroom.dto.ChatroomMemberInfoDto;
 import jsl.moum.global.error.ErrorCode;
 import jsl.moum.global.error.exception.CustomException;
+import jsl.moum.moum.team.domain.TeamRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +26,7 @@ import java.util.List;
 public class ChatroomService {
 
     private final ChatroomRepository chatroomRepository;
+    private final TeamRepository teamRepository;
     private final ChatroomMemberRepository chatroomMemberRepository;
     private final MemberRepository memberRepository;
 
@@ -58,6 +61,11 @@ public class ChatroomService {
         }
 
         return chatroomMemberList;
+    }
+
+    public ChatroomDto createChatroom(ChatroomDto.Request requestDto, MultipartFile chatroomImageFile){
+
+        return null;
     }
 
 }

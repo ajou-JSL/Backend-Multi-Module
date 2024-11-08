@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@Builder
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Entity

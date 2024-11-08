@@ -42,4 +42,14 @@ public class ChatroomController {
         ResultResponse response = ResultResponse.of(ResponseCode.CHATROOM_MEMBER_LIST_GET_SUCCESS, chatroomList);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
+
+    @PostMapping("")
+    public ResponseEntity<?> createChatroom(@RequestPart(value = "chatroomInfo") ChatroomDto.Request requestDto,
+                                            @RequestPart(value = "chatroomProfile", required = false) MultipartFile chatroomImageFile) {
+
+
+
+        chatroomService.createChatroom(requestDto, chatroomImageFile);
+        return null;
+    }
 }
