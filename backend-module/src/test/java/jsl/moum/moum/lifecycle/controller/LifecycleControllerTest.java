@@ -2,6 +2,7 @@ package jsl.moum.moum.lifecycle.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jsl.moum.auth.domain.entity.MemberEntity;
+import jsl.moum.custom.WithNoAuthUser;
 import jsl.moum.global.response.ResponseCode;
 import jsl.moum.moum.lifecycle.domain.LifecycleEntity;
 import jsl.moum.moum.lifecycle.dto.LifecycleDto;
@@ -103,7 +104,7 @@ class LifecycleControllerTest {
         when(lifecycleService.getMoumById(anyString(), anyInt())).thenReturn(response);
 
         // then
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/moum/{moumId}", mockLifecycle.getId())
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/moum/{moumId}",lifcycleId)
                 .contentType(MediaType.APPLICATION_JSON))
                         .andExpect(jsonPath("$.status").value(200))
                         .andExpect(jsonPath("$.data.moumName").value("테스트 라이프사이클"));
