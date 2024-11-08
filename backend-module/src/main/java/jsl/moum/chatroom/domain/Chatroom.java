@@ -11,7 +11,7 @@ import java.util.List;
 
 @Data
 @Builder
-@RequiredArgsConstructor
+@NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "chatroom")

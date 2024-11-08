@@ -10,14 +10,19 @@ import jsl.moum.chatroom.dto.ChatroomMemberInfoDto;
 import jsl.moum.global.error.ErrorCode;
 import jsl.moum.global.error.exception.CustomException;
 import jsl.moum.moum.team.domain.TeamRepository;
+import jsl.moum.objectstorage.StorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import static jsl.moum.chatroom.domain.QChatroom.chatroom;
 
 @Service
 @Transactional
@@ -29,6 +34,7 @@ public class ChatroomService {
     private final TeamRepository teamRepository;
     private final ChatroomMemberRepository chatroomMemberRepository;
     private final MemberRepository memberRepository;
+    private final StorageService storageService;
 
     public List<ChatroomDto> getChatroomListByMemberId(Integer memberId) throws CustomException {
         // Add method for sorting, etc later on
@@ -63,9 +69,61 @@ public class ChatroomService {
         return chatroomMemberList;
     }
 
-    public ChatroomDto createChatroom(ChatroomDto.Request requestDto, MultipartFile chatroomImageFile){
+    public ChatroomDto createChatroom(ChatroomDto.Request requestDto, MultipartFile chatroomImageFile) throws IOException {
 
-        return null;
+        String originalFilename = chatroomImageFile.getOriginalFilename();
+        String key = "chatrooms/" + requestDto.getName() + "/" + originalFilename;
+        String fileUrl = storageService.uploadFile(key, chatroomImageFile);
+
+        Chatroom chatroom = new Chatroom();
+
+        if(requestDto.getTeamId() == null){
+            chatroom = buildPersonalChatroom(requestDto, fileUrl);
+        } else {
+            chatroom = buildTeamChatroom(requestDto, fileUrl);
+        }
+
+        chatroom = chatroomRepository.saveAndFlush(chatroom);
+        addChatroomMembers(chatroom.getId(), requestDto.getMembers());
+
+        return new ChatroomDto(chatroom);
     }
+
+    private void addChatroomMembers(int chatroomId, List<Integer> memberIds){
+        for(Integer memberId : memberIds){
+            ChatroomMember chatroomMember = ChatroomMember.builder()
+                    .chatroom(chatroomRepository.findById(chatroomId)
+                            .orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_CREATE_FAIL)))
+                    .member(memberRepository.findById(memberId)
+                            .orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_CREATE_FAIL)))
+                    .build();
+            chatroomMemberRepository.save(chatroomMember);
+        }
+    }
+
+    private Chatroom buildPersonalChatroom(ChatroomDto.Request requestDto, String fileUrl){
+        return Chatroom.builder()
+                .name(requestDto.getName())
+                .type(requestDto.getType())
+                .createdAt(LocalDateTime.now())
+                .lastChat(null)
+                .lastTimestamp(null)
+                .fileUrl(fileUrl)
+                .build();
+    }
+
+    private Chatroom buildTeamChatroom(ChatroomDto.Request requestDto, String fileUrl){
+        return Chatroom.builder()
+                .name(requestDto.getName())
+                .type(requestDto.getType())
+                .team(teamRepository.findById(requestDto.getTeamId())
+                        .orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_CREATE_FAIL)))
+                .createdAt(LocalDateTime.now())
+                .lastChat(null)
+                .lastTimestamp(null)
+                .fileUrl(fileUrl)
+                .build();
+    }
+
 
 }

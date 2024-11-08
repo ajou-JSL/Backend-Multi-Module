@@ -41,6 +41,6 @@ public class ChatroomDto {
         private int type;
         private Integer teamId;
         private Integer leaderId;
-        private List<Integer> memberIds;
+        private List<Integer> members;
     }
 }

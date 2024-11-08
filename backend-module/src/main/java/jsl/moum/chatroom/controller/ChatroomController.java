@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Controller
@@ -45,11 +46,11 @@ public class ChatroomController {
 
     @PostMapping("")
     public ResponseEntity<?> createChatroom(@RequestPart(value = "chatroomInfo") ChatroomDto.Request requestDto,
-                                            @RequestPart(value = "chatroomProfile", required = false) MultipartFile chatroomImageFile) {
+                                            @RequestPart(value = "chatroomProfile", required = false) MultipartFile chatroomImageFile) throws IOException {
 
+        ChatroomDto chatroomDto = chatroomService.createChatroom(requestDto, chatroomImageFile);
 
-
-        chatroomService.createChatroom(requestDto, chatroomImageFile);
-        return null;
+        ResultResponse response = ResultResponse.of(ResponseCode.CHATROOM_CREATE_SUCCESS, chatroomDto);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
 }
