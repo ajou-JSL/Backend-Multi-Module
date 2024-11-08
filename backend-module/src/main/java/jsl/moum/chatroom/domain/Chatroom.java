@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Data
 @RequiredArgsConstructor
 @AllArgsConstructor
@@ -15,13 +17,25 @@ public class Chatroom {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "chatroom_name")
-    private String chatroomName;
+    @Column(name = "name")
+    private String name;
 
-    @Column(name = "chatroom_id")
-    private int chatroomId;
+    @Column(name = "type")
+    private int type;
 
     @Column(name = "team_id")
-    private int memberId;
+    private int teamId;
+
+    @Column(name = "leader_id")
+    private int leaderId;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "last_chat")
+    private String lastChat;
+
+    @Column(name = "last_timestamp")
+    private LocalDateTime lastTimestamp;
 
 }
