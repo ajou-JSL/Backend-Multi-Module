@@ -6,6 +6,8 @@ import jsl.moum.moum.team.domain.TeamEntity;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @RequiredArgsConstructor
@@ -45,4 +47,6 @@ public class Chatroom {
     @Column(name = "file_url", nullable = true)
     private String fileUrl;
 
+    @OneToMany(mappedBy = "chatroom", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<ChatroomMember> chatroomMembers = new ArrayList<>();
 }

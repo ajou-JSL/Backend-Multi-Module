@@ -1,6 +1,7 @@
 package jsl.moum.chatroom.domain;
 
 import jakarta.persistence.*;
+import jsl.moum.auth.domain.entity.MemberEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -16,5 +17,12 @@ public class ChatroomMember {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @ManyToOne
+    @JoinColumn(name = "chatroom_id")
+    private Chatroom chatroom;
+
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private MemberEntity member;
 
 }
