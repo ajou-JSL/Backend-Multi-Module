@@ -6,5 +6,4 @@ import java.util.Optional;
 
 public interface ChatroomRepository extends R2dbcRepository<Chatroom, Integer> {
     Optional<Chatroom> findById(int chatroomId);
-    Boolean existsByChatroomId(int chatroomId);
 }
