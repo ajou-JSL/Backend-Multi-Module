@@ -1,5 +1,6 @@
 package jsl.moum.chatroom.domain;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -23,9 +24,11 @@ public class Chatroom {
     @Column(name = "type")
     private int type;
 
+    @Nullable
     @Column(name = "team_id")
     private int teamId;
 
+    @Nullable
     @Column(name = "leader_id")
     private int leaderId;
 
