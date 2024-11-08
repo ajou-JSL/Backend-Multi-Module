@@ -20,22 +20,9 @@ public class ChatService {
     private final AuthService authService;
     private int PAGE_SIZE = 5;
 
-    public Chat buildTestChat(Chat.TestRequest testRequest, int chatroomId){
-        Chat chat = Chat.builder()
-                .sender(testRequest.getSender())
-                .receiver(testRequest.getReceiver())
-                .message(testRequest.getMessage())
-                .chatroomId(chatroomId)
-                .timestamp(LocalDateTime.now())
-                .build();
-        log.info("ChatController buildTestChat : {}", chat);
-        return chat;
-    }
-
     public Chat buildChat(Chat.Request request, String sender, int chatroomId){
         Chat chat = Chat.builder()
                 .sender(sender)
-                .receiver(request.getReceiver())
                 .message(request.getMessage())
                 .chatroomId(chatroomId)
                 .timestamp(LocalDateTime.now())
