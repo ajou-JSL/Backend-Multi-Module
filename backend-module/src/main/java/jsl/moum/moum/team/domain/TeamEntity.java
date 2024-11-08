@@ -1,6 +1,7 @@
 package jsl.moum.moum.team.domain;
 
 import jakarta.persistence.*;
+import jsl.moum.chatroom.domain.Chatroom;
 import jsl.moum.moum.lifecycle.domain.LifecycleEntity;
 import jsl.moum.moum.lifecycle.domain.LifecycleTeamEntity;
 import lombok.*;
@@ -36,6 +37,9 @@ public class TeamEntity {
 
     @OneToMany(mappedBy = "team", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LifecycleTeamEntity> lifecycles = new ArrayList<>();
+
+    @OneToOne(mappedBy = "teamId", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Chatroom chatroom;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

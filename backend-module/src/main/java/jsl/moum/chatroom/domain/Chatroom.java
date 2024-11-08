@@ -2,7 +2,7 @@ package jsl.moum.chatroom.domain;
 
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
+import jsl.moum.moum.team.domain.TeamEntity;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -18,27 +18,31 @@ public class Chatroom {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "type")
+    @Column(name = "type", nullable = false)
     private int type;
 
-    @Nullable
-    @Column(name = "team_id")
-    private int teamId;
+    @OneToOne(optional = true)
+    @JoinColumns({
+            @JoinColumn(name = "team_id", referencedColumnName = "id"),
+            @JoinColumn(name = "leader_id", referencedColumnName = "leader_id")
+    })
+    private TeamEntity team;
 
-    @Nullable
-    @Column(name = "leader_id")
-    private int leaderId;
-
-    @Column(name = "created_at")
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "last_chat")
+    @Nullable
+    @Column(name = "last_chat", nullable = true)
     private String lastChat;
 
-    @Column(name = "last_timestamp")
+    @Nullable
+    @Column(name = "last_timestamp", nullable = true)
     private LocalDateTime lastTimestamp;
+
+    @Column(name = "file_url", nullable = true)
+    private String fileUrl;
 
 }

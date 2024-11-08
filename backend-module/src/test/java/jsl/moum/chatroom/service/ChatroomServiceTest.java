@@ -1,9 +1,5 @@
 package jsl.moum.chatroom.service;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jsl.moum.chatroom.domain.Chatroom;
 import jsl.moum.chatroom.domain.ChatroomRepository;
 import jsl.moum.chatroom.dto.ChatroomDto;
@@ -19,7 +15,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 class ChatroomServiceTest {
@@ -53,8 +48,8 @@ class ChatroomServiceTest {
 
         // then
         assertThat(result.size()).isEqualTo(2);
-        assertThat(result.get(0).getChatroomName()).isEqualTo("A");
-        assertThat(result.get(1).getChatroomName()).isEqualTo("B");
+        assertThat(result.get(0).getName()).isEqualTo("A");
+        assertThat(result.get(1).getName()).isEqualTo("B");
 
     }
     /*

@@ -3,7 +3,6 @@ package jsl.moum.chatroom.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jsl.moum.chatroom.dto.ChatroomDto;
 import jsl.moum.chatroom.service.ChatroomService;
-import jsl.moum.custom.WithAuthUser;
 import jsl.moum.global.response.ResponseCode;
 import jsl.moum.global.response.ResultResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +20,6 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -73,10 +71,10 @@ class ChatroomControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value(response.getStatus()))
                 .andExpect(jsonPath("$.message").value(ResponseCode.CHATROOM_LIST_GET_SUCCESS.getMessage()))
-                .andExpect(jsonPath("$.data[0].chatroomName").value(chatroom1.getChatroomName()))
-                .andExpect(jsonPath("$.data[0].chatroomId").value(chatroom1.getChatroomId()))
-                .andExpect(jsonPath("$.data[1].chatroomName").value(chatroom2.getChatroomName()))
-                .andExpect(jsonPath("$.data[1].chatroomId").value(chatroom2.getChatroomId()));
+                .andExpect(jsonPath("$.data[0].chatroomName").value(chatroom1.getName()))
+                .andExpect(jsonPath("$.data[0].chatroomId").value(chatroom1.getId()))
+                .andExpect(jsonPath("$.data[1].chatroomName").value(chatroom2.getName()))
+                .andExpect(jsonPath("$.data[1].chatroomId").value(chatroom2.getId()));
     }
 
 
