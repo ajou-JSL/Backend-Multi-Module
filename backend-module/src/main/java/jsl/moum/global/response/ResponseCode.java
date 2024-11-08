@@ -60,6 +60,9 @@ public enum ResponseCode {
 
     // Chatroom
     CHATROOM_LIST_GET_SUCCESS(200, "S-CH001", "채팅방 목록 호출 성공"),
+    CHATROOM_MEMBER_LIST_GET_SUCCESS(200, "S-CH002", "채팅방 멤버 목록 호출 성공"),
+    CHATROOM_CREATE_SUCCESS(200, "S-CH003", "채팅방 생성 성공"),
+    CHATROOM_UPDATE_SUCCESS(201, "S-CH004", "채팅방 수정 성공"),
 
     // Moum
     CREATE_MOUM_SUCCESS(201,"S-MMO001", "모음 생성 성공"),
