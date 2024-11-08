@@ -6,8 +6,9 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Getter
-@RequiredArgsConstructor
+@Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class ChatroomDto {
 
     private int id;
