@@ -21,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -217,12 +216,6 @@ public class TeamService {
             fileName = URLDecoder.decode(fileName, StandardCharsets.UTF_8);
             storageService.deleteFile(fileName);
         }
-
-//        // 팀의 멤버 목록을 가져와서 각 멤버의 팀 리스트에서 해당 팀을 삭제
-//        for (TeamMemberEntity teamMember : targetTeam.getMembers()) {
-//            MemberEntity member = teamMember.getMember();
-//            member.removeTeamFromMember(targetTeam);
-//        }
 
         teamMemberRepositoryCustom.deleteTeamMemberTable(teamId);
         teamRepository.deleteById(teamId);
