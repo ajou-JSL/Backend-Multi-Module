@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import jsl.moum.auth.domain.entity.MemberEntity;
 import jsl.moum.auth.dto.MemberDto;
 import jsl.moum.moum.team.domain.TeamEntity;
+import jsl.moum.moum.team.domain.TeamMemberEntity;
+import jsl.moum.record.domain.entity.RecordEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -58,6 +60,9 @@ public class LifecycleEntity {
 
     @Embedded
     private Process process;
+
+    @OneToMany(mappedBy = "lifecycle", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RecordEntity> records;
 
     @PrePersist
     @PreUpdate

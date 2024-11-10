@@ -2,6 +2,7 @@ package jsl.moum.moum.team.domain;
 
 import jakarta.persistence.*;
 import jsl.moum.moum.team.dto.TeamDto;
+import jsl.moum.record.domain.entity.RecordEntity;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -45,6 +46,9 @@ public class TeamEntity {
 
     @OneToMany(mappedBy = "team", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TeamMemberEntity> members = new ArrayList<>();
+
+    @OneToMany(mappedBy = "team", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RecordEntity> records;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

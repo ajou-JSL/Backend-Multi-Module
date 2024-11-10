@@ -4,6 +4,8 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jsl.moum.auth.domain.entity.MemberEntity;
+import jsl.moum.record.domain.dto.RecordDto;
+import jsl.moum.record.domain.entity.RecordEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -44,6 +46,8 @@ public class ProfileDto {
         @NotEmpty @NotNull
         private String address;
 
+        private List<RecordDto.Request> records;
+
         public MemberEntity toEntity(){
             return MemberEntity.builder()
                     .username(username)
@@ -54,6 +58,7 @@ public class ProfileDto {
                     .instrument(instrument)
                     .proficiency(proficiency)
                     .name(name)
+                    .records(records.stream().map(RecordDto.Request::toEntity).collect(Collectors.toList()))
                     .build();
         }
     }
@@ -70,7 +75,8 @@ public class ProfileDto {
         private String proficiency;
         private String instrument;
         private String address;
-        private List<TeamDto.Response> teams = new ArrayList<>();
+        private List<TeamDto.Response> teams;
+        private List<RecordDto.Response> records;
 
         public Response(MemberEntity member){
             this.id = member.getId();
@@ -86,6 +92,9 @@ public class ProfileDto {
                     .map(TeamMemberEntity::getTeam) // TeamEntity 추출
                     .map(TeamDto.Response::new)    // TeamDto.Response로 변환
                     .collect(Collectors.toList());
+            this.records = member.getRecords().stream()
+                    .map(RecordDto.Response::new)
+                    .collect(Collectors.toList());;
         }
     }
 }

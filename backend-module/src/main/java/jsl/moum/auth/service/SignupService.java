@@ -3,6 +3,8 @@ package jsl.moum.auth.service;
 import jsl.moum.auth.domain.entity.MemberEntity;
 import jsl.moum.auth.domain.repository.MemberRepository;
 import jsl.moum.email.service.EmailService;
+import jsl.moum.record.domain.entity.RecordEntity;
+import jsl.moum.record.domain.repository.RecordRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import jsl.moum.global.error.exception.DuplicateUsernameException;
 import jsl.moum.config.redis.util.RedisUtil;
 
 import java.io.IOException;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +27,7 @@ public class SignupService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final RedisUtil redisUtil;
     private final StorageService storageService;
-    private final EmailService emailService;
+    private final RecordRepository recordRepository;
 
     public void signupMember(MemberDto.Request memberRequestDto, MultipartFile file) throws IOException {
 
@@ -56,13 +59,23 @@ public class SignupService {
                 .instrument(memberRequestDto.getInstrument())
                 .proficiency(memberRequestDto.getProficiency())
                 .profileDescription(memberRequestDto.getProfileDescription())
-
+                .records(memberRequestDto.getRecords())
                 .profileImageUrl(fileUrl)
                 .build();
 
-
         MemberEntity newMember = joinRequestDto.toEntity();
+
+        List<RecordEntity> records = newMember.getRecords();
+        if (records != null && !records.isEmpty()) {
+            for (RecordEntity record : records) {
+                record.setMember(newMember);
+            }
+            recordRepository.saveAll(records);
+        }
+
         memberRepository.save(newMember);
+
+
 
     }
 
