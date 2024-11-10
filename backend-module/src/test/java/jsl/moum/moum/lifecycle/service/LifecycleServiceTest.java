@@ -73,12 +73,14 @@ class LifecycleServiceTest {
         mockTeam = TeamEntity.builder()
                 .id(1)
                 .members(new ArrayList<>())
+                .records(new ArrayList<>())
                 .build();
 
         mockLifecycle = LifecycleEntity.builder()
                 .id(1)
                 .lifecycleName("test lifecycle")
                 .team(mockTeam)
+                .records(new ArrayList<>())
                 .build();
     }
 
@@ -156,6 +158,7 @@ class LifecycleServiceTest {
 
         LifecycleDto.Request moumRequestDto = LifecycleDto.Request.builder()
                 .moumName("test moum")
+                .records(new ArrayList<>())
                 .build();
         // when
         LifecycleDto.Response response = lifecycleService.addMoum(mockLeader.getUsername(), moumRequestDto, file);

@@ -94,6 +94,7 @@ class TeamControllerTest {
                 .teamName("mock team")
                 .description("mock description")
                 .members(new ArrayList<>())
+                .records(new ArrayList<>())
                 .build();
 
 
@@ -162,6 +163,7 @@ class TeamControllerTest {
                 .teamName("another team")
                 .description("another description")
                 .members(new ArrayList<>())
+                .records(new ArrayList<>())
                 .build();
 
         List<TeamEntity> teams = new ArrayList<>();
@@ -199,6 +201,7 @@ class TeamControllerTest {
                 .teamName("update team")
                 .description("update description")
                 .fileUrl("update fileUrl")
+                .records(new ArrayList<>())
                 .build();
 
         TeamEntity updateMockTeam = updateRequest.toEntity();
@@ -326,6 +329,7 @@ class TeamControllerTest {
                 .teamName("team one")
                 .description("description one")
                 .members(new ArrayList<>())
+                .records(new ArrayList<>())
                 .build();
 
         TeamEntity mockTeam2 = TeamEntity.builder()
@@ -334,6 +338,7 @@ class TeamControllerTest {
                 .teamName("team two")
                 .description("description two")
                 .members(new ArrayList<>())
+                .records(new ArrayList<>())
                 .build();
 
         List<TeamEntity> teams = List.of(mockTeam1, mockTeam2);

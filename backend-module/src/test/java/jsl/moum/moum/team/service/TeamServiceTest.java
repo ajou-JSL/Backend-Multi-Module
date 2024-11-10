@@ -69,6 +69,7 @@ class TeamServiceTest {
                 .id(1)
                 .username("leader")
                 .teams(new ArrayList<>())
+                .records(new ArrayList<>())
                 .build();
 
         mockMember = MemberEntity.builder()
@@ -130,6 +131,7 @@ class TeamServiceTest {
                 .teamName("Test Team2")
                 .description("Team Description2")
                 .members(new ArrayList<>())
+                .records(new ArrayList<>())
                 .build();
 
         List<TeamEntity> mockTeams = List.of(mockTeam, mockTeam2);
@@ -152,6 +154,7 @@ class TeamServiceTest {
                 .teamName("New Team")
                 .description("New Team Description")
                 .fileUrl("New Team fileUrl")
+                .records(new ArrayList<>())
                 .build();
 
         MultipartFile file = mock(MultipartFile.class);
@@ -479,6 +482,7 @@ class TeamServiceTest {
                 .teamName("team one")
                 .description("description one")
                 .members(new ArrayList<>())
+                .records(new ArrayList<>())
                 .build();
 
         TeamEntity mockTeam2 = TeamEntity.builder()
@@ -487,6 +491,7 @@ class TeamServiceTest {
                 .teamName("team two")
                 .description("description two")
                 .members(new ArrayList<>())
+                .records(new ArrayList<>())
                 .build();
 
         List<TeamEntity> leaderTeams = List.of(mockTeam1, mockTeam2);

@@ -90,6 +90,7 @@ class LifecycleControllerTest {
                 .id(1)
                 .team(mockTeam)
                 .lifecycleName("테스트 라이프사이클")
+                .records(new ArrayList<>())
                 .build();
 
     }
@@ -152,6 +153,7 @@ class LifecycleControllerTest {
                 .teamId(mockTeam.getId())
                 .moumName("테스트 라이프사이클")
                 .leaderName("리더 이름")
+                .records(new ArrayList<>())
                 .build();
         // then
         LifecycleEntity lifecycle = requestDto.toEntity();
@@ -191,6 +193,7 @@ class LifecycleControllerTest {
                 .teamId(mockTeam.getId())
                 .moumName("업데이트 라이프사이클")
                 .leaderName("리더 이름")
+                .records(new ArrayList<>())
                 .build();
 
         LifecycleEntity lifecycle = updateRequestDto.toEntity();
