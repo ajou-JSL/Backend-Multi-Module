@@ -1,7 +1,6 @@
 package jsl.moum.moum.team.domain;
 
 import jakarta.persistence.*;
-import jsl.moum.moum.team.dto.TeamDto;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -35,14 +34,6 @@ public class TeamEntity {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "genre")
-    private String genre;
-
-    @Column(name = "location")
-    private String location;
-
-    // private 이력
-
     @OneToMany(mappedBy = "team", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TeamMemberEntity> members = new ArrayList<>();
 
@@ -61,11 +52,9 @@ public class TeamEntity {
         this.members.remove(teamMember);
     }
 
-    public void updateTeamInfo(TeamDto.UpdateRequest requestDto) {
-        this.teamName = requestDto.getTeamName();
-        this.description = requestDto.getDescription();
-        this.genre = requestDto.getGenre();
-        this.location = requestDto.getLocation();
+    public void updateTeamInfo(String teamName, String description) {
+        this.teamName = teamName;
+        this.description = description;
     }
 
     public void updateProfileImage(String newUrl){

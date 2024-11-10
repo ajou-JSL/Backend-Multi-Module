@@ -1,6 +1,5 @@
 package jsl.moum.moum.lifecycle.dto;
 
-import jakarta.validation.constraints.NotNull;
 import jsl.moum.auth.dto.MemberDto;
 import jsl.moum.moum.lifecycle.domain.LifecycleEntity;
 import jsl.moum.moum.team.domain.TeamMemberEntity;
@@ -26,14 +25,8 @@ public class LifecycleDto {
         private LocalDate startDate;
         private int price;
         private String imageUrl;
-
-        @NotNull
         private int leaderId;
-
-        @NotNull
         private String leaderName;
-
-        @NotNull
         private int teamId; // 어느 팀의 라이프사이클인지 알아야하니까
 
         public LifecycleEntity toEntity(){
