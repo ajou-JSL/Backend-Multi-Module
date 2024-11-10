@@ -1,9 +1,11 @@
 package jsl.moum.moum.team.dto;
 
 import jakarta.validation.constraints.NotNull;
+import jsl.moum.auth.domain.entity.MemberEntity;
 import jsl.moum.auth.dto.MemberDto;
 import jsl.moum.moum.team.domain.TeamEntity;
 import jsl.moum.moum.team.domain.TeamMemberEntity;
+import jsl.moum.record.domain.dto.RecordDto;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -25,10 +27,9 @@ public class TeamDto {
         private int leaderId;
         private List<TeamMemberEntity> members;
         private String fileUrl;
-
         private String genre;
         private String location;
-        // private 이력
+        private List<RecordDto.Request> records;
 
 
         public TeamEntity toEntity(){
@@ -40,8 +41,10 @@ public class TeamDto {
                     .description(description)
                     .leaderId(leaderId)
                     .fileUrl(fileUrl)
+                    .records(records.stream().map(RecordDto.Request::toEntity).collect(Collectors.toList()))
                     .build();
         }
+
     }
 
     @Getter
@@ -56,6 +59,7 @@ public class TeamDto {
         private LocalDateTime createdAt;
         private String fileUrl;
         private List<MemberDto.Response> members = new ArrayList<>();
+        private List<RecordDto.Response> records = new ArrayList<>();
 
         public Response(TeamEntity teamEntity){
             this.teamId = teamEntity.getId();
@@ -71,6 +75,10 @@ public class TeamDto {
                     .map(TeamMemberEntity::getMember) // TeamMemberEntity에서 MemberEntity 가져오기
                     .map(MemberDto.Response::new) // MemberEntity를 MemberDto.Response로 변환
                     .collect(Collectors.toList());
+
+            this.records = teamEntity.getRecords().stream()
+                    .map(RecordDto.Response::new)
+                    .collect(Collectors.toList());;
         }
 
     }
@@ -86,6 +94,7 @@ public class TeamDto {
         private String genre;
         private String location;
         private String fileUrl;
+        private List<RecordDto.Request> records;
 
         public TeamEntity toEntity(){
             return TeamEntity.builder()
@@ -94,6 +103,7 @@ public class TeamDto {
                     .genre(genre)
                     .location(location)
                     .fileUrl(fileUrl)
+                    .records(records.stream().map(RecordDto.Request::toEntity).collect(Collectors.toList()))
                     .build();
         }
     }
@@ -109,6 +119,7 @@ public class TeamDto {
         private final String locaion;
         private LocalDateTime createdAt;
         private String fileUrl;
+        private List<RecordDto.Response> records = new ArrayList<>();
 
         public UpdateResponse(TeamEntity teamEntity){
             this.teamId = teamEntity.getId();
@@ -119,6 +130,9 @@ public class TeamDto {
             this.locaion = teamEntity.getLocation();
             this.createdAt = teamEntity.getCreatedAt();
             this.fileUrl = teamEntity.getFileUrl();
+            this.records = teamEntity.getRecords().stream()
+                    .map(RecordDto.Response::new)
+                    .collect(Collectors.toList());;
         }
     }
 }

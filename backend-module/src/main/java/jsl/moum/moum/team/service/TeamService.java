@@ -7,6 +7,8 @@ import jsl.moum.global.error.ErrorCode;
 import jsl.moum.global.error.exception.CustomException;
 import jsl.moum.moum.team.domain.*;
 import jsl.moum.objectstorage.StorageService;
+import jsl.moum.record.domain.dto.RecordDto;
+import jsl.moum.record.domain.entity.RecordEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
@@ -82,6 +84,7 @@ public class TeamService {
                 .location(teamRequestDto.getLocation())
                 .leaderId(loginUser.getId())
                 .fileUrl(fileUrl)
+                .records(teamRequestDto.getRecords())
                 .build();
 
         TeamEntity newTeam = request.toEntity();
@@ -161,6 +164,14 @@ public class TeamService {
             String newFileName = "teams/" + team.getTeamName() + "/" + file.getOriginalFilename();
             String newFileUrl = storageService.uploadFile(newFileName, file);
             team.updateProfileImage(newFileUrl);
+        }
+
+
+        if (teamUpdateRequestDto.getRecords() != null) {
+            List<RecordEntity> updatedRecords = teamUpdateRequestDto.getRecords().stream()
+                    .map(RecordDto.Request::toEntity)
+                    .collect(Collectors.toList());
+            team.updateRecords(updatedRecords);
         }
 
         team.updateTeamInfo(teamUpdateRequestDto);

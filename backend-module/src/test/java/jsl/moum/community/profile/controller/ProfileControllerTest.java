@@ -62,7 +62,7 @@ class ProfileControllerTest {
                 .id(1)
                 .username("test user")
                 .teams(new ArrayList<>())
-               // .records(new ArrayList<>())
+                .records(new ArrayList<>())
                 .build();
     }
 

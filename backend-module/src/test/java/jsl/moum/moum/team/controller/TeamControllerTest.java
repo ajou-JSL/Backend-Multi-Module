@@ -69,12 +69,14 @@ class TeamControllerTest {
                 .id(1)
                 .email("leader@mail.com")
                 .username("mockLeader")
+                .records(new ArrayList<>())
                 .build();
 
         mockMember = MemberEntity.builder()
                 .id(2)
                 .email("member@mail.com")
                 .username("mockMember")
+                .records(new ArrayList<>())
                 .build();
 
         mockTeam = TeamEntity.builder()
@@ -83,6 +85,7 @@ class TeamControllerTest {
                 .teamName("mock team")
                 .description("mock description")
                 .members(new ArrayList<>())
+                .records(new ArrayList<>())
                 .build();
 
         teamRequestDto = TeamDto.Request.builder()
@@ -258,6 +261,7 @@ class TeamControllerTest {
         MemberEntity targetMember = MemberEntity.builder()
                 .id(222)
                 .username("new member")
+                .records(new ArrayList<>())
                 .build();
 
         MemberDto.Response memberResponse = new MemberDto.Response(targetMember);

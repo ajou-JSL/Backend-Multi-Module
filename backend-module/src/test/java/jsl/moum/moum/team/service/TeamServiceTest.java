@@ -75,6 +75,7 @@ class TeamServiceTest {
                 .id(2)
                 .username("member")
                 .teams(new ArrayList<>())
+                .records(new ArrayList<>())
                 .build();
 
         mockTeam = TeamEntity.builder()
@@ -83,6 +84,7 @@ class TeamServiceTest {
                 .teamName("Test Team")
                 .description("Team Description")
                 .members(new ArrayList<>())
+                .records(new ArrayList<>())
                 .build();
 
         mockTeamMember = TeamMemberEntity.builder()
