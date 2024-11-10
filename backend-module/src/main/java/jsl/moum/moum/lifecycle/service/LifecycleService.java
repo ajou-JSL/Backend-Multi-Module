@@ -9,6 +9,8 @@ import jsl.moum.moum.lifecycle.dto.LifecycleDto;
 import jsl.moum.moum.team.domain.*;
 import jsl.moum.moum.team.dto.TeamDto;
 import jsl.moum.objectstorage.StorageService;
+import jsl.moum.record.domain.entity.RecordEntity;
+import jsl.moum.record.domain.repository.RecordRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +31,7 @@ public class LifecycleService {
     private final TeamMemberRepositoryCustom teamMemberRepositoryCustom;
     private final StorageService storageService;
     private final TeamRepository teamRepository;
-
+    private final RecordRepository recordRepository;
 
     /**
      * 모음 단건 조회
@@ -90,9 +92,18 @@ public class LifecycleService {
                 .startDate(requestDto.getStartDate())
                 .leaderId(loginUser.getId())
                 .leaderName(loginUser.getUsername())
+                .records(requestDto.getRecords())
                 .build().toEntity();
 
         newMoum.assignTeam(team);
+
+        List<RecordEntity> records = newMoum.getRecords();
+        if (records != null && !records.isEmpty()) {
+            for (RecordEntity record : records) {
+                record.setLifecycle(newMoum);
+            }
+            recordRepository.saveAll(records);
+        }
 
        lifecycleRepository.save(newMoum);
 

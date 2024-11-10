@@ -9,6 +9,7 @@ import jsl.moum.moum.team.domain.*;
 import jsl.moum.objectstorage.StorageService;
 import jsl.moum.record.domain.dto.RecordDto;
 import jsl.moum.record.domain.entity.RecordEntity;
+import jsl.moum.record.domain.repository.RecordRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
@@ -34,6 +35,7 @@ public class TeamService {
     private final TeamMemberRepository teamMemberRepository;
     private final TeamMemberRepositoryCustom teamMemberRepositoryCustom;
     private final StorageService storageService;
+    private final RecordRepository recordRepository;
 
     @Value("${ncp.object-storage.bucket}")
     private String bucket;
@@ -88,6 +90,15 @@ public class TeamService {
                 .build();
 
         TeamEntity newTeam = request.toEntity();
+
+        List<RecordEntity> records = newTeam.getRecords();
+        if (records != null && !records.isEmpty()) {
+            for (RecordEntity record : records) {
+                record.setTeam(newTeam);
+            }
+            recordRepository.saveAll(records);
+        }
+
         teamRepository.save(newTeam);
 
 
@@ -172,6 +183,14 @@ public class TeamService {
                     .map(RecordDto.Request::toEntity)
                     .collect(Collectors.toList());
             team.updateRecords(updatedRecords);
+        }
+
+        List<RecordEntity> records = team.getRecords();
+        if (records != null && !records.isEmpty()) {
+            for (RecordEntity record : records) {
+                record.setTeam(team);
+            }
+            recordRepository.saveAll(records);
         }
 
         team.updateTeamInfo(teamUpdateRequestDto);

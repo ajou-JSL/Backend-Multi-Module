@@ -78,6 +78,15 @@ public class ProfileService {
         }
 
         memberEntity.updateMemberInfo(request);
+
+        List<RecordEntity> records = memberEntity.getRecords();
+        if (records != null && !records.isEmpty()) {
+            for (RecordEntity record : records) {
+                record.setMember(memberEntity);
+            }
+            recordRepository.saveAll(records);
+        }
+
         memberRepository.save(memberEntity);
         return new ProfileDto.Response(memberEntity);
 

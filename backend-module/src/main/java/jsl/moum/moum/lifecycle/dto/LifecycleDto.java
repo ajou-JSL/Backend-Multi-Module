@@ -5,6 +5,7 @@ import jsl.moum.auth.dto.MemberDto;
 import jsl.moum.moum.lifecycle.domain.LifecycleEntity;
 import jsl.moum.moum.team.domain.TeamMemberEntity;
 import jsl.moum.moum.team.dto.TeamDto;
+import jsl.moum.record.domain.dto.RecordDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -36,6 +37,8 @@ public class LifecycleDto {
         @NotNull
         private int teamId; // 어느 팀의 라이프사이클인지 알아야하니까
 
+        private List<RecordDto.Request> records;
+
         public LifecycleEntity toEntity(){
             return LifecycleEntity.builder()
                     .lifecycleName(moumName)
@@ -46,6 +49,7 @@ public class LifecycleDto {
                     .imageUrl(imageUrl)
                     .leaderId(leaderId)
                     .leaderName(leaderName)
+                    .records(records.stream().map(RecordDto.Request::toEntity).collect(Collectors.toList()))
                     .build();
         }
     }
@@ -65,6 +69,7 @@ public class LifecycleDto {
         private String leaderName;
         private int teamId;
         private List<MemberDto.Response> members = new ArrayList<>();
+        private List<RecordDto.Response> records = new ArrayList<>();
 
         public Response(LifecycleEntity lifecycle){
             this.moumId = lifecycle.getId();
@@ -90,6 +95,11 @@ public class LifecycleDto {
                     .collect(Collectors.toList())
                     : new ArrayList<>();  // 만약 team이나 members가 null이라면 빈 리스트로 초기화
 
+            this.records = (lifecycle.getTeam() != null && lifecycle.getTeam().getRecords() != null)
+                    ? lifecycle.getTeam().getRecords().stream()
+                    .map(RecordDto.Response::new)  // RecordEntity를 RecordDto.Response로 변환
+                    .collect(Collectors.toList())
+                    : new ArrayList<>();
 
         }
     }

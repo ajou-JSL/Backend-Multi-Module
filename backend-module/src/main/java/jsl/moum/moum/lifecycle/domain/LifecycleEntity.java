@@ -84,4 +84,31 @@ public class LifecycleEntity {
         }
     }
 
+    // 양방향이라 서로간 저장-삭제 신경 써줘야함 : GPT
+    public void updateRecords(List<RecordEntity> updatedRecords) {
+        // 새로 추가된 RecordEntity들을 추가
+        for (RecordEntity updatedRecord : updatedRecords) {
+            if (!this.records.contains(updatedRecord)) {
+                this.records.add(updatedRecord);  // 새 RecordEntity를 추가
+            }
+            updatedRecord.setLifecycle(this);  // 각 RecordEntity에 현재 TeamEntity 설정
+        }
+
+        // 기존 records에서 업데이트된 목록에 포함되지 않는 RecordEntity를 삭제
+        List<RecordEntity> toRemove = new ArrayList<>();
+        for (RecordEntity existingRecord : this.records) {
+            if (!updatedRecords.contains(existingRecord)) {
+                toRemove.add(existingRecord);
+            }
+        }
+
+        // 삭제할 RecordEntity들을 리스트에서 제거
+        this.records.removeAll(toRemove);
+
+        // toRemove에 추가된 RecordEntity들은 실제로 삭제되도록 처리
+        for (RecordEntity record : toRemove) {
+            record.setLifecycle(null);  // 해당 RecordEntity와의 팀 관계 끊기
+        }
+    }
+
 }
