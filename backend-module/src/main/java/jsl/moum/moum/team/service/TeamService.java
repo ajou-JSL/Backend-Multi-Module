@@ -78,6 +78,8 @@ public class TeamService {
                 .members(new ArrayList<>())
                 .teamName(teamRequestDto.getTeamName())
                 .description(teamRequestDto.getDescription())
+                .genre(teamRequestDto.getGenre())
+                .location(teamRequestDto.getLocation())
                 .leaderId(loginUser.getId())
                 .fileUrl(fileUrl)
                 .build();
@@ -161,7 +163,7 @@ public class TeamService {
             team.updateProfileImage(newFileUrl);
         }
 
-        team.updateTeamInfo(teamUpdateRequestDto.getTeamName(), teamUpdateRequestDto.getDescription());
+        team.updateTeamInfo(teamUpdateRequestDto);
 
         return new TeamDto.UpdateResponse(team);
 
