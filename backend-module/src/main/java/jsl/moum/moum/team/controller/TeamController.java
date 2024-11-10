@@ -167,18 +167,18 @@ public class TeamController {
 
 
     /**
-     * 리더의 팀 리스트 찾기 API
+     * 멤버의 팀 리스트 찾기 API
      */
     @GetMapping("/api/teams-all/{memberId}")
-    public ResponseEntity<ResultResponse> getLeaderTeamList(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+    public ResponseEntity<ResultResponse> getMemberTeamList(@AuthenticationPrincipal CustomUserDetails customUserDetails,
                                                             @PathVariable int memberId)
     {
         loginCheck(customUserDetails.getUsername());
-        List<TeamDto.Response> responseDto = teamService.getTeamsByLeaderId(memberId);
+        List<TeamDto.Response> responseDto = teamService.getTeamsByMemberId(memberId);
         ResultResponse response = ResultResponse.of(ResponseCode.GET_TEAM_LIST_SUCCESS,responseDto);
         return new ResponseEntity<>(response, HttpStatusCode.valueOf(response.getStatus()));
-
     }
+
 
     public String loginCheck(String username){
         if(username == null){

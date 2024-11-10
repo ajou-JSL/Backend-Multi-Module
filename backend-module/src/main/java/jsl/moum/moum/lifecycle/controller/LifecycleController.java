@@ -40,12 +40,25 @@ public class LifecycleController {
     /**
      * 나의 모음 리스트 조회
      */
-    @GetMapping("/api/moum/mylist")
+    @GetMapping("/api/moum-all/my")
     public ResponseEntity<ResultResponse> getMyMoumList(@AuthenticationPrincipal CustomUserDetails customUserDetails)
     {
 
         String username = loginCheck(customUserDetails.getUsername());
         List<LifecycleDto.Response> responseDto = lifecycleService.getMyMoumList(username);
+        ResultResponse response = ResultResponse.of(ResponseCode.GET_MOUM_SUCCESS,responseDto);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+    }
+
+    /**
+     * 팀의 모음 리스트 조회
+     */
+    @GetMapping("/api/moum-all/team/{teamId}")
+    public ResponseEntity<ResultResponse> getTeamMoumList(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                                          @PathVariable int teamId)
+    {
+        loginCheck(customUserDetails.getUsername());
+        List<LifecycleDto.Response> responseDto = lifecycleService.getTeamMoumList(teamId);
         ResultResponse response = ResultResponse.of(ResponseCode.GET_MOUM_SUCCESS,responseDto);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }

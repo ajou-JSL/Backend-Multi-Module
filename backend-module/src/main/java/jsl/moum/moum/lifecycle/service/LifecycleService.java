@@ -2,6 +2,7 @@ package jsl.moum.moum.lifecycle.service;
 
 import jsl.moum.auth.domain.entity.MemberEntity;
 import jsl.moum.auth.domain.repository.MemberRepository;
+import jsl.moum.auth.dto.MemberDto;
 import jsl.moum.global.error.ErrorCode;
 import jsl.moum.global.error.exception.CustomException;
 import jsl.moum.moum.lifecycle.domain.*;
@@ -62,6 +63,20 @@ public class LifecycleService {
     }
 
     /**
+     * 팀의 모음 리스트 조회
+     */
+    @Transactional(readOnly = true)
+    public List<LifecycleDto.Response> getTeamMoumList(int teamId){
+
+        findTeam(teamId);
+        List<LifecycleEntity> lifecycles = lifecycleRepositoryCustom.findLifecyclesByTeamId(teamId);
+
+        return lifecycles.stream()
+                .map(LifecycleDto.Response::new)
+                .collect(Collectors.toList());
+    }
+
+    /**
      * 모음 생성
      */
     @Transactional
@@ -91,7 +106,6 @@ public class LifecycleService {
                 .performLocation(requestDto.getPerformLocation())
                 .startDate(requestDto.getStartDate())
                 .leaderId(loginUser.getId())
-                .leaderName(loginUser.getUsername())
                 .records(requestDto.getRecords())
                 .build().toEntity();
 

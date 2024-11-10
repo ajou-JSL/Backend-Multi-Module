@@ -32,11 +32,9 @@ public class LifecycleDto {
         private int leaderId;
 
         @NotNull
-        private String leaderName;
-
-        @NotNull
         private int teamId; // 어느 팀의 라이프사이클인지 알아야하니까
 
+        private List<Integer> members;
         private List<RecordDto.Request> records;
 
         public LifecycleEntity toEntity(){
@@ -48,7 +46,6 @@ public class LifecycleDto {
                     .price(price)
                     .imageUrl(imageUrl)
                     .leaderId(leaderId)
-                    .leaderName(leaderName)
                     .records(records.stream().map(RecordDto.Request::toEntity).collect(Collectors.toList()))
                     .build();
         }
@@ -83,23 +80,15 @@ public class LifecycleDto {
             this.leaderId = lifecycle.getLeaderId();
             this.leaderName = lifecycle.getLeaderName();
             this.teamId = lifecycle.getTeam().getId();
-//            this.members = lifecycle.getTeam().getMembers().stream()
-//                    .map(TeamMemberEntity::getMember)
-//                    .map(MemberDto.Response::new)
-//                    .collect(Collectors.toList());
-            // getMember랑 getTeam이 null이 아닐때만 하도록해서 테스트코드 넘길수있게끔
-            this.members = (lifecycle.getTeam() != null && lifecycle.getTeam().getMembers() != null)
-                    ? lifecycle.getTeam().getMembers().stream()
-                    .map(TeamMemberEntity::getMember)  // TeamMemberEntity에서 MemberEntity로 변환
-                    .map(MemberDto.Response::new)     // MemberEntity를 MemberDto.Response로 변환
-                    .collect(Collectors.toList())
-                    : new ArrayList<>();  // 만약 team이나 members가 null이라면 빈 리스트로 초기화
 
-            this.records = (lifecycle.getTeam() != null && lifecycle.getTeam().getRecords() != null)
-                    ? lifecycle.getTeam().getRecords().stream()
-                    .map(RecordDto.Response::new)  // RecordEntity를 RecordDto.Response로 변환
-                    .collect(Collectors.toList())
-                    : new ArrayList<>();
+            this.members = lifecycle.getTeam().getMembers().stream()
+                    .map(TeamMemberEntity::getMember)
+                    .map(MemberDto.Response::new)
+                    .collect(Collectors.toList());
+
+            this.records = lifecycle.getRecords().stream()
+                    .map(RecordDto.Response::new)
+                    .collect(Collectors.toList());;
 
         }
     }

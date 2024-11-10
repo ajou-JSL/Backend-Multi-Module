@@ -138,6 +138,40 @@ class LifecycleServiceTest {
     }
 
     /**
+     * 팀의 모음 목록 조회
+     */
+    @Test
+    @DisplayName("팀의 모음 목록 조회 성공")
+    void get_team_moum_list_success(){
+        // given
+        when(teamRepository.findById(anyInt())).thenReturn(Optional.of(mockTeam));
+        when(lifecycleService.findTeam(anyInt())).thenReturn(mockTeam);
+        when(lifecycleRepositoryCustom.findLifecyclesByTeamId(anyInt())).thenReturn(List.of(mockLifecycle));
+
+        // when
+        List<LifecycleDto.Response> responseList = lifecycleService.getTeamMoumList(mockTeam.getId());
+
+        // then
+        assertThat(responseList).isNotEmpty();
+        assertThat(responseList.get(0).getMoumName()).isEqualTo(mockLifecycle.getLifecycleName());
+    }
+
+    @Test
+    @DisplayName("팀의 모음 목록 조회 실패 - 없는 팀")
+    void get_team_moum_list_fail_teamNotFound(){
+        // given
+        //when(lifecycleService.findTeam(anyInt())).thenReturn(null);
+        when(lifecycleRepositoryCustom.findLifecyclesByTeamId(anyInt())).thenReturn(List.of(mockLifecycle));
+
+        // when
+        // then
+        assertThatThrownBy(() -> lifecycleService.findTeam(mockTeam.getId()))
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.TEAM_NOT_FOUND.getMessage());
+
+    }
+
+    /**
      * 모음 생성
      */
     @Test

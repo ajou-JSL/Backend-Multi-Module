@@ -468,67 +468,60 @@ class TeamServiceTest {
     void rejectInvite_Success() {
 
     }
-
     @Test
-    @DisplayName("팀 리더의 팀 목록 조회 성공")
+    @DisplayName("멤버가 자신이 속한 팀 목록 조회 성공")
     void get_team_list_byMemberId_success() {
         // given
-        int leaderId = 1;
-        String leaderName = mockLeader.getUsername();
+        int memberId = mockMember.getId();
 
         TeamEntity mockTeam1 = TeamEntity.builder()
                 .id(1)
-                .leaderId(leaderId)
+                .leaderId(mockLeader.getId())
                 .teamName("team one")
                 .description("description one")
-                .members(new ArrayList<>())
+                .members(List.of(mockTeamMember))
                 .records(new ArrayList<>())
                 .build();
 
         TeamEntity mockTeam2 = TeamEntity.builder()
                 .id(2)
-                .leaderId(leaderId)
+                .leaderId(mockLeader.getId())
                 .teamName("team two")
                 .description("description two")
-                .members(new ArrayList<>())
+                .members(List.of(mockTeamMember))
                 .records(new ArrayList<>())
                 .build();
 
-        List<TeamEntity> leaderTeams = List.of(mockTeam1, mockTeam2);
-        List<TeamDto.Response> expectedResponseList = leaderTeams.stream()
+        List<TeamEntity> memberTeams = List.of(mockTeam1, mockTeam2);
+        List<TeamDto.Response> expectedResponseList = memberTeams.stream()
                 .map(TeamDto.Response::new)
                 .collect(Collectors.toList());
 
         // when
-        when(teamService.isMemberExist(leaderId)).thenReturn(true);
-        when(teamMemberRepositoryCustom.findAllTeamsByLeaderId(leaderId)).thenReturn(expectedResponseList);
+        when(teamService.isMemberExist(memberId)).thenReturn(true);
+        when(teamMemberRepositoryCustom.findAllTeamsByMemberId(memberId)).thenReturn(expectedResponseList);
 
         // then
-        List<TeamDto.Response> actualResponseList = teamService.getTeamsByLeaderId(leaderId);
+        List<TeamDto.Response> actualResponseList = teamService.getTeamsByMemberId(memberId);
 
         assertEquals(expectedResponseList.size(), actualResponseList.size());
         for (int i = 0; i < expectedResponseList.size(); i++) {
             assertEquals(expectedResponseList.get(i).getTeamName(), actualResponseList.get(i).getTeamName());
             assertEquals(expectedResponseList.get(i).getLeaderId(), actualResponseList.get(i).getLeaderId());
         }
-
     }
 
     @Test
-    @DisplayName("팀 리더의 팀 목록 조회 실패 - 없는 유저")
+    @DisplayName("멤버의 팀 목록 조회 실패 - 없는 유저")
     void get_team_list_byMemberId_fail_MemberNotFound() {
         // given
         int invalidMemberId = 411414;
 
         // when & then
-        assertThatThrownBy(() -> teamService.getTeamsByLeaderId(invalidMemberId))
+        assertThatThrownBy(() -> teamService.getTeamsByMemberId(invalidMemberId))
                 .isInstanceOf(CustomException.class)
                 .hasMessage(ErrorCode.MEMBER_NOT_EXIST.getMessage());
     }
-
-
-
-
 
 }
 

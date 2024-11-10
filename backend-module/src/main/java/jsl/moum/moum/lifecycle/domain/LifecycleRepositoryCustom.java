@@ -61,4 +61,20 @@ public class LifecycleRepositoryCustom {
 
         return count > 0;
     }
+
+    /**
+     * 팀이 속한 라이프사이클 찾기
+       SELECT l.*
+       FROM lifecycle l
+       JOIN team t ON l.fk_team_id = t.id
+       WHERE t.id = :teamId;
+     */
+    public List<LifecycleEntity> findLifecyclesByTeamId(int teamId){
+        return jpaQueryFactory
+                .selectFrom(lifecycleEntity)
+                .join(teamEntity)
+                .on(lifecycleEntity.team.id.eq(teamEntity.id))
+                .where(teamEntity.id.eq(teamId))
+                .fetch();
+    }
 }

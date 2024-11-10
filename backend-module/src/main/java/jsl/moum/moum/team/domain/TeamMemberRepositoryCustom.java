@@ -128,4 +128,23 @@ public class TeamMemberRepositoryCustom {
                 .map(TeamDto.Response::new)
                 .collect(Collectors.toList());
     }
+
+    /**
+     * select team
+     * from team_member
+     * where team_member.member_id=:memberId
+     */
+    public List<TeamDto.Response> findAllTeamsByMemberId(int memberId) {
+        List<TeamEntity> teams = jpaQueryFactory
+                .select(teamMemberEntity.team)
+                .from(teamMemberEntity)
+                .where(
+                        teamMemberEntity.member.id.eq(memberId)
+                )
+                .fetch();
+
+        return teams.stream()
+                .map(TeamDto.Response::new)
+                .collect(Collectors.toList());
+    }
 }

@@ -40,20 +40,20 @@ public class TeamService {
     private String bucket;
 
     /**
-        팀 정보 조회
+     * 팀 정보 조회
      **/
     @Transactional(readOnly = true)
-    public TeamDto.Response getTeamById(int teamId){
+    public TeamDto.Response getTeamById(int teamId) {
 
         TeamEntity team = findTeam(teamId);
         return new TeamDto.Response(team);
     }
 
     /**
-        팀 리스트 조회
+     * 팀 리스트 조회
      **/
     @Transactional(readOnly = true)
-    public List<TeamDto.Response> getTeamList(int page, int size){
+    public List<TeamDto.Response> getTeamList(int page, int size) {
 
         List<TeamEntity> teams = teamRepository.findAll(PageRequest.of(page, size)).getContent();
 
@@ -122,7 +122,7 @@ public class TeamService {
         TeamEntity team = findTeam(teamId);
 
         // 팀의 리더인지 확인
-        if(!checkLeader(team, loginUser)){
+        if (!checkLeader(team, loginUser)) {
             throw new CustomException(ErrorCode.NO_AUTHORITY);
         }
 
@@ -131,7 +131,7 @@ public class TeamService {
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_EXIST));
 
         // 이미 팀 멤버면 에러
-        if(isTeamMember(teamId, targetMemberId)){
+        if (isTeamMember(teamId, targetMemberId)) {
             throw new CustomException(ErrorCode.MEMBER_ALREADY_INVITED);
         }
 
@@ -158,7 +158,7 @@ public class TeamService {
         MemberEntity leader = memberRepository.findByUsername(username);
         TeamEntity team = findTeam(teamId);
 
-        if(!checkLeader(team, leader)){
+        if (!checkLeader(team, leader)) {
             throw new CustomException(ErrorCode.NO_AUTHORITY);
         }
 
@@ -206,7 +206,7 @@ public class TeamService {
         MemberEntity leader = memberRepository.findByUsername(username);
         TeamEntity targetTeam = findTeam(teamId);
 
-        if(!checkLeader(targetTeam, leader)){
+        if (!checkLeader(targetTeam, leader)) {
             throw new CustomException(ErrorCode.NO_AUTHORITY);
         }
 
@@ -240,17 +240,17 @@ public class TeamService {
 
         MemberEntity leader = memberRepository.findByUsername(username);
         // 로그인 유저가 리더 아니면 에러. 대상이 리더가 아니라.
-        if(!checkLeader(team,leader)){
+        if (!checkLeader(team, leader)) {
             throw new CustomException(ErrorCode.NO_AUTHORITY);
         }
 
         // 강퇴 대상 멤버 찾기
-        if(!isMemberExist(targetMemberId)){
+        if (!isMemberExist(targetMemberId)) {
             throw new CustomException(ErrorCode.MEMBER_NOT_EXIST);
         }
 
         // 팀 멤버가 아니면 에러
-        if(!isTeamMember(teamId, targetMemberId)){
+        if (!isTeamMember(teamId, targetMemberId)) {
             throw new CustomException(ErrorCode.NOT_TEAM_MEMBER);
         }
 
@@ -268,11 +268,11 @@ public class TeamService {
         MemberEntity member = memberRepository.findByUsername(username);
         TeamEntity team = findTeam(teamId);
 
-        if(checkLeader(team, member)){
+        if (checkLeader(team, member)) {
             throw new CustomException(ErrorCode.LEADER_CANNOT_LEAVE);
         }
 
-        if(!isTeamMember(teamId, member.getId())){
+        if (!isTeamMember(teamId, member.getId())) {
             throw new CustomException(ErrorCode.NOT_TEAM_MEMBER);
         }
 
@@ -281,16 +281,16 @@ public class TeamService {
     }
 
     /**
-     * 리더의 팀 리스트 조회
+     * 멤버의 팀 리스트 조회
      */
     @Transactional
-    public List<TeamDto.Response> getTeamsByLeaderId(int memberId){
+    public List<TeamDto.Response> getTeamsByMemberId(int memberId) {
 
-        if(!isMemberExist(memberId)){
+        if (!isMemberExist(memberId)) {
             throw new CustomException(ErrorCode.MEMBER_NOT_EXIST);
         }
 
-        return teamMemberRepositoryCustom.findAllTeamsByLeaderId(memberId);
+        return teamMemberRepositoryCustom.findAllTeamsByMemberId(memberId);
     }
 
 

@@ -123,6 +123,7 @@ class LifecycleControllerTest {
                 .id(2)
                 .team(mockTeam)
                 .lifecycleName("또 다른 라이프사이클")
+                .records(new ArrayList<>())
                 .build();
         List<LifecycleDto.Response> lifecycleList = List.of(
                 new LifecycleDto.Response(mockLifecycle),
@@ -133,7 +134,37 @@ class LifecycleControllerTest {
         when(lifecycleService.getMyMoumList(anyString())).thenReturn(lifecycleList);
 
         // then
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/moum/mylist")
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/moum-all/my")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status").value(200))
+                .andExpect(jsonPath("$.data").isArray())
+                .andExpect(jsonPath("$.data[0].moumName").value("테스트 라이프사이클"))
+                .andExpect(jsonPath("$.data[0].moumId").value(1))
+                .andExpect(jsonPath("$.data[1].moumName").value("또 다른 라이프사이클"))
+                .andExpect(jsonPath("$.data[1].moumId").value(2));
+    }
+
+    @Test
+    @DisplayName("팀의 라이프사이클 목록 조회")
+    @WithAuthUser
+    void get_team_lifecycle_list() throws Exception {
+        // given
+        LifecycleEntity anotherMockLifecycle = LifecycleEntity.builder()
+                .id(2)
+                .team(mockTeam)
+                .lifecycleName("또 다른 라이프사이클")
+                .records(new ArrayList<>())
+                .build();
+        List<LifecycleDto.Response> lifecycleList = List.of(
+                new LifecycleDto.Response(mockLifecycle),
+                new LifecycleDto.Response(anotherMockLifecycle)
+        );
+
+        // when
+        when(lifecycleService.getTeamMoumList(anyInt())).thenReturn(lifecycleList);
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/moum-all/team/{teamId}", mockTeam.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status").value(200))
                 .andExpect(jsonPath("$.data").isArray())
@@ -152,7 +183,6 @@ class LifecycleControllerTest {
         LifecycleDto.Request requestDto = LifecycleDto.Request.builder()
                 .teamId(mockTeam.getId())
                 .moumName("테스트 라이프사이클")
-                .leaderName("리더 이름")
                 .records(new ArrayList<>())
                 .build();
         // then
@@ -192,7 +222,6 @@ class LifecycleControllerTest {
         LifecycleDto.Request updateRequestDto = LifecycleDto.Request.builder()
                 .teamId(mockTeam.getId())
                 .moumName("업데이트 라이프사이클")
-                .leaderName("리더 이름")
                 .records(new ArrayList<>())
                 .build();
 
