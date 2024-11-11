@@ -80,7 +80,6 @@ public class TeamDto {
                     .map(RecordDto.Response::new)
                     .collect(Collectors.toList());;
         }
-
     }
 
 

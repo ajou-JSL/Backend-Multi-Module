@@ -9,7 +9,6 @@ import java.time.format.DateTimeFormatter;
 @Data
 public class ChatDto{
     private String sender;
-    private String receiver;
     private String message;
     private int chatroomId;
     private LocalDateTime timestamp;
@@ -17,7 +16,6 @@ public class ChatDto{
 
     public ChatDto(Chat chat){
         this.sender = chat.getSender();
-        this.receiver = chat.getReceiver();
         this.message = chat.getMessage();
         this.chatroomId = chat.getChatroomId();
         this.timestamp = chat.getTimestamp();

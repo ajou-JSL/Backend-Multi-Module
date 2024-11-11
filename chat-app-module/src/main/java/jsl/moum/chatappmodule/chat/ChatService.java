@@ -1,5 +1,6 @@
 package jsl.moum.chatappmodule.chat;
 
+import com.mongodb.internal.connection.LoadBalancedClusterableServerFactory;
 import jsl.moum.chatappmodule.auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,25 +18,13 @@ import java.time.LocalDateTime;
 public class ChatService {
 
     private final ChatRepository chatRepository;
+    private final ChatroomRepository chatroomRepository;
     private final AuthService authService;
     private int PAGE_SIZE = 5;
-
-    public Chat buildTestChat(Chat.TestRequest testRequest, int chatroomId){
-        Chat chat = Chat.builder()
-                .sender(testRequest.getSender())
-                .receiver(testRequest.getReceiver())
-                .message(testRequest.getMessage())
-                .chatroomId(chatroomId)
-                .timestamp(LocalDateTime.now())
-                .build();
-        log.info("ChatController buildTestChat : {}", chat);
-        return chat;
-    }
 
     public Chat buildChat(Chat.Request request, String sender, int chatroomId){
         Chat chat = Chat.builder()
                 .sender(sender)
-                .receiver(request.getReceiver())
                 .message(request.getMessage())
                 .chatroomId(chatroomId)
                 .timestamp(LocalDateTime.now())
@@ -45,6 +34,15 @@ public class ChatService {
     }
 
     public Mono<Chat> saveChat(Chat chat){
+        String lastChat = chat.getMessage();
+        LocalDateTime lastTimestamp = chat.getTimestamp();
+
+        Chatroom chatroom = chatroomRepository.findById(chat.getChatroomId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid Chatroom Id : Chatroom Not Found"));
+        chatroom.setLastChat(lastChat);
+        chatroom.setLastTimestamp(lastTimestamp);
+        chatroomRepository.save(chatroom);
+
         return chatRepository.save(chat);
     }
 
