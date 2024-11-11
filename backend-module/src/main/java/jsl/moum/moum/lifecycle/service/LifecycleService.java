@@ -20,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -185,7 +187,23 @@ public class LifecycleService {
      */
     @Transactional
     public LifecycleDto.Response deleteMoum(String username, int moumId){
-        return null;
+
+        if(!isTeamLeader(username)){
+            throw new CustomException(ErrorCode.NO_AUTHORITY);
+        }
+
+        LifecycleEntity targetMoum = findMoum(moumId);
+        findTeam(targetMoum.getTeam().getId());
+
+        String fileUrl = targetMoum.getImageUrl();
+        if (fileUrl != null && !fileUrl.isEmpty()) {
+            String fileName = fileUrl.replace("https://kr.object.ncloudstorage.com/" + bucket + "/", "");
+            fileName = URLDecoder.decode(fileName, StandardCharsets.UTF_8);
+            storageService.deleteFile(fileName);
+        }
+
+        lifecycleRepository.deleteById(moumId);
+        return new LifecycleDto.Response(targetMoum);
     }
 
 

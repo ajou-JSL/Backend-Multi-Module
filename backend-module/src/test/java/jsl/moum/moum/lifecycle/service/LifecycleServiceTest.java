@@ -253,6 +253,8 @@ class LifecycleServiceTest {
         assertThatThrownBy(() -> lifecycleService.addMoum(mockLeader.getUsername(), moumRequestDto, file))
                 .isInstanceOf(CustomException.class)
                 .hasMessage(ErrorCode.NO_AUTHORITY.getMessage());
+
+        verify(lifecycleRepository, never()).save(any());
     }
 
     @Test
@@ -429,20 +431,52 @@ class LifecycleServiceTest {
     @Test
     @DisplayName("모음 삭제 성공")
     void delete_moum_success(){
+        // given & when
+        when(memberRepository.findByUsername(anyString())).thenReturn(mockLeader);
+        when(lifecycleRepository.findById(anyInt())).thenReturn(Optional.of(mockLifecycle));
+        when(teamRepository.findById(anyInt())).thenReturn(Optional.of(mockTeam));
 
+        doReturn(true).when(lifecycleService).isTeamLeader(anyString());
+        doReturn(mockLifecycle).when(lifecycleService).findMoum(anyInt());
+
+        lifecycleService.deleteMoum(mockLeader.getUsername(), mockLifecycle.getId());
+
+        // then
+        verify(lifecycleRepository).deleteById(mockLifecycle.getId());
     }
 
     @Test
     @DisplayName("모음 삭제 실패 - 없는 모음")
     void delete_moum_failmoumNotFound(){
-        // given & when
+        // given
+        when(memberRepository.findByUsername(anyString())).thenReturn(mockLeader);
+        when(teamRepository.findById(anyInt())).thenReturn(Optional.of(mockTeam));
+        when(lifecycleRepository.findById(anyInt())).thenReturn(Optional.empty());
+        when(lifecycleService.isTeamLeader(anyString())).thenReturn(true);
 
+        // then
+        assertThatThrownBy(() -> lifecycleService.deleteMoum(mockLeader.getUsername(), mockLifecycle.getId()))
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.ILLEGAL_ARGUMENT.getMessage());
     }
 
     @Test
     @DisplayName("모음 삭제 실패 - 리더가 아님")
     void delete_moum_faile_notLeader(){
-        // given & when
+        // given
+        when(memberRepository.findByUsername(anyString())).thenReturn(mockLeader);
+        when(teamRepository.findById(anyInt())).thenReturn(Optional.of(mockTeam));
+        when(lifecycleRepository.findById(anyInt())).thenReturn(Optional.of(mockLifecycle));
+        when(lifecycleService.isTeamLeader(anyString())).thenReturn(false);
+
+        // when
+        doThrow(new CustomException(ErrorCode.NO_AUTHORITY))
+                .when(lifecycleService).isTeamLeader(anyString());
+
+        // then
+        assertThatThrownBy(() -> lifecycleService.deleteMoum(mockLeader.getUsername(), mockLifecycle.getId()))
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.NO_AUTHORITY.getMessage());
     }
 
     /**
