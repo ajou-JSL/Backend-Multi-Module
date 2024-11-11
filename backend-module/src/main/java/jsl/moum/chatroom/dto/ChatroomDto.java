@@ -43,4 +43,12 @@ public class ChatroomDto {
         private Integer leaderId;
         private List<Integer> members;
     }
+
+    @Getter
+    @Setter
+    @RequiredArgsConstructor
+    public static class Patch{
+        private String name;
+        private Integer leaderId;
+    }
 }

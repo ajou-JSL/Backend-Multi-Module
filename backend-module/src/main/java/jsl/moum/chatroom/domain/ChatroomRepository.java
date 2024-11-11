@@ -8,4 +8,6 @@ import java.util.List;
 @Repository
 public interface ChatroomRepository extends JpaRepository<Chatroom, Integer> {
 //    List<Chatroom> findByMemberId(Integer memberId);
+
+    Boolean existsByTeamId(Integer teamId);
 }
