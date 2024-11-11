@@ -68,7 +68,9 @@ public class ChatroomService {
     }
 
     public ChatroomDto createChatroom(ChatroomDto.Request requestDto, MultipartFile chatroomImageFile) throws IOException {
+        log.info("createChatroom method");
         if(isChatroomExists(requestDto)){
+            log.error("chatroom already exists");
             throw new CustomException(ErrorCode.CHATROOM_CREATE_FAIL);
         }
 
@@ -77,16 +79,22 @@ public class ChatroomService {
         String fileUrl = storageService.uploadFile(key, chatroomImageFile);
 
         Chatroom chatroom = new Chatroom();
+        log.info("Created new chatroom entity");
 
         if(requestDto.getTeamId() == null){
             chatroom = buildPersonalChatroom(requestDto, fileUrl);
         } else {
             chatroom = buildTeamChatroom(requestDto, fileUrl);
         }
+        log.info("Chatroom has been built");
 
         chatroom = chatroomRepository.saveAndFlush(chatroom);
+
+        log.info("Chatroom saved to repository");
+
         addChatroomMembers(chatroom.getId(), requestDto.getMembers());
 
+        log.info("Finish createChatroom method");
         return new ChatroomDto(chatroom);
     }
 
@@ -111,13 +119,16 @@ public class ChatroomService {
      */
 
     private boolean isChatroomExists(ChatroomDto.Request requestDto){
+        log.info("isChatroomExists method");
         if(requestDto.getTeamId() == null){
+            log.info("teamId == null");
             if(isPrivateChatroomExists(requestDto)){
                 return true;
             } else{
                 return false;
             }
         } else {
+            log.info("teamId != null");
             if(isGroupChatroomExists(requestDto)){
                 return true;
             } else{
@@ -131,6 +142,7 @@ public class ChatroomService {
     }
 
     private boolean isPrivateChatroomExists(ChatroomDto.Request requestDto){
+        log.info("isPrivateChatroomExists");
         if(requestDto.getMembers().size() !=2){
             log.error("Incorrect number of members in the private chatroom");
             throw new CustomException(ErrorCode.CHATROOM_CREATE_FAIL);
@@ -144,9 +156,13 @@ public class ChatroomService {
         MemberEntity receiver = memberRepository.findById(receiverId)
                 .orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_CREATE_FAIL));
 
+        log.info("isPrivateChatroomExists get member entities");
+
         List<Integer> commonChatroomIds = Optional.ofNullable(chatroomMemberRepository.findCommonChatroomIds(sender, receiver))
                 .orElse(List.of());
         if(commonChatroomIds.isEmpty()) {return false;}
+
+        log.info("Get chatroomIds");
 
         for(Integer chatroomId : commonChatroomIds){
             Chatroom chatroom = chatroomRepository.findById(chatroomId)
@@ -159,6 +175,7 @@ public class ChatroomService {
     }
 
     private void addChatroomMembers(int chatroomId, List<Integer> memberIds){
+        log.info("addChatroomMembers method");
         for(Integer memberId : memberIds){
             ChatroomMember chatroomMember = ChatroomMember.builder()
                     .chatroom(chatroomRepository.findById(chatroomId)
@@ -171,6 +188,7 @@ public class ChatroomService {
     }
 
     private Chatroom buildPersonalChatroom(ChatroomDto.Request requestDto, String fileUrl){
+        log.info("buildPersonalChatroom method");
         return Chatroom.builder()
                 .name(requestDto.getName())
                 .type(requestDto.getType())
@@ -183,6 +201,7 @@ public class ChatroomService {
     }
 
     private Chatroom buildTeamChatroom(ChatroomDto.Request requestDto, String fileUrl){
+        log.info("buildTeamChatroom method");
         return Chatroom.builder()
                 .name(requestDto.getName())
                 .type(requestDto.getType())
