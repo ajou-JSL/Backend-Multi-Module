@@ -38,7 +38,7 @@ public class ChatroomService {
         // Add method for sorting, etc later on
         List<ChatroomDto> chatroomList = new ArrayList<>();
 
-        List<ChatroomMember> chatroomMembers = chatroomMemberRepository.findByMemberId(memberId);
+        List<ChatroomMember> chatroomMembers = chatroomMemberRepository.findByMember_Id(memberId);
         if(chatroomMembers.isEmpty()){
             throw new CustomException(ErrorCode.CHATROOM_LIST_GET_FAIL);
         }
@@ -53,7 +53,7 @@ public class ChatroomService {
     public List<ChatroomMemberInfoDto> getChatroomMemberList(Integer chatroomId) throws CustomException {
         List<ChatroomMemberInfoDto> chatroomMemberList = new ArrayList<>();
 
-        List<Integer> memberIds = chatroomMemberRepository.findMemberIdByChatroomId(chatroomId);
+        List<Integer> memberIds = chatroomMemberRepository.findMember_IdByChatroom_Id(chatroomId);
         if(memberIds.isEmpty()){
             throw new CustomException(ErrorCode.CHATROOM_MEMBER_LIST_GET_FAIL);
         }
