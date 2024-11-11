@@ -30,6 +30,7 @@ public class StorageService {
                         .bucket(bucket)
                         .key(key)
                         .contentType(multipartFile.getContentType())
+                        .acl("public-read")
                         .build(),
                 RequestBody.fromInputStream(multipartFile.getInputStream(), multipartFile.getSize())
         );
