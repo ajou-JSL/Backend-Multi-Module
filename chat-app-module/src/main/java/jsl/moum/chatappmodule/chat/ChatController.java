@@ -39,7 +39,6 @@ public class ChatController {
             Mono<Chat> savedChat = chatService.saveChat(chat);
 
             ResultResponse result = ResultResponse.of(ResponseCode.CHAT_SEND_SUCCESS, new ChatDto(chat));
-            log.info("ChatController sendMessage resultresponse : {}", result);
             return savedChat
                     .map(res -> new ResponseEntity<>(result, HttpStatus.OK)) // map success response
                     .doOnError(error -> log.error("ChatController sendMessage error : {}", error));

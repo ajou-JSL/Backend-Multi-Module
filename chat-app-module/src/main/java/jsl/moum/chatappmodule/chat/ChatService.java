@@ -37,22 +37,16 @@ public class ChatService {
         String lastChat = chat.getMessage();
         LocalDateTime lastTimestamp = chat.getTimestamp();
 
-        log.info("ChatController timestamp : {}", lastTimestamp);
-
         Mono<Chatroom> chatroomMono = chatroomRepository.findById(chat.getChatroomId())
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("Invalid Chatroom Id: Chatroom Not Found")));
 
-        log.info("ChatController chatroomMono : {}", chatroomMono);
-
         return chatroomMono.flatMap(chatroom ->{
-            log.info("ChatController chatroom : {}", chatroom);
             chatroom.setLastChat(lastChat);
             chatroom.setLastTimestamp(lastTimestamp);
-
             log.info("ChatController chatroom with updated info : {}", chatroom);
+
             chatroomRepository.save(chatroom);
             log.info("ChatController chatroom saved");
-
 
             return chatRepository.save(chat);
         }).doOnError(error -> log.error("ChatController saveChat error : {}", error));
