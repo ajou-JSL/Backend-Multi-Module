@@ -37,11 +37,18 @@ public class ChatService {
         String lastChat = chat.getMessage();
         LocalDateTime lastTimestamp = chat.getTimestamp();
 
+        log.info("ChatController timestamp : {}", lastTimestamp);
+
         Chatroom chatroom = chatroomRepository.findById(chat.getChatroomId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Chatroom Id : Chatroom Not Found"));
+        log.info("ChatController chatroom : {}", chatroom);
+
         chatroom.setLastChat(lastChat);
         chatroom.setLastTimestamp(lastTimestamp);
+
+        log.info("ChatController chatroom with updated info : {}", chatroom);
         chatroomRepository.save(chatroom);
+        log.info("ChatController chatroom saved");
 
         return chatRepository.save(chat);
     }
