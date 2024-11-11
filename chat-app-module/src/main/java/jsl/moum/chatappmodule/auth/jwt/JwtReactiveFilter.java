@@ -92,7 +92,7 @@ public class JwtReactiveFilter implements WebFilter {
                 .flatMap(userDetails -> {
                     log.info("JwtReactiveFilter : flatMap initiated");
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                            userDetails, null, userDetails.getAuthorities());
+                            userDetails.getUsername(), null, userDetails.getAuthorities());
                     log.info("JwtReactiveFilter authToken : {}", authToken);
 
                     SecurityContext context = new SecurityContextImpl(authToken);
