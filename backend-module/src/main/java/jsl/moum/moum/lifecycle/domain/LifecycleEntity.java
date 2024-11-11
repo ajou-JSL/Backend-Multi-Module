@@ -3,6 +3,7 @@ package jsl.moum.moum.lifecycle.domain;
 import jakarta.persistence.*;
 import jsl.moum.auth.domain.entity.MemberEntity;
 import jsl.moum.auth.dto.MemberDto;
+import jsl.moum.moum.lifecycle.dto.LifecycleDto;
 import jsl.moum.moum.team.domain.TeamEntity;
 import jsl.moum.moum.team.domain.TeamMemberEntity;
 import jsl.moum.record.domain.entity.RecordEntity;
@@ -82,6 +83,18 @@ public class LifecycleEntity {
         if (team != null) {
             this.team = team;
         }
+    }
+
+    public void updateProfileImage(String newUrl){
+        this.imageUrl = newUrl;
+    }
+
+    public void updateLifecycleInfo(LifecycleDto.Request updateRequest){
+        this.lifecycleName = updateRequest.getMoumName();
+        this.price = updateRequest.getPrice();
+        this.lifecycleDescription = updateRequest.getMoumDescription();
+        this.performLocation = updateRequest.getPerformLocation();
+        this.endDate = updateRequest.getEndDate();
     }
 
     // 양방향이라 서로간 저장-삭제 신경 써줘야함 : GPT

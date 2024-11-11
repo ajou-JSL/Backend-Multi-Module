@@ -19,6 +19,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -28,6 +29,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -58,7 +60,11 @@ class LifecycleServiceTest {
 
     private LifecycleEntity mockLifecycle;
     private MemberEntity mockLeader;
+    private MemberEntity mockMember;
     private TeamEntity mockTeam;
+    private LifecycleDto.Request mockLifecycleUpdateRequestDto;
+    private MultipartFile mockFile;
+
 
     @BeforeEach
     void setUp() {
@@ -68,6 +74,12 @@ class LifecycleServiceTest {
                 .id(1)
                 .teams(new ArrayList<>())
                 .username("mock leader")
+                .build();
+
+        mockMember = MemberEntity.builder()
+                .id(2)
+                .teams(new ArrayList<>())
+                .username("not leader")
                 .build();
 
         mockTeam = TeamEntity.builder()
@@ -82,6 +94,18 @@ class LifecycleServiceTest {
                 .team(mockTeam)
                 .records(new ArrayList<>())
                 .build();
+
+        mockLifecycleUpdateRequestDto = LifecycleDto.Request.builder()
+                .teamId(123)
+                .leaderId(mockLeader.getId())
+                .records(new ArrayList<>())
+                .moumName("update moum name")
+                .teamId(mockTeam.getId())
+                .imageUrl("imageUrl")
+                .members(new ArrayList<>())
+                .build();
+
+        mockFile = mock(MultipartFile.class);
     }
 
 
@@ -291,20 +315,19 @@ class LifecycleServiceTest {
 
 
 
-//    @Test
-//    @DisplayName("팀을 찾을 수 없음 메소드")
-//    void team_not_found_exception() throws IOException {
-//        // given
-//        int nonExistentTeamId = 999;
-//
-//        // when & then
-//        when(teamRepository.findById(nonExistentTeamId)).thenReturn(Optional.empty());
-//
-//        // 팀이 존재하지 않으면 CustomException이 발생해야 한다.
-//        assertThatThrownBy(() -> lifecycleService.findTeam(nonExistentTeamId))
-//                .isInstanceOf(CustomException.class)
-//                .hasMessage(ErrorCode.TEAM_NOT_FOUND.getMessage());
-//    }
+    @Test
+    @DisplayName("팀을 찾을 수 없음 메소드")
+    void team_not_found_exception() throws IOException {
+        // given
+        int nonExistentTeamId = 999;
+
+        // when & then
+        when(teamRepository.findById(nonExistentTeamId)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> lifecycleService.findTeam(nonExistentTeamId))
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.TEAM_NOT_FOUND.getMessage());
+    }
 
 
     /**
@@ -312,19 +335,114 @@ class LifecycleServiceTest {
      */
     @Test
     @DisplayName("모음 수정 성공")
-    @Disabled("보류")
-    void update_moum_success(){
+    void update_moum_success() throws IOException {
+        // given
+        String imageUrl = "mockUrl";
+        LifecycleDto.Request updateRequestDto = LifecycleDto.Request.builder()
+                .teamId(123)
+                .leaderId(mockLeader.getId())
+                .records(new ArrayList<>())
+                .moumName("update moum name")
+                .teamId(mockTeam.getId())
+                .imageUrl(imageUrl)
+                .members(new ArrayList<>())
+                .build();
 
+        doReturn(mockTeam).when(lifecycleService).findTeam(anyInt());
+        doReturn(mockLifecycle).when(lifecycleService).findMoum(anyInt());
+        when(lifecycleService.isTeamLeader(anyString())).thenReturn(true);
+        when(memberRepository.findByUsername(mockLeader.getUsername())).thenReturn(mockLeader);
+        when(storageService.uploadFile(anyString(), any(MultipartFile.class))).thenReturn(imageUrl);
+
+        MultipartFile file = mock(MultipartFile.class);
+        when(file.getOriginalFilename()).thenReturn(imageUrl);
+        when(file.isEmpty()).thenReturn(false);
+
+        // when
+        LifecycleDto.Response response = lifecycleService.updateMoum(mockLeader.getUsername(), updateRequestDto, file,mockLifecycle.getId());
+        mockLifecycle.assignTeam(mockTeam);
+
+        // then
+        assertThat(response.getMoumName()).isEqualTo(updateRequestDto.getMoumName());
     }
 
+    @Test
+    @DisplayName("모음 수정 실패 - 팀을 찾을 수 없음")
+    void update_moum_fail_teamNotFound() {
+        // given & when
+        when(memberRepository.findByUsername(anyString())).thenReturn(mockLeader);
+        when(teamRepository.findById(anyInt())).thenReturn(Optional.empty());
+
+        // then
+        assertThatThrownBy(() -> lifecycleService.updateMoum(mockLeader.getUsername(), mockLifecycleUpdateRequestDto, mockFile, mockLifecycle.getId()))
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.TEAM_NOT_FOUND.getMessage());
+    }
+
+    @Test
+    @DisplayName("모음 수정 실패 - 모음을 찾을 수 없음")
+    void update_moum_fail_moumNotFound() {
+        // given & when
+        when(memberRepository.findByUsername("leader")).thenReturn(mockLeader);
+        when(teamRepository.findById(anyInt())).thenReturn(Optional.of(mockTeam));
+        when(lifecycleRepository.findById(anyInt())).thenReturn(Optional.empty());
+
+        // then
+        assertThatThrownBy(() -> lifecycleService.updateMoum(mockLeader.getUsername(), mockLifecycleUpdateRequestDto, mockFile, mockLifecycle.getId()))
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.ILLEGAL_ARGUMENT.getMessage());
+    }
+
+    @Test
+    @DisplayName("모음 수정 실패 - 팀 리더가 아님")
+    void update_moum_fail_notLeader() {
+        // given
+        when(memberRepository.findByUsername(anyString())).thenReturn(mockMember);
+        when(teamRepository.findById(anyInt())).thenReturn(Optional.of(mockTeam));
+        when(lifecycleRepository.findById(anyInt())).thenReturn(Optional.of(mockLifecycle));
+        when(lifecycleService.isTeamLeader(anyString())).thenReturn(false);
+
+        // then
+        assertThatThrownBy(() -> lifecycleService.updateMoum(mockLeader.getUsername(), mockLifecycleUpdateRequestDto, mockFile, mockLifecycle.getId()))
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.NO_AUTHORITY.getMessage());
+    }
+
+    @Test
+    @DisplayName("모음 수정 실패 - 파일 업로드 중 오류 발생")
+    void update_moum_fail_fileUploadError() throws IOException {
+        // given
+        when(memberRepository.findByUsername(anyString())).thenReturn(mockLeader);
+        when(teamRepository.findById(anyInt())).thenReturn(Optional.of(mockTeam));
+        when(lifecycleRepository.findById(anyInt())).thenReturn(Optional.of(mockLifecycle));
+        when(lifecycleService.isTeamLeader(anyString())).thenReturn(true);
+        doThrow(new IOException("File upload failed")).when(storageService).uploadFile(anyString(), any());
+
+        // then
+        assertThatThrownBy(() -> lifecycleService.updateMoum(mockLeader.getUsername(), mockLifecycleUpdateRequestDto, mockFile, mockLifecycle.getId()))
+                .isInstanceOf(IOException.class)
+                .hasMessage(ErrorCode.FILE_UPLOAD_FAIL.getMessage());
+    }
     /**
      * 모음 삭제
      */
     @Test
     @DisplayName("모음 삭제 성공")
-    @Disabled("보류")
     void delete_moum_success(){
 
+    }
+
+    @Test
+    @DisplayName("모음 삭제 실패 - 없는 모음")
+    void delete_moum_failmoumNotFound(){
+        // given & when
+
+    }
+
+    @Test
+    @DisplayName("모음 삭제 실패 - 리더가 아님")
+    void delete_moum_faile_notLeader(){
+        // given & when
     }
 
     /**

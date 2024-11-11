@@ -25,6 +25,7 @@ public class LifecycleDto {
         private String moumDescription;
         private String performLocation;
         private LocalDate startDate;
+        private LocalDate endDate;
         private int price;
         private String imageUrl;
 
@@ -43,6 +44,7 @@ public class LifecycleDto {
                     .lifecycleDescription(moumDescription)
                     .performLocation(performLocation)
                     .startDate(startDate)
+                    .endDate(endDate)
                     .price(price)
                     .imageUrl(imageUrl)
                     .leaderId(leaderId)

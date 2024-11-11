@@ -10,9 +10,11 @@ import jsl.moum.moum.lifecycle.dto.LifecycleDto;
 import jsl.moum.moum.team.domain.*;
 import jsl.moum.moum.team.dto.TeamDto;
 import jsl.moum.objectstorage.StorageService;
+import jsl.moum.record.domain.dto.RecordDto;
 import jsl.moum.record.domain.entity.RecordEntity;
 import jsl.moum.record.domain.repository.RecordRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,6 +35,9 @@ public class LifecycleService {
     private final StorageService storageService;
     private final TeamRepository teamRepository;
     private final RecordRepository recordRepository;
+
+    @Value("${ncp.object-storage.bucket}")
+    private String bucket;
 
     /**
      * 모음 단건 조회
@@ -129,8 +134,50 @@ public class LifecycleService {
      * 모음 정보 수정
      */
     @Transactional
-    public LifecycleDto.Response updateMoum(String username, LifecycleDto.Request requestDto, MultipartFile file, int moumId){
-        return null;
+    public LifecycleDto.Response updateMoum(String username, LifecycleDto.Request requestDto, MultipartFile file, int moumId) throws IOException {
+
+        MemberEntity loginUser = memberRepository.findByUsername(username);
+        TeamEntity team = findTeam(requestDto.getTeamId());
+        LifecycleEntity lifecycle = findMoum(moumId);
+
+        if (!isTeamLeader(loginUser.getUsername())) {
+            throw new CustomException(ErrorCode.NO_AUTHORITY);
+        }
+
+        String existingFileUrl = team.getFileUrl();
+
+        if (file != null && !file.isEmpty()) {
+            if (existingFileUrl != null && !existingFileUrl.isEmpty()) {
+                String existingFileName = existingFileUrl.replace("https://kr.object.ncloudstorage.com/" + bucket + "/", "");
+                storageService.deleteFile(existingFileName);
+            }
+
+            // 새로운 파일 업로드
+            String newFileName = "moums/" + lifecycle.getLifecycleName() + "/" + file.getOriginalFilename();
+            String newFileUrl = storageService.uploadFile(newFileName, file);
+            lifecycle.updateProfileImage(newFileUrl);
+        }
+
+
+        if (requestDto.getRecords() != null) {
+            List<RecordEntity> updatedRecords = requestDto.getRecords().stream()
+                    .map(RecordDto.Request::toEntity)
+                    .collect(Collectors.toList());
+            lifecycle.updateRecords(updatedRecords);
+        }
+
+        List<RecordEntity> records = team.getRecords();
+        if (records != null && !records.isEmpty()) {
+            for (RecordEntity record : records) {
+                record.setTeam(team);
+            }
+            recordRepository.saveAll(records);
+        }
+
+        lifecycle.updateLifecycleInfo(requestDto);
+
+        return new LifecycleDto.Response(lifecycle);
+
     }
 
     /**

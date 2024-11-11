@@ -14,6 +14,7 @@ public enum ErrorCode {
     INVALID_TYPE_VALUE(400, "F-C004", "invalid type value"),
     BAD_CREDENTIALS(400, "F-C005", "bad credentials"),
     ILLEGAL_ARGUMENT(400, "F-C006", "유효하지 않은 데이터입니다."),
+    FILE_UPLOAD_FAIL(400, "F-C007", "File upload failed"),
 
     // Member
     MEMBER_NOT_EXIST(404, "F-M001", "존재하지 않은 회원입니다."),

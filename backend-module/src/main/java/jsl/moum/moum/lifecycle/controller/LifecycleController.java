@@ -83,8 +83,7 @@ public class LifecycleController {
     public ResponseEntity<ResultResponse> updateMoum(@AuthenticationPrincipal CustomUserDetails customUserDetails,
                                                   @Valid @RequestPart LifecycleDto.Request lifecycleRequestDto,
                                                   @RequestPart(value = "file", required = false)MultipartFile file,
-                                                  @PathVariable int moumId)
-    {
+                                                  @PathVariable int moumId) throws IOException {
         String username = loginCheck(customUserDetails.getUsername());
         LifecycleDto.Response responseDto = lifecycleService.updateMoum(username, lifecycleRequestDto, file, moumId);
         ResultResponse response = ResultResponse.of(ResponseCode.UPDATE_MOUM_SUCCESS,responseDto);
