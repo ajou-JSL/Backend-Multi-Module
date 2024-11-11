@@ -1,9 +1,8 @@
 package jsl.moum.chatappmodule.chat;
 
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
-
-import java.util.Optional;
+import reactor.core.publisher.Mono;
 
 public interface ChatroomRepository extends R2dbcRepository<Chatroom, Integer> {
-    Optional<Chatroom> findById(int chatroomId);
+    Mono<Chatroom> findById(int chatroomId);
 }

@@ -39,18 +39,23 @@ public class ChatService {
 
         log.info("ChatController timestamp : {}", lastTimestamp);
 
-        Chatroom chatroom = chatroomRepository.findById(chat.getChatroomId())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid Chatroom Id : Chatroom Not Found"));
-        log.info("ChatController chatroom : {}", chatroom);
+        Mono<Chatroom> chatroomMono = chatroomRepository.findById(chat.getChatroomId())
+                .switchIfEmpty(Mono.error(new IllegalArgumentException("Invalid Chatroom Id: Chatroom Not Found")));
 
-        chatroom.setLastChat(lastChat);
-        chatroom.setLastTimestamp(lastTimestamp);
+        log.info("ChatController chatroomMono : {}", chatroomMono);
 
-        log.info("ChatController chatroom with updated info : {}", chatroom);
-        chatroomRepository.save(chatroom);
-        log.info("ChatController chatroom saved");
+        return chatroomMono.flatMap(chatroom ->{
+            log.info("ChatController chatroom : {}", chatroom);
+            chatroom.setLastChat(lastChat);
+            chatroom.setLastTimestamp(lastTimestamp);
 
-        return chatRepository.save(chat);
+            log.info("ChatController chatroom with updated info : {}", chatroom);
+            chatroomRepository.save(chatroom);
+            log.info("ChatController chatroom saved");
+
+
+            return chatRepository.save(chat);
+        }).doOnError(error -> log.error("ChatController saveChat error : {}", error));
     }
 
     public Flux<ChatDto> getChatsRecentByChatroomId(int chatroomId){
