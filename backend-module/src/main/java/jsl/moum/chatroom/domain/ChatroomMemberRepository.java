@@ -10,9 +10,10 @@ import java.util.List;
 
 @Repository
 public interface ChatroomMemberRepository extends JpaRepository<ChatroomMember, Integer> {
-    List<ChatroomMember> findByMember_Id(Integer memberId);
+    List<ChatroomMember> findByMemberId(Integer memberId);
 
-    List<Integer> findMember_IdByChatroom_Id(Integer chatroomId);
+    @Query("SELECT cm.member.id FROM ChatroomMember cm WHERE cm.chatroom.id = :chatroomId")
+    List<Integer> findAllMemberIdByChatroomId(Integer chatroomId);
 
 
     @Query("SELECT cm1.chatroom.id " +
