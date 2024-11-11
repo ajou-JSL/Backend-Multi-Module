@@ -441,6 +441,7 @@ class LifecycleServiceTest {
 
         lifecycleService.deleteMoum(mockLeader.getUsername(), mockLifecycle.getId());
 
+
         // then
         verify(lifecycleRepository).deleteById(mockLifecycle.getId());
     }
