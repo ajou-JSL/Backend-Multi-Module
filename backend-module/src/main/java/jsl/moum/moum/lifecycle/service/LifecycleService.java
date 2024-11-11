@@ -6,6 +6,7 @@ import jsl.moum.auth.dto.MemberDto;
 import jsl.moum.global.error.ErrorCode;
 import jsl.moum.global.error.exception.CustomException;
 import jsl.moum.moum.lifecycle.domain.*;
+import jsl.moum.moum.lifecycle.domain.Process;
 import jsl.moum.moum.lifecycle.dto.LifecycleDto;
 import jsl.moum.moum.team.domain.*;
 import jsl.moum.moum.team.dto.TeamDto;
@@ -208,11 +209,22 @@ public class LifecycleService {
 
 
     /**
-     * 모음 마감하기
+     * 모음 마감하기, 되살리기
+     * 상태변경 true <-> false
      */
     @Transactional
     public LifecycleDto.Response finishMoum(String username, int moumId){
-        return null;
+
+        if(!isTeamLeader(username)){
+            throw new CustomException(ErrorCode.NO_AUTHORITY);
+        }
+        LifecycleEntity moum = findMoum(moumId);
+
+        moum.getProcess().changeFinishStatus();
+        int percentage = moum.getProcess().updateAndGetProcessPercentage();
+        System.out.println("============" + percentage);
+
+        return new LifecycleDto.Response(moum);
     }
 
     /**

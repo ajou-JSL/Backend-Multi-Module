@@ -3,6 +3,7 @@ package jsl.moum.moum.lifecycle.dto;
 import jakarta.validation.constraints.NotNull;
 import jsl.moum.auth.dto.MemberDto;
 import jsl.moum.moum.lifecycle.domain.LifecycleEntity;
+import jsl.moum.moum.lifecycle.domain.Process;
 import jsl.moum.moum.team.domain.TeamMemberEntity;
 import jsl.moum.moum.team.dto.TeamDto;
 import jsl.moum.record.domain.dto.RecordDto;
@@ -38,6 +39,7 @@ public class LifecycleDto {
         private List<Integer> members;
         private List<RecordDto.Request> records;
 
+
         public LifecycleEntity toEntity(){
             return LifecycleEntity.builder()
                     .lifecycleName(moumName)
@@ -67,6 +69,7 @@ public class LifecycleDto {
         private int leaderId;
         private String leaderName;
         private int teamId;
+        private Process process;
         private List<MemberDto.Response> members = new ArrayList<>();
         private List<RecordDto.Response> records = new ArrayList<>();
 
@@ -82,6 +85,7 @@ public class LifecycleDto {
             this.leaderId = lifecycle.getLeaderId();
             this.leaderName = lifecycle.getLeaderName();
             this.teamId = lifecycle.getTeam().getId();
+            this.process = lifecycle.getProcess();
 
             this.members = lifecycle.getTeam().getMembers().stream()
                     .map(TeamMemberEntity::getMember)

@@ -26,8 +26,13 @@ public class ChatroomDto {
         this.id = chatroom.getId();
         this.name = chatroom.getName();
         this.type = chatroom.getType();
-        this.teamId = chatroom.getTeam().getId();
-        this.leaderId = chatroom.getTeam().getLeaderId();
+        if(chatroom.getTeam() == null){
+            this.teamId = null;
+            this.leaderId = null;
+        } else{
+            this.teamId = chatroom.getTeam().getId();
+            this.leaderId = chatroom.getTeam().getLeaderId();
+        }
         this.lastChat = chatroom.getLastChat();
         this.lastTimestamp = chatroom.getLastTimestamp();
         this.fileUrl = chatroom.getFileUrl();

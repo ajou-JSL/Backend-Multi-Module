@@ -65,20 +65,6 @@ public class LifecycleEntity {
     @OneToMany(mappedBy = "lifecycle", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RecordEntity> records;
 
-    @PrePersist
-    @PreUpdate
-    public void updateProcessPercentage() {
-        if (process != null) {
-            process.updateProcessPercentage();
-        }
-    }
-
-    public int getPercentage(){
-        return process.updateProcessPercentage();
-    }
-    public boolean changeActiceStatus(){return process.changeActiceStatus();}
-    public boolean getActiceStatus(){return process.getActiceStatus();}
-
     public void assignTeam(TeamEntity team) {
         if (team != null) {
             this.team = team;

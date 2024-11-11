@@ -8,6 +8,7 @@ import jsl.moum.global.error.ErrorResponse;
 import jsl.moum.global.response.ResponseCode;
 import jsl.moum.global.response.ResultResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/api/chatroom")
+@Slf4j
 public class ChatroomController {
 
     private final ChatroomService chatroomService;
@@ -47,8 +49,9 @@ public class ChatroomController {
     @PostMapping("")
     public ResponseEntity<ResultResponse> createChatroom(@RequestPart(value = "chatroomInfo") ChatroomDto.Request requestDto,
                                             @RequestPart(value = "chatroomProfile", required = false) MultipartFile chatroomImageFile) throws IOException {
-
+        log.info("/api/chatroom createChatroom");
         ChatroomDto chatroomDto = chatroomService.createChatroom(requestDto, chatroomImageFile);
+        log.info("createChatroom method successfully executed");
 
         ResultResponse response = ResultResponse.of(ResponseCode.CHATROOM_CREATE_SUCCESS, chatroomDto);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
