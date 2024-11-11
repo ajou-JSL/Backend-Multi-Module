@@ -19,7 +19,6 @@ public class Chat {
      */
 
     private String sender;
-    private String receiver;
     private String message;
     private int chatroomId;
     private LocalDateTime timestamp;
@@ -30,14 +29,6 @@ public class Chat {
      */
     @Data
     public static class Request{
-        private String receiver;
-        private String message;
-    }
-
-    @Data
-    public static class TestRequest{
-        private String sender;
-        private String receiver;
         private String message;
     }
 }

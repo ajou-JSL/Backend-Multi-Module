@@ -50,6 +50,12 @@ public enum ErrorCode {
     CANNOT_CREATE_SELF_LIKES(409, "F-L003","자신의 게시글에는 좋아요를 누를 수 없습니다."),
     CANNOT_DELETE_OTHERS_LIKES(409, "F-L004","본인이 등록한 좋아요만 취소할 수 있습니다."),
 
+    // Chatroom
+    CHATROOM_LIST_GET_FAIL(400, "F-CH001", "채팅방 목록 호출 실패"),
+    CHATROOM_MEMBER_LIST_GET_FAIL(400, "F-CH002", "채팅방 멤버 목록 호출 실패"),
+    CHATROOM_CREATE_FAIL(400, "F-CH003", "채팅방 생성 실패"),
+    CHATROOM_UPDATE_FAIL(400, "F-CH004", "채팅방 수정 실패"),
+
     // Team
     MEMBER_ALREADY_INVITED(400, "F-T001", "이미 초대된 멤버입니다."),
     TEAM_NOT_FOUND(404, "F-T002", "팀을 찾을 수 없습니다."),

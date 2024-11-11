@@ -2,10 +2,10 @@ package jsl.moum.auth.domain.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+
 import jsl.moum.member_profile.dto.ProfileDto;
-import jsl.moum.record.domain.dto.RecordDto;
 import jsl.moum.record.domain.entity.RecordEntity;
-import jsl.moum.record.domain.repository.RecordRepository;
+import jsl.moum.chatroom.domain.ChatroomMember;
 import lombok.*;
 import jsl.moum.moum.team.domain.TeamEntity;
 import jsl.moum.moum.team.domain.TeamMemberEntity;
@@ -50,6 +50,9 @@ public class MemberEntity {
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RecordEntity> records;
+
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<ChatroomMember> chatroomMembers = new ArrayList<>();
 
     // role은 회원가입 시 입력하게 할지?
     // admin, 일반사용자, 일반사용자중에서도 연주자,참여자 뭐 이런거 등등..
