@@ -13,7 +13,7 @@ public interface ChatroomMemberRepository extends JpaRepository<ChatroomMember, 
     List<ChatroomMember> findByMemberId(Integer memberId);
 
     @Query("SELECT cm.member.id FROM ChatroomMember cm WHERE cm.chatroom.id = :chatroomId")
-    List<Integer> findAllMemberIdByChatroomId(Integer chatroomId);
+    List<Integer> findAllMemberIdByChatroomId(@Param("chatroomId") Integer chatroomId);
 
 
     @Query("SELECT cm1.chatroom.id " +
