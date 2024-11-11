@@ -14,30 +14,59 @@ import lombok.NoArgsConstructor;
 public class Process {
 
     @Column(name = "recruit_status")
-    private Boolean recruitStatus;
+    private Boolean recruitStatus = false;
 
     @Column(name = "chatroom_status")
-    private Boolean chatroomStatus;
+    private Boolean chatroomStatus = false;
 
     @Column(name = "practiceroom_status")
-    private Boolean practiceroomStatus;
+    private Boolean practiceroomStatus = false;
 
     @Column(name = "perform_location_status")
-    private Boolean performLocationStatus;
+    private Boolean performLocationStatus = false;
 
     @Column(name = "promote_status")
-    private Boolean promoteStatus;
+    private Boolean promoteStatus = false;
 
     @Column(name = "payment_status")
-    private Boolean paymentStatus;
+    private Boolean paymentStatus = false;
 
-    @Column(name = "actice_status")
-    private Boolean activeStatus;
+    @Column(name = "finish_status")
+    private Boolean finishStatus = false;
 
     @Column(name = "process_percentage")
-    private int processPercentage;
+    private int processPercentage = 0;
 
-    public int updateProcessPercentage() {
+    public void changeRecruitStatus() {
+        this.recruitStatus = !this.recruitStatus;
+    }
+
+    public void changeChatroomStatus() {
+        this.chatroomStatus = !this.chatroomStatus;
+    }
+
+    public void changePracticeroomStatus() {
+        this.practiceroomStatus = !this.practiceroomStatus;
+    }
+
+    public void changePerformLocationStatus() {
+        this.performLocationStatus = !this.performLocationStatus;
+    }
+
+    public void changePromoteStatus() {
+        this.promoteStatus = !this.promoteStatus;
+    }
+
+    public void changePaymentStatus() {
+        this.paymentStatus = !this.paymentStatus;
+    }
+
+    public void changeFinishStatus() {
+        this.finishStatus = !this.finishStatus;
+    }
+
+
+    public int updateAndGetProcessPercentage() {
         int completedSteps = 0;
         int totalSteps = 7;
 
@@ -47,17 +76,9 @@ public class Process {
         if (Boolean.TRUE.equals(performLocationStatus)) completedSteps++;
         if (Boolean.TRUE.equals(promoteStatus)) completedSteps++;
         if (Boolean.TRUE.equals(paymentStatus)) completedSteps++;
-        if (Boolean.TRUE.equals(activeStatus)) completedSteps++;
+        if (Boolean.TRUE.equals(finishStatus)) completedSteps++;
 
         this.processPercentage = (completedSteps * 100) / totalSteps;
         return this.processPercentage;
-    }
-
-    public boolean changeActiceStatus(){
-        return !this.activeStatus;
-    }
-
-    public boolean getActiceStatus(){
-        return this.activeStatus;
     }
 }
