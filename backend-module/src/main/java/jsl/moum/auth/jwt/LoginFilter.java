@@ -5,8 +5,11 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jsl.moum.auth.domain.CustomUserDetails;
 import jsl.moum.auth.domain.entity.RefreshEntity;
 import jsl.moum.auth.domain.repository.RefreshRepository;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -62,6 +65,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException {
     //유저 정보
     String username = authentication.getName();
+    int userId = ((CustomUserDetails) authentication.getPrincipal()).getMemberId();
 
     Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
     Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
@@ -76,7 +80,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     addRefreshEntity(username, refresh, 842000L); // 24h
 
     //응답 설정
-        ResultResponse resultResponse = ResultResponse.of(ResponseCode.LOGIN_SUCCESS, username);
+        ResultResponse resultResponse = ResultResponse.of(ResponseCode.LOGIN_SUCCESS, userId);
     response.setHeader("access", access);
     response.addCookie(createCookie("refresh", refresh));
     response.setStatus(HttpStatus.OK.value());

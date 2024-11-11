@@ -7,6 +7,9 @@ import jsl.moum.global.error.ErrorCode;
 import jsl.moum.global.error.exception.CustomException;
 import jsl.moum.moum.team.domain.*;
 import jsl.moum.objectstorage.StorageService;
+import jsl.moum.record.domain.dto.RecordDto;
+import jsl.moum.record.domain.entity.RecordEntity;
+import jsl.moum.record.domain.repository.RecordRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
@@ -18,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,29 +34,26 @@ public class TeamService {
     private final TeamMemberRepository teamMemberRepository;
     private final TeamMemberRepositoryCustom teamMemberRepositoryCustom;
     private final StorageService storageService;
-
-
+    private final RecordRepository recordRepository;
 
     @Value("${ncp.object-storage.bucket}")
     private String bucket;
 
     /**
-        팀 정보 조회
+     * 팀 정보 조회
      **/
     @Transactional(readOnly = true)
-    public TeamDto.Response getTeamById(int teamId){
+    public TeamDto.Response getTeamById(int teamId) {
 
-        TeamEntity team = teamRepository.findById(teamId)
-                .orElseThrow(()-> new CustomException(ErrorCode.ILLEGAL_ARGUMENT));
-
+        TeamEntity team = findTeam(teamId);
         return new TeamDto.Response(team);
     }
 
     /**
-        팀 리스트 조회
+     * 팀 리스트 조회
      **/
     @Transactional(readOnly = true)
-    public List<TeamDto.Response> getTeamList(int page, int size){
+    public List<TeamDto.Response> getTeamList(int page, int size) {
 
         List<TeamEntity> teams = teamRepository.findAll(PageRequest.of(page, size)).getContent();
 
@@ -82,11 +81,23 @@ public class TeamService {
                 .members(new ArrayList<>())
                 .teamName(teamRequestDto.getTeamName())
                 .description(teamRequestDto.getDescription())
+                .genre(teamRequestDto.getGenre())
+                .location(teamRequestDto.getLocation())
                 .leaderId(loginUser.getId())
                 .fileUrl(fileUrl)
+                .records(teamRequestDto.getRecords())
                 .build();
 
         TeamEntity newTeam = request.toEntity();
+
+        List<RecordEntity> records = newTeam.getRecords();
+        if (records != null && !records.isEmpty()) {
+            for (RecordEntity record : records) {
+                record.setTeam(newTeam);
+            }
+            recordRepository.saveAll(records);
+        }
+
         teamRepository.save(newTeam);
 
 
@@ -111,7 +122,7 @@ public class TeamService {
         TeamEntity team = findTeam(teamId);
 
         // 팀의 리더인지 확인
-        if(!checkLeader(team, loginUser)){
+        if (!checkLeader(team, loginUser)) {
             throw new CustomException(ErrorCode.NO_AUTHORITY);
         }
 
@@ -120,13 +131,14 @@ public class TeamService {
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_EXIST));
 
         // 이미 팀 멤버면 에러
-        if(isTeamMember(teamId, targetMemberId)){
+        if (isTeamMember(teamId, targetMemberId)) {
             throw new CustomException(ErrorCode.MEMBER_ALREADY_INVITED);
         }
 
         // 팀 멤버 초대 로직
         TeamMemberEntity teamMember = TeamMemberEntity.builder()
                 .member(targetMember)
+                .leaderId(loginUser.getId())
                 .team(team)
                 .build();
 
@@ -146,7 +158,7 @@ public class TeamService {
         MemberEntity leader = memberRepository.findByUsername(username);
         TeamEntity team = findTeam(teamId);
 
-        if(!checkLeader(team, leader)){
+        if (!checkLeader(team, leader)) {
             throw new CustomException(ErrorCode.NO_AUTHORITY);
         }
 
@@ -164,7 +176,23 @@ public class TeamService {
             team.updateProfileImage(newFileUrl);
         }
 
-        team.updateTeamInfo(teamUpdateRequestDto.getTeamName(), teamUpdateRequestDto.getDescription());
+
+        if (teamUpdateRequestDto.getRecords() != null) {
+            List<RecordEntity> updatedRecords = teamUpdateRequestDto.getRecords().stream()
+                    .map(RecordDto.Request::toEntity)
+                    .collect(Collectors.toList());
+            team.updateRecords(updatedRecords);
+        }
+
+        List<RecordEntity> records = team.getRecords();
+        if (records != null && !records.isEmpty()) {
+            for (RecordEntity record : records) {
+                record.setTeam(team);
+            }
+            recordRepository.saveAll(records);
+        }
+
+        team.updateTeamInfo(teamUpdateRequestDto);
 
         return new TeamDto.UpdateResponse(team);
 
@@ -178,7 +206,7 @@ public class TeamService {
         MemberEntity leader = memberRepository.findByUsername(username);
         TeamEntity targetTeam = findTeam(teamId);
 
-        if(!checkLeader(targetTeam, leader)){
+        if (!checkLeader(targetTeam, leader)) {
             throw new CustomException(ErrorCode.NO_AUTHORITY);
         }
 
@@ -188,12 +216,6 @@ public class TeamService {
             fileName = URLDecoder.decode(fileName, StandardCharsets.UTF_8);
             storageService.deleteFile(fileName);
         }
-
-//        // 팀의 멤버 목록을 가져와서 각 멤버의 팀 리스트에서 해당 팀을 삭제
-//        for (TeamMemberEntity teamMember : targetTeam.getMembers()) {
-//            MemberEntity member = teamMember.getMember();
-//            member.removeTeamFromMember(targetTeam);
-//        }
 
         teamMemberRepositoryCustom.deleteTeamMemberTable(teamId);
         teamRepository.deleteById(teamId);
@@ -218,32 +240,22 @@ public class TeamService {
 
         MemberEntity leader = memberRepository.findByUsername(username);
         // 로그인 유저가 리더 아니면 에러. 대상이 리더가 아니라.
-        if(!checkLeader(team,leader)){
+        if (!checkLeader(team, leader)) {
             throw new CustomException(ErrorCode.NO_AUTHORITY);
         }
 
         // 강퇴 대상 멤버 찾기
-        if(!isMemberExist(targetMemberId)){
+        if (!isMemberExist(targetMemberId)) {
             throw new CustomException(ErrorCode.MEMBER_NOT_EXIST);
         }
 
         // 팀 멤버가 아니면 에러
-        if(!isTeamMember(teamId, targetMemberId)){
+        if (!isTeamMember(teamId, targetMemberId)) {
             throw new CustomException(ErrorCode.NOT_TEAM_MEMBER);
         }
 
         // 강퇴 대상 멤버가 팀의 멤버인지 확인
-        TeamMemberEntity teamMember = teamMemberRepositoryCustom.findMemberInTeamById(teamId, targetMemberId);
-
-        // 팀에서 멤버 제거
-        team.removeMemberFromTeam(teamMember);
-        // 멤버에서 팀 제거
-        targetMember.removeTeamFromMember(team);
-
-
         teamMemberRepositoryCustom.deleteMemberFromTeamById(teamId, targetMemberId);
-        teamRepository.save(team);
-        memberRepository.save(targetMember);
 
         return new TeamDto.Response(team);
     }
@@ -256,40 +268,29 @@ public class TeamService {
         MemberEntity member = memberRepository.findByUsername(username);
         TeamEntity team = findTeam(teamId);
 
-        if(checkLeader(team, member)){
+        if (checkLeader(team, member)) {
             throw new CustomException(ErrorCode.LEADER_CANNOT_LEAVE);
         }
 
-        if(!isTeamMember(teamId, member.getId())){
+        if (!isTeamMember(teamId, member.getId())) {
             throw new CustomException(ErrorCode.NOT_TEAM_MEMBER);
         }
 
-
-        TeamMemberEntity teamMember = teamMemberRepositoryCustom.findMemberInTeamById(teamId, member.getId());
-
-        // 팀에서 멤버 제거
-        team.removeMemberFromTeam(teamMember);
-        // 멤버에서 팀 제거
-        member.removeTeamFromMember(team);
-
-
         teamMemberRepositoryCustom.deleteMemberFromTeamById(teamId, member.getId());
-        teamRepository.save(team);
-        memberRepository.save(member);
         return new TeamDto.Response(team);
     }
 
     /**
-     * 리더의 팀 리스트 조회
+     * 멤버의 팀 리스트 조회
      */
     @Transactional
-    public List<TeamDto.Response> getTeamsByLeaderId(int memberId){
+    public List<TeamDto.Response> getTeamsByMemberId(int memberId) {
 
-        if(!isMemberExist(memberId)){
+        if (!isMemberExist(memberId)) {
             throw new CustomException(ErrorCode.MEMBER_NOT_EXIST);
         }
 
-        return teamMemberRepositoryCustom.findAllTeamsByLeaderId(memberId);
+        return teamMemberRepositoryCustom.findAllTeamsByMemberId(memberId);
     }
 
 

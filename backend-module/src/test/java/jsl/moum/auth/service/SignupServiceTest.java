@@ -19,6 +19,7 @@ import jsl.moum.global.error.exception.DuplicateUsernameException;
 import jsl.moum.config.redis.util.RedisUtil;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -102,6 +103,7 @@ class SignupServiceTest {
                 .password("password123")
                 .email("test@example.com")
                 .verifyCode("123456")
+                .records(new ArrayList<>())
                 .build();
 
         // Mock username check, Redis 인증 코드, 비밀번호 인코딩

@@ -69,12 +69,14 @@ class TeamServiceTest {
                 .id(1)
                 .username("leader")
                 .teams(new ArrayList<>())
+                .records(new ArrayList<>())
                 .build();
 
         mockMember = MemberEntity.builder()
                 .id(2)
                 .username("member")
                 .teams(new ArrayList<>())
+                .records(new ArrayList<>())
                 .build();
 
         mockTeam = TeamEntity.builder()
@@ -83,6 +85,7 @@ class TeamServiceTest {
                 .teamName("Test Team")
                 .description("Team Description")
                 .members(new ArrayList<>())
+                .records(new ArrayList<>())
                 .build();
 
         mockTeamMember = TeamMemberEntity.builder()
@@ -115,7 +118,7 @@ class TeamServiceTest {
         // when & then
         assertThatThrownBy(() -> teamService.getTeamById(mockTeam.getId()))
                 .isInstanceOf(CustomException.class)
-                .hasMessage(ErrorCode.ILLEGAL_ARGUMENT.getMessage());
+                .hasMessage(ErrorCode.TEAM_NOT_FOUND.getMessage());
     }
 
     @Test
@@ -128,6 +131,7 @@ class TeamServiceTest {
                 .teamName("Test Team2")
                 .description("Team Description2")
                 .members(new ArrayList<>())
+                .records(new ArrayList<>())
                 .build();
 
         List<TeamEntity> mockTeams = List.of(mockTeam, mockTeam2);
@@ -150,6 +154,7 @@ class TeamServiceTest {
                 .teamName("New Team")
                 .description("New Team Description")
                 .fileUrl("New Team fileUrl")
+                .records(new ArrayList<>())
                 .build();
 
         MultipartFile file = mock(MultipartFile.class);
@@ -311,7 +316,6 @@ class TeamServiceTest {
         when(teamRepository.findById(mockTeam.getId())).thenReturn(Optional.of(mockTeam));
         when(teamMemberRepositoryCustom.existsByTeamAndMember(mockTeam.getId(), mockMember.getId())).thenReturn(true);
         doReturn(true).when(teamService).checkLeader(any(), any());
-        when(teamMemberRepositoryCustom.findMemberInTeamById(anyInt(), anyInt())).thenReturn(mockTeamMember);
 
         // when
         TeamDto.Response response = teamService.kickMemberById(mockMember.getId(), mockTeam.getId(), mockLeader.getUsername());
@@ -319,8 +323,6 @@ class TeamServiceTest {
         // then
         assertThat(response.getMembers().size()).isEqualTo(0);
         verify(teamMemberRepositoryCustom).deleteMemberFromTeamById(anyInt(), anyInt());
-        verify(teamRepository).save(mockTeam);
-        verify(memberRepository).save(mockMember);
     }
 
     @Test
@@ -394,7 +396,6 @@ class TeamServiceTest {
         when(memberRepository.findByUsername(mockLeader.getUsername())).thenReturn(mockLeader);
         when(memberRepository.findByUsername(mockMember.getUsername())).thenReturn(mockMember);
         when(teamRepository.findById(mockTeam.getId())).thenReturn(Optional.of(mockTeam));
-        when(teamMemberRepositoryCustom.findMemberInTeamById(anyInt(), anyInt())).thenReturn(mockTeamMember);
 
         doReturn(false).when(teamService).checkLeader(any(), any());
         doReturn(true).when(teamService).isTeamMember(anyInt(), anyInt());
@@ -405,8 +406,6 @@ class TeamServiceTest {
         // then
         assertThat(response.getTeamName()).isEqualTo(mockTeam.getTeamName());
         verify(teamMemberRepositoryCustom).deleteMemberFromTeamById(anyInt(), anyInt());
-        verify(teamRepository).save(mockTeam);
-        verify(memberRepository).save(mockMember);
     }
 
     @Test
@@ -469,65 +468,60 @@ class TeamServiceTest {
     void rejectInvite_Success() {
 
     }
-
     @Test
-    @DisplayName("팀 리더의 팀 목록 조회 성공")
+    @DisplayName("멤버가 자신이 속한 팀 목록 조회 성공")
     void get_team_list_byMemberId_success() {
         // given
-        int leaderId = 1;
-        String leaderName = mockLeader.getUsername();
+        int memberId = mockMember.getId();
 
         TeamEntity mockTeam1 = TeamEntity.builder()
                 .id(1)
-                .leaderId(leaderId)
+                .leaderId(mockLeader.getId())
                 .teamName("team one")
                 .description("description one")
-                .members(new ArrayList<>())
+                .members(List.of(mockTeamMember))
+                .records(new ArrayList<>())
                 .build();
 
         TeamEntity mockTeam2 = TeamEntity.builder()
                 .id(2)
-                .leaderId(leaderId)
+                .leaderId(mockLeader.getId())
                 .teamName("team two")
                 .description("description two")
-                .members(new ArrayList<>())
+                .members(List.of(mockTeamMember))
+                .records(new ArrayList<>())
                 .build();
 
-        List<TeamEntity> leaderTeams = List.of(mockTeam1, mockTeam2);
-        List<TeamDto.Response> expectedResponseList = leaderTeams.stream()
+        List<TeamEntity> memberTeams = List.of(mockTeam1, mockTeam2);
+        List<TeamDto.Response> expectedResponseList = memberTeams.stream()
                 .map(TeamDto.Response::new)
                 .collect(Collectors.toList());
 
         // when
-        when(teamService.isMemberExist(leaderId)).thenReturn(true);
-        when(teamMemberRepositoryCustom.findAllTeamsByLeaderId(leaderId)).thenReturn(expectedResponseList);
+        when(teamService.isMemberExist(memberId)).thenReturn(true);
+        when(teamMemberRepositoryCustom.findAllTeamsByMemberId(memberId)).thenReturn(expectedResponseList);
 
         // then
-        List<TeamDto.Response> actualResponseList = teamService.getTeamsByLeaderId(leaderId);
+        List<TeamDto.Response> actualResponseList = teamService.getTeamsByMemberId(memberId);
 
         assertEquals(expectedResponseList.size(), actualResponseList.size());
         for (int i = 0; i < expectedResponseList.size(); i++) {
             assertEquals(expectedResponseList.get(i).getTeamName(), actualResponseList.get(i).getTeamName());
             assertEquals(expectedResponseList.get(i).getLeaderId(), actualResponseList.get(i).getLeaderId());
         }
-
     }
 
     @Test
-    @DisplayName("팀 리더의 팀 목록 조회 실패 - 없는 유저")
+    @DisplayName("멤버의 팀 목록 조회 실패 - 없는 유저")
     void get_team_list_byMemberId_fail_MemberNotFound() {
         // given
         int invalidMemberId = 411414;
 
         // when & then
-        assertThatThrownBy(() -> teamService.getTeamsByLeaderId(invalidMemberId))
+        assertThatThrownBy(() -> teamService.getTeamsByMemberId(invalidMemberId))
                 .isInstanceOf(CustomException.class)
                 .hasMessage(ErrorCode.MEMBER_NOT_EXIST.getMessage());
     }
-
-
-
-
 
 }
 

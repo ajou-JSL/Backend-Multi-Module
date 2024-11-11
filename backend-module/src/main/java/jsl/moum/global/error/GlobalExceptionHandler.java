@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.io.IOException;
+
 import static jsl.moum.global.error.ErrorCode.*;
 
 
@@ -29,6 +31,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler
     protected ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
         final ErrorResponse response = ErrorResponse.of(e);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    protected ResponseEntity<ErrorResponse> handleFileUploadException(IOException e) {
+        final ErrorResponse response = ErrorResponse.of(FILE_UPLOAD_FAIL);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 

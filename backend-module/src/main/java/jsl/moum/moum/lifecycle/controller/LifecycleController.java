@@ -14,6 +14,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 
@@ -39,7 +40,7 @@ public class LifecycleController {
     /**
      * 나의 모음 리스트 조회
      */
-    @GetMapping("/api/moum/mylist")
+    @GetMapping("/api/moum-all/my")
     public ResponseEntity<ResultResponse> getMyMoumList(@AuthenticationPrincipal CustomUserDetails customUserDetails)
     {
 
@@ -50,13 +51,25 @@ public class LifecycleController {
     }
 
     /**
+     * 팀의 모음 리스트 조회
+     */
+    @GetMapping("/api/moum-all/team/{teamId}")
+    public ResponseEntity<ResultResponse> getTeamMoumList(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                                          @PathVariable int teamId)
+    {
+        loginCheck(customUserDetails.getUsername());
+        List<LifecycleDto.Response> responseDto = lifecycleService.getTeamMoumList(teamId);
+        ResultResponse response = ResultResponse.of(ResponseCode.GET_MOUM_SUCCESS,responseDto);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+    }
+
+    /**
      * 모음 생성
      */
     @PostMapping("/api/moum")
     public ResponseEntity<ResultResponse> addMoum(@AuthenticationPrincipal CustomUserDetails customUserDetails,
                                                        @Valid @RequestPart LifecycleDto.Request lifecycleRequestDto,
-                                                       @RequestPart(value = "file", required = false)MultipartFile file)
-    {
+                                                       @RequestPart(value = "file", required = false)MultipartFile file) throws IOException {
         String username = loginCheck(customUserDetails.getUsername());
         LifecycleDto.Response responseDto = lifecycleService.addMoum(username, lifecycleRequestDto, file);
         ResultResponse response = ResultResponse.of(ResponseCode.CREATE_MOUM_SUCCESS,responseDto);
@@ -70,8 +83,7 @@ public class LifecycleController {
     public ResponseEntity<ResultResponse> updateMoum(@AuthenticationPrincipal CustomUserDetails customUserDetails,
                                                   @Valid @RequestPart LifecycleDto.Request lifecycleRequestDto,
                                                   @RequestPart(value = "file", required = false)MultipartFile file,
-                                                  @PathVariable int moumId)
-    {
+                                                  @PathVariable int moumId) throws IOException {
         String username = loginCheck(customUserDetails.getUsername());
         LifecycleDto.Response responseDto = lifecycleService.updateMoum(username, lifecycleRequestDto, file, moumId);
         ResultResponse response = ResultResponse.of(ResponseCode.UPDATE_MOUM_SUCCESS,responseDto);

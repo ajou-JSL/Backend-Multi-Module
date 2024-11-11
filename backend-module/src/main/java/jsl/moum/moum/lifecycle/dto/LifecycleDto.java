@@ -1,9 +1,11 @@
 package jsl.moum.moum.lifecycle.dto;
 
+import jakarta.validation.constraints.NotNull;
 import jsl.moum.auth.dto.MemberDto;
 import jsl.moum.moum.lifecycle.domain.LifecycleEntity;
-import jsl.moum.moum.lifecycle.domain.LifecycleTeamEntity;
 import jsl.moum.moum.team.domain.TeamMemberEntity;
+import jsl.moum.moum.team.dto.TeamDto;
+import jsl.moum.record.domain.dto.RecordDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,9 +13,7 @@ import lombok.Getter;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class LifecycleDto {
 
@@ -29,6 +29,15 @@ public class LifecycleDto {
         private int price;
         private String imageUrl;
 
+        @NotNull
+        private int leaderId;
+
+        @NotNull
+        private int teamId; // 어느 팀의 라이프사이클인지 알아야하니까
+
+        private List<Integer> members;
+        private List<RecordDto.Request> records;
+
         public LifecycleEntity toEntity(){
             return LifecycleEntity.builder()
                     .lifecycleName(moumName)
@@ -38,6 +47,8 @@ public class LifecycleDto {
                     .endDate(endDate)
                     .price(price)
                     .imageUrl(imageUrl)
+                    .leaderId(leaderId)
+                    .records(records.stream().map(RecordDto.Request::toEntity).collect(Collectors.toList()))
                     .build();
         }
     }
@@ -53,7 +64,11 @@ public class LifecycleDto {
         private LocalDate endDate;
         private int price;
         private String imageUrl;
+        private int leaderId;
+        private String leaderName;
+        private int teamId;
         private List<MemberDto.Response> members = new ArrayList<>();
+        private List<RecordDto.Response> records = new ArrayList<>();
 
         public Response(LifecycleEntity lifecycle){
             this.moumId = lifecycle.getId();
@@ -64,16 +79,18 @@ public class LifecycleDto {
             this.endDate = lifecycle.getEndDate();
             this.price = lifecycle.getPrice();
             this.imageUrl = lifecycle.getImageUrl();
-            this.members = lifecycle.getTeams() == null
-                    ? null
-                    : lifecycle.getTeams().stream()
-                    .map(LifecycleTeamEntity::getTeam)
-                    .filter(Objects::nonNull) // team이 null이 아닌 경우만 처리
-                    .flatMap(team -> team.getMembers() == null ? Stream.empty() : team.getMembers().stream())
+            this.leaderId = lifecycle.getLeaderId();
+            this.leaderName = lifecycle.getLeaderName();
+            this.teamId = lifecycle.getTeam().getId();
+
+            this.members = lifecycle.getTeam().getMembers().stream()
                     .map(TeamMemberEntity::getMember)
-                    .filter(Objects::nonNull) // member가 null이 아닌 경우만 처리
                     .map(MemberDto.Response::new)
                     .collect(Collectors.toList());
+
+            this.records = lifecycle.getRecords().stream()
+                    .map(RecordDto.Response::new)
+                    .collect(Collectors.toList());;
 
         }
     }

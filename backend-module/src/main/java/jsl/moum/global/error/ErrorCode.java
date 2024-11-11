@@ -14,6 +14,7 @@ public enum ErrorCode {
     INVALID_TYPE_VALUE(400, "F-C004", "invalid type value"),
     BAD_CREDENTIALS(400, "F-C005", "bad credentials"),
     ILLEGAL_ARGUMENT(400, "F-C006", "유효하지 않은 데이터입니다."),
+    FILE_UPLOAD_FAIL(400, "F-C007", "File upload failed"),
 
     // Member
     MEMBER_NOT_EXIST(404, "F-M001", "존재하지 않은 회원입니다."),
@@ -53,7 +54,8 @@ public enum ErrorCode {
     MEMBER_ALREADY_INVITED(400, "F-T001", "이미 초대된 멤버입니다."),
     TEAM_NOT_FOUND(404, "F-T002", "팀을 찾을 수 없습니다."),
     NOT_TEAM_MEMBER(404, "F-T003", "팀에 속한 멤버가 아닙니다."),
-    LEADER_CANNOT_LEAVE(401, "F-T004", "리더가 팀을 떠날 수 없습니다.");
+    LEADER_CANNOT_LEAVE(401, "F-T004", "리더가 팀을 떠날 수 없습니다."),
+    NEED_TEAM(401, "F-T005", "팀에 먼저 가입해야 합니다.");
 
 
     private final int status;

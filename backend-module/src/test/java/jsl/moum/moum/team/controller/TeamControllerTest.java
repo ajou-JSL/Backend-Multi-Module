@@ -54,8 +54,7 @@ class TeamControllerTest {
     private MemberEntity mockMember;
     private MemberEntity mockLeader;
     private TeamEntity mockTeam;
-    private TeamMemberEntity mockTeamMember1;
-    private TeamMemberEntity mockTeamMember2;
+    private TeamMemberEntity mockTeamMember;
 
     @BeforeEach
     void setUp() {
@@ -69,12 +68,14 @@ class TeamControllerTest {
                 .id(1)
                 .email("leader@mail.com")
                 .username("mockLeader")
+                .records(new ArrayList<>())
                 .build();
 
         mockMember = MemberEntity.builder()
                 .id(2)
                 .email("member@mail.com")
                 .username("mockMember")
+                .records(new ArrayList<>())
                 .build();
 
         mockTeam = TeamEntity.builder()
@@ -83,6 +84,7 @@ class TeamControllerTest {
                 .teamName("mock team")
                 .description("mock description")
                 .members(new ArrayList<>())
+                .records(new ArrayList<>())
                 .build();
 
         teamRequestDto = TeamDto.Request.builder()
@@ -91,6 +93,12 @@ class TeamControllerTest {
                 .teamName("mock team")
                 .description("mock description")
                 .members(new ArrayList<>())
+                .records(new ArrayList<>())
+                .build();
+
+        mockTeamMember = TeamMemberEntity.builder()
+                .member(mockMember)
+                .team(mockTeam)
                 .build();
 
 
@@ -159,6 +167,7 @@ class TeamControllerTest {
                 .teamName("another team")
                 .description("another description")
                 .members(new ArrayList<>())
+                .records(new ArrayList<>())
                 .build();
 
         List<TeamEntity> teams = new ArrayList<>();
@@ -196,6 +205,7 @@ class TeamControllerTest {
                 .teamName("update team")
                 .description("update description")
                 .fileUrl("update fileUrl")
+                .records(new ArrayList<>())
                 .build();
 
         TeamEntity updateMockTeam = updateRequest.toEntity();
@@ -258,6 +268,7 @@ class TeamControllerTest {
         MemberEntity targetMember = MemberEntity.builder()
                 .id(222)
                 .username("new member")
+                .records(new ArrayList<>())
                 .build();
 
         MemberDto.Response memberResponse = new MemberDto.Response(targetMember);
@@ -310,18 +321,18 @@ class TeamControllerTest {
                 .andExpect(jsonPath("$.status").value(200))
                 .andExpect(jsonPath("$.message").value(ResponseCode.LEAVE_TEAM_SUCCESS.getMessage()));
     }
-
     @Test
-    @DisplayName("리더가 속한 팀 리스트 조회 테스트")
+    @DisplayName("멤버가 자신이 속한 팀 리스트 조회 테스트")
     @WithAuthUser
-    void get_teams_by_leader_success() throws Exception {
+    void get_teams_by_member_success() throws Exception {
         // given
         TeamEntity mockTeam1 = TeamEntity.builder()
                 .id(1)
                 .leaderId(mockLeader.getId())
                 .teamName("team one")
                 .description("description one")
-                .members(new ArrayList<>())
+                .members(List.of(mockTeamMember))
+                .records(new ArrayList<>())
                 .build();
 
         TeamEntity mockTeam2 = TeamEntity.builder()
@@ -329,7 +340,8 @@ class TeamControllerTest {
                 .leaderId(mockLeader.getId())
                 .teamName("team two")
                 .description("description two")
-                .members(new ArrayList<>())
+                .members(List.of(mockTeamMember))
+                .records(new ArrayList<>())
                 .build();
 
         List<TeamEntity> teams = List.of(mockTeam1, mockTeam2);
@@ -340,10 +352,10 @@ class TeamControllerTest {
         }
 
         // when
-        when(teamService.getTeamsByLeaderId(anyInt())).thenReturn(responseList);
+        when(teamService.getTeamsByMemberId(anyInt())).thenReturn(responseList);
 
         // then
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/teams-all/{memberId}", mockLeader.getId())
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/teams-all/{memberId}", mockMember.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status").value(200))
                 .andExpect(jsonPath("$.message").value(ResponseCode.GET_TEAM_LIST_SUCCESS.getMessage()))
@@ -354,7 +366,6 @@ class TeamControllerTest {
                 .andExpect(jsonPath("$.data[1].teamName").value(mockTeam2.getTeamName()))
                 .andExpect(jsonPath("$.data[1].leaderId").value(mockTeam2.getLeaderId()));
     }
-
 
 
 

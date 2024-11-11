@@ -2,6 +2,10 @@ package jsl.moum.auth.domain.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import jsl.moum.member_profile.dto.ProfileDto;
+import jsl.moum.record.domain.dto.RecordDto;
+import jsl.moum.record.domain.entity.RecordEntity;
+import jsl.moum.record.domain.repository.RecordRepository;
 import lombok.*;
 import jsl.moum.moum.team.domain.TeamEntity;
 import jsl.moum.moum.team.domain.TeamMemberEntity;
@@ -41,8 +45,11 @@ public class MemberEntity {
     @Column(name = "email", nullable = false)
     private String email;
 
-    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TeamMemberEntity> teams = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RecordEntity> records;
 
     // role은 회원가입 시 입력하게 할지?
     // admin, 일반사용자, 일반사용자중에서도 연주자,참여자 뭐 이런거 등등..
@@ -71,20 +78,41 @@ public class MemberEntity {
         this.profileImageUrl = newUrl;
     }
 
-    public void updateMemberInfo(       String name,
-                                        String username,
-                                        String profileDescription,
-                                        String email,
-                                        String proficiency,
-                                        String instrument,
-                                        String address){
-
-        this.name = name;
-        this.username = username;
-        this.profileDescription = profileDescription;
-        this.email = email;
-        this.proficiency = proficiency;
-        this.instrument = instrument;
-        this.address = address;
+    public void updateMemberInfo(ProfileDto.UpdateRequest updateRequest){
+        this.name = updateRequest.getName();
+        this.username = updateRequest.getUsername();
+        this.profileDescription = updateRequest.getProfileDescription();
+        this.email = updateRequest.getEmail();
+        this.proficiency = updateRequest.getProficiency();
+        this.instrument = updateRequest.getInstrument();
+        this.address = updateRequest.getAddress();
     }
+
+    // 양방향이라 서로간 저장-삭제 신경 써줘야함 : GPT
+    public void updateRecords(List<RecordEntity> updatedRecords) {
+        // 새로 추가된 RecordEntity들을 추가
+        for (RecordEntity updatedRecord : updatedRecords) {
+            if (!this.records.contains(updatedRecord)) {
+                this.records.add(updatedRecord);  // 새 RecordEntity를 추가
+            }
+            updatedRecord.setMember(this);  // 각 RecordEntity에 현재 MemberEntity 설정
+        }
+
+        // 기존 records에서 업데이트된 목록에 포함되지 않는 RecordEntity를 삭제
+        List<RecordEntity> toRemove = new ArrayList<>();
+        for (RecordEntity existingRecord : this.records) {
+            if (!updatedRecords.contains(existingRecord)) {
+                toRemove.add(existingRecord);
+            }
+        }
+
+        // 삭제할 RecordEntity들을 리스트에서 제거
+        this.records.removeAll(toRemove);
+
+        // toRemove에 추가된 RecordEntity들은 실제로 삭제되도록 처리
+        for (RecordEntity record : toRemove) {
+            record.setMember(null);  // 해당 RecordEntity와의 관계 끊기
+        }
+    }
+
 }

@@ -1,6 +1,9 @@
 package jsl.moum.member_profile.service;
 
 import jsl.moum.auth.domain.entity.MemberEntity;
+import jsl.moum.record.domain.dto.RecordDto;
+import jsl.moum.record.domain.entity.RecordEntity;
+import jsl.moum.record.domain.repository.RecordRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -13,6 +16,8 @@ import jsl.moum.global.error.exception.CustomException;
 import jsl.moum.objectstorage.StorageService;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +25,7 @@ public class ProfileService {
 
     private final MemberRepository memberRepository;
     private final StorageService storageService;
+    private final RecordRepository recordRepository;
 
     @Value("${ncp.object-storage.bucket}")
     private String bucket;
@@ -64,8 +70,23 @@ public class ProfileService {
             memberEntity.updateProfileImage(fileUrl);
         }
 
-        memberEntity.updateMemberInfo(request.getName(), request.getUsername(), request.getProfileDescription(), request.getEmail(),
-                request.getProficiency(), request.getInstrument(), request.getAddress());
+        if (request.getRecords() != null) {
+            List<RecordEntity> updatedRecords = request.getRecords().stream()
+                    .map(RecordDto.Request::toEntity)
+                    .collect(Collectors.toList());
+            memberEntity.updateRecords(updatedRecords);
+        }
+
+        memberEntity.updateMemberInfo(request);
+
+        List<RecordEntity> records = memberEntity.getRecords();
+        if (records != null && !records.isEmpty()) {
+            for (RecordEntity record : records) {
+                record.setMember(memberEntity);
+            }
+            recordRepository.saveAll(records);
+        }
+
         memberRepository.save(memberEntity);
         return new ProfileDto.Response(memberEntity);
 
@@ -90,5 +111,4 @@ public class ProfileService {
         }
         return false;
     }
-
 }

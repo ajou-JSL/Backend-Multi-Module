@@ -1,13 +1,10 @@
 package jsl.moum.moum.lifecycle.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jsl.moum.auth.domain.CustomUserDetails;
 import jsl.moum.auth.domain.entity.MemberEntity;
+import jsl.moum.custom.WithNoAuthUser;
 import jsl.moum.global.response.ResponseCode;
-import jsl.moum.global.response.ResultResponse;
 import jsl.moum.moum.lifecycle.domain.LifecycleEntity;
-import jsl.moum.moum.lifecycle.domain.LifecycleTeamEntity;
 import jsl.moum.moum.lifecycle.dto.LifecycleDto;
 import jsl.moum.moum.team.domain.TeamEntity;
 import jsl.moum.moum.team.domain.TeamMemberEntity;
@@ -18,16 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import jsl.moum.custom.WithAuthUser;
@@ -59,7 +51,6 @@ class LifecycleControllerTest {
     private WebApplicationContext webApplicationContext;
 
     private LifecycleEntity mockLifecycle;
-    private LifecycleTeamEntity mockLifecycleTeam;
     private TeamMemberEntity mockTeamMember;
     private TeamEntity mockTeam;
     private MemberEntity mockLeader;
@@ -77,25 +68,29 @@ class LifecycleControllerTest {
                 .address("주소")
                 .email("test@user.com")
                 .teams(new ArrayList<>())
+                .records(new ArrayList<>())
+                .build();
+
+        mockTeamMember = TeamMemberEntity.builder()
+                .id(1)
+                .leaderId(mockLeader.getId())
+                .member(mockLeader)
+                .team(mockTeam)
                 .build();
 
         mockTeam = TeamEntity.builder()
                 .id(1)
-                .lifecycles(new ArrayList<>())
                 .teamName("테스트 팀")
-                .members(new ArrayList<>())
+                .members(List.of(mockTeamMember))
+                .records(new ArrayList<>())
                 .build();
 
-        mockLifecycleTeam = LifecycleTeamEntity.builder()
-                .id(1)
-                .team(mockTeam)
-                .lifecycle(mockLifecycle)
-                .build();
 
         mockLifecycle = LifecycleEntity.builder()
                 .id(1)
-                .teams(new ArrayList<>())
+                .team(mockTeam)
                 .lifecycleName("테스트 라이프사이클")
+                .records(new ArrayList<>())
                 .build();
 
     }
@@ -112,7 +107,7 @@ class LifecycleControllerTest {
         when(lifecycleService.getMoumById(anyString(), anyInt())).thenReturn(response);
 
         // then
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/moum/{moumId}", mockLifecycle.getId())
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/moum/{moumId}",lifcycleId)
                 .contentType(MediaType.APPLICATION_JSON))
                         .andExpect(jsonPath("$.status").value(200))
                         .andExpect(jsonPath("$.data.moumName").value("테스트 라이프사이클"));
@@ -126,8 +121,9 @@ class LifecycleControllerTest {
         // given
         LifecycleEntity anotherMockLifecycle = LifecycleEntity.builder()
                 .id(2)
-                .teams(new ArrayList<>())
+                .team(mockTeam)
                 .lifecycleName("또 다른 라이프사이클")
+                .records(new ArrayList<>())
                 .build();
         List<LifecycleDto.Response> lifecycleList = List.of(
                 new LifecycleDto.Response(mockLifecycle),
@@ -138,7 +134,37 @@ class LifecycleControllerTest {
         when(lifecycleService.getMyMoumList(anyString())).thenReturn(lifecycleList);
 
         // then
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/moum/mylist")
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/moum-all/my")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status").value(200))
+                .andExpect(jsonPath("$.data").isArray())
+                .andExpect(jsonPath("$.data[0].moumName").value("테스트 라이프사이클"))
+                .andExpect(jsonPath("$.data[0].moumId").value(1))
+                .andExpect(jsonPath("$.data[1].moumName").value("또 다른 라이프사이클"))
+                .andExpect(jsonPath("$.data[1].moumId").value(2));
+    }
+
+    @Test
+    @DisplayName("팀의 라이프사이클 목록 조회")
+    @WithAuthUser
+    void get_team_lifecycle_list() throws Exception {
+        // given
+        LifecycleEntity anotherMockLifecycle = LifecycleEntity.builder()
+                .id(2)
+                .team(mockTeam)
+                .lifecycleName("또 다른 라이프사이클")
+                .records(new ArrayList<>())
+                .build();
+        List<LifecycleDto.Response> lifecycleList = List.of(
+                new LifecycleDto.Response(mockLifecycle),
+                new LifecycleDto.Response(anotherMockLifecycle)
+        );
+
+        // when
+        when(lifecycleService.getTeamMoumList(anyInt())).thenReturn(lifecycleList);
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/moum-all/team/{teamId}", mockTeam.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status").value(200))
                 .andExpect(jsonPath("$.data").isArray())
@@ -155,10 +181,13 @@ class LifecycleControllerTest {
     void create_lifecycle() throws Exception {
         // given
         LifecycleDto.Request requestDto = LifecycleDto.Request.builder()
+                .teamId(mockTeam.getId())
                 .moumName("테스트 라이프사이클")
+                .records(new ArrayList<>())
                 .build();
         // then
         LifecycleEntity lifecycle = requestDto.toEntity();
+        lifecycle.assignTeam(mockTeam);
         LifecycleDto.Response response = new LifecycleDto.Response(lifecycle);
 
         // when
@@ -191,9 +220,13 @@ class LifecycleControllerTest {
         // given
         int targetId = mockLifecycle.getId();
         LifecycleDto.Request updateRequestDto = LifecycleDto.Request.builder()
+                .teamId(mockTeam.getId())
                 .moumName("업데이트 라이프사이클")
+                .records(new ArrayList<>())
                 .build();
+
         LifecycleEntity lifecycle = updateRequestDto.toEntity();
+        lifecycle.assignTeam(mockTeam);
         LifecycleDto.Response response = new LifecycleDto.Response(lifecycle);
 
         // when

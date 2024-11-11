@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @Embeddable
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
 public class Process {
 
     @Column(name = "recruit_status")

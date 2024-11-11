@@ -3,9 +3,15 @@ package jsl.moum.auth.dto;
 
 import jakarta.validation.constraints.*;
 import jsl.moum.auth.domain.entity.MemberEntity;
+import jsl.moum.record.domain.dto.RecordDto;
+import jsl.moum.record.domain.entity.RecordEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class MemberDto {
 
@@ -47,6 +53,8 @@ public class MemberDto {
         @NotEmpty @NotNull(message = "사용 악기를 입력해주세요")
         private String instrument;
 
+        private List<RecordDto.Request> records;
+
 
 
         // private String verifyCode;
@@ -63,6 +71,7 @@ public class MemberDto {
                     .instrument(instrument)
                     .proficiency(proficiency)
                     .name(name)
+                    .records(records.stream().map(RecordDto.Request::toEntity).collect(Collectors.toList()))
                     .build();
         }
     }
@@ -75,6 +84,7 @@ public class MemberDto {
         private final String username;
         private final String profileDescription;
         private final String profileImageUrl;
+        private final List<RecordDto.Response> records;
 
         public Response(MemberEntity member){
             this.id = member.getId();
@@ -82,6 +92,9 @@ public class MemberDto {
             this.username = member.getUsername();
             this.profileDescription = member.getProfileDescription();
             this.profileImageUrl = member.getProfileImageUrl();
+            this.records = member.getRecords().stream()
+                    .map(RecordDto.Response::new)
+                    .collect(Collectors.toList());
         }
     }
 
