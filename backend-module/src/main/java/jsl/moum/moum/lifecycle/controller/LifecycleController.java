@@ -6,6 +6,7 @@ import jsl.moum.global.error.exception.NeedLoginException;
 import jsl.moum.global.response.ResponseCode;
 import jsl.moum.global.response.ResultResponse;
 import jsl.moum.moum.lifecycle.dto.LifecycleDto;
+import jsl.moum.moum.lifecycle.dto.ProcessDto;
 import jsl.moum.moum.lifecycle.service.LifecycleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -130,8 +131,18 @@ public class LifecycleController {
     }
 
     /**
-     * todo : 선택하면 진행률 관련한거 업데이트되는 로직 필요함
+     * 모음 진척도 수정하기
      */
+    @PatchMapping("/api/moum/update-process/{moumId}")
+    public ResponseEntity<ResultResponse> updateMoumProcess(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                                            @PathVariable int moumId, @RequestBody ProcessDto processDto)
+    {
+        String username = loginCheck(customUserDetails.getUsername());
+        LifecycleDto.Response responseDto = lifecycleService.updateProcessStatus(username, moumId,processDto);
+        ResultResponse response = ResultResponse.of(ResponseCode.UPDATE_MOUM_PROCESS_SUCCESS,responseDto);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+    }
+
 
 
 

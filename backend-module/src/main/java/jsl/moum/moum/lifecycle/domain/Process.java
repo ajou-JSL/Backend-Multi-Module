@@ -3,11 +3,14 @@ package jsl.moum.moum.lifecycle.domain;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.PrePersist;
+import jsl.moum.moum.lifecycle.dto.ProcessDto;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Embeddable
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -63,6 +66,15 @@ public class Process {
 
     public void changeFinishStatus(Boolean status) {
         this.finishStatus = status;
+    }
+
+    public void updateProcessStatus(ProcessDto processDto){
+        this.recruitStatus = processDto.getRecruitStatus() != null ? processDto.getRecruitStatus() : false;
+        this.chatroomStatus = processDto.getChatroomStatus() != null ? processDto.getChatroomStatus() : false;
+        this.practiceroomStatus = processDto.getPracticeroomStatus() != null ? processDto.getPracticeroomStatus() : false;
+        this.performLocationStatus = processDto.getPerformLocationStatus() != null ? processDto.getPerformLocationStatus() : false;
+        this.promoteStatus = processDto.getPromoteStatus() != null ? processDto.getPromoteStatus() : false;
+        this.paymentStatus = processDto.getPaymentStatus() != null ? processDto.getPaymentStatus() : false;
     }
 
 

@@ -8,6 +8,7 @@ import jsl.moum.global.error.exception.CustomException;
 import jsl.moum.moum.lifecycle.domain.*;
 import jsl.moum.moum.lifecycle.domain.Process;
 import jsl.moum.moum.lifecycle.dto.LifecycleDto;
+import jsl.moum.moum.lifecycle.dto.ProcessDto;
 import jsl.moum.moum.team.domain.*;
 import jsl.moum.moum.team.dto.TeamDto;
 import jsl.moum.objectstorage.StorageService;
@@ -159,7 +160,7 @@ public class LifecycleService {
         if(existingFileUrls == null){
             existingFileUrls = new ArrayList<>();
         }
-        if (existingFileUrls != null && !existingFileUrls.isEmpty()) {
+        if (!existingFileUrls.isEmpty()) {
             for (String existingFileUrl : existingFileUrls) {
                 String existingFileName = existingFileUrl.replace("https://kr.object.ncloudstorage.com/" + bucket + "/", "");
                 storageService.deleteFile(existingFileName);
@@ -238,9 +239,11 @@ public class LifecycleService {
         }
         LifecycleEntity moum = findMoum(moumId);
 
+        /*
+            todo : 팀이랑 개인 이력에 추가되는 로직 필요
+         */
         moum.getProcess().changeFinishStatus(true);
-        int percentage = moum.getProcess().updateAndGetProcessPercentage();
-        System.out.println("============" + percentage);
+        moum.getProcess().updateAndGetProcessPercentage();
 
         return new LifecycleDto.Response(moum);
     }
@@ -250,7 +253,18 @@ public class LifecycleService {
      */
     @Transactional
     public LifecycleDto.Response reopenMoum(String username, int moumId){
-        return null;
+        if(!isTeamLeader(username)){
+            throw new CustomException(ErrorCode.NO_AUTHORITY);
+        }
+        LifecycleEntity moum = findMoum(moumId);
+
+        moum.getProcess().changeFinishStatus(false);
+        moum.getProcess().updateAndGetProcessPercentage();
+
+        /*
+            todo : 팀이랑 개인 이력에 추가되는 로직 필요
+         */
+        return new LifecycleDto.Response(moum);
     }
 
     public MemberEntity findLoginUser(String username){
@@ -265,7 +279,16 @@ public class LifecycleService {
     /**
      * 모음 진척도 수정하기
      */
-    public void updateProcessStatus(){
+    public LifecycleDto.Response updateProcessStatus(String username, int moumId, ProcessDto processDto){
+        if(!isTeamLeader(username)){
+            throw new CustomException(ErrorCode.NO_AUTHORITY);
+        }
+        LifecycleEntity moum = findMoum(moumId);
+
+        moum.getProcess().updateProcessStatus(processDto);
+        moum.getProcess().updateAndGetProcessPercentage();
+
+        return new LifecycleDto.Response(moum);
 
     }
 

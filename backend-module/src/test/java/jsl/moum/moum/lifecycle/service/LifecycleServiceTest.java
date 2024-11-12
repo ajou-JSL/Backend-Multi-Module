@@ -5,7 +5,9 @@ import jsl.moum.auth.domain.repository.MemberRepository;
 import jsl.moum.global.error.ErrorCode;
 import jsl.moum.global.error.exception.CustomException;
 import jsl.moum.moum.lifecycle.domain.*;
+import jsl.moum.moum.lifecycle.domain.Process;
 import jsl.moum.moum.lifecycle.dto.LifecycleDto;
+import jsl.moum.moum.lifecycle.dto.ProcessDto;
 import jsl.moum.moum.team.domain.TeamEntity;
 import jsl.moum.moum.team.domain.TeamMemberRepositoryCustom;
 import jsl.moum.moum.team.domain.TeamRepository;
@@ -64,6 +66,8 @@ class LifecycleServiceTest {
     private TeamEntity mockTeam;
     private LifecycleDto.Request mockLifecycleUpdateRequestDto;
     private MultipartFile mockFile;
+    private Process mockProcess;
+    private ProcessDto mockProcessDto;
 
 
     @BeforeEach
@@ -93,6 +97,7 @@ class LifecycleServiceTest {
                 .lifecycleName("test lifecycle")
                 .team(mockTeam)
                 .records(new ArrayList<>())
+                .process(mockProcess)
                 .build();
 
         mockLifecycleUpdateRequestDto = LifecycleDto.Request.builder()
@@ -106,6 +111,11 @@ class LifecycleServiceTest {
                 .build();
 
         mockFile = mock(MultipartFile.class);
+        mockProcess = new Process(false,false,false,false,false,false,false,0);
+        mockProcessDto = ProcessDto.builder()
+                .chatroomStatus(true)
+                .recruitStatus(true)
+                .build();
     }
 
 
@@ -339,6 +349,20 @@ class LifecycleServiceTest {
                 .hasMessage(ErrorCode.TEAM_NOT_FOUND.getMessage());
     }
 
+    @Test
+    @DisplayName("모음을 찾을 수 없음 메소드")
+    void moum_not_found_exception() throws IOException {
+        // given
+        int nonExistentMoumId = 999;
+
+        // when & then
+        when(lifecycleRepository.findById(nonExistentMoumId)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> lifecycleService.findMoum(nonExistentMoumId))
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.ILLEGAL_ARGUMENT.getMessage());
+    }
+
 
     /**
      * 모음 정보 수정
@@ -531,23 +555,187 @@ class LifecycleServiceTest {
      */
     @Test
     @DisplayName("모음 마감하기 성공")
-    @Disabled("보류")
     void finish_moum_success(){
+        // given
+        String username = mockLeader.getUsername();
+        int moumId = mockLifecycle.getId();
+
+        when(memberRepository.findByUsername(anyString())).thenReturn(mockLeader);
+        when(lifecycleRepository.findById(anyInt())).thenReturn(Optional.of(mockLifecycle));
+        when(teamRepository.findById(anyInt())).thenReturn(Optional.of(mockTeam));
+        when(lifecycleService.findMoum((moumId))).thenReturn(mockLifecycle);
+        when(lifecycleService.isTeamLeader(username)).thenReturn(true);
+
+        mockLifecycle.assignProcess(mockProcess);
+        mockLifecycle.getProcess().updateAndGetProcessPercentage();
+
+        // when
+        LifecycleDto.Response response = lifecycleService.finishMoum(username, moumId);
+
+        // then
+        assertThat(response.getProcess().getFinishStatus()).isEqualTo(true);
+        assertThat(response.getProcess().getProcessPercentage()).isEqualTo(14);
 
     }
+
+    @Test
+    @DisplayName("모음 마감하기 실패 - 없는 모음")
+    void finish_moum_fail_moumNotFound() {
+        // given
+        when(memberRepository.findByUsername(anyString())).thenReturn(mockLeader);
+        when(teamRepository.findById(anyInt())).thenReturn(Optional.of(mockTeam));
+        when(lifecycleRepository.findById(anyInt())).thenReturn(Optional.empty());
+
+        // when
+        when(lifecycleService.isTeamLeader(anyString())).thenReturn(true);
+
+        // then
+        assertThatThrownBy(() -> lifecycleService.finishMoum(mockLeader.getUsername(), mockLifecycle.getId()))
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.ILLEGAL_ARGUMENT.getMessage());
+
+    }
+
+
+    @Test
+    @DisplayName("모음 마감하기 실패 - 리더가 아님")
+    void finish_moum_fail_notLeader() {
+        // given
+        when(memberRepository.findByUsername(anyString())).thenReturn(mockLeader);
+        when(teamRepository.findById(anyInt())).thenReturn(Optional.of(mockTeam));
+        when(lifecycleRepository.findById(anyInt())).thenReturn(Optional.of(mockLifecycle));
+
+        // when
+        when(lifecycleService.isTeamLeader(anyString())).thenReturn(false);
+
+        // then
+        assertThatThrownBy(() -> lifecycleService.finishMoum(mockLeader.getUsername(), mockLifecycle.getId()))
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.NO_AUTHORITY.getMessage());
+    }
+
 
     /**
      * 모음 되살리기
      */
     @Test
     @DisplayName("모음 되살리기 성공")
-    @Disabled("보류")
     void reopen_moum_success(){
+        // given
+        String username = mockLeader.getUsername();
+        int moumId = mockLifecycle.getId();
+
+        when(memberRepository.findByUsername(anyString())).thenReturn(mockLeader);
+        when(lifecycleRepository.findById(anyInt())).thenReturn(Optional.of(mockLifecycle));
+        when(teamRepository.findById(anyInt())).thenReturn(Optional.of(mockTeam));
+        when(lifecycleService.findMoum((moumId))).thenReturn(mockLifecycle);
+        when(lifecycleService.isTeamLeader(username)).thenReturn(true);
+
+        mockLifecycle.assignProcess(mockProcess);
+        mockLifecycle.getProcess().updateAndGetProcessPercentage();
+
+        // when
+        LifecycleDto.Response response = lifecycleService.reopenMoum(username, moumId);
+
+        // then
+        assertThat(response.getProcess().getFinishStatus()).isEqualTo(false);
+        assertThat(response.getProcess().getProcessPercentage()).isEqualTo(0);
+    }
+
+
+    @Test
+    @DisplayName("모음 되살리기 실패 - 없는 모음")
+    void reopen_moum_fail_moumNotFound() {
+        // given & when
+        when(memberRepository.findByUsername(anyString())).thenReturn(mockLeader);
+        when(teamRepository.findById(anyInt())).thenReturn(Optional.of(mockTeam));
+        when(lifecycleRepository.findById(anyInt())).thenReturn(Optional.empty());
+        when(lifecycleService.isTeamLeader(anyString())).thenReturn(true);
+
+        // then
+        assertThatThrownBy(() -> lifecycleService.reopenMoum(mockLeader.getUsername(), mockLifecycle.getId()))
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.ILLEGAL_ARGUMENT.getMessage());
 
     }
 
+
+    @Test
+    @DisplayName("모음 되살리기 실패 - 리더가 아님")
+    void reopen_moum_fail_notLeader() {
+        // given
+        when(memberRepository.findByUsername(anyString())).thenReturn(mockLeader);
+        when(teamRepository.findById(anyInt())).thenReturn(Optional.of(mockTeam));
+        when(lifecycleRepository.findById(anyInt())).thenReturn(Optional.of(mockLifecycle));
+
+        // when
+        when(lifecycleService.isTeamLeader(anyString())).thenReturn(false);
+
+        // then
+        assertThatThrownBy(() -> lifecycleService.reopenMoum(mockLeader.getUsername(), mockLifecycle.getId()))
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.NO_AUTHORITY.getMessage());
+    }
+
+
+
     /**
-     * todo : 선택하면 진행률 관련한거 업데이트되는 로직 필요함
+     * 모음 진척도 수정하기
      */
+    @Test
+    @DisplayName("진척도 수정하기 성공")
+    public void update_process_status_success(){
+        // given & when
+        when(memberRepository.findByUsername(anyString())).thenReturn(mockLeader);
+        when(teamRepository.findById(anyInt())).thenReturn(Optional.of(mockTeam));
+        when(lifecycleRepository.findById(anyInt())).thenReturn(Optional.of(mockLifecycle));
+        when(lifecycleService.isTeamLeader(anyString())).thenReturn(true);
+
+        mockLifecycle.assignProcess(mockProcess);
+        mockLifecycle.getProcess().updateAndGetProcessPercentage();
+        LifecycleDto.Response response = lifecycleService.updateProcessStatus(mockLeader.getUsername(), mockLifecycle.getId(), mockProcessDto);
+
+        // then
+        assertThat(response.getProcess().getChatroomStatus()).isEqualTo(true);
+        assertThat(response.getProcess().getRecruitStatus()).isEqualTo(true);
+        assertThat(response.getProcess().getPaymentStatus()).isEqualTo(false);
+        assertThat(response.getProcess().getProcessPercentage()).isEqualTo(28);
+
+    }
+
+    @Test
+    @DisplayName("진척도 수정하기 실패 - 리더가 아님")
+    void update_process_status_fail_notLeader() {
+        // given
+        when(memberRepository.findByUsername(anyString())).thenReturn(mockLeader);
+        when(teamRepository.findById(anyInt())).thenReturn(Optional.of(mockTeam));
+        when(lifecycleRepository.findById(anyInt())).thenReturn(Optional.of(mockLifecycle));
+
+        // when
+        when(lifecycleService.isTeamLeader(anyString())).thenReturn(false);
+
+        // then
+        assertThatThrownBy(() -> lifecycleService.updateProcessStatus(mockLeader.getUsername(), mockLifecycle.getId(), mockProcessDto))
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.NO_AUTHORITY.getMessage());
+    }
+
+    @Test
+    @DisplayName("진척도 수정하기 실패 - 없는 모음")
+    void update_process_status_fail_moumNotFound() {
+        // given
+        when(memberRepository.findByUsername(anyString())).thenReturn(mockLeader);
+        when(teamRepository.findById(anyInt())).thenReturn(Optional.of(mockTeam));
+        when(lifecycleService.isTeamLeader(anyString())).thenReturn(true);
+
+        // when
+        when(lifecycleRepository.findById(anyInt())).thenReturn(Optional.empty());
+
+        // then
+        assertThatThrownBy(() -> lifecycleService.updateProcessStatus(mockLeader.getUsername(), mockLifecycle.getId(), mockProcessDto))
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.ILLEGAL_ARGUMENT.getMessage());
+    }
+
 
 }

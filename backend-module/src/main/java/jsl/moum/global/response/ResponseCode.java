@@ -69,8 +69,9 @@ public enum ResponseCode {
     GET_MOUM_SUCCESS(200,"S-MM002", "모음 조회 성공"),
     UPDATE_MOUM_SUCCESS(201,"S-MM003", "모음 수정 성공"),
     DELETE_MOUM_SUCCESS(200,"S-MM004", "모음 삭제 성공"),
-    FINISH_MOUM_SUCCESS(200,"S-MM005", "모음 마감하기 성공"),
-    REOPEN_MOUM_SUCCESS(200,"S-MM006", "모음 되살리기 성공");
+    FINISH_MOUM_SUCCESS(201,"S-MM005", "모음 마감하기 성공"),
+    REOPEN_MOUM_SUCCESS(201,"S-MM006", "모음 되살리기 성공"),
+    UPDATE_MOUM_PROCESS_SUCCESS(201,"S-MM007", "모음 진행률 상태 수정 성공");
 
 
     private final int status;
