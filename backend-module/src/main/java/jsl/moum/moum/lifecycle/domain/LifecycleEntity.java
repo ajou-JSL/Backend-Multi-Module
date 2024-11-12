@@ -82,6 +82,9 @@ public class LifecycleEntity {
     }
 
     public void updateProfileImages(List<String> newUrls) {
+        if(this.imageUrls == null){
+            this.imageUrls = new ArrayList<>();
+        }
         this.imageUrls.clear();
         this.imageUrls.addAll(newUrls);
     }

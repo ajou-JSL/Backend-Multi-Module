@@ -156,6 +156,9 @@ public class LifecycleService {
 
         // 기존 파일 삭제 및 새로운 파일 업로드
         List<String> existingFileUrls = lifecycle.getImageUrls();
+        if(existingFileUrls == null){
+            existingFileUrls = new ArrayList<>();
+        }
         if (existingFileUrls != null && !existingFileUrls.isEmpty()) {
             for (String existingFileUrl : existingFileUrls) {
                 String existingFileName = existingFileUrl.replace("https://kr.object.ncloudstorage.com/" + bucket + "/", "");
@@ -173,7 +176,6 @@ public class LifecycleService {
             }
         }
         lifecycle.updateProfileImages(newFileUrls);
-
 
         if (requestDto.getRecords() != null) {
             List<RecordEntity> updatedRecords = requestDto.getRecords().stream()
@@ -210,6 +212,9 @@ public class LifecycleService {
         findTeam(targetMoum.getTeam().getId());
 
         List<String> fileUrls = targetMoum.getImageUrls();
+        if(fileUrls == null){
+            fileUrls = new ArrayList<>();
+        }
         for (String fileUrl : fileUrls) {
             if (fileUrl != null && !fileUrl.isEmpty()) {
                 String fileName = fileUrl.replace("https://kr.object.ncloudstorage.com/" + bucket + "/", "");

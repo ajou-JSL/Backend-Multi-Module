@@ -101,7 +101,7 @@ class LifecycleServiceTest {
                 .records(new ArrayList<>())
                 .moumName("update moum name")
                 .teamId(mockTeam.getId())
-                .imageUrl("imageUrl")
+                .imageUrls(List.of("imageUrl","imageUrl2"))
                 .members(new ArrayList<>())
                 .build();
 
@@ -210,21 +210,23 @@ class LifecycleServiceTest {
         when(memberRepository.findByUsername(mockLeader.getUsername())).thenReturn(mockLeader);
         when(storageService.uploadFile(anyString(), any(MultipartFile.class))).thenReturn(imageUrl);
 
+        List<MultipartFile> files = new ArrayList<>();
         MultipartFile file = mock(MultipartFile.class);
         when(file.getOriginalFilename()).thenReturn(imageUrl);
         when(file.isEmpty()).thenReturn(false);
+        files.add(file);
 
         LifecycleDto.Request moumRequestDto = LifecycleDto.Request.builder()
                 .moumName("test moum")
                 .records(new ArrayList<>())
                 .build();
         // when
-        LifecycleDto.Response response = lifecycleService.addMoum(mockLeader.getUsername(), moumRequestDto, file);
+        LifecycleDto.Response response = lifecycleService.addMoum(mockLeader.getUsername(), moumRequestDto, files);
         mockLifecycle.assignTeam(mockTeam);
 
         // then
         assertThat(response.getMoumName()).isEqualTo(moumRequestDto.getMoumName());
-        assertThat(response.getImageUrl()).isEqualTo(imageUrl);
+        assertThat(response.getImageUrls().get(0)).isEqualTo(imageUrl);
     }
 
     @Test
@@ -241,16 +243,18 @@ class LifecycleServiceTest {
 
 
         when(storageService.uploadFile(anyString(), any(MultipartFile.class))).thenReturn(imageUrl);
+        List<MultipartFile> files = new ArrayList<>();
         MultipartFile file = mock(MultipartFile.class);
         when(file.getOriginalFilename()).thenReturn(imageUrl);
         when(file.isEmpty()).thenReturn(false);
+        files.add(file);
 
         LifecycleDto.Request moumRequestDto = LifecycleDto.Request.builder()
                 .moumName("test moum")
                 .build();
 
         // then
-        assertThatThrownBy(() -> lifecycleService.addMoum(mockLeader.getUsername(), moumRequestDto, file))
+        assertThatThrownBy(() -> lifecycleService.addMoum(mockLeader.getUsername(), moumRequestDto, files))
                 .isInstanceOf(CustomException.class)
                 .hasMessage(ErrorCode.NO_AUTHORITY.getMessage());
 
@@ -271,16 +275,18 @@ class LifecycleServiceTest {
         when(memberRepository.findByUsername(mockLeader.getUsername())).thenReturn(mockLeader);
         when(storageService.uploadFile(anyString(), any(MultipartFile.class))).thenReturn(imageUrl);
 
+        List<MultipartFile> files = new ArrayList<>();
         MultipartFile file = mock(MultipartFile.class);
         when(file.getOriginalFilename()).thenReturn(imageUrl);
         when(file.isEmpty()).thenReturn(false);
+        files.add(file);
 
         LifecycleDto.Request moumRequestDto = LifecycleDto.Request.builder()
                 .moumName("test moum")
                 .build();
 
         // then
-        assertThatThrownBy(() -> lifecycleService.addMoum(mockLeader.getUsername(), moumRequestDto, file))
+        assertThatThrownBy(() -> lifecycleService.addMoum(mockLeader.getUsername(), moumRequestDto, files))
                 .isInstanceOf(CustomException.class)
                 .hasMessage(ErrorCode.NEED_TEAM.getMessage());
     }
@@ -301,16 +307,18 @@ class LifecycleServiceTest {
         when(memberRepository.findByUsername(mockLeader.getUsername())).thenReturn(mockLeader);
         when(storageService.uploadFile(anyString(), any(MultipartFile.class))).thenReturn(imageUrl);
 
+        List<MultipartFile> files = new ArrayList<>();
         MultipartFile file = mock(MultipartFile.class);
         when(file.getOriginalFilename()).thenReturn(imageUrl);
         when(file.isEmpty()).thenReturn(false);
+        files.add(file);
 
         LifecycleDto.Request moumRequestDto = LifecycleDto.Request.builder()
                 .moumName("test moum")
                 .build();
 
         // when & then
-        assertThatThrownBy(() -> lifecycleService.addMoum(mockLeader.getUsername(), moumRequestDto, file))
+        assertThatThrownBy(() -> lifecycleService.addMoum(mockLeader.getUsername(), moumRequestDto, files))
                 .isInstanceOf(CustomException.class)
                 .hasMessage(ErrorCode.TEAM_NOT_FOUND.getMessage());
     }
@@ -346,26 +354,37 @@ class LifecycleServiceTest {
                 .records(new ArrayList<>())
                 .moumName("update moum name")
                 .teamId(mockTeam.getId())
-                .imageUrl(imageUrl)
+                .imageUrls(List.of("imageUrl","imageUrl2"))
                 .members(new ArrayList<>())
                 .build();
 
+        // Mocking dependencies
         doReturn(mockTeam).when(lifecycleService).findTeam(anyInt());
         doReturn(mockLifecycle).when(lifecycleService).findMoum(anyInt());
         when(lifecycleService.isTeamLeader(anyString())).thenReturn(true);
         when(memberRepository.findByUsername(mockLeader.getUsername())).thenReturn(mockLeader);
         when(storageService.uploadFile(anyString(), any(MultipartFile.class))).thenReturn(imageUrl);
 
-        MultipartFile file = mock(MultipartFile.class);
-        when(file.getOriginalFilename()).thenReturn(imageUrl);
-        when(file.isEmpty()).thenReturn(false);
+        // Prepare files to upload
+        List<MultipartFile> files = new ArrayList<>();
+
+        MultipartFile file1 = mock(MultipartFile.class);
+        when(file1.getOriginalFilename()).thenReturn("imageUrl");
+        when(file1.isEmpty()).thenReturn(false);
+        files.add(file1);
+
+        MultipartFile file2 = mock(MultipartFile.class);
+        when(file2.getOriginalFilename()).thenReturn("imageUrl2");
+        when(file2.isEmpty()).thenReturn(false);
+        files.add(file2);
 
         // when
-        LifecycleDto.Response response = lifecycleService.updateMoum(mockLeader.getUsername(), updateRequestDto, file,mockLifecycle.getId());
+        LifecycleDto.Response response = lifecycleService.updateMoum(mockLeader.getUsername(), updateRequestDto, files, mockLifecycle.getId());
         mockLifecycle.assignTeam(mockTeam);
 
         // then
         assertThat(response.getMoumName()).isEqualTo(updateRequestDto.getMoumName());
+        assertThat(response.getImageUrls()).containsExactly("mockUrl", "mockUrl");  // assuming both files result in the same mock URL
     }
 
     @Test
@@ -375,8 +394,14 @@ class LifecycleServiceTest {
         when(memberRepository.findByUsername(anyString())).thenReturn(mockLeader);
         when(teamRepository.findById(anyInt())).thenReturn(Optional.empty());
 
+        List<MultipartFile> files = new ArrayList<>();
+        MultipartFile file = mock(MultipartFile.class);
+        when(file.getOriginalFilename()).thenReturn("imageUrl");
+        when(file.isEmpty()).thenReturn(false);
+        files.add(file);
+
         // then
-        assertThatThrownBy(() -> lifecycleService.updateMoum(mockLeader.getUsername(), mockLifecycleUpdateRequestDto, mockFile, mockLifecycle.getId()))
+        assertThatThrownBy(() -> lifecycleService.updateMoum(mockLeader.getUsername(), mockLifecycleUpdateRequestDto, files, mockLifecycle.getId()))
                 .isInstanceOf(CustomException.class)
                 .hasMessage(ErrorCode.TEAM_NOT_FOUND.getMessage());
     }
@@ -389,8 +414,14 @@ class LifecycleServiceTest {
         when(teamRepository.findById(anyInt())).thenReturn(Optional.of(mockTeam));
         when(lifecycleRepository.findById(anyInt())).thenReturn(Optional.empty());
 
+        List<MultipartFile> files = new ArrayList<>();
+        MultipartFile file = mock(MultipartFile.class);
+        when(file.getOriginalFilename()).thenReturn("imageUrl");
+        when(file.isEmpty()).thenReturn(false);
+        files.add(file);
+
         // then
-        assertThatThrownBy(() -> lifecycleService.updateMoum(mockLeader.getUsername(), mockLifecycleUpdateRequestDto, mockFile, mockLifecycle.getId()))
+        assertThatThrownBy(() -> lifecycleService.updateMoum(mockLeader.getUsername(), mockLifecycleUpdateRequestDto, files, mockLifecycle.getId()))
                 .isInstanceOf(CustomException.class)
                 .hasMessage(ErrorCode.ILLEGAL_ARGUMENT.getMessage());
     }
@@ -404,8 +435,14 @@ class LifecycleServiceTest {
         when(lifecycleRepository.findById(anyInt())).thenReturn(Optional.of(mockLifecycle));
         when(lifecycleService.isTeamLeader(anyString())).thenReturn(false);
 
+        List<MultipartFile> files = new ArrayList<>();
+        MultipartFile file = mock(MultipartFile.class);
+        when(file.getOriginalFilename()).thenReturn("imageUrl");
+        when(file.isEmpty()).thenReturn(false);
+        files.add(file);
+
         // then
-        assertThatThrownBy(() -> lifecycleService.updateMoum(mockLeader.getUsername(), mockLifecycleUpdateRequestDto, mockFile, mockLifecycle.getId()))
+        assertThatThrownBy(() -> lifecycleService.updateMoum(mockLeader.getUsername(), mockLifecycleUpdateRequestDto, files, mockLifecycle.getId()))
                 .isInstanceOf(CustomException.class)
                 .hasMessage(ErrorCode.NO_AUTHORITY.getMessage());
     }
@@ -418,13 +455,22 @@ class LifecycleServiceTest {
         when(teamRepository.findById(anyInt())).thenReturn(Optional.of(mockTeam));
         when(lifecycleRepository.findById(anyInt())).thenReturn(Optional.of(mockLifecycle));
         when(lifecycleService.isTeamLeader(anyString())).thenReturn(true);
-        doThrow(new IOException("File upload failed")).when(storageService).uploadFile(anyString(), any());
+
+        List<MultipartFile> files = new ArrayList<>();
+        MultipartFile file = mock(MultipartFile.class);
+        when(file.getOriginalFilename()).thenReturn("imageUrl");
+        when(file.isEmpty()).thenReturn(false);
+        files.add(file);
+
+        doThrow(new IOException("File upload failed")).when(storageService).uploadFile(anyString(), any(MultipartFile.class));
 
         // then
-        assertThatThrownBy(() -> lifecycleService.updateMoum(mockLeader.getUsername(), mockLifecycleUpdateRequestDto, mockFile, mockLifecycle.getId()))
+        assertThatThrownBy(() -> lifecycleService.updateMoum(mockLeader.getUsername(), mockLifecycleUpdateRequestDto, files, mockLifecycle.getId()))
                 .isInstanceOf(IOException.class)
                 .hasMessage(ErrorCode.FILE_UPLOAD_FAIL.getMessage());
     }
+
+
     /**
      * 모음 삭제
      */
