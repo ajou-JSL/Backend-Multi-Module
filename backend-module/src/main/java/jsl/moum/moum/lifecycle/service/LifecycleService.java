@@ -16,6 +16,7 @@ import jsl.moum.record.domain.dto.RecordDto;
 import jsl.moum.record.domain.entity.RecordEntity;
 import jsl.moum.record.domain.repository.RecordRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class LifecycleService {
 
     private final LifecycleRepository lifecycleRepository;
@@ -104,7 +106,7 @@ public class LifecycleService {
 
         // "moums/{moumName}/{UUID}_{originalFileName}"
         List<String> fileUrls = new ArrayList<>();
-        if (files != null && !files.isEmpty()) {
+        if (files != null || !files.isEmpty()) {
             for (MultipartFile file : files) {
                 String originalFilename = file.getOriginalFilename();
                 String key = "moums/" + requestDto.getMoumName() + "/" + originalFilename;
@@ -155,27 +157,32 @@ public class LifecycleService {
             throw new CustomException(ErrorCode.NO_AUTHORITY);
         }
 
-        // 기존 파일 삭제 및 새로운 파일 업로드
+         //기존 파일 삭제
         List<String> existingFileUrls = lifecycle.getImageUrls();
         if(existingFileUrls == null){
             existingFileUrls = new ArrayList<>();
         }
-        if (!existingFileUrls.isEmpty()) {
+        if (existingFileUrls != null || !existingFileUrls.isEmpty()) { // 얘도....... 아오 리스트니까...
             for (String existingFileUrl : existingFileUrls) {
                 String existingFileName = existingFileUrl.replace("https://kr.object.ncloudstorage.com/" + bucket + "/", "");
                 storageService.deleteFile(existingFileName);
+                log.info("================= 기존 파일 삭제");
             }
         }
 
-        // 새로운 파일 업로드 처리
+        log.info("================= updateMoum() : 새로운 파일 업로드 로직 시작");
+//        // 새로운 파일 업로드 처리
         List<String> newFileUrls = new ArrayList<>();
-        if (files != null && !files.isEmpty()) {
+        if (files != null || !files.isEmpty()) { // 하 &&랑 || 때매 삽질을...
             for (MultipartFile file : files) {
-                String newFileName = "moums/" + lifecycle.getLifecycleName() + "/" + file.getOriginalFilename();
-                String newFileUrl = storageService.uploadFile(newFileName, file);
-                newFileUrls.add(newFileUrl);
+                String originalFilename = file.getOriginalFilename();
+                String key = "moums/" + requestDto.getMoumName() + "/" + originalFilename;
+                String fileUrl = storageService.uploadFile(key, file);
+                newFileUrls.add(fileUrl);
+                log.info("================= updateMoum() : 새로운 파일 업로드 로직 내부");
             }
         }
+
         lifecycle.updateProfileImages(newFileUrls);
 
         if (requestDto.getRecords() != null) {
@@ -212,17 +219,20 @@ public class LifecycleService {
         LifecycleEntity targetMoum = findMoum(moumId);
         findTeam(targetMoum.getTeam().getId());
 
-        List<String> fileUrls = targetMoum.getImageUrls();
-        if(fileUrls == null){
-            fileUrls = new ArrayList<>();
+        //기존 파일 삭제
+        List<String> existingFileUrls = targetMoum.getImageUrls();
+        if(existingFileUrls == null){
+            existingFileUrls = new ArrayList<>();
         }
-        for (String fileUrl : fileUrls) {
-            if (fileUrl != null && !fileUrl.isEmpty()) {
-                String fileName = fileUrl.replace("https://kr.object.ncloudstorage.com/" + bucket + "/", "");
-                fileName = URLDecoder.decode(fileName, StandardCharsets.UTF_8);
-                storageService.deleteFile(fileName);
+        if (existingFileUrls != null || !existingFileUrls.isEmpty()) { // 얘도....... 아오
+            for (String existingFileUrl : existingFileUrls) {
+                String existingFileName = existingFileUrl.replace("https://kr.object.ncloudstorage.com/" + bucket + "/", "");
+                storageService.deleteFile(existingFileName);
+                log.info("================= 기존 파일 삭제");
             }
         }
+
+
 
         lifecycleRepository.deleteById(moumId);
         return new LifecycleDto.Response(targetMoum);
