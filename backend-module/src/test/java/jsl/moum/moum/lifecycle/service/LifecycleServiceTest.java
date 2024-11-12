@@ -387,6 +387,7 @@ class LifecycleServiceTest {
         doReturn(mockLifecycle).when(lifecycleService).findMoum(anyInt());
         when(lifecycleService.isTeamLeader(anyString())).thenReturn(true);
         when(memberRepository.findByUsername(mockLeader.getUsername())).thenReturn(mockLeader);
+        when(storageService.uploadFile(anyString(), any(MultipartFile.class))).thenReturn(imageUrl);
 
         // Prepare files to upload
         List<MultipartFile> files = new ArrayList<>();
@@ -400,8 +401,6 @@ class LifecycleServiceTest {
         when(file2.getOriginalFilename()).thenReturn("imageUrl2");
         when(file2.isEmpty()).thenReturn(false);
         files.add(file2);
-
-        when(storageService.uploadFiles(files)).thenReturn("asd");
 
         // when
         LifecycleDto.Response response = lifecycleService.updateMoum(mockLeader.getUsername(), updateRequestDto, files, mockLifecycle.getId());
@@ -487,7 +486,7 @@ class LifecycleServiceTest {
         when(file.isEmpty()).thenReturn(false);
         files.add(file);
 
-        doThrow(new IOException("File upload failed")).when(storageService).uploadFiles(files);
+        doThrow(new IOException("File upload failed")).when(storageService).uploadFile(anyString(), any(MultipartFile.class));
 
         // then
         assertThatThrownBy(() -> lifecycleService.updateMoum(mockLeader.getUsername(), mockLifecycleUpdateRequestDto, files, mockLifecycle.getId()))
