@@ -71,6 +71,14 @@ public class LifecycleEntity {
         }
     }
 
+    public void assignProcess(Process process){
+        if(process != null){
+            this.process = process;
+        }else{
+            this.process = new Process();
+        }
+    }
+
     public void updateProfileImage(String newUrl){
         this.imageUrl = newUrl;
     }

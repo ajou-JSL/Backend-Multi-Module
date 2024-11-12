@@ -61,8 +61,8 @@ public class Process {
         this.paymentStatus = !this.paymentStatus;
     }
 
-    public void changeFinishStatus() {
-        this.finishStatus = !this.finishStatus;
+    public void changeFinishStatus(Boolean status) {
+        this.finishStatus = status;
     }
 
 

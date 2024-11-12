@@ -118,6 +118,7 @@ public class LifecycleService {
                 .build().toEntity();
 
         newMoum.assignTeam(team);
+        newMoum.assignProcess(requestDto.getProcess());
 
         List<RecordEntity> records = newMoum.getRecords();
         if (records != null && !records.isEmpty()) {
@@ -207,10 +208,8 @@ public class LifecycleService {
         return new LifecycleDto.Response(targetMoum);
     }
 
-
     /**
-     * 모음 마감하기, 되살리기
-     * 상태변경 true <-> false
+     * 모음 마감하기
      */
     @Transactional
     public LifecycleDto.Response finishMoum(String username, int moumId){
@@ -220,7 +219,7 @@ public class LifecycleService {
         }
         LifecycleEntity moum = findMoum(moumId);
 
-        moum.getProcess().changeFinishStatus();
+        moum.getProcess().changeFinishStatus(true);
         int percentage = moum.getProcess().updateAndGetProcessPercentage();
         System.out.println("============" + percentage);
 
@@ -242,6 +241,13 @@ public class LifecycleService {
     public TeamEntity findTeam(int teamId) {
         return teamRepository.findById(teamId)
                 .orElseThrow(() -> new CustomException(ErrorCode.TEAM_NOT_FOUND));
+    }
+
+    /**
+     * 모음 진척도 수정하기
+     */
+    public void updateProcessStatus(){
+
     }
 
     public boolean hasTeam(String username){

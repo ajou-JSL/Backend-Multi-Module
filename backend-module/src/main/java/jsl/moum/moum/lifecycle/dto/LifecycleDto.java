@@ -38,6 +38,7 @@ public class LifecycleDto {
 
         private List<Integer> members;
         private List<RecordDto.Request> records;
+        private Process process;
 
 
         public LifecycleEntity toEntity(){
@@ -51,6 +52,7 @@ public class LifecycleDto {
                     .imageUrl(imageUrl)
                     .leaderId(leaderId)
                     .records(records.stream().map(RecordDto.Request::toEntity).collect(Collectors.toList()))
+                    .process(process)
                     .build();
         }
     }
