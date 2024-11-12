@@ -10,6 +10,11 @@ spring:
     username: root
     password: zpzzgjdg@$^1
 
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
   jpa:
     open-in-view: true
     hibernate:
