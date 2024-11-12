@@ -52,8 +52,10 @@ public class LifecycleEntity {
     @Column(name = "price")
     private int price;
 
-    @Column(name = "image_url")
-    private String imageUrl;
+    @ElementCollection // 다중 값 저장
+    @CollectionTable(name = "lifecycle_images", joinColumns = @JoinColumn(name = "lifecycle_id"))
+    @Column(name = "image_url") // 각 이미지 URL을 저장하는 컬럼
+    private List<String> imageUrls = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "fk_team_id")
@@ -79,8 +81,9 @@ public class LifecycleEntity {
         }
     }
 
-    public void updateProfileImage(String newUrl){
-        this.imageUrl = newUrl;
+    public void updateProfileImages(List<String> newUrls) {
+        this.imageUrls.clear();
+        this.imageUrls.addAll(newUrls);
     }
 
     public void updateLifecycleInfo(LifecycleDto.Request updateRequest){

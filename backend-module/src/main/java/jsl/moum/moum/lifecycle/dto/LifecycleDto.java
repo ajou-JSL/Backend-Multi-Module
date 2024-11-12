@@ -28,7 +28,7 @@ public class LifecycleDto {
         private LocalDate startDate;
         private LocalDate endDate;
         private int price;
-        private String imageUrl;
+        private List<String> imageUrls = new ArrayList<>();
 
         @NotNull
         private int leaderId;
@@ -49,7 +49,7 @@ public class LifecycleDto {
                     .startDate(startDate)
                     .endDate(endDate)
                     .price(price)
-                    .imageUrl(imageUrl)
+                    .imageUrls(imageUrls)
                     .leaderId(leaderId)
                     .records(records.stream().map(RecordDto.Request::toEntity).collect(Collectors.toList()))
                     .process(process)
@@ -67,7 +67,7 @@ public class LifecycleDto {
         private LocalDate startDate;
         private LocalDate endDate;
         private int price;
-        private String imageUrl;
+        private List<String> imageUrls = new ArrayList<>();
         private int leaderId;
         private String leaderName;
         private int teamId;
@@ -83,7 +83,7 @@ public class LifecycleDto {
             this.startDate = lifecycle.getStartDate();
             this.endDate = lifecycle.getEndDate();
             this.price = lifecycle.getPrice();
-            this.imageUrl = lifecycle.getImageUrl();
+            this.imageUrls = lifecycle.getImageUrls();
             this.leaderId = lifecycle.getLeaderId();
             this.leaderName = lifecycle.getLeaderName();
             this.teamId = lifecycle.getTeam().getId();

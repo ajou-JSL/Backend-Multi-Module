@@ -69,9 +69,9 @@ public class LifecycleController {
     @PostMapping("/api/moum")
     public ResponseEntity<ResultResponse> addMoum(@AuthenticationPrincipal CustomUserDetails customUserDetails,
                                                        @Valid @RequestPart LifecycleDto.Request lifecycleRequestDto,
-                                                       @RequestPart(value = "file", required = false)MultipartFile file) throws IOException {
+                                                       @RequestPart(value = "file", required = false)List<MultipartFile> files) throws IOException {
         String username = loginCheck(customUserDetails.getUsername());
-        LifecycleDto.Response responseDto = lifecycleService.addMoum(username, lifecycleRequestDto, file);
+        LifecycleDto.Response responseDto = lifecycleService.addMoum(username, lifecycleRequestDto, files);
         ResultResponse response = ResultResponse.of(ResponseCode.CREATE_MOUM_SUCCESS,responseDto);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
@@ -82,10 +82,10 @@ public class LifecycleController {
     @PatchMapping("/api/moum/{moumId}")
     public ResponseEntity<ResultResponse> updateMoum(@AuthenticationPrincipal CustomUserDetails customUserDetails,
                                                   @Valid @RequestPart LifecycleDto.Request lifecycleRequestDto,
-                                                  @RequestPart(value = "file", required = false)MultipartFile file,
+                                                  @RequestPart(value = "file", required = false)List<MultipartFile> files,
                                                   @PathVariable int moumId) throws IOException {
         String username = loginCheck(customUserDetails.getUsername());
-        LifecycleDto.Response responseDto = lifecycleService.updateMoum(username, lifecycleRequestDto, file, moumId);
+        LifecycleDto.Response responseDto = lifecycleService.updateMoum(username, lifecycleRequestDto, files, moumId);
         ResultResponse response = ResultResponse.of(ResponseCode.UPDATE_MOUM_SUCCESS,responseDto);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }

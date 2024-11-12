@@ -88,7 +88,7 @@ public class LifecycleService {
      * 모음 생성
      */
     @Transactional
-    public LifecycleDto.Response addMoum(String username, LifecycleDto.Request requestDto, MultipartFile file) throws IOException {
+    public LifecycleDto.Response addMoum(String username, LifecycleDto.Request requestDto, List<MultipartFile> files) throws IOException {
 
         MemberEntity loginUser = findLoginUser(username);
         TeamEntity team = findTeam(requestDto.getTeamId());
@@ -101,16 +101,22 @@ public class LifecycleService {
             throw new CustomException(ErrorCode.NO_AUTHORITY);
         }
 
-        // "moums/{moumName}/{originalFileName}"
-        String originalFilename = file.getOriginalFilename();
-        String key = "moums/" + requestDto.getMoumName() + "/" + originalFilename;
-        String fileUrl = storageService.uploadFile(key, file);
+        // "moums/{moumName}/{UUID}_{originalFileName}"
+        List<String> fileUrls = new ArrayList<>();
+        if (files != null && !files.isEmpty()) {
+            for (MultipartFile file : files) {
+                String originalFilename = file.getOriginalFilename();
+                String key = "moums/" + requestDto.getMoumName() + "/" + originalFilename;
+                String fileUrl = storageService.uploadFile(key, file);
+                fileUrls.add(fileUrl);
+            }
+        }
 
         LifecycleEntity newMoum = LifecycleDto.Request.builder()
                 .moumName(requestDto.getMoumName())
                 .price(requestDto.getPrice())
                 .moumDescription(requestDto.getMoumDescription())
-                .imageUrl(fileUrl)
+                .imageUrls(fileUrls)
                 .performLocation(requestDto.getPerformLocation())
                 .startDate(requestDto.getStartDate())
                 .leaderId(loginUser.getId())
@@ -138,7 +144,7 @@ public class LifecycleService {
      * 모음 정보 수정
      */
     @Transactional
-    public LifecycleDto.Response updateMoum(String username, LifecycleDto.Request requestDto, MultipartFile file, int moumId) throws IOException {
+    public LifecycleDto.Response updateMoum(String username, LifecycleDto.Request requestDto, List<MultipartFile> files, int moumId) throws IOException {
 
         MemberEntity loginUser = memberRepository.findByUsername(username);
         TeamEntity team = findTeam(requestDto.getTeamId());
@@ -148,19 +154,25 @@ public class LifecycleService {
             throw new CustomException(ErrorCode.NO_AUTHORITY);
         }
 
-        String existingFileUrl = team.getFileUrl();
-
-        if (file != null && !file.isEmpty()) {
-            if (existingFileUrl != null && !existingFileUrl.isEmpty()) {
+        // 기존 파일 삭제 및 새로운 파일 업로드
+        List<String> existingFileUrls = lifecycle.getImageUrls();
+        if (existingFileUrls != null && !existingFileUrls.isEmpty()) {
+            for (String existingFileUrl : existingFileUrls) {
                 String existingFileName = existingFileUrl.replace("https://kr.object.ncloudstorage.com/" + bucket + "/", "");
                 storageService.deleteFile(existingFileName);
             }
-
-            // 새로운 파일 업로드
-            String newFileName = "moums/" + lifecycle.getLifecycleName() + "/" + file.getOriginalFilename();
-            String newFileUrl = storageService.uploadFile(newFileName, file);
-            lifecycle.updateProfileImage(newFileUrl);
         }
+
+        // 새로운 파일 업로드 처리
+        List<String> newFileUrls = new ArrayList<>();
+        if (files != null && !files.isEmpty()) {
+            for (MultipartFile file : files) {
+                String newFileName = "moums/" + lifecycle.getLifecycleName() + "/" + file.getOriginalFilename();
+                String newFileUrl = storageService.uploadFile(newFileName, file);
+                newFileUrls.add(newFileUrl);
+            }
+        }
+        lifecycle.updateProfileImages(newFileUrls);
 
 
         if (requestDto.getRecords() != null) {
@@ -188,20 +200,22 @@ public class LifecycleService {
      * 모음 삭제
      */
     @Transactional
-    public LifecycleDto.Response deleteMoum(String username, int moumId){
+    public LifecycleDto.Response deleteMoum(String username, int moumId) {
 
-        if(!isTeamLeader(username)){
+        if (!isTeamLeader(username)) {
             throw new CustomException(ErrorCode.NO_AUTHORITY);
         }
 
         LifecycleEntity targetMoum = findMoum(moumId);
         findTeam(targetMoum.getTeam().getId());
 
-        String fileUrl = targetMoum.getImageUrl();
-        if (fileUrl != null && !fileUrl.isEmpty()) {
-            String fileName = fileUrl.replace("https://kr.object.ncloudstorage.com/" + bucket + "/", "");
-            fileName = URLDecoder.decode(fileName, StandardCharsets.UTF_8);
-            storageService.deleteFile(fileName);
+        List<String> fileUrls = targetMoum.getImageUrls();
+        for (String fileUrl : fileUrls) {
+            if (fileUrl != null && !fileUrl.isEmpty()) {
+                String fileName = fileUrl.replace("https://kr.object.ncloudstorage.com/" + bucket + "/", "");
+                fileName = URLDecoder.decode(fileName, StandardCharsets.UTF_8);
+                storageService.deleteFile(fileName);
+            }
         }
 
         lifecycleRepository.deleteById(moumId);

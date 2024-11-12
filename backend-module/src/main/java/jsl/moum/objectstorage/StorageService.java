@@ -11,6 +11,9 @@ import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +39,21 @@ public class StorageService {
         );
         // NCP에서 파일 URL 반환
         return "https://kr.object.ncloudstorage.com/" + bucket + "/" + key;
+    }
+
+    /**
+     * S3에 여러 파일 업로드
+     */
+    public List<String> uploadFiles(List<MultipartFile> multipartFiles) throws IOException {
+        List<String> fileUrls = new ArrayList<>();
+
+        for (MultipartFile file : multipartFiles) {
+            String key = UUID.randomUUID() + "_" + file.getOriginalFilename();
+            String fileUrl = uploadFile(key, file);
+            fileUrls.add(fileUrl);
+        }
+
+        return fileUrls;
     }
 
     /**
