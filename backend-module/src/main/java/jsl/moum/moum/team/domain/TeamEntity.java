@@ -1,6 +1,7 @@
 package jsl.moum.moum.team.domain;
 
 import jakarta.persistence.*;
+import jsl.moum.moum.lifecycle.domain.LifecycleEntity;
 import jsl.moum.moum.team.dto.TeamDto;
 import jsl.moum.record.domain.entity.RecordEntity;
 import jsl.moum.chatroom.domain.Chatroom;
@@ -63,6 +64,21 @@ public class TeamEntity {
     @PrePersist
     public void createDate(){
         this.createdAt = LocalDateTime.now();
+    }
+
+    public void assignRecord(RecordEntity record){
+        if(record == null){
+            return;
+        }
+        this.records.add(record);
+    }
+
+    public void removeRecord(RecordEntity record){
+        if(record == null){
+            return;
+        }
+        this.records.remove(record);
+        record.setTeam(null);
     }
 
     public void removeMemberFromTeam(TeamMemberEntity teamMember) {

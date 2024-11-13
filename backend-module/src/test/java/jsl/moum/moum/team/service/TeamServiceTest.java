@@ -1,6 +1,10 @@
 package jsl.moum.moum.team.service;
 
 import jsl.moum.custom.WithAuthUser;
+import jsl.moum.moum.lifecycle.domain.LifecycleEntity;
+import jsl.moum.moum.lifecycle.domain.LifecycleRepository;
+import jsl.moum.moum.lifecycle.domain.LifecycleRepositoryCustom;
+import jsl.moum.moum.lifecycle.domain.Process;
 import jsl.moum.moum.team.domain.*;
 import jsl.moum.objectstorage.StorageService;
 import org.junit.jupiter.api.BeforeEach;
@@ -56,10 +60,17 @@ class TeamServiceTest {
     @Mock
     private TeamMemberRepositoryCustom teamMemberRepositoryCustom;
 
+    @Mock
+    private LifecycleRepositoryCustom lifecycleRepositoryCustom;
+
+    @Mock
+    private LifecycleRepository lifecycleRepository;
+
     private MemberEntity mockLeader;
     private MemberEntity mockMember;
     private TeamEntity mockTeam;
     private TeamMemberEntity mockTeamMember;
+    private LifecycleEntity mockLifecycle;
 
     @BeforeEach
     void setUp() {
@@ -92,6 +103,11 @@ class TeamServiceTest {
                 .id(1)
                 .team(mockTeam)
                 .member(mockMember)
+                .build();
+
+        mockLifecycle = LifecycleEntity.builder()
+                .id(1)
+                .lifecycleName("테스트 모음")
                 .build();
     }
 
@@ -282,7 +298,7 @@ class TeamServiceTest {
         // given
         when(memberRepository.findByUsername(mockLeader.getUsername())).thenReturn(mockLeader);
         when(teamRepository.findById(mockTeam.getId())).thenReturn(Optional.of(mockTeam));
-
+        when(lifecycleRepositoryCustom.findLifecyclesByTeamId(anyInt())).thenReturn(List.of(mockLifecycle));
 
         // when
         TeamDto.Response response = teamService.deleteTeamById(mockTeam.getId(), mockLeader.getUsername());
@@ -290,6 +306,7 @@ class TeamServiceTest {
         // then
         assertThat(response.getTeamName()).isEqualTo(mockTeam.getTeamName());
         verify(teamRepository).deleteById(mockTeam.getId());
+        verify(lifecycleRepository).deleteAll(List.of(mockLifecycle));
     }
 
     @Test

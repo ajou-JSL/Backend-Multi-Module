@@ -25,7 +25,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -104,7 +106,7 @@ public class LifecycleService {
             throw new CustomException(ErrorCode.NO_AUTHORITY);
         }
 
-        long existingLifecycleCount = lifecycleRepositoryCustom.countCreatedLifecycleByMemberId(loginUser.getId());
+        long existingLifecycleCount = lifecycleRepositoryCustom.countCreatedLifecycleByTeamId(team.getId());
         if (existingLifecycleCount >= 3) {
             throw new CustomException(ErrorCode.MAX_MOUM_LIMIT_EXCEEDED);
         }
@@ -200,11 +202,30 @@ public class LifecycleService {
         if(!isTeamLeader(username)){
             throw new CustomException(ErrorCode.NO_AUTHORITY);
         }
-        LifecycleEntity moum = findMoum(moumId);
 
-        /*
-            todo : 팀이랑 개인 이력에 추가되는 로직 필요
-         */
+        if(isFinished(moumId)){
+           throw new CustomException(ErrorCode.ALREADY_FINISHED_MOUM);
+        }
+
+        LifecycleEntity moum = findMoum(moumId);
+        TeamEntity team = findTeam(moum.getTeam().getId());
+
+        RecordEntity newRecord = RecordEntity.builder()
+                .recordName(moum.getLifecycleName())
+                .lifecycle(moum)
+                .team(team)
+                .startDate(moum.getStartDate())
+                .endDate(LocalDate.now())
+                .build();
+
+        team.assignRecord(newRecord);
+
+        List<MemberEntity> members = teamMemberRepositoryCustom.findAllMembersByTeamId(team.getId());
+        for (MemberEntity member : members) {
+            member.assignRecord(newRecord);
+        }
+
+
         moum.getProcess().changeFinishStatus(true);
         moum.getProcess().updateAndGetProcessPercentage();
 
@@ -216,10 +237,25 @@ public class LifecycleService {
      */
     @Transactional
     public LifecycleDto.Response reopenMoum(String username, int moumId){
+
         if(!isTeamLeader(username)){
             throw new CustomException(ErrorCode.NO_AUTHORITY);
         }
+
+        if(!isFinished(moumId)){
+            throw new CustomException(ErrorCode.NOT_FINISHED_MOUM);
+        }
+
         LifecycleEntity moum = findMoum(moumId);
+        TeamEntity team = findTeam(moum.getTeam().getId());
+        RecordEntity record = lifecycleRepositoryCustom.findLatestRecordByMoumId(moumId);
+
+        team.removeRecord(record);
+        List<MemberEntity> members = teamMemberRepositoryCustom.findAllMembersByTeamId(team.getId());
+        for (MemberEntity member : members) {
+            member.removeRecord(record);
+        }
+        recordRepository.deleteById(record.getId());
 
         moum.getProcess().changeFinishStatus(false);
         moum.getProcess().updateAndGetProcessPercentage();
@@ -313,6 +349,10 @@ public class LifecycleService {
 
     public boolean isTeamLeader(String username){
         return lifecycleRepositoryCustom.isTeamLeaderByUsername(username);
+    }
+
+    public boolean isFinished(int moumId){
+        return lifecycleRepositoryCustom.findFinishStatusByMoumId(moumId);
     }
 
 }

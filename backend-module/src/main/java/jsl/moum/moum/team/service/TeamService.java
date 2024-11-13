@@ -5,12 +5,16 @@ import jsl.moum.auth.domain.repository.MemberRepository;
 import jsl.moum.auth.dto.MemberDto;
 import jsl.moum.global.error.ErrorCode;
 import jsl.moum.global.error.exception.CustomException;
+import jsl.moum.moum.lifecycle.domain.LifecycleEntity;
+import jsl.moum.moum.lifecycle.domain.LifecycleRepository;
+import jsl.moum.moum.lifecycle.domain.LifecycleRepositoryCustom;
 import jsl.moum.moum.team.domain.*;
 import jsl.moum.objectstorage.StorageService;
 import jsl.moum.record.domain.dto.RecordDto;
 import jsl.moum.record.domain.entity.RecordEntity;
 import jsl.moum.record.domain.repository.RecordRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -27,6 +31,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class TeamService {
 
     private final MemberRepository memberRepository;
@@ -35,6 +40,8 @@ public class TeamService {
     private final TeamMemberRepositoryCustom teamMemberRepositoryCustom;
     private final StorageService storageService;
     private final RecordRepository recordRepository;
+    private final LifecycleRepository lifecycleRepository;
+    private final LifecycleRepositoryCustom lifecycleRepositoryCustom;
 
     @Value("${ncp.object-storage.bucket}")
     private String bucket;
@@ -73,8 +80,10 @@ public class TeamService {
         MemberEntity loginUser = memberRepository.findByUsername(username);
 
         long existingTeamCount = teamMemberRepositoryCustom.countCreatedTeamByMemberId(loginUser.getId());
+        log.info("============ 팀 개 : {}",existingTeamCount);
         if (existingTeamCount >= 3) {
             throw new CustomException(ErrorCode.MAX_TEAM_LIMIT_EXCEEDED);
+
         }
 
         // "teams/{teamName}/{originalFileName}"
@@ -222,6 +231,14 @@ public class TeamService {
             storageService.deleteFile(fileName);
         }
 
+        List<LifecycleEntity> moumList = lifecycleRepositoryCustom.findLifecyclesByTeamId(teamId);
+        if (moumList != null && !moumList.isEmpty()) {
+            lifecycleRepository.deleteAll(moumList);
+            for(LifecycleEntity moum : moumList){
+                moum.removeTeam(targetTeam);
+            }
+        }
+
         teamMemberRepositoryCustom.deleteTeamMemberTable(teamId);
         teamRepository.deleteById(teamId);
 
@@ -233,8 +250,6 @@ public class TeamService {
     /**
      * 팀에서 멤버 강퇴 메소드
      */
-    // todo : 버그해결. 테스트필요
-    // todo : 요청을 보내면, 리더가 아니면 에러가남 -> 리더인 멤버만 강퇴 가능해지는 버그. 타겟멤버랑 로그인멤버 구분 필요
     @Transactional
     public TeamDto.Response kickMemberById(int targetMemberId, int teamId, String username) {
 

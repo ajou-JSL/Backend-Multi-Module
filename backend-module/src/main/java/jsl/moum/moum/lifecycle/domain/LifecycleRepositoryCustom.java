@@ -3,6 +3,7 @@ package jsl.moum.moum.lifecycle.domain;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jsl.moum.moum.lifecycle.dto.LifecycleDto;
 import jsl.moum.moum.team.dto.TeamDto;
+import jsl.moum.record.domain.entity.RecordEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -12,6 +13,7 @@ import static jsl.moum.auth.domain.entity.QMemberEntity.memberEntity;
 import static jsl.moum.moum.lifecycle.domain.QLifecycleEntity.lifecycleEntity;
 import static jsl.moum.moum.team.domain.QTeamEntity.teamEntity;
 import static jsl.moum.moum.team.domain.QTeamMemberEntity.teamMemberEntity;
+import static jsl.moum.record.domain.entity.QRecordEntity.recordEntity;
 
 @Repository
 @RequiredArgsConstructor
@@ -82,12 +84,46 @@ public class LifecycleRepositoryCustom {
        생성한 라이프사이클 개수 찾기
        SELECT COUNT(*)
        FROM lifecycle
-       WHERE leader_id = ?;
+       WHERE lifecycle.team_id =: teamId;
      */
-    public long countCreatedLifecycleByMemberId(int leaderId){
+    public long countCreatedLifecycleByTeamId(int teamId){
         return jpaQueryFactory
                 .selectFrom(lifecycleEntity)
-                .where(lifecycleEntity.leaderId.eq(leaderId))
+                .where(lifecycleEntity.team.id.eq(teamId))
                 .fetch().size();
+    }
+
+    /**
+     모음의 이력 찾기
+     SELECT *
+     from record
+     join lifecycle on lifecycle.id = record.lifecycle_id
+     where lifecycle.id =: moumId
+     order by record.created_at desc
+     limit 1
+     */
+    public RecordEntity findLatestRecordByMoumId(int moumId) {
+        return jpaQueryFactory
+                .selectFrom(recordEntity)
+                .join(recordEntity.lifecycle, lifecycleEntity)
+                .on(recordEntity.lifecycle.id.eq(lifecycleEntity.id))
+                .where(lifecycleEntity.id.eq(moumId))
+                .orderBy(recordEntity.createdAt.desc())
+                .limit(1)
+                .fetchOne();
+    }
+
+    /**
+     모음의 finish 상태 찾기
+     SELECT lifecycle.process.finishStatus
+     from lifecycle
+     where lifecycle.id =: moumId
+     */
+    public boolean findFinishStatusByMoumId(int moumId) {
+        return Boolean.TRUE.equals(jpaQueryFactory
+                .select(lifecycleEntity.process.finishStatus)
+                .from(lifecycleEntity)
+                .where(lifecycleEntity.id.eq(moumId))
+                .fetchOne());
     }
 }

@@ -2,6 +2,8 @@ package jsl.moum.record.domain.dto;
 
 import jsl.moum.record.domain.entity.RecordEntity;
 import lombok.*;
+
+import java.time.LocalDate;
 import java.util.Date;
 
 
@@ -13,8 +15,8 @@ public class RecordDto {
     @Getter
     public static class Request{
         private String recordName;
-        private Date startDate;
-        private Date endDate;
+        private LocalDate startDate;
+        private LocalDate endDate;
 
 
         public RecordEntity toEntity(){
@@ -31,8 +33,8 @@ public class RecordDto {
     public static class Response{
         private final int recordId;
         private final String recordName;
-        private final Date startDate;
-        private final Date endDate;
+        private final LocalDate startDate;
+        private final LocalDate endDate;
 
 
         public Response(RecordEntity recordEntity){

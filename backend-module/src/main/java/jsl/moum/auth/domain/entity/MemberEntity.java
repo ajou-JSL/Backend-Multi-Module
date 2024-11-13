@@ -9,6 +9,7 @@ import jsl.moum.chatroom.domain.ChatroomMember;
 import lombok.*;
 import jsl.moum.moum.team.domain.TeamEntity;
 import jsl.moum.moum.team.domain.TeamMemberEntity;
+import org.springframework.security.core.parameters.P;
 
 
 import java.util.ArrayList;
@@ -76,6 +77,20 @@ public class MemberEntity {
         teams.removeIf(teamMemberEntity -> teamMemberEntity.getTeam().equals(team));
     }
 
+    public void assignRecord(RecordEntity record){
+        if(record == null){
+            return;
+        }
+        this.records.add(record);
+    }
+
+    public void removeRecord(RecordEntity record){
+        if(record == null){
+            return;
+        }
+        this.records.remove(record);
+        record.setMember(null);
+    }
 
     public void updateProfileImage(String newUrl){
         this.profileImageUrl = newUrl;

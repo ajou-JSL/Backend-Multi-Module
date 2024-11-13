@@ -7,6 +7,8 @@ import jsl.moum.moum.team.domain.TeamEntity;
 import jsl.moum.record.domain.dto.RecordDto;
 import lombok.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Builder
@@ -25,10 +27,10 @@ public class RecordEntity {
     private String recordName;
 
     @Column(name = "start_date")
-    private Date startDate;
+    private LocalDate startDate;
 
     @Column(name = "end_date")
-    private Date endDate;
+    private LocalDate endDate;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "fk_member_id")
@@ -41,6 +43,14 @@ public class RecordEntity {
     @ManyToOne
     @JoinColumn(name = "fk_lifecycle_id")
     private LifecycleEntity lifecycle;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    void createdAt(){
+        this.createdAt = LocalDateTime.now();
+    }
 
     public void updateRecord(RecordDto.Request request) {
         this.recordName = request.getRecordName();

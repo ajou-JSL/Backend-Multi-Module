@@ -13,6 +13,8 @@ import jsl.moum.moum.team.domain.TeamMemberRepositoryCustom;
 import jsl.moum.moum.team.domain.TeamRepository;
 import jsl.moum.moum.team.dto.TeamDto;
 import jsl.moum.objectstorage.StorageService;
+import jsl.moum.record.domain.entity.RecordEntity;
+import jsl.moum.record.domain.repository.RecordRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -25,6 +27,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -58,6 +61,9 @@ class LifecycleServiceTest {
     private LifecycleRepositoryCustom lifecycleRepositoryCustom;
 
     @Mock
+    private RecordRepository recordRepository;
+
+    @Mock
     private MemberRepository memberRepository;
 
     private LifecycleEntity mockLifecycle;
@@ -68,6 +74,7 @@ class LifecycleServiceTest {
     private MultipartFile mockFile;
     private Process mockProcess;
     private ProcessDto mockProcessDto;
+    private RecordEntity mockRecord;
 
 
     @BeforeEach
@@ -115,6 +122,15 @@ class LifecycleServiceTest {
         mockProcessDto = ProcessDto.builder()
                 .chatroomStatus(true)
                 .recruitStatus(true)
+                .build();
+
+        mockRecord = RecordEntity.builder()
+                .id(1)
+                .lifecycle(mockLifecycle)
+                .team(mockTeam)
+                .createdAt(LocalDateTime.now())
+                .recordName("test record")
+                .member(mockMember)
                 .build();
     }
 
@@ -247,7 +263,7 @@ class LifecycleServiceTest {
         when(teamRepository.findById(mockTeam.getId())).thenReturn(Optional.of(mockTeam));
         doReturn(true).when(lifecycleService).hasTeam(anyString());
         doReturn(true).when(lifecycleService).isTeamLeader(anyString());
-        when(lifecycleRepositoryCustom.countCreatedLifecycleByMemberId(mockLeader.getId())).thenReturn(3L);
+        when(lifecycleRepositoryCustom.countCreatedLifecycleByTeamId(mockLeader.getId())).thenReturn(3L);
 
         // when & then
         assertThatThrownBy(() -> lifecycleService.addMoum(mockLeader.getUsername(), mockLifecycleUpdateRequestDto, List.of(mockFile)))
@@ -631,6 +647,27 @@ class LifecycleServiceTest {
                 .hasMessage(ErrorCode.NO_AUTHORITY.getMessage());
     }
 
+    @Test
+    @DisplayName("모음 마감하기 실패 - 이미 마감 누른 모음")
+    void finish_moum_fail_alreadyFinished() {
+        // given
+        when(memberRepository.findByUsername(anyString())).thenReturn(mockLeader);
+        when(teamRepository.findById(anyInt())).thenReturn(Optional.of(mockTeam));
+        when(lifecycleRepository.findById(anyInt())).thenReturn(Optional.of(mockLifecycle));
+        when(lifecycleService.isTeamLeader(anyString())).thenReturn(true);
+        when(recordRepository.findById(anyInt())).thenReturn(Optional.of(mockRecord));
+        when(lifecycleRepositoryCustom.findLatestRecordByMoumId(anyInt())).thenReturn(mockRecord);
+        when(teamMemberRepositoryCustom.findAllMembersByTeamId(anyInt())).thenReturn(List.of(mockMember));
+
+        // when
+        when(lifecycleService.isFinished(anyInt())).thenReturn(true);
+
+        // then
+        assertThatThrownBy(() -> lifecycleService.finishMoum(mockLeader.getUsername(), mockLifecycle.getId()))
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.ALREADY_FINISHED_MOUM.getMessage());
+    }
+
 
     /**
      * 모음 되살리기
@@ -647,6 +684,9 @@ class LifecycleServiceTest {
         when(teamRepository.findById(anyInt())).thenReturn(Optional.of(mockTeam));
         when(lifecycleService.findMoum((moumId))).thenReturn(mockLifecycle);
         when(lifecycleService.isTeamLeader(username)).thenReturn(true);
+        when(recordRepository.findById(anyInt())).thenReturn(Optional.of(mockRecord));
+        when(lifecycleRepositoryCustom.findLatestRecordByMoumId(anyInt())).thenReturn(mockRecord);
+        when(lifecycleService.isFinished(anyInt())).thenReturn(true);
 
         mockLifecycle.assignProcess(mockProcess);
         mockLifecycle.getProcess().updateAndGetProcessPercentage();
@@ -657,6 +697,7 @@ class LifecycleServiceTest {
         // then
         assertThat(response.getProcess().getFinishStatus()).isEqualTo(false);
         assertThat(response.getProcess().getProcessPercentage()).isEqualTo(0);
+        verify(recordRepository).deleteById(anyInt());
     }
 
 
@@ -668,6 +709,7 @@ class LifecycleServiceTest {
         when(teamRepository.findById(anyInt())).thenReturn(Optional.of(mockTeam));
         when(lifecycleRepository.findById(anyInt())).thenReturn(Optional.empty());
         when(lifecycleService.isTeamLeader(anyString())).thenReturn(true);
+        when(lifecycleService.isFinished(anyInt())).thenReturn(true);
 
         // then
         assertThatThrownBy(() -> lifecycleService.reopenMoum(mockLeader.getUsername(), mockLifecycle.getId()))
@@ -694,6 +736,27 @@ class LifecycleServiceTest {
                 .hasMessage(ErrorCode.NO_AUTHORITY.getMessage());
     }
 
+    @Test
+    @DisplayName("모음 되살리기 실패 - 진행중인 모음")
+    void finish_moum_fail_notFinished() {
+        // given
+        when(memberRepository.findByUsername(anyString())).thenReturn(mockLeader);
+        when(teamRepository.findById(anyInt())).thenReturn(Optional.of(mockTeam));
+        when(lifecycleRepository.findById(anyInt())).thenReturn(Optional.of(mockLifecycle));
+        when(lifecycleService.isTeamLeader(anyString())).thenReturn(true);
+        when(recordRepository.findById(anyInt())).thenReturn(Optional.of(mockRecord));
+        when(lifecycleRepositoryCustom.findLatestRecordByMoumId(anyInt())).thenReturn(mockRecord);
+        //when(teamMemberRepositoryCustom.findAllMembersByTeamId(anyInt())).thenReturn(List.of(mockMember));
+
+        // when
+        mockLifecycle.assignProcess(mockProcess);
+        when(lifecycleService.isFinished(anyInt())).thenReturn(false);
+
+        // then
+        assertThatThrownBy(() -> lifecycleService.reopenMoum(mockLeader.getUsername(), mockLifecycle.getId()))
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.NOT_FINISHED_MOUM.getMessage());
+    }
 
 
     /**

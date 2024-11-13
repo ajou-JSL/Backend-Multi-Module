@@ -73,7 +73,7 @@ public class LifecycleDto {
         private int teamId;
         private Process process;
         private List<MemberDto.Response> members = new ArrayList<>();
-        private List<RecordDto.Response> records = new ArrayList<>();
+        //private List<RecordDto.Response> records = new ArrayList<>();
 
         public Response(LifecycleEntity lifecycle){
             this.moumId = lifecycle.getId();
@@ -93,10 +93,10 @@ public class LifecycleDto {
                     .map(TeamMemberEntity::getMember)
                     .map(MemberDto.Response::new)
                     .collect(Collectors.toList());
-
-            this.records = lifecycle.getRecords().stream()
-                    .map(RecordDto.Response::new)
-                    .collect(Collectors.toList());;
+//
+//            this.records = lifecycle.getRecords().stream()
+//                    .map(RecordDto.Response::new)
+//                    .collect(Collectors.toList());;
 
         }
     }

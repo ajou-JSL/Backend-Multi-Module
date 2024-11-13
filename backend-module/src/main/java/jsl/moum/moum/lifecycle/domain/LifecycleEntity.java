@@ -54,7 +54,7 @@ public class LifecycleEntity {
 
     @ElementCollection // 다중 값 저장
     @CollectionTable(name = "lifecycle_images", joinColumns = @JoinColumn(name = "lifecycle_id"))
-    @Column(name = "image_url") // 각 이미지 URL을 저장하는 컬럼
+    @Column(name = "image_url")
     private List<String> imageUrls = new ArrayList<>();
 
     @ManyToOne
@@ -81,6 +81,11 @@ public class LifecycleEntity {
         }
     }
 
+    public void removeTeam(TeamEntity targetTeam) {
+        if (this.team != null && this.team.equals(targetTeam)) {
+            this.team = null;
+        }
+    }
     public void updateProfileImages(List<String> newUrls) {
         if(this.imageUrls == null){
             this.imageUrls = new ArrayList<>();

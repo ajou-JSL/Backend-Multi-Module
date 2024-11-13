@@ -65,7 +65,9 @@ public enum ErrorCode {
     MAX_TEAM_LIMIT_EXCEEDED(400, "F-T006","팀 생성 최대 개수 초과하였습니다."),
 
     // Moum
-    MAX_MOUM_LIMIT_EXCEEDED(400, "F-MM001","모음 생성 최대 개수 초과하였습니다.");
+    MAX_MOUM_LIMIT_EXCEEDED(400, "F-MM001","모음 생성 최대 개수 초과하였습니다."),
+    ALREADY_FINISHED_MOUM(401,"F-MM002","이미 끝난 모음입니다."),
+    NOT_FINISHED_MOUM(401,"F-MM003","이미 진행중인 모음입니다.");
 
 
     private final int status;
