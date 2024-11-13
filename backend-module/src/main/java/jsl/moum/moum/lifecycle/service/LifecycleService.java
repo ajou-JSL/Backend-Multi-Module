@@ -104,16 +104,8 @@ public class LifecycleService {
             throw new CustomException(ErrorCode.NO_AUTHORITY);
         }
 
-        // "moums/{moumName}/{UUID}_{originalFileName}"
-        List<String> fileUrls = new ArrayList<>();
-        if (files != null || !files.isEmpty()) {
-            for (MultipartFile file : files) {
-                String originalFilename = file.getOriginalFilename();
-                String key = "moums/" + requestDto.getMoumName() + "/" + originalFilename;
-                String fileUrl = storageService.uploadFile(key, file);
-                fileUrls.add(fileUrl);
-            }
-        }
+        // "moums/{moumName}/{originalFileName}"
+        List<String> fileUrls = uploadFiles(files, requestDto.getMoumName());
 
         LifecycleEntity newMoum = LifecycleDto.Request.builder()
                 .moumName(requestDto.getMoumName())
@@ -157,48 +149,14 @@ public class LifecycleService {
             throw new CustomException(ErrorCode.NO_AUTHORITY);
         }
 
-         //기존 파일 삭제
         List<String> existingFileUrls = lifecycle.getImageUrls();
-        if(existingFileUrls == null){
-            existingFileUrls = new ArrayList<>();
-        }
-        if (existingFileUrls != null || !existingFileUrls.isEmpty()) { // 얘도....... 아오 리스트니까...
-            for (String existingFileUrl : existingFileUrls) {
-                String existingFileName = existingFileUrl.replace("https://kr.object.ncloudstorage.com/" + bucket + "/", "");
-                storageService.deleteFile(existingFileName);
-                log.info("================= 기존 파일 삭제");
-            }
-        }
+        deleteExistingFiles(existingFileUrls);
 
-        log.info("================= updateMoum() : 새로운 파일 업로드 로직 시작");
-//        // 새로운 파일 업로드 처리
-        List<String> newFileUrls = new ArrayList<>();
-        if (files != null || !files.isEmpty()) { // 하 &&랑 || 때매 삽질을...
-            for (MultipartFile file : files) {
-                String originalFilename = file.getOriginalFilename();
-                String key = "moums/" + requestDto.getMoumName() + "/" + originalFilename;
-                String fileUrl = storageService.uploadFile(key, file);
-                newFileUrls.add(fileUrl);
-                log.info("================= updateMoum() : 새로운 파일 업로드 로직 내부");
-            }
-        }
-
+        // "moums/{moumName}/{originalFileName}"
+        List<String> newFileUrls = uploadFiles(files, requestDto.getMoumName());
         lifecycle.updateProfileImages(newFileUrls);
 
-        if (requestDto.getRecords() != null) {
-            List<RecordEntity> updatedRecords = requestDto.getRecords().stream()
-                    .map(RecordDto.Request::toEntity)
-                    .collect(Collectors.toList());
-            lifecycle.updateRecords(updatedRecords);
-        }
-
-        List<RecordEntity> records = team.getRecords();
-        if (records != null && !records.isEmpty()) {
-            for (RecordEntity record : records) {
-                record.setTeam(team);
-            }
-            recordRepository.saveAll(records);
-        }
+        updateLifecycleRecords(requestDto, lifecycle);
 
         lifecycle.updateLifecycleInfo(requestDto);
 
@@ -219,19 +177,9 @@ public class LifecycleService {
         LifecycleEntity targetMoum = findMoum(moumId);
         findTeam(targetMoum.getTeam().getId());
 
-        //기존 파일 삭제
+        // "moums/{moumName}/{originalFileName}"
         List<String> existingFileUrls = targetMoum.getImageUrls();
-        if(existingFileUrls == null){
-            existingFileUrls = new ArrayList<>();
-        }
-        if (existingFileUrls != null || !existingFileUrls.isEmpty()) { // 얘도....... 아오
-            for (String existingFileUrl : existingFileUrls) {
-                String existingFileName = existingFileUrl.replace("https://kr.object.ncloudstorage.com/" + bucket + "/", "");
-                storageService.deleteFile(existingFileName);
-                log.info("================= 기존 파일 삭제");
-            }
-        }
-
+        deleteExistingFiles(existingFileUrls);
 
 
         lifecycleRepository.deleteById(moumId);
@@ -277,15 +225,6 @@ public class LifecycleService {
         return new LifecycleDto.Response(moum);
     }
 
-    public MemberEntity findLoginUser(String username){
-        return memberRepository.findByUsername(username);
-    }
-
-    public TeamEntity findTeam(int teamId) {
-        return teamRepository.findById(teamId)
-                .orElseThrow(() -> new CustomException(ErrorCode.TEAM_NOT_FOUND));
-    }
-
     /**
      * 모음 진척도 수정하기
      */
@@ -297,10 +236,64 @@ public class LifecycleService {
 
         moum.getProcess().updateProcessStatus(processDto);
         moum.getProcess().updateAndGetProcessPercentage();
+        lifecycleRepository.save(moum);
 
         return new LifecycleDto.Response(moum);
 
     }
+
+
+    public MemberEntity findLoginUser(String username){
+        return memberRepository.findByUsername(username);
+    }
+
+    public TeamEntity findTeam(int teamId) {
+        return teamRepository.findById(teamId)
+                .orElseThrow(() -> new CustomException(ErrorCode.TEAM_NOT_FOUND));
+    }
+
+    private List<String> uploadFiles(List<MultipartFile> files, String moumName) throws IOException {
+        List<String> newFileUrls = new ArrayList<>();
+        if (files != null || !files.isEmpty()) {
+            for (MultipartFile file : files) {
+                String originalFilename = file.getOriginalFilename();
+                String key = "moums/" + moumName + "/" + originalFilename;
+                String fileUrl = storageService.uploadFile(key, file);
+                log.info("================= 파일 리스트 업로드");
+                newFileUrls.add(fileUrl);
+            }
+        }
+        return newFileUrls;
+    }
+
+    private void deleteExistingFiles(List<String> existingFileUrls) {
+        if(existingFileUrls == null || existingFileUrls.isEmpty()){
+            existingFileUrls = new ArrayList<>();
+        }
+        for (String existingFileUrl : existingFileUrls) {
+            String existingFileName = existingFileUrl.replace("https://kr.object.ncloudstorage.com/" + bucket + "/", "");
+            log.info("================= 기존 파일 리스트 삭제");
+            storageService.deleteFile(existingFileName);
+        }
+    }
+
+    private void updateLifecycleRecords(LifecycleDto.Request requestDto, LifecycleEntity lifecycle) {
+        if (requestDto.getRecords() != null) {
+            List<RecordEntity> updatedRecords = requestDto.getRecords().stream()
+                    .map(RecordDto.Request::toEntity)
+                    .collect(Collectors.toList());
+            lifecycle.updateRecords(updatedRecords);
+        }
+
+        List<RecordEntity> records = lifecycle.getRecords();
+        if (records != null && !records.isEmpty()) {
+            for (RecordEntity record : records) {
+                record.setLifecycle(lifecycle);
+            }
+            recordRepository.saveAll(records);
+        }
+    }
+
 
     public boolean hasTeam(String username){
         int memberId = memberRepository.findByUsername(username).getId();
