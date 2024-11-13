@@ -61,7 +61,11 @@ public enum ErrorCode {
     TEAM_NOT_FOUND(404, "F-T002", "팀을 찾을 수 없습니다."),
     NOT_TEAM_MEMBER(404, "F-T003", "팀에 속한 멤버가 아닙니다."),
     LEADER_CANNOT_LEAVE(401, "F-T004", "리더가 팀을 떠날 수 없습니다."),
-    NEED_TEAM(401, "F-T005", "팀에 먼저 가입해야 합니다.");
+    NEED_TEAM(401, "F-T005", "팀에 먼저 가입해야 합니다."),
+    MAX_TEAM_LIMIT_EXCEEDED(400, "F-T006","팀 생성 최대 개수 초과하였습니다."),
+
+    // Moum
+    MAX_MOUM_LIMIT_EXCEEDED(400, "F-MM001","모음 생성 최대 개수 초과하였습니다.");
 
 
     private final int status;

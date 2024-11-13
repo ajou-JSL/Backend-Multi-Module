@@ -240,6 +240,23 @@ class LifecycleServiceTest {
     }
 
     @Test
+    @DisplayName("모음 생성 실패 - 최대 생성 개수 초과")
+    void add_moum_fail_max_limit_exceeded() throws IOException {
+        // given
+        when(memberRepository.findByUsername(mockLeader.getUsername())).thenReturn(mockLeader);
+        when(teamRepository.findById(mockTeam.getId())).thenReturn(Optional.of(mockTeam));
+        doReturn(true).when(lifecycleService).hasTeam(anyString());
+        doReturn(true).when(lifecycleService).isTeamLeader(anyString());
+        when(lifecycleRepositoryCustom.countCreatedLifecycleByMemberId(mockLeader.getId())).thenReturn(3L);
+
+        // when & then
+        assertThatThrownBy(() -> lifecycleService.addMoum(mockLeader.getUsername(), mockLifecycleUpdateRequestDto, List.of(mockFile)))
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.MAX_MOUM_LIMIT_EXCEEDED.getMessage());
+    }
+
+
+    @Test
     @DisplayName("모음 생성 실패 - 권한 없음")
     void create_moum_fail_no_authority() throws IOException {
         // given & when

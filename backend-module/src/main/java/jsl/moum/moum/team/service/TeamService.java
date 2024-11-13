@@ -72,6 +72,11 @@ public class TeamService {
 
         MemberEntity loginUser = memberRepository.findByUsername(username);
 
+        long existingTeamCount = teamMemberRepositoryCustom.countCreatedTeamByMemberId(loginUser.getId());
+        if (existingTeamCount >= 3) {
+            throw new CustomException(ErrorCode.MAX_TEAM_LIMIT_EXCEEDED);
+        }
+
         // "teams/{teamName}/{originalFileName}"
         String originalFilename = file.getOriginalFilename();
         String key = "teams/" + teamRequestDto.getTeamName() + "/" + originalFilename;

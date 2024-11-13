@@ -104,6 +104,11 @@ public class LifecycleService {
             throw new CustomException(ErrorCode.NO_AUTHORITY);
         }
 
+        long existingLifecycleCount = lifecycleRepositoryCustom.countCreatedLifecycleByMemberId(loginUser.getId());
+        if (existingLifecycleCount >= 3) {
+            throw new CustomException(ErrorCode.MAX_MOUM_LIMIT_EXCEEDED);
+        }
+
         // "moums/{moumName}/{originalFileName}"
         List<String> fileUrls = uploadFiles(files, requestDto.getMoumName());
 

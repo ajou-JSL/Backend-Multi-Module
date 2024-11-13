@@ -77,4 +77,17 @@ public class LifecycleRepositoryCustom {
                 .where(teamEntity.id.eq(teamId))
                 .fetch();
     }
+
+    /**
+       생성한 라이프사이클 개수 찾기
+       SELECT COUNT(*)
+       FROM lifecycle
+       WHERE leader_id = ?;
+     */
+    public long countCreatedLifecycleByMemberId(int leaderId){
+        return jpaQueryFactory
+                .selectFrom(lifecycleEntity)
+                .where(lifecycleEntity.leaderId.eq(leaderId))
+                .fetch().size();
+    }
 }

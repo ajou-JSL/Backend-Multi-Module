@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static jsl.moum.moum.lifecycle.domain.QLifecycleEntity.lifecycleEntity;
 import static jsl.moum.moum.team.domain.QTeamMemberEntity.teamMemberEntity;
 
 
@@ -146,5 +147,18 @@ public class TeamMemberRepositoryCustom {
         return teams.stream()
                 .map(TeamDto.Response::new)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     생성한 팀 개수 찾기
+     select COUNT(*)
+     from lifecycle
+     where leader_id = ?;
+     */
+    public long countCreatedTeamByMemberId(int leaderId){
+        return jpaQueryFactory
+                .selectFrom(teamMemberEntity)
+                .where(teamMemberEntity.leaderId.eq(leaderId))
+                .fetch().size();
     }
 }

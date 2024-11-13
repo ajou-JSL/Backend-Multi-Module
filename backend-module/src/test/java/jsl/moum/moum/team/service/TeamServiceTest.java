@@ -308,6 +308,33 @@ class TeamServiceTest {
     }
 
     @Test
+    @DisplayName("팀 생성 실패 - 최대 생성 개수 초과")
+    void create_team_fail_max_limit_exceeded() throws IOException {
+        // given
+        TeamDto.Request teamRequestDto = TeamDto.Request.builder()
+                .teamName("New Team")
+                .description("New Team Description")
+                .fileUrl("New Team fileUrl")
+                .records(new ArrayList<>())
+                .build();
+
+        MultipartFile file = mock(MultipartFile.class);
+        when(file.getOriginalFilename()).thenReturn("new.jpg");
+        when(file.isEmpty()).thenReturn(false);
+
+        when(memberRepository.findByUsername(mockLeader.getUsername())).thenReturn(mockLeader);
+        when(teamRepository.save(any(TeamEntity.class))).thenReturn(mockTeam);
+        when(storageService.uploadFile(anyString(), any(MultipartFile.class)))
+                .thenReturn("New Team fileUrl");
+        when(teamMemberRepositoryCustom.countCreatedTeamByMemberId(mockLeader.getId())).thenReturn(3L);
+
+        // when & then
+        assertThatThrownBy(() -> teamService.createTeam(teamRequestDto, mockLeader.getUsername(),file))
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.MAX_TEAM_LIMIT_EXCEEDED.getMessage());
+    }
+
+    @Test
     @DisplayName("팀 멤버 강퇴 성공")
     @Disabled("테스트코드 수정 필요")
     void kickMember_Success() {
