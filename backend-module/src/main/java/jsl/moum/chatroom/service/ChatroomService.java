@@ -13,6 +13,8 @@ import jsl.moum.moum.team.domain.TeamRepository;
 import jsl.moum.objectstorage.StorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.BadRequestException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,6 +29,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 public class ChatroomService {
+
+    @Value("${ncp.object-storage.bucket}")
+    private String bucket;
 
     private final ChatroomRepository chatroomRepository;
     private final TeamRepository teamRepository;
@@ -98,18 +103,27 @@ public class ChatroomService {
         return new ChatroomDto(chatroom);
     }
 
-//    public ChatroomDto updateChatroom(Integer chatroomId, ChatroomDto.Patch patchDto, MultipartFile chatroomImageFile) throws BadRequestException {
-//        Chatroom chatroom = chatroomRepository.findById(chatroomId)
-//                .orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_UPDATE_FAIL));
-//
-//        chatroom.setName(patchDto.getName());
-//        if(chatroom.getType() == 1){
-//            chatroom.setTeam(teamRepository.findById(patchDto.getLeaderId())
-//                    .orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_UPDATE_FAIL)));
-//        }
-//
-//        return new ChatroomDto(chatroom);
-//    }
+    public ChatroomDto updateChatroom(Integer chatroomId, ChatroomDto.Patch patchDto, MultipartFile chatroomImageFile) throws BadRequestException, IOException {
+        Chatroom chatroom = chatroomRepository.findById(chatroomId)
+                .orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_UPDATE_FAIL));
+
+        String existingFileUrl = chatroom.getFileUrl();
+
+        if(chatroomImageFile != null && !chatroomImageFile.isEmpty()){
+            if(existingFileUrl != null && !existingFileUrl.isEmpty()){
+                String existingFileName = existingFileUrl.replace("https://kr.object.ncloudstorage.com/" + bucket + "/", "");
+                storageService.deleteFile(existingFileName);
+            }
+
+            String key = "chatrooms/" + chatroom.getName() + "/" + chatroomImageFile.getOriginalFilename();
+            String newFileUrl = storageService.uploadFile(key, chatroomImageFile);
+            chatroom.setFileUrl(newFileUrl);
+        }
+
+        chatroom.setName(patchDto.getName());
+        chatroomRepository.save(chatroom);
+        return new ChatroomDto(chatroom);
+    }
 
 
     /**
@@ -117,6 +131,7 @@ public class ChatroomService {
      * Private access methods
      *
      */
+
 
     private boolean isChatroomExists(ChatroomDto.Request requestDto){
         log.info("isChatroomExists method");

@@ -54,6 +54,5 @@ public class ChatroomDto {
     @RequiredArgsConstructor
     public static class Patch{
         private String name;
-        private Integer leaderId;
     }
 }
