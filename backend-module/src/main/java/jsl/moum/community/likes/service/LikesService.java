@@ -47,6 +47,8 @@ public class LikesService {
         article.updateLikesCount(1);
         articleRepository.save(article);
 
+        article.getAuthor().updateMemberExpAndRank(1);
+
         return new LikesDto.Response(newLikes);
     }
 
@@ -74,6 +76,8 @@ public class LikesService {
         ArticleEntity article = findArticle(articleId);
         article.updateLikesCount(-1);
         articleRepository.save(article);
+
+        article.getAuthor().updateMemberExpAndRank(-1);
 
         return new LikesDto.Response(likesEntity);
     }
