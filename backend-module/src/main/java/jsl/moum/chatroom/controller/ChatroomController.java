@@ -4,7 +4,7 @@ import jsl.moum.chatroom.dto.ChatroomDto;
 import jsl.moum.chatroom.dto.ChatroomMemberInfoDto;
 import jsl.moum.chatroom.service.ChatroomService;
 import jsl.moum.global.error.ErrorCode;
-import jsl.moum.global.error.ErrorResponse;
+import jsl.moum.global.error.exception.CustomException;
 import jsl.moum.global.response.ResponseCode;
 import jsl.moum.global.response.ResultResponse;
 import lombok.RequiredArgsConstructor;
@@ -66,5 +66,29 @@ public class ChatroomController {
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
 
+    @PostMapping("/{id}/member")
+    public ResponseEntity<ResultResponse> addChatroomMember(@PathVariable(name = "id") Integer chatroomId,
+                                                            @RequestBody ChatroomDto.Members members) {
+        chatroomService.inviteChatroomMembers(chatroomId, members);
+        try {
+            ChatroomDto chatroomDto = chatroomService.getChatroomById(chatroomId);
+            ResultResponse response = ResultResponse.of(ResponseCode.CHATROOM_INVITE_SUCCESS, chatroomDto);
+            return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+        } catch (BadRequestException e) {
+            throw new CustomException(ErrorCode.CHATROOM_MEMBER_INVITE_FAIL);
+        }
+    }
 
+    @DeleteMapping("/{id}/member")
+    public ResponseEntity<ResultResponse> removeChatroomMember(@PathVariable(name = "id") Integer chatroomId,
+                                                               @RequestBody ChatroomDto.Members members) {
+        chatroomService.removeChatroomMembers(chatroomId, members);
+        try {
+            ChatroomDto chatroomDto = chatroomService.getChatroomById(chatroomId);
+            ResultResponse response = ResultResponse.of(ResponseCode.CHATROOM_MEMBER_REMOVE_SUCCESS, chatroomDto);
+            return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+        } catch (BadRequestException e) {
+            throw new CustomException(ErrorCode.CHATROOM_MEMBER_REMOVE_FAIL);
+        }
+    }
 }
