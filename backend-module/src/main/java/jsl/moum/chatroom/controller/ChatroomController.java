@@ -37,15 +37,6 @@ public class ChatroomController {
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getChatroomMemberList(@PathVariable(name = "id") Integer chatroomId) {
-
-        List<ChatroomMemberInfoDto> chatroomList = chatroomService.getChatroomMemberList(chatroomId);
-
-        ResultResponse response = ResultResponse.of(ResponseCode.CHATROOM_MEMBER_LIST_GET_SUCCESS, chatroomList);
-        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
-    }
-
     @PostMapping("")
     public ResponseEntity<ResultResponse> createChatroom(@RequestPart(value = "chatroomInfo") ChatroomDto.Request requestDto,
                                             @RequestPart(value = "chatroomProfile", required = false) MultipartFile chatroomImageFile) throws IOException {
@@ -57,6 +48,17 @@ public class ChatroomController {
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ResultResponse> getChatroomById(@PathVariable(name = "id") Integer chatroomId) {
+        try {
+            ChatroomDto chatroomDto = chatroomService.getChatroomById(chatroomId);
+            ResultResponse response = ResultResponse.of(ResponseCode.CHATROOM_FIND_SUCCESS, chatroomDto);
+            return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+        } catch (BadRequestException e) {
+            throw new CustomException(ErrorCode.CHATROOM_FIND_FAIL);
+        }
+    }
+
     @PatchMapping("/{id}")
     public ResponseEntity<ResultResponse> updateChatroom(@PathVariable(name = "id") Integer chatroomId,
                                                          @RequestPart(name = "chatroomInfo") ChatroomDto.Patch patchDto,
@@ -65,6 +67,16 @@ public class ChatroomController {
         ResultResponse response = ResultResponse.of(ResponseCode.CHATROOM_UPDATE_SUCCESS, chatroomDto);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
+
+    @GetMapping("/{id}/member")
+    public ResponseEntity<?> getChatroomMemberList(@PathVariable(name = "id") Integer chatroomId) {
+
+        List<ChatroomMemberInfoDto> chatroomList = chatroomService.getChatroomMemberList(chatroomId);
+
+        ResultResponse response = ResultResponse.of(ResponseCode.CHATROOM_MEMBER_LIST_GET_SUCCESS, chatroomList);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+    }
+
 
     @PostMapping("/{id}/member")
     public ResponseEntity<ResultResponse> addChatroomMember(@PathVariable(name = "id") Integer chatroomId,
