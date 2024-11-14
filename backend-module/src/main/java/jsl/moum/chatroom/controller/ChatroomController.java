@@ -57,16 +57,14 @@ public class ChatroomController {
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
 
-//    @PatchMapping("/{id}")
-//    public ResponseEntity<ResultResponse> updateChatroom(@PathVariable(name = "id") Integer chatroomId,
-//                                                         @RequestPart(name = "chatroomInfo") ChatroomDto.Patch patchDto,
-//                                                         @RequestPart(name = "chatroomProfile") MultipartFile chatroomImageFile) throws BadRequestException {
-//
-//        ChatroomDto chatroomDto = chatroomService.updateChatroom(chatroomId, patchDto, chatroomImageFile);
-//
-//        ResultResponse response = ResultResponse.of(ResponseCode.CHATROOM_UPDATE_SUCCESS, chatroomDto);
-//        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
-//    }
+    @PatchMapping("/{id}")
+    public ResponseEntity<ResultResponse> updateChatroom(@PathVariable(name = "id") Integer chatroomId,
+                                                         @RequestPart(name = "chatroomInfo") ChatroomDto.Patch patchDto,
+                                                         @RequestPart(name = "chatroomProfile") MultipartFile chatroomImageFile) throws IOException {
+        ChatroomDto chatroomDto = chatroomService.updateChatroom(chatroomId, patchDto, chatroomImageFile);
+        ResultResponse response = ResultResponse.of(ResponseCode.CHATROOM_UPDATE_SUCCESS, chatroomDto);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+    }
 
 
 }
