@@ -59,7 +59,6 @@ public enum ErrorCode {
     CHATROOM_MEMBER_REMOVE_FAIL(400, "F-CH006", "채팅방에서 멤버(들) 삭제 실패"),
     CHATROOM_FIND_FAIL(404, "F-CH007", "채팅방이 존재하지 않습니다"),
 
-
     // Team
     MEMBER_ALREADY_INVITED(400, "F-T001", "이미 초대된 멤버입니다."),
     TEAM_NOT_FOUND(404, "F-T002", "팀을 찾을 수 없습니다."),
