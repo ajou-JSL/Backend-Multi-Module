@@ -67,7 +67,7 @@ public class TeamEntity {
     private Integer exp = 0;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Rank tier = Rank.BRONZE;
 
     public void updateTeamExpAndRank(int newExp) {

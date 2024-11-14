@@ -32,7 +32,6 @@ public class TeamDto {
         private String location;
         private List<RecordDto.Request> records;
 
-
         public TeamEntity toEntity(){
             return TeamEntity.builder()
                     .members(members)
@@ -43,6 +42,8 @@ public class TeamDto {
                     .leaderId(leaderId)
                     .fileUrl(fileUrl)
                     .records(records.stream().map(RecordDto.Request::toEntity).collect(Collectors.toList()))
+                    .exp(0)
+                    .tier(Rank.BRONZE)
                     .build();
         }
 

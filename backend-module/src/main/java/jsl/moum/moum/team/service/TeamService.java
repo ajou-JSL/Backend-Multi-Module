@@ -161,6 +161,7 @@ public class TeamService {
         teamMemberRepository.save(teamMember);
 
         team.updateTeamExpAndRank(1);
+        updateAllMembersExp(teamId,1);
 
         return new MemberDto.Response(targetMember); // 팀 정보 반환
     }
@@ -246,6 +247,7 @@ public class TeamService {
         teamRepository.deleteById(teamId);
 
         targetTeam.updateTeamExpAndRank(-1);
+        updateAllMembersExp(teamId,-1);
 
         return new TeamDto.Response(targetTeam);
 
@@ -283,6 +285,7 @@ public class TeamService {
         teamMemberRepositoryCustom.deleteMemberFromTeamById(teamId, targetMemberId);
 
         team.updateTeamExpAndRank(-1);
+        updateAllMembersExp(teamId,-1);
 
         return new TeamDto.Response(team);
     }
@@ -304,6 +307,7 @@ public class TeamService {
         }
 
         team.updateTeamExpAndRank(-1);
+        updateAllMembersExp(teamId,-1);
 
         teamMemberRepositoryCustom.deleteMemberFromTeamById(teamId, member.getId());
         return new TeamDto.Response(team);
@@ -383,5 +387,14 @@ public class TeamService {
             return false;
         }
         return true;
+    }
+
+    public void updateAllMembersExp(int teamId, int exp){
+        List<MemberEntity> members = teamMemberRepositoryCustom.findAllMembersByTeamId(teamId);
+        if(members != null && !members.isEmpty()){
+            for(MemberEntity m: members){
+                m.updateMemberExpAndRank(exp);
+            }
+        }
     }
 }
