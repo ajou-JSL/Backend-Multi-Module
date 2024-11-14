@@ -39,6 +39,12 @@ public class ChatroomService {
     private final MemberRepository memberRepository;
     private final StorageService storageService;
 
+    public ChatroomDto getChatroomById(Integer chatroomId) throws BadRequestException {
+        Chatroom chatroom = chatroomRepository.findById(chatroomId)
+                .orElseThrow(() -> new BadRequestException());
+        return new ChatroomDto(chatroom);
+    }
+
     public List<ChatroomDto> getChatroomListByMemberId(Integer memberId) throws CustomException {
         // Add method for sorting, etc later on
         List<ChatroomDto> chatroomList = new ArrayList<>();
@@ -91,14 +97,16 @@ public class ChatroomService {
         } else {
             chatroom = buildTeamChatroom(requestDto, fileUrl);
         }
-        log.info("Chatroom has been built");
 
         chatroom = chatroomRepository.saveAndFlush(chatroom);
-
         log.info("Chatroom saved to repository");
 
-        addChatroomMembers(chatroom.getId(), requestDto.getMembers());
-
+        try {
+            addChatroomMembers(chatroom.getId(), requestDto.getMembers());
+        } catch (BadRequestException e){
+            log.error("Failed to add chatroom members");
+            throw new CustomException(ErrorCode.CHATROOM_CREATE_FAIL);
+        }
         log.info("Finish createChatroom method");
         return new ChatroomDto(chatroom);
     }
@@ -123,6 +131,34 @@ public class ChatroomService {
         chatroom.setName(patchDto.getName());
         chatroomRepository.save(chatroom);
         return new ChatroomDto(chatroom);
+    }
+
+    public void inviteChatroomMembers(int chatroomId, ChatroomDto.Members members){
+        if(!chatroomRepository.existsById(chatroomId)){
+            log.error("Chatroom does not exist");
+            throw new CustomException(ErrorCode.CHATROOM_MEMBER_INVITE_FAIL);
+        }
+        try {
+            addChatroomMembers(chatroomId, members.getMemberIds());
+        } catch (BadRequestException e) {
+            log.error("Failed to add chatroom members");
+            throw new CustomException(ErrorCode.CHATROOM_MEMBER_INVITE_FAIL);
+        }
+    }
+
+    public void removeChatroomMembers(int chatroomId, ChatroomDto.Members members){
+        if(!chatroomRepository.existsById(chatroomId)){
+            log.error("Chatroom does not exist");
+            throw new CustomException(ErrorCode.CHATROOM_MEMBER_REMOVE_FAIL);
+        }
+        for(Integer memberId : members.getMemberIds()){
+            try {
+                removeChatroomMember(chatroomId, memberId);
+            } catch (BadRequestException e) {
+                log.error("Failed to remove chatroom member");
+                throw new CustomException(ErrorCode.CHATROOM_MEMBER_REMOVE_FAIL);
+            }
+        }
     }
 
 
@@ -189,17 +225,35 @@ public class ChatroomService {
         return false;
     }
 
-    private void addChatroomMembers(int chatroomId, List<Integer> memberIds){
+    private void addChatroomMembers(int chatroomId, List<Integer> memberIds) throws BadRequestException {
         log.info("addChatroomMembers method");
-        for(Integer memberId : memberIds){
-            ChatroomMember chatroomMember = ChatroomMember.builder()
-                    .chatroom(chatroomRepository.findById(chatroomId)
-                            .orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_CREATE_FAIL)))
-                    .member(memberRepository.findById(memberId)
-                            .orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_CREATE_FAIL)))
-                    .build();
-            chatroomMemberRepository.save(chatroomMember);
+        if(!chatroomRepository.existsById(chatroomId)){
+            log.error("Chatroom does not exist");
+            throw new BadRequestException("Chatroom not found");
         }
+        for(Integer memberId : memberIds){
+            addChatroomMember(chatroomId, memberId);
+        }
+    }
+
+    private void addChatroomMember(int chatroomId, int memberId) throws BadRequestException {
+        ChatroomMember chatroomMember = ChatroomMember.builder()
+                .chatroom(chatroomRepository.findById(chatroomId)
+                        .orElseThrow(() -> new BadRequestException("Chatroom not found")))
+                .member(memberRepository.findById(memberId)
+                        .orElseThrow(() -> new BadRequestException("Member not found")))
+                .build();
+        chatroomMemberRepository.save(chatroomMember);
+    }
+
+    private void removeChatroomMember(int chatroomId, int memberId) throws BadRequestException {
+        if(!memberRepository.existsById(memberId)){
+            log.error("Member does not exist");
+            throw new BadRequestException("Member not found");
+        }
+        ChatroomMember chatroomMember = chatroomMemberRepository.findByChatroomIdAndMemberId(chatroomId, memberId)
+                .orElseThrow(() -> new BadRequestException("Chatroom member not found"));
+        chatroomMemberRepository.delete(chatroomMember);
     }
 
     private Chatroom buildPersonalChatroom(ChatroomDto.Request requestDto, String fileUrl){

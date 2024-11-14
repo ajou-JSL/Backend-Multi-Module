@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ChatroomMemberRepository extends JpaRepository<ChatroomMember, Integer> {
@@ -15,6 +16,7 @@ public interface ChatroomMemberRepository extends JpaRepository<ChatroomMember, 
     @Query("SELECT cm.member.id FROM ChatroomMember cm WHERE cm.chatroom.id = :chatroomId")
     List<Integer> findAllMemberIdByChatroomId(@Param("chatroomId") Integer chatroomId);
 
+    Optional<ChatroomMember> findByChatroomIdAndMemberId(Integer chatroomId, Integer memberId);
 
     @Query("SELECT cm1.chatroom.id " +
             "FROM ChatroomMember cm1 " +

@@ -55,4 +55,12 @@ public class ChatroomDto {
     public static class Patch{
         private String name;
     }
+
+    @Getter
+    @Setter
+    @RequiredArgsConstructor
+    public static class Members {
+        private int type;
+        private List<Integer> memberIds;
+    }
 }
