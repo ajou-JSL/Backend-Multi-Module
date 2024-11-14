@@ -25,24 +25,28 @@ public class GlobalExceptionHandler {
     @ExceptionHandler
     protected ResponseEntity<ErrorResponse> handleBadCredentialException(BadCredentialsException e) {
         final ErrorResponse response = ErrorResponse.of(BAD_CREDENTIALS);
+        log.error("Credential Exception: ", e);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler
     protected ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
         final ErrorResponse response = ErrorResponse.of(e);
+        log.error("Method argument Exception: ", e);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler
     protected ResponseEntity<ErrorResponse> handleFileUploadException(IOException e) {
         final ErrorResponse response = ErrorResponse.of(FILE_UPLOAD_FAIL);
+        log.error("File Upload Exception: ", e);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler
     protected ResponseEntity<ErrorResponse> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
         final ErrorResponse response = ErrorResponse.of(METHOD_NOT_ALLOWED);
+        log.error("Method Exception: ", e);
         return new ResponseEntity<>(response, HttpStatus.METHOD_NOT_ALLOWED);
     }
 
@@ -50,7 +54,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler
     protected ResponseEntity<ErrorResponse> handleBindException(BindException e) {
         final ErrorResponse response = ErrorResponse.of(INVALID_INPUT_VALUE, e.getBindingResult());
-        System.out.println("==================  @Valid, @Validated 에서 binding error 발생 시 (@RequestBody)");
+        log.error("Validation Exception: ", e);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
@@ -59,7 +63,7 @@ public class GlobalExceptionHandler {
     protected ResponseEntity<ErrorResponse> handleBusinessException(CustomException e) {
         final ErrorCode errorCode = e.getErrorCode();
         final ErrorResponse response = ErrorResponse.of(errorCode, e.getErrors());
-        System.out.println("================== 비즈니스 요구사항에 따른 Exception");
+        log.error("비즈니스 Exception: ", e);
         return new ResponseEntity<>(response, HttpStatus.valueOf(errorCode.getStatus()));
     }
 
