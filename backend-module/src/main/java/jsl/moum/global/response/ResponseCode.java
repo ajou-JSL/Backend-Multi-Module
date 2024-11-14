@@ -65,7 +65,7 @@ public enum ResponseCode {
     CHATROOM_UPDATE_SUCCESS(201, "S-CH004", "채팅방 수정 성공"),
 
     // Moum
-    CREATE_MOUM_SUCCESS(201,"S-MMO001", "모음 생성 성공"),
+    CREATE_MOUM_SUCCESS(201,"S-MM001", "모음 생성 성공"),
     GET_MOUM_SUCCESS(200,"S-MM002", "모음 조회 성공"),
     UPDATE_MOUM_SUCCESS(201,"S-MM003", "모음 수정 성공"),
     DELETE_MOUM_SUCCESS(200,"S-MM004", "모음 삭제 성공"),
