@@ -88,6 +88,8 @@ public class ArticleService {
         ArticleDetailsEntity newArticleDetails = articleDetailsRequestDto.toEntity();
         articleDetailsRepository.save(newArticleDetails);
 
+        author.updateMemberExpAndRank(1);
+
         return new ArticleDto.Response(newArticle);
 
     }
@@ -215,6 +217,8 @@ public class ArticleService {
         // article_details, article 테이블 둘 다 삭제
         articleDetailsRepository.deleteById(articleDetailsId);
         articleRepository.deleteById(articleDetailsId);
+
+        article.getAuthor().updateMemberExpAndRank(-1);
 
         return new ArticleDto.Response(article);
     }

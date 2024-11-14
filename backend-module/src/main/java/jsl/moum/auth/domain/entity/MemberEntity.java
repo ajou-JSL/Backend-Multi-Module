@@ -3,7 +3,9 @@ package jsl.moum.auth.domain.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
+import jsl.moum.community.article.domain.article.ArticleEntity;
 import jsl.moum.member_profile.dto.ProfileDto;
+import jsl.moum.rank.Rank;
 import jsl.moum.record.domain.entity.RecordEntity;
 import jsl.moum.chatroom.domain.ChatroomMember;
 import lombok.*;
@@ -69,9 +71,24 @@ public class MemberEntity {
     @Column(name = "instrument", nullable = false)
     private String instrument;
 
-    // todo : 필수항목으로
     @Column(name = "address", nullable = false)
     private String address;
+
+    @Column(name = "exp", nullable = false)
+    private Integer exp = 0;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Rank tier = Rank.BRONZE;
+
+    public void updateMemberExpAndRank(int newExp) {
+        if (this.exp == null) {
+            this.exp = 0;
+        }
+        this.exp = this.exp + this.teams.size() + this.records.size() + newExp;
+        this.tier = Rank.getRank(this.exp);
+    }
+
 
     public void removeTeamFromMember(TeamEntity team) {
         teams.removeIf(teamMemberEntity -> teamMemberEntity.getTeam().equals(team));
