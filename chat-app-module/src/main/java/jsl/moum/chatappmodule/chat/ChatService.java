@@ -21,7 +21,7 @@ public class ChatService {
     private final ChatRepository chatRepository;
     private final ChatroomRepository chatroomRepository;
     private final AuthService authService;
-    private int PAGE_SIZE = 5;
+    private int PAGE_SIZE = 20;
 
     public Chat buildChat(Chat.Request request, String sender, int chatroomId){
         Chat chat = Chat.builder()
