@@ -51,7 +51,6 @@ public enum ErrorCode {
     CANNOT_DELETE_OTHERS_LIKES(409, "F-L004","본인이 등록한 좋아요만 취소할 수 있습니다."),
 
     // Chatroom
-//    CHATROOM_NOT_EXIST(404, "F-CH000", "채팅방이 존재하지 않습니다."),
     CHATROOM_LIST_GET_FAIL(400, "F-CH001", "채팅방 목록 호출 실패"),
     CHATROOM_MEMBER_LIST_GET_FAIL(400, "F-CH002", "채팅방 멤버 목록 호출 실패"),
     CHATROOM_CREATE_FAIL(400, "F-CH003", "채팅방 생성 실패"),
