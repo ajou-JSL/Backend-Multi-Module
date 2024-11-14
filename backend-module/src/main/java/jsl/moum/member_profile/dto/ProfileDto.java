@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jsl.moum.auth.domain.entity.MemberEntity;
+import jsl.moum.rank.Rank;
 import jsl.moum.record.domain.dto.RecordDto;
 import jsl.moum.record.domain.entity.RecordEntity;
 import lombok.AllArgsConstructor;
@@ -75,6 +76,8 @@ public class ProfileDto {
         private String proficiency;
         private String instrument;
         private String address;
+        private Integer exp;
+        private Rank tier;
         private List<TeamDto.Response> teams;
         private List<RecordDto.Response> records;
 
@@ -88,6 +91,8 @@ public class ProfileDto {
             this.proficiency = member.getProficiency();
             this.instrument = member.getInstrument();
             this.address = member.getAddress();
+            this.exp = member.getExp();
+            this.tier = member.getTier();
             this.teams = member.getTeams().stream() // TeamMemberEntity -> TeamEntity -> TeamDto.Response 변환
                     .map(TeamMemberEntity::getTeam) // TeamEntity 추출
                     .map(TeamDto.Response::new)    // TeamDto.Response로 변환

@@ -57,6 +57,8 @@ public class CommentService {
         // 게시글_상세 테이블에 댓글 추가됐으니 게시글_상세 저장
         articleDetailsRepository.save(articleDetails);
 
+        author.updateMemberExpAndRank(1);
+
         return new CommentDto.Response(newComment);
     }
 
@@ -94,6 +96,9 @@ public class CommentService {
         checkAuthor(username, comment.getAuthor().getUsername());
 
         commentRepository.deleteById(commentId);
+
+        comment.getAuthor().updateMemberExpAndRank(-1);
+
         return new CommentDto.Response(comment);
     }
 

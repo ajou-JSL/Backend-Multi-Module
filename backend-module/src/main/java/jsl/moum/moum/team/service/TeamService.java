@@ -114,6 +114,7 @@ public class TeamService {
 
         teamRepository.save(newTeam);
 
+        newTeam.updateTeamExpAndRank(1);
 
         TeamMemberEntity teamMember = TeamMemberEntity.builder()
                 .team(newTeam)
@@ -158,6 +159,9 @@ public class TeamService {
 
         // 팀 멤버 저장
         teamMemberRepository.save(teamMember);
+
+        team.updateTeamExpAndRank(1);
+        updateAllMembersExp(teamId,1);
 
         return new MemberDto.Response(targetMember); // 팀 정보 반환
     }
@@ -242,6 +246,9 @@ public class TeamService {
         teamMemberRepositoryCustom.deleteTeamMemberTable(teamId);
         teamRepository.deleteById(teamId);
 
+        targetTeam.updateTeamExpAndRank(-1);
+        updateAllMembersExp(teamId,-1);
+
         return new TeamDto.Response(targetTeam);
 
     }
@@ -277,6 +284,9 @@ public class TeamService {
         // 강퇴 대상 멤버가 팀의 멤버인지 확인
         teamMemberRepositoryCustom.deleteMemberFromTeamById(teamId, targetMemberId);
 
+        team.updateTeamExpAndRank(-1);
+        updateAllMembersExp(teamId,-1);
+
         return new TeamDto.Response(team);
     }
 
@@ -295,6 +305,9 @@ public class TeamService {
         if (!isTeamMember(teamId, member.getId())) {
             throw new CustomException(ErrorCode.NOT_TEAM_MEMBER);
         }
+
+        team.updateTeamExpAndRank(-1);
+        updateAllMembersExp(teamId,-1);
 
         teamMemberRepositoryCustom.deleteMemberFromTeamById(teamId, member.getId());
         return new TeamDto.Response(team);
@@ -374,5 +387,14 @@ public class TeamService {
             return false;
         }
         return true;
+    }
+
+    public void updateAllMembersExp(int teamId, int exp){
+        List<MemberEntity> members = teamMemberRepositoryCustom.findAllMembersByTeamId(teamId);
+        if(members != null && !members.isEmpty()){
+            for(MemberEntity m: members){
+                m.updateMemberExpAndRank(exp);
+            }
+        }
     }
 }

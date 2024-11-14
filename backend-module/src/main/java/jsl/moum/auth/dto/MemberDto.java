@@ -3,6 +3,7 @@ package jsl.moum.auth.dto;
 
 import jakarta.validation.constraints.*;
 import jsl.moum.auth.domain.entity.MemberEntity;
+import jsl.moum.rank.Rank;
 import jsl.moum.record.domain.dto.RecordDto;
 import jsl.moum.record.domain.entity.RecordEntity;
 import lombok.AllArgsConstructor;
@@ -72,6 +73,8 @@ public class MemberDto {
                     .proficiency(proficiency)
                     .name(name)
                     .records(records.stream().map(RecordDto.Request::toEntity).collect(Collectors.toList()))
+                    .exp(0)
+                    .tier(Rank.BRONZE)
                     .build();
         }
     }
@@ -85,6 +88,8 @@ public class MemberDto {
         private final String profileDescription;
         private final String profileImageUrl;
         private final List<RecordDto.Response> records;
+        private final Integer exp;
+        private final Rank tier;
 
         public Response(MemberEntity member){
             this.id = member.getId();
@@ -92,6 +97,8 @@ public class MemberDto {
             this.username = member.getUsername();
             this.profileDescription = member.getProfileDescription();
             this.profileImageUrl = member.getProfileImageUrl();
+            this.exp = member.getExp();
+            this.tier = member.getTier();
             this.records = member.getRecords().stream()
                     .map(RecordDto.Response::new)
                     .collect(Collectors.toList());

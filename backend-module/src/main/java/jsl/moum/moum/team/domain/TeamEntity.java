@@ -3,9 +3,11 @@ package jsl.moum.moum.team.domain;
 import jakarta.persistence.*;
 import jsl.moum.moum.lifecycle.domain.LifecycleEntity;
 import jsl.moum.moum.team.dto.TeamDto;
+import jsl.moum.rank.Rank;
 import jsl.moum.record.domain.entity.RecordEntity;
 import jsl.moum.chatroom.domain.Chatroom;
 import lombok.*;
+import org.springframework.security.core.parameters.P;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -60,6 +62,21 @@ public class TeamEntity {
 
     @Column(name = "file_url")
     private String fileUrl;
+
+    @Column(name = "exp")
+    private Integer exp = 0;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = true)
+    private Rank tier = Rank.BRONZE;
+
+    public void updateTeamExpAndRank(int newExp) {
+        if (this.exp == null) {
+            this.exp = 0;  // null인 경우 0으로 초기화
+        }
+        this.exp = this.exp + this.members.size() + this.records.size() + newExp;
+        this.tier = Rank.getRank(this.exp);
+    }
 
     @PrePersist
     public void createDate(){

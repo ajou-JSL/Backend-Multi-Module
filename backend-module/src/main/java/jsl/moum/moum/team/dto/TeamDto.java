@@ -5,6 +5,7 @@ import jsl.moum.auth.domain.entity.MemberEntity;
 import jsl.moum.auth.dto.MemberDto;
 import jsl.moum.moum.team.domain.TeamEntity;
 import jsl.moum.moum.team.domain.TeamMemberEntity;
+import jsl.moum.rank.Rank;
 import jsl.moum.record.domain.dto.RecordDto;
 import lombok.*;
 
@@ -31,7 +32,6 @@ public class TeamDto {
         private String location;
         private List<RecordDto.Request> records;
 
-
         public TeamEntity toEntity(){
             return TeamEntity.builder()
                     .members(members)
@@ -42,6 +42,8 @@ public class TeamDto {
                     .leaderId(leaderId)
                     .fileUrl(fileUrl)
                     .records(records.stream().map(RecordDto.Request::toEntity).collect(Collectors.toList()))
+                    .exp(0)
+                    .tier(Rank.BRONZE)
                     .build();
         }
 
@@ -58,8 +60,10 @@ public class TeamDto {
         private final String location;
         private LocalDateTime createdAt;
         private String fileUrl;
-        private List<MemberDto.Response> members = new ArrayList<>();
-        private List<RecordDto.Response> records = new ArrayList<>();
+        private Integer exp;
+        private Rank tier;
+        private List<MemberDto.Response> members;
+        private List<RecordDto.Response> records;
 
         public Response(TeamEntity teamEntity){
             this.teamId = teamEntity.getId();
@@ -70,6 +74,8 @@ public class TeamDto {
             this.location = teamEntity.getLocation();
             this.createdAt = teamEntity.getCreatedAt();
             this.fileUrl = teamEntity.getFileUrl();
+            this.exp = teamEntity.getExp();
+            this.tier = teamEntity.getTier();
 
             this.members = teamEntity.getMembers().stream()
                     .map(TeamMemberEntity::getMember) // TeamMemberEntity에서 MemberEntity 가져오기
@@ -115,10 +121,10 @@ public class TeamDto {
         private final String teamName;
         private final String description;
         private final String genre;
-        private final String locaion;
+        private final String location;
         private LocalDateTime createdAt;
         private String fileUrl;
-        private List<RecordDto.Response> records = new ArrayList<>();
+        private List<RecordDto.Response> records;
 
         public UpdateResponse(TeamEntity teamEntity){
             this.teamId = teamEntity.getId();
@@ -126,7 +132,7 @@ public class TeamDto {
             this.teamName = teamEntity.getTeamName();
             this.description = teamEntity.getDescription();
             this.genre = teamEntity.getGenre();
-            this.locaion = teamEntity.getLocation();
+            this.location = teamEntity.getLocation();
             this.createdAt = teamEntity.getCreatedAt();
             this.fileUrl = teamEntity.getFileUrl();
             this.records = teamEntity.getRecords().stream()
