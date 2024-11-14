@@ -73,6 +73,8 @@ public class MemberDto {
                     .proficiency(proficiency)
                     .name(name)
                     .records(records.stream().map(RecordDto.Request::toEntity).collect(Collectors.toList()))
+                    .exp(0)
+                    .tier(Rank.BRONZE)
                     .build();
         }
     }
