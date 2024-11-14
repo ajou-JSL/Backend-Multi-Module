@@ -11,6 +11,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 
 @Service
 @Slf4j
@@ -53,14 +54,16 @@ public class ChatService {
     }
 
     public Flux<ChatDto> getChatsRecentByChatroomId(int chatroomId){
-        PageRequest pageRequest = PageRequest.of(0, PAGE_SIZE, Sort.by(Sort.Direction.ASC ,"timestamp"));
+        PageRequest pageRequest = PageRequest.of(0, PAGE_SIZE, Sort.by(Sort.Direction.DESC ,"timestamp"));
         return chatRepository.findByChatroomId(chatroomId, pageRequest)
+                .sort(Comparator.comparing(chat -> chat.getTimestamp()))
                 .map(chat -> new ChatDto(chat));
     }
 
     public Flux<ChatDto> getChatsBeforeTimestampByChatroomId(int chatroomId, LocalDateTime timestamp){
-        PageRequest pageRequest = PageRequest.of(0, PAGE_SIZE, Sort.by(Sort.Direction.ASC ,"timestamp"));
+        PageRequest pageRequest = PageRequest.of(0, PAGE_SIZE, Sort.by(Sort.Direction.DESC ,"timestamp"));
         return chatRepository.findChatsBeforeTimestampByChatroomId(chatroomId, timestamp, pageRequest)
+                .sort(Comparator.comparing(chat -> chat.getTimestamp()))
                 .map(chat -> new ChatDto(chat));
     }
 }
