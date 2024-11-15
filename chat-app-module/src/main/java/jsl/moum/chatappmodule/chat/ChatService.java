@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -44,11 +45,10 @@ public class ChatService {
         return chatroomMono.flatMap(chatroom ->{
             chatroom.setLastChat(lastChat);
             chatroom.setLastTimestamp(lastTimestamp);
-            log.info("ChatController chatroom with updated info : {}", chatroom);
 
-            chatroomRepository.save(chatroom);
-            log.info("ChatController chatroom saved");
-
+            chatroomRepository.save(chatroom)
+                    .then(Mono.fromRunnable(() -> log.info("ChatController chatroom saved : {}", chatroom)))
+                    .subscribe();
             return chatRepository.save(chat);
         }).doOnError(error -> log.error("ChatController saveChat error : {}", error));
     }
