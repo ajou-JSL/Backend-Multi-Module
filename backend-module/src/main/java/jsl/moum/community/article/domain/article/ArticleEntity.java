@@ -14,7 +14,10 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
-@Table(name = "article")
+@Table(
+        name = "article",
+        indexes = @Index(name = "idx_article_created_at_desc", columnList = "created_at DESC")
+)
 public class ArticleEntity {
 
     @Id

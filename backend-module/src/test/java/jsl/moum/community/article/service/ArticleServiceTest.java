@@ -16,7 +16,7 @@ import jsl.moum.community.article.domain.article.ArticleEntity;
 import jsl.moum.community.article.domain.article.ArticleRepository;
 import jsl.moum.community.article.domain.article_details.ArticleDetailsEntity;
 import jsl.moum.community.article.domain.article_details.ArticleDetailsRepository;
-import jsl.moum.community.article.domain.article_details.ArticleRepositoryCustom;
+import jsl.moum.community.article.domain.article_details.ArticleDetailsRepositoryCustom;
 import jsl.moum.community.article.dto.ArticleDetailsDto;
 import jsl.moum.community.article.dto.ArticleDto;
 import jsl.moum.objectstorage.StorageService;
@@ -52,7 +52,7 @@ class ArticleServiceTest {
     private MemberRepository memberRepository;
 
     @Mock
-    private ArticleRepositoryCustom articleRepositoryCustom;
+    private ArticleDetailsRepositoryCustom articleDetailsRepositoryCustom;
 
     private MemberEntity author;
     private ArticleEntity mockArticle;
@@ -312,8 +312,8 @@ class ArticleServiceTest {
         );
 
         // Mock 동작
-        when(articleRepositoryCustom.findFreeTalkingArticles(0,10)).thenReturn(mockArticle); // 자유게시판
-        when(articleRepositoryCustom.findRecruitingdArticles(0,10)).thenReturn(mockArticle); // 모집게시판
+        when(articleDetailsRepositoryCustom.findFreeTalkingArticles(0,10)).thenReturn(mockArticle); // 자유게시판
+        when(articleDetailsRepositoryCustom.findRecruitingdArticles(0,10)).thenReturn(mockArticle); // 모집게시판
 
         // when
         List<ArticleDto.Response> Freearticles = articleService.getArticlesByCategory(ArticleEntity.ArticleCategories.FREE_TALKING_BOARD,0,10);
@@ -371,7 +371,7 @@ class ArticleServiceTest {
                         article.getCategory() == ArticleEntity.ArticleCategories.FREE_TALKING_BOARD)
                 .collect(Collectors.toList());
 
-        when(articleRepositoryCustom.searchArticlesByTitleKeyword(keyword, "FREE_TALKING_BOARD",0,10))
+        when(articleDetailsRepositoryCustom.searchArticlesByTitleKeyword(keyword, "FREE_TALKING_BOARD",0,10))
                 .thenReturn(articleList);
 
         // when

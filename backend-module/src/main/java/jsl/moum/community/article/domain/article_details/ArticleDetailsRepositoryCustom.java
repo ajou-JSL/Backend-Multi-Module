@@ -14,7 +14,7 @@ import static jsl.moum.community.article.domain.article.QArticleEntity.*;
 
 @Repository
 @RequiredArgsConstructor
-public class ArticleRepositoryCustom {
+public class ArticleDetailsRepositoryCustom {
 
     private final JPAQueryFactory jpaQueryFactory;
 

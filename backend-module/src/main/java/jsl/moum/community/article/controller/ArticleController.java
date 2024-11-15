@@ -150,4 +150,22 @@ public class ArticleController {
 
     }
 
+    /**
+     * 실시간 인기게시글 조회 API
+     */
+    @GetMapping("/api/articles/hot")
+    public ResponseEntity<ResultResponse> getHotArticleList(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                                        @RequestParam(defaultValue = "0") int page,
+                                                        @RequestParam(defaultValue = "10") int size){
+        if(customUserDetails == null){
+            throw new NeedLoginException();
+        }
+
+        List<ArticleDto.Response> articleList = articleService.getHotArticleList(page,size);
+
+        ResultResponse response = ResultResponse.of(ResponseCode.ARTICLE_LIST_GET_SUCCESS, articleList);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+
+    }
+
 }

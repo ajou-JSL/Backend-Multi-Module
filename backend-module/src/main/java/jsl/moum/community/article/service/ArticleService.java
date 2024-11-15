@@ -2,8 +2,9 @@ package jsl.moum.community.article.service;
 
 import jsl.moum.auth.domain.entity.MemberEntity;
 import jsl.moum.auth.domain.repository.MemberRepository;
+import jsl.moum.community.article.domain.article.ArticleRepositoryCustom;
 import jsl.moum.community.article.domain.article_details.ArticleDetailsEntity;
-import jsl.moum.community.article.domain.article_details.ArticleRepositoryCustom;
+import jsl.moum.community.article.domain.article_details.ArticleDetailsRepositoryCustom;
 import jsl.moum.community.article.dto.ArticleDetailsDto;
 import jsl.moum.community.article.dto.ArticleDto;
 import jsl.moum.objectstorage.StorageService;
@@ -34,8 +35,9 @@ public class ArticleService {
     private final ArticleRepository articleRepository;
     private final ArticleDetailsRepository articleDetailsRepository;
     private final MemberRepository memberRepository;
-    private final ArticleRepositoryCustom articleRepositoryCustom;
+    private final ArticleDetailsRepositoryCustom articleDetailsRepositoryCustom;
     private final StorageService storageService;
+    private final ArticleRepositoryCustom articleRepositoryCustom;
 
     @Value("${ncp.object-storage.bucket}")
     private String bucket;
@@ -224,6 +226,19 @@ public class ArticleService {
     }
 
     /**
+     * 실시간 인기 게시글 목록 조회
+     */
+    @Transactional(readOnly = true)
+    public List<ArticleDto.Response> getHotArticleList(int page, int size) {
+        List<ArticleEntity> articles = articleRepositoryCustom.getAllHotArticles(page, size);
+
+        // 조회된 게시글들을 DTO로 변환
+        return articles.stream()
+                .map(ArticleDto.Response::new)
+                .collect(Collectors.toList());
+    }
+
+    /**
      * 카테고리에 따른 게시글 목록 조회 메서드
      *
      * @param category 게시글 카테고리
@@ -234,9 +249,9 @@ public class ArticleService {
         List<ArticleEntity> articles;
 
         if (category == ArticleEntity.ArticleCategories.FREE_TALKING_BOARD) {
-            articles = articleRepositoryCustom.findFreeTalkingArticles(page, size);
+            articles = articleDetailsRepositoryCustom.findFreeTalkingArticles(page, size);
         } else if (category == ArticleEntity.ArticleCategories.RECRUIT_BOARD) {
-            articles = articleRepositoryCustom.findRecruitingdArticles(page, size);
+            articles = articleDetailsRepositoryCustom.findRecruitingdArticles(page, size);
         } else {
             throw new CustomException(ErrorCode.ARTICLE_NOT_FOUND);
         }
@@ -255,7 +270,7 @@ public class ArticleService {
      */
     @Transactional(readOnly = true)
     public List<ArticleDto.Response> getArticleWithTitleSearch(String keyword, String category,int page, int size) {
-        List<ArticleEntity> articles = articleRepositoryCustom.searchArticlesByTitleKeyword(keyword, category, page, size);
+        List<ArticleEntity> articles = articleDetailsRepositoryCustom.searchArticlesByTitleKeyword(keyword, category, page, size);
 
         // 조회된 게시글들을 DTO로 변환
         List<ArticleDto.Response> articleResponseList = articles.stream()
