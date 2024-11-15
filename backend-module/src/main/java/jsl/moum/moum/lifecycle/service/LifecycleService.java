@@ -13,7 +13,10 @@ import jsl.moum.moum.team.domain.*;
 import jsl.moum.moum.team.dto.TeamDto;
 import jsl.moum.objectstorage.StorageService;
 import jsl.moum.record.domain.dto.RecordDto;
+import jsl.moum.record.domain.entity.MoumMemberRecordEntity;
 import jsl.moum.record.domain.entity.RecordEntity;
+import jsl.moum.record.domain.repository.MoumMemberRecordRepository;
+import jsl.moum.record.domain.repository.MoumMemberRecordRepositoryCustom;
 import jsl.moum.record.domain.repository.RecordRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +32,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,6 +47,8 @@ public class LifecycleService {
     private final StorageService storageService;
     private final TeamRepository teamRepository;
     private final RecordRepository recordRepository;
+    private final MoumMemberRecordRepository moumMemberRecordRepository;
+    private final MoumMemberRecordRepositoryCustom moumMemberRecordRepositoryCustom;
 
     @Value("${ncp.object-storage.bucket}")
     private String bucket;
@@ -217,14 +223,23 @@ public class LifecycleService {
                 .startDate(moum.getStartDate())
                 .endDate(LocalDate.now())
                 .build();
+        recordRepository.save(newRecord);
 
         team.assignRecord(newRecord);
 
         List<MemberEntity> members = teamMemberRepositoryCustom.findAllMembersByTeamId(team.getId());
         for (MemberEntity member : members) {
-            member.assignRecord(newRecord);
+//            member.assignRecord(newRecord);
+            MoumMemberRecordEntity moumMemberRecord = MoumMemberRecordEntity.builder()
+                    .member(member)
+                    .record(newRecord)
+                    .lifecycle(moum)
+                    .build();
+            moumMemberRecordRepository.save(moumMemberRecord);
+            member.updateMemberExpAndRank(1);
         }
 
+        team.updateTeamExpAndRank(1);
 
         moum.getProcess().changeFinishStatus(true);
         moum.getProcess().updateAndGetProcessPercentage();
@@ -250,21 +265,28 @@ public class LifecycleService {
         TeamEntity team = findTeam(moum.getTeam().getId());
         RecordEntity record = lifecycleRepositoryCustom.findLatestRecordByMoumId(moumId);
 
-        team.removeRecord(record);
+        // 모음에 속한 모든 멤버들의 이력 삭제
         List<MemberEntity> members = teamMemberRepositoryCustom.findAllMembersByTeamId(team.getId());
         for (MemberEntity member : members) {
-            member.removeRecord(record);
-        }
-        recordRepository.deleteById(record.getId());
+            // 모음 이력 삭제
+            moumMemberRecordRepositoryCustom.deleteMoumMemberRecordByLifecycleAndMember(moum.getId(), member.getId());
 
+            // 멤버의 경험치 및 랭킹 업데이트 (삭제된 이력에 맞게 감소 처리)
+            member.updateMemberExpAndRank(-1);
+        }
+
+        // 팀의 기록 삭제 및 경험치 및 랭킹 업데이트
+        team.removeRecord(record);
+        team.updateTeamExpAndRank(-1);
+
+        // 모음 상태를 다시 되살리기
         moum.getProcess().changeFinishStatus(false);
         moum.getProcess().updateAndGetProcessPercentage();
 
-        /*
-            todo : 팀이랑 개인 이력에 추가되는 로직 필요
-         */
         return new LifecycleDto.Response(moum);
     }
+
+
 
     /**
      * 모음 진척도 수정하기

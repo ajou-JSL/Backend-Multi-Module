@@ -67,13 +67,12 @@ public class LifecycleDto {
         private LocalDate startDate;
         private LocalDate endDate;
         private int price;
-        private List<String> imageUrls = new ArrayList<>();
+        private List<String> imageUrls;
         private int leaderId;
         private String leaderName;
         private int teamId;
         private Process process;
-        private List<MemberDto.Response> members = new ArrayList<>();
-        //private List<RecordDto.Response> records = new ArrayList<>();
+        private List<MemberDto.Response> members;
 
         public Response(LifecycleEntity lifecycle){
             this.moumId = lifecycle.getId();
@@ -93,11 +92,6 @@ public class LifecycleDto {
                     .map(TeamMemberEntity::getMember)
                     .map(MemberDto.Response::new)
                     .collect(Collectors.toList());
-//
-//            this.records = lifecycle.getRecords().stream()
-//                    .map(RecordDto.Response::new)
-//                    .collect(Collectors.toList());;
-
         }
     }
 }

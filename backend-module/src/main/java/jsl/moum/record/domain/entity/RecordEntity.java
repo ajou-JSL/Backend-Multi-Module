@@ -9,7 +9,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
+import java.util.List;
 
 @Builder
 @AllArgsConstructor
@@ -32,7 +32,7 @@ public class RecordEntity {
     @Column(name = "end_date")
     private LocalDate endDate;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "fk_member_id")
     private MemberEntity member;
 
@@ -46,6 +46,9 @@ public class RecordEntity {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @OneToMany(mappedBy = "record", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MoumMemberRecordEntity> moumMemberRecords;
 
     @PrePersist
     void createdAt(){

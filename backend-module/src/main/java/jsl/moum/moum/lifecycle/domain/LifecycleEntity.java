@@ -1,17 +1,16 @@
 package jsl.moum.moum.lifecycle.domain;
 
 import jakarta.persistence.*;
-import jsl.moum.auth.domain.entity.MemberEntity;
-import jsl.moum.auth.dto.MemberDto;
 import jsl.moum.moum.lifecycle.dto.LifecycleDto;
 import jsl.moum.moum.team.domain.TeamEntity;
-import jsl.moum.moum.team.domain.TeamMemberEntity;
+
+import jsl.moum.record.domain.entity.MoumMemberRecordEntity;
 import jsl.moum.record.domain.entity.RecordEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.XSlf4j;
+
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -66,6 +65,9 @@ public class LifecycleEntity {
 
     @OneToMany(mappedBy = "lifecycle", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RecordEntity> records;
+
+    @OneToMany(mappedBy = "lifecycle", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MoumMemberRecordEntity> moumMemberRecords;
 
     public void assignTeam(TeamEntity team) {
         if (team != null) {

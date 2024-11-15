@@ -84,7 +84,7 @@ public class TeamMemberRepositoryCustom {
     /**
         select team_member
         from team_member
-        where team_member.team_id =:teamId
+        where team_member.team_id =: teamId
      **/
     public List<MemberEntity> findAllMembersByTeamId(int teamId) {
         return jpaQueryFactory
@@ -147,18 +147,5 @@ public class TeamMemberRepositoryCustom {
         return teams.stream()
                 .map(TeamDto.Response::new)
                 .collect(Collectors.toList());
-    }
-
-    /**
-     생성한 팀 개수 찾기
-     select COUNT(*)
-     from lifecycle
-     where leader_id = ?;
-     */
-    public long countCreatedTeamByMemberId(int leaderId){
-        return jpaQueryFactory
-                .selectFrom(teamMemberEntity)
-                .where(teamMemberEntity.leaderId.eq(leaderId))
-                .fetch().size();
     }
 }

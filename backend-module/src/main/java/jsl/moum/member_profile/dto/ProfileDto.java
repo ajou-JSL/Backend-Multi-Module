@@ -4,8 +4,10 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jsl.moum.auth.domain.entity.MemberEntity;
+import jsl.moum.auth.dto.MemberDto;
 import jsl.moum.rank.Rank;
 import jsl.moum.record.domain.dto.RecordDto;
+import jsl.moum.record.domain.entity.MoumMemberRecordEntity;
 import jsl.moum.record.domain.entity.RecordEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -80,6 +82,7 @@ public class ProfileDto {
         private Rank tier;
         private List<TeamDto.Response> teams;
         private List<RecordDto.Response> records;
+        private List<RecordDto.Response> moumRecords;
 
         public Response(MemberEntity member){
             this.id = member.getId();
@@ -99,7 +102,11 @@ public class ProfileDto {
                     .collect(Collectors.toList());
             this.records = member.getRecords().stream()
                     .map(RecordDto.Response::new)
-                    .collect(Collectors.toList());;
+                    .collect(Collectors.toList());
+            this.moumRecords = member.getMoumMemberRecords().stream()
+                    .map(MoumMemberRecordEntity::getRecord)
+                    .map(RecordDto.Response::new)
+                    .collect(Collectors.toList());
         }
     }
 }

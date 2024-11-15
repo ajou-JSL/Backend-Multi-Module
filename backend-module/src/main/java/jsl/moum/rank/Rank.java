@@ -6,7 +6,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum Rank {
-    GREEN("그린"),
     BRONZE("브론즈"),
     SILVER("실버"),
     GOLD("골드"),
@@ -16,9 +15,7 @@ public enum Rank {
     private final String tier;
 
     public static Rank getRank(int exp) {
-        if (exp < 5) {
-            return GREEN;
-        } else if (exp < 10) {
+        if (exp < 10) {
             return BRONZE;
         } else if (exp < 15) {
             return SILVER;

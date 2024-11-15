@@ -3,15 +3,15 @@ package jsl.moum.auth.domain.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
-import jsl.moum.community.article.domain.article.ArticleEntity;
 import jsl.moum.member_profile.dto.ProfileDto;
 import jsl.moum.rank.Rank;
+import jsl.moum.record.domain.entity.MoumMemberRecordEntity;
 import jsl.moum.record.domain.entity.RecordEntity;
 import jsl.moum.chatroom.domain.ChatroomMember;
 import lombok.*;
 import jsl.moum.moum.team.domain.TeamEntity;
 import jsl.moum.moum.team.domain.TeamMemberEntity;
-import org.springframework.security.core.parameters.P;
+import lombok.extern.slf4j.Slf4j;
 
 
 import java.util.ArrayList;
@@ -23,6 +23,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@Slf4j
 @Table(name = "member")
 public class MemberEntity {
 
@@ -51,8 +52,13 @@ public class MemberEntity {
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TeamMemberEntity> teams = new ArrayList<>();
 
+    // 개인 이력
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<RecordEntity> records;
+    private List<RecordEntity> records = new ArrayList<>();
+
+    // 모음 이력
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MoumMemberRecordEntity> moumMemberRecords;
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<ChatroomMember> chatroomMembers = new ArrayList<>();
@@ -77,6 +83,7 @@ public class MemberEntity {
     @Column(name = "exp", nullable = false)
     private Integer exp = 0;
 
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Rank tier = Rank.BRONZE;
@@ -85,7 +92,8 @@ public class MemberEntity {
         if (this.exp == null) {
             this.exp = 0;
         }
-        this.exp = this.exp + this.teams.size() + this.records.size() + newExp;
+        //this.exp = this.exp + this.teams.size() + this.records.size() + newExp;
+        this.exp += newExp;
         this.tier = Rank.getRank(this.exp);
     }
 
@@ -93,21 +101,23 @@ public class MemberEntity {
     public void removeTeamFromMember(TeamEntity team) {
         teams.removeIf(teamMemberEntity -> teamMemberEntity.getTeam().equals(team));
     }
+//
+//    public void assignRecord(RecordEntity record){
+//        if(record == null){
+//            return;
+//        }
+//        log.info("assign Record method called");
+//        this.records.add(record);
+//    }
+//
+//    public void removeRecord(RecordEntity record){
+//        if(record == null){
+//            return;
+//        }
+//        this.records.remove(record);
+//        record.setMember(null);
+//    }
 
-    public void assignRecord(RecordEntity record){
-        if(record == null){
-            return;
-        }
-        this.records.add(record);
-    }
-
-    public void removeRecord(RecordEntity record){
-        if(record == null){
-            return;
-        }
-        this.records.remove(record);
-        record.setMember(null);
-    }
 
     public void updateProfileImage(String newUrl){
         this.profileImageUrl = newUrl;
@@ -130,7 +140,7 @@ public class MemberEntity {
             if (!this.records.contains(updatedRecord)) {
                 this.records.add(updatedRecord);  // 새 RecordEntity를 추가
             }
-            updatedRecord.setMember(this);  // 각 RecordEntity에 현재 MemberEntity 설정
+            updatedRecord.setMember(this);  // 각 RecordEntity에 현재 TeamEntity 설정
         }
 
         // 기존 records에서 업데이트된 목록에 포함되지 않는 RecordEntity를 삭제
@@ -146,7 +156,7 @@ public class MemberEntity {
 
         // toRemove에 추가된 RecordEntity들은 실제로 삭제되도록 처리
         for (RecordEntity record : toRemove) {
-            record.setMember(null);  // 해당 RecordEntity와의 관계 끊기
+            record.setMember(null);  // 해당 RecordEntity와의 팀 관계 끊기
         }
     }
 

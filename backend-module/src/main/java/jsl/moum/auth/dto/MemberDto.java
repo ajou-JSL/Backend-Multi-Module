@@ -5,6 +5,7 @@ import jakarta.validation.constraints.*;
 import jsl.moum.auth.domain.entity.MemberEntity;
 import jsl.moum.rank.Rank;
 import jsl.moum.record.domain.dto.RecordDto;
+import jsl.moum.record.domain.entity.MoumMemberRecordEntity;
 import jsl.moum.record.domain.entity.RecordEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -87,9 +88,11 @@ public class MemberDto {
         private final String username;
         private final String profileDescription;
         private final String profileImageUrl;
-        private final List<RecordDto.Response> records;
         private final Integer exp;
         private final Rank tier;
+        private final List<RecordDto.Response> records;
+        private final List<RecordDto.Response> moumRecords;
+
 
         public Response(MemberEntity member){
             this.id = member.getId();
@@ -100,6 +103,10 @@ public class MemberDto {
             this.exp = member.getExp();
             this.tier = member.getTier();
             this.records = member.getRecords().stream()
+                    .map(RecordDto.Response::new)
+                    .collect(Collectors.toList());
+            this.moumRecords = member.getMoumMemberRecords().stream()
+                    .map(MoumMemberRecordEntity::getRecord)
                     .map(RecordDto.Response::new)
                     .collect(Collectors.toList());
         }

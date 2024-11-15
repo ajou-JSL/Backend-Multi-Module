@@ -72,9 +72,10 @@ public class TeamEntity {
 
     public void updateTeamExpAndRank(int newExp) {
         if (this.exp == null) {
-            this.exp = 0;  // null인 경우 0으로 초기화
+            this.exp = 0;
         }
-        this.exp = this.exp + this.members.size() + this.records.size() + newExp;
+        //this.exp = this.exp + this.members.size() + this.records.size() + newExp;
+        this.exp += newExp;
         this.tier = Rank.getRank(this.exp);
     }
 

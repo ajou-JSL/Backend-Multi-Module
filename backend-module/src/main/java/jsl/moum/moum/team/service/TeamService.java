@@ -42,6 +42,7 @@ public class TeamService {
     private final RecordRepository recordRepository;
     private final LifecycleRepository lifecycleRepository;
     private final LifecycleRepositoryCustom lifecycleRepositoryCustom;
+    private final TeamRepositoryCustom teamRepositoryCustom;
 
     @Value("${ncp.object-storage.bucket}")
     private String bucket;
@@ -79,7 +80,7 @@ public class TeamService {
 
         MemberEntity loginUser = memberRepository.findByUsername(username);
 
-        long existingTeamCount = teamMemberRepositoryCustom.countCreatedTeamByMemberId(loginUser.getId());
+        long existingTeamCount = teamRepositoryCustom.countCreatedTeamByMemberId(loginUser.getId());
         log.info("============ 팀 개 : {}",existingTeamCount);
         if (existingTeamCount >= 3) {
             throw new CustomException(ErrorCode.MAX_TEAM_LIMIT_EXCEEDED);
