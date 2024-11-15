@@ -52,7 +52,7 @@ public class PerformArticleService {
         List<Integer> requestedMemberIds = requestDto.getMembersId();
 
         List<PerformMember> performMembers = allMembers.stream()
-                .filter(m -> requestedMemberIds.contains(m.getId()))
+                .filter(m -> requestedMemberIds.contains(m.getId()) || m.getId() == member.getId())
                 .map(m -> PerformMember.builder()
                         .performanceArticle(null)
                         .member(m)
