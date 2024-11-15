@@ -56,6 +56,7 @@ public class MemberDto {
         private String instrument;
 
         private List<RecordDto.Request> records;
+        private String videoUrl;
 
 
 
@@ -68,6 +69,7 @@ public class MemberDto {
                     .email(email)
                     .password(password)
                     .address(address)
+                    .videoUrl(videoUrl)
                     .profileImageUrl(profileImageUrl)
                     .profileDescription(profileDescription)
                     .instrument(instrument)
@@ -90,6 +92,7 @@ public class MemberDto {
         private final String profileImageUrl;
         private final Integer exp;
         private final Rank tier;
+        private final String videoUrl;
         private final List<RecordDto.Response> records;
         private final List<RecordDto.Response> moumRecords;
 
@@ -100,6 +103,7 @@ public class MemberDto {
             this.username = member.getUsername();
             this.profileDescription = member.getProfileDescription();
             this.profileImageUrl = member.getProfileImageUrl();
+            this.videoUrl = member.getVideoUrl();
             this.exp = member.getExp();
             this.tier = member.getTier();
             this.records = member.getRecords().stream()

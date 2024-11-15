@@ -50,6 +50,7 @@ public class ProfileDto {
         private String address;
 
         private List<RecordDto.Request> records;
+        private String videoUrl;
 
         public MemberEntity toEntity(){
             return MemberEntity.builder()
@@ -61,6 +62,7 @@ public class ProfileDto {
                     .instrument(instrument)
                     .proficiency(proficiency)
                     .name(name)
+                    .videoUrl(videoUrl)
                     .records(records.stream().map(RecordDto.Request::toEntity).collect(Collectors.toList()))
                     .build();
         }
@@ -75,6 +77,7 @@ public class ProfileDto {
         private String profileDescription;
         private String email;
         private String profileImageUrl;
+        private String videoUrl;
         private String proficiency;
         private String instrument;
         private String address;
@@ -91,6 +94,7 @@ public class ProfileDto {
             this.profileDescription = member.getProfileDescription();
             this.email = member.getEmail();
             this.profileImageUrl = member.getProfileImageUrl();
+            this.videoUrl = member.getVideoUrl();
             this.proficiency = member.getProficiency();
             this.instrument = member.getInstrument();
             this.address = member.getAddress();

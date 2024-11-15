@@ -64,6 +64,9 @@ class TeamServiceTest {
     private LifecycleRepositoryCustom lifecycleRepositoryCustom;
 
     @Mock
+    private TeamRepositoryCustom teamRepositoryCustom;
+
+    @Mock
     private LifecycleRepository lifecycleRepository;
 
     private MemberEntity mockLeader;
@@ -343,7 +346,7 @@ class TeamServiceTest {
         when(teamRepository.save(any(TeamEntity.class))).thenReturn(mockTeam);
         when(storageService.uploadFile(anyString(), any(MultipartFile.class)))
                 .thenReturn("New Team fileUrl");
-        when(teamMemberRepositoryCustom.countCreatedTeamByMemberId(mockLeader.getId())).thenReturn(3L);
+        when(teamRepositoryCustom.countCreatedTeamByMemberId(mockLeader.getId())).thenReturn(3L);
 
         // when & then
         assertThatThrownBy(() -> teamService.createTeam(teamRequestDto, mockLeader.getUsername(),file))
