@@ -4,6 +4,7 @@ import jsl.moum.auth.domain.entity.MemberEntity;
 import jsl.moum.auth.domain.repository.MemberRepository;
 import jsl.moum.community.perform.domain.entity.PerformArticleEntity;
 import jsl.moum.community.perform.domain.repository.PerformArticleRepository;
+import jsl.moum.community.perform.domain.repository.PerformArticleRepositoryCustom;
 import jsl.moum.community.perform.dto.PerformArticleDto;
 import jsl.moum.global.error.exception.CustomException;
 import jsl.moum.moum.team.domain.TeamEntity;
@@ -21,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,6 +51,9 @@ class PerformArticleServiceTest {
 
     @Mock
     private TeamMemberRepositoryCustom teamMemberRepositoryCustom;
+
+    @Mock
+    private PerformArticleRepositoryCustom performArticleRepositoryCustom;
 
     private MemberEntity mockMember;
     private TeamEntity mockTeam;
@@ -181,6 +186,50 @@ class PerformArticleServiceTest {
     }
 
     @Test
+    @DisplayName("이달의 공연 게시글 리스트 조회 성공")
+    void get_all_thismonth_perform_articles_suceess() {
+        // given
+        // 시작일자 이번달인거
+        PerformArticleEntity mockArticle1 = PerformArticleEntity.builder()
+                .id(1)
+                .performanceName("Performance 1")
+                .performanceStartDate(new Date())
+                .build();
+        PerformArticleEntity mockArticle2 = PerformArticleEntity.builder()
+                .id(2)
+                .performanceName("Performance 2")
+                .performanceStartDate(new Date())
+                .build();
+
+        // 시작일자 2025년인거
+        PerformArticleEntity mockArticleA = PerformArticleEntity.builder()
+                .id(1)
+                .performanceName("Performance 1")
+                .performanceStartDate(java.sql.Date.valueOf("2025-11-15"))
+                .build();
+
+        PerformArticleEntity mockArticleB = PerformArticleEntity.builder()
+                .id(2)
+                .performanceName("Performance 2")
+                .performanceStartDate(java.sql.Date.valueOf("2025-11-15"))
+                .build();
+
+        List<PerformArticleEntity> mockArticles = List.of(mockArticle1, mockArticle2);
+        when(performArticleRepositoryCustom.getThisMonthPerformArticles(anyInt(), anyInt()))
+                .thenReturn(mockArticles);
+
+        // when
+        List<PerformArticleDto.Response> responseList = performArticleService.getAllThisMonthPerformArticles(0, 10);
+
+        // then
+        assertNotNull(responseList);
+        assertEquals(2, responseList.size());
+        assertEquals("Performance 1", responseList.get(0).getPerformanceName());
+        assertEquals("Performance 2", responseList.get(1).getPerformanceName());
+    }
+
+
+    @Test
     @DisplayName("findMember 메서드 성공")
     void findMember_method_success() {
         // given
@@ -260,4 +309,6 @@ class PerformArticleServiceTest {
         // then
         assertFalse(isLeader);
     }
+
+
 }

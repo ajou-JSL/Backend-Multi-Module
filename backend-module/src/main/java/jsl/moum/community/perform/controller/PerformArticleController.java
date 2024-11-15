@@ -61,6 +61,20 @@ public class PerformArticleController {
         return new ResponseEntity<>(result, HttpStatusCode.valueOf(result.getStatus()));
     }
 
+    /*
+        이달의 공연 게시글 리스트 조회
+    */
+    @GetMapping("/api/performs-all/this-month")
+    public ResponseEntity<ResultResponse> getAllThisMonthPerformArticles(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                                               @RequestParam(defaultValue = "0") int page,
+                                                               @RequestParam(defaultValue = "10") int size){
+        loginCheck(customUserDetails.getUsername());
+        List<PerformArticleDto.Response> responseDto = performArticleService.getAllThisMonthPerformArticles(page, size);
+        ResultResponse result = ResultResponse.of(ResponseCode.GET_THIS_MONTH_PERFORM_ARTICLE_SUCCESS,responseDto);
+        return new ResponseEntity<>(result, HttpStatusCode.valueOf(result.getStatus()));
+    }
+
+
 
 
     public String loginCheck(String username){

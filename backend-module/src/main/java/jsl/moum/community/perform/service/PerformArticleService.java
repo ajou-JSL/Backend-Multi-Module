@@ -7,6 +7,7 @@ import jsl.moum.community.article.dto.ArticleDto;
 import jsl.moum.community.perform.domain.entity.PerformArticleEntity;
 import jsl.moum.community.perform.domain.entity.PerformMember;
 import jsl.moum.community.perform.domain.repository.PerformArticleRepository;
+import jsl.moum.community.perform.domain.repository.PerformArticleRepositoryCustom;
 import jsl.moum.community.perform.dto.PerformArticleDto;
 import jsl.moum.global.error.ErrorCode;
 import jsl.moum.global.error.exception.CustomException;
@@ -33,6 +34,7 @@ public class PerformArticleService {
     private final TeamRepository teamRepository;
     private final StorageService storageService;
     private final TeamMemberRepositoryCustom teamMemberRepositoryCustom;
+    private final PerformArticleRepositoryCustom performArticleRepositoryCustom;
 
     /*
         생성
@@ -96,6 +98,20 @@ public class PerformArticleService {
     @Transactional(readOnly = true)
     public List<PerformArticleDto.Response> getAllPerformArticle(int page, int size){
         List<PerformArticleEntity> performArticles = performArticleRepository.findAll(PageRequest.of(page, size)).getContent();
+
+        List<PerformArticleDto.Response> responseList = performArticles.stream()
+                .map(PerformArticleDto.Response::new)
+                .toList();
+
+        return responseList;
+    }
+
+    /*
+        이달의 공연 게시글 리스트 조회
+    */
+    @Transactional(readOnly = true)
+    public List<PerformArticleDto.Response> getAllThisMonthPerformArticles(int page, int size){
+        List<PerformArticleEntity> performArticles = performArticleRepositoryCustom.getThisMonthPerformArticles(page, size);
 
         List<PerformArticleDto.Response> responseList = performArticles.stream()
                 .map(PerformArticleDto.Response::new)
