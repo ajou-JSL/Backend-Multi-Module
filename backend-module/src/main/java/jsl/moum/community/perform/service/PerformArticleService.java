@@ -37,7 +37,7 @@ public class PerformArticleService {
     /*
         생성
      */
-    @Transactional // 멤버 넣을때 리더id도 넣어줘야.....
+    @Transactional
     public PerformArticleDto.Response createPerformArticle(String username, PerformArticleDto.Request requestDto, MultipartFile file) throws IOException {
         MemberEntity member = findMember(username);
         TeamEntity team = findTeam(requestDto.getTeamId());
@@ -82,6 +82,7 @@ public class PerformArticleService {
     /*
         단건 조회
      */
+    @Transactional(readOnly = true)
     public PerformArticleDto.Response getPerformArticleById(int performArticleId){
         PerformArticleEntity target = performArticleRepository.findById(performArticleId)
                 .orElseThrow(()-> new CustomException(ErrorCode.ILLEGAL_ARGUMENT));
@@ -92,6 +93,7 @@ public class PerformArticleService {
     /*
         리스트 조회
     */
+    @Transactional(readOnly = true)
     public List<PerformArticleDto.Response> getAllPerformArticle(int page, int size){
         List<PerformArticleEntity> performArticles = performArticleRepository.findAll(PageRequest.of(page, size)).getContent();
 
