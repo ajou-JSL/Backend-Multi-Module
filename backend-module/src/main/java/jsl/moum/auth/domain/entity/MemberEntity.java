@@ -3,6 +3,7 @@ package jsl.moum.auth.domain.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
+import jsl.moum.community.perform.domain.entity.PerformMember;
 import jsl.moum.member_profile.dto.ProfileDto;
 import jsl.moum.rank.Rank;
 import jsl.moum.record.domain.entity.MoumMemberRecordEntity;
@@ -65,6 +66,11 @@ public class MemberEntity {
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<ChatroomMember> chatroomMembers = new ArrayList<>();
+
+    // 멤버가 참여한 공연게시글들
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PerformMember> membersPerforms = new ArrayList<>();
+
 
     // role은 회원가입 시 입력하게 할지?
     // admin, 일반사용자, 일반사용자중에서도 연주자,참여자 뭐 이런거 등등..

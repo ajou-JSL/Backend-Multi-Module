@@ -74,7 +74,12 @@ public enum ResponseCode {
     DELETE_MOUM_SUCCESS(200,"S-MM004", "모음 삭제 성공"),
     FINISH_MOUM_SUCCESS(201,"S-MM005", "모음 마감하기 성공"),
     REOPEN_MOUM_SUCCESS(201,"S-MM006", "모음 되살리기 성공"),
-    UPDATE_MOUM_PROCESS_SUCCESS(201,"S-MM007", "모음 진행률 상태 수정 성공");
+    UPDATE_MOUM_PROCESS_SUCCESS(201,"S-MM007", "모음 진행률 상태 수정 성공"),
+
+    // Perform
+    CREATE_PERFORM_ARTICLE_SUCCESS(201,"S-P001","공연게시글 생성 성공"),
+    GET_PERFORM_ARTICLE_SUCCESS(200,"S-P002","공연게시글 단건 조회 성공"),
+    GET_ALL_PERFORM_ARTICLE_SUCCESS(200,"S-P003","공연게시글 리스트 조회 성공");
 
 
     private final int status;

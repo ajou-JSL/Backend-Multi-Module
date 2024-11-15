@@ -358,7 +358,7 @@ class LifecycleControllerTest {
     @DisplayName("로그인 체크")
     void loginCheck_test(){
         // given
-        String username = mockLeader.getUsername();
+        String username = null;
 
         // when
         NeedLoginException exception = assertThrows(NeedLoginException.class, () -> {
