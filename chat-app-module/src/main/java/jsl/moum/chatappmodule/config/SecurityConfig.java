@@ -12,6 +12,7 @@ import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.RedirectServerAuthenticationEntryPoint;
+import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
 import org.springframework.security.web.server.context.WebSessionServerSecurityContextRepository;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
 
@@ -43,7 +44,7 @@ public class SecurityConfig {
 
         http.addFilterAt(jwtReactiveFilter, SecurityWebFiltersOrder.AUTHENTICATION)
                 .authenticationManager(authenticationManager)
-                .securityContextRepository(new WebSessionServerSecurityContextRepository());
+                .securityContextRepository(NoOpServerSecurityContextRepository.getInstance());
 
         /**
          * Add exceptionHandling to redirect to login page if not authenticated
