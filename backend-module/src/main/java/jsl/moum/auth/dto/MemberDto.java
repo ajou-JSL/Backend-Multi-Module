@@ -106,13 +106,26 @@ public class MemberDto {
             this.videoUrl = member.getVideoUrl();
             this.exp = member.getExp();
             this.tier = member.getTier();
-            this.memberRecords = member.getRecords().stream()
+//            this.memberRecords = member.getRecords().stream()
+//                    .map(RecordDto.Response::new)
+//                    .collect(Collectors.toList());
+//            this.moumRecords = member.getMoumMemberRecords().stream()
+//                    .map(MoumMemberRecordEntity::getRecord)
+//                    .map(RecordDto.Response::new)
+//                    .collect(Collectors.toList());
+
+            this.memberRecords = (member.getRecords() != null)
+                    ? member.getRecords().stream()
                     .map(RecordDto.Response::new)
-                    .collect(Collectors.toList());
-            this.moumRecords = member.getMoumMemberRecords().stream()
+                    .collect(Collectors.toList())
+                    : null;
+
+            this.moumRecords = (member.getMoumMemberRecords() != null)
+                    ? member.getMoumMemberRecords().stream()
                     .map(MoumMemberRecordEntity::getRecord)
                     .map(RecordDto.Response::new)
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toList())
+                    : null;
         }
     }
 
