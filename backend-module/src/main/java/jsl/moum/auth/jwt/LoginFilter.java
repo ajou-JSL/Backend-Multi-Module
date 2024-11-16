@@ -68,11 +68,11 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     String username = authentication.getName();
     int userId = ((CustomUserDetails) authentication.getPrincipal()).getMemberId();
     MemberEntity loginUser = memberRepository.findById(userId).get();
-    String nickname = loginUser.getName();
+    String name = loginUser.getName();
 
     Map<String, String> userInfo = new HashMap<>();
     userInfo.put("id", String.valueOf(userId));
-    userInfo.put("nickname", nickname);
+    userInfo.put("name", name);
 
     Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
     Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
