@@ -45,9 +45,7 @@ public class SignupService {
 
         // 파일 업로드 후 URL 획득
         // S3에 저장할 파일의 키를 설정 (예: "profiles/{username}/{originalFileName}")
-        String originalFilename = file.getOriginalFilename();
-        String key = "profiles/" + memberRequestDto.getUsername() + "/" + originalFilename; // 키 생성
-        String fileUrl = storageService.uploadFile(key, file); // 업로드 메서드 호출
+        String fileUrl = uploadMemberImage(memberRequestDto.getUsername(), file);
 
         // dto -> entity
         MemberDto.Request joinRequestDto = MemberDto.Request.builder()
@@ -79,4 +77,13 @@ public class SignupService {
 
     }
 
+    private String uploadMemberImage(String memberName, MultipartFile file) throws IOException {
+        if(file == null || file.isEmpty()){
+            return null;
+        }
+
+        String originalFilename = file.getOriginalFilename();
+        String key = "profiles/" + memberName + "/" + originalFilename; // 키 생성
+        return storageService.uploadFile(key, file); // 업로드 메서드 호출
+    }
 }
