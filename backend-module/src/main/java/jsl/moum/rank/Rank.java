@@ -33,5 +33,6 @@ public enum Rank {
             log.info("======= getRank() exp: {}", exp);
             return DIAMOND;
         }
+        return null;
     }
 }
