@@ -16,6 +16,9 @@ public enum ErrorCode {
     ILLEGAL_ARGUMENT(400, "F-C006", "유효하지 않은 데이터입니다."),
     FILE_UPLOAD_FAIL(400, "F-C007", "File upload failed"),
 
+    // Jwt
+    JWT_TOKEN_INVALID(400,"F-J001","유효하지 않은 JWT토큰"),
+
     // Member
     MEMBER_NOT_EXIST(404, "F-M001", "존재하지 않은 회원입니다."),
     USER_NAME_ALREADY_EXISTS(409, "F-M002", "이미 존재하는 아이디입니다."),
