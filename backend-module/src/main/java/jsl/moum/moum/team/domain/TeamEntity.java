@@ -63,6 +63,9 @@ public class TeamEntity {
     @Column(name = "file_url")
     private String fileUrl;
 
+    @Column(name = "video_url")
+    private String videoUrl;
+
     @Column(name = "exp")
     private Integer exp = 0;
 
@@ -108,6 +111,7 @@ public class TeamEntity {
         this.description = requestDto.getDescription();
         this.genre = requestDto.getGenre();
         this.location = requestDto.getLocation();
+        this.videoUrl = requestDto.getVideoUrl();
     }
 
     public void updateProfileImage(String newUrl){

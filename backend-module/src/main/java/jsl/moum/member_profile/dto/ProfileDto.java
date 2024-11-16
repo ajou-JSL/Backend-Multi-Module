@@ -52,6 +52,7 @@ public class ProfileDto {
         @NotEmpty @NotNull
         private String address;
 
+
         @Nullable
         private List<RecordDto.Request> records;
         private String videoUrl;

@@ -31,6 +31,7 @@ public class TeamDto {
         private String genre;
         private String location;
         private List<RecordDto.Request> records;
+        private String videoUrl;
 
         public TeamEntity toEntity(){
             return TeamEntity.builder()
@@ -41,6 +42,7 @@ public class TeamDto {
                     .description(description)
                     .leaderId(leaderId)
                     .fileUrl(fileUrl)
+                    .videoUrl(videoUrl)
                     .records(records.stream().map(RecordDto.Request::toEntity).collect(Collectors.toList()))
                     .exp(0)
                     .tier(Rank.BRONZE)
@@ -60,6 +62,7 @@ public class TeamDto {
         private final String location;
         private LocalDateTime createdAt;
         private String fileUrl;
+        private final String videoUrl;
         private Integer exp;
         private Rank tier;
         private List<MemberDto.Response> members;
@@ -74,6 +77,7 @@ public class TeamDto {
             this.location = teamEntity.getLocation();
             this.createdAt = teamEntity.getCreatedAt();
             this.fileUrl = teamEntity.getFileUrl();
+            this.videoUrl = teamEntity.getVideoUrl();
             this.exp = teamEntity.getExp();
             this.tier = teamEntity.getTier();
 
@@ -99,7 +103,9 @@ public class TeamDto {
         private String genre;
         private String location;
         private String fileUrl;
+        private String videoUrl;
         private List<RecordDto.Request> records;
+
 
         public TeamEntity toEntity(){
             return TeamEntity.builder()
@@ -108,6 +114,7 @@ public class TeamDto {
                     .genre(genre)
                     .location(location)
                     .fileUrl(fileUrl)
+                    .videoUrl(videoUrl)
                     .records(records.stream().map(RecordDto.Request::toEntity).collect(Collectors.toList()))
                     .build();
         }
@@ -124,6 +131,7 @@ public class TeamDto {
         private final String location;
         private LocalDateTime createdAt;
         private String fileUrl;
+        private String videoUrl;
         private List<RecordDto.Response> records;
 
         public UpdateResponse(TeamEntity teamEntity){
@@ -135,6 +143,7 @@ public class TeamDto {
             this.location = teamEntity.getLocation();
             this.createdAt = teamEntity.getCreatedAt();
             this.fileUrl = teamEntity.getFileUrl();
+            this.videoUrl = teamEntity.getVideoUrl();
             this.records = teamEntity.getRecords().stream()
                     .map(RecordDto.Response::new)
                     .collect(Collectors.toList());;

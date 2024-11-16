@@ -100,6 +100,7 @@ public class TeamService {
                 .location(teamRequestDto.getLocation())
                 .leaderId(loginUser.getId())
                 .fileUrl(fileUrl)
+                .videoUrl(teamRequestDto.getVideoUrl())
                 .records(teamRequestDto.getRecords())
                 .build();
 
