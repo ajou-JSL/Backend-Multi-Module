@@ -27,9 +27,7 @@ import jsl.moum.global.response.ResponseCode;
 import jsl.moum.global.response.ResultResponse;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
+import java.util.*;
 
 @RequiredArgsConstructor
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
@@ -70,6 +68,11 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     String username = authentication.getName();
     int userId = ((CustomUserDetails) authentication.getPrincipal()).getMemberId();
     MemberEntity loginUser = memberRepository.findById(userId).get();
+    String nickname = loginUser.getName();
+
+    Map<String, String> userInfo = new HashMap<>();
+    userInfo.put("id", String.valueOf(userId));
+    userInfo.put("nickname", nickname);
 
     Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
     Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
@@ -84,7 +87,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     addRefreshEntity(username, refresh, 842000L); // 24h
 
     //응답 설정
-        ResultResponse resultResponse = ResultResponse.of(ResponseCode.LOGIN_SUCCESS, loginUser);
+        ResultResponse resultResponse = ResultResponse.of(ResponseCode.LOGIN_SUCCESS, userInfo);
     response.setHeader("access", access);
     response.addCookie(createCookie("refresh", refresh));
     response.setStatus(resultResponse.getStatus());
