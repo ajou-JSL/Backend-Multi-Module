@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Getter;
 import jsl.moum.community.article.domain.article.ArticleEntity;
 
+import java.time.LocalDateTime;
+
 public class ArticleDto {
 
     @Builder
@@ -51,6 +53,8 @@ public class ArticleDto {
         private final int commentCounts;
         private final int likeCounts;
         private final String author;
+        private LocalDateTime createdAt;
+        private LocalDateTime updatedAt;
 
         public Response(ArticleEntity article){
             this.id = article.getId();
@@ -60,6 +64,8 @@ public class ArticleDto {
             this.viewCounts = article.getViewCount();
             this.commentCounts = article.getCommentCount();
             this.likeCounts = article.getLikesCount();
+            this.createdAt = article.getCreatedAt();
+            this.updatedAt = article.getUpdatedAt();
         }
     }
 
