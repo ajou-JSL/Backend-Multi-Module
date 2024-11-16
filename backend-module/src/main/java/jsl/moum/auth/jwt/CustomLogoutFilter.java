@@ -146,7 +146,5 @@ public class CustomLogoutFilter extends GenericFilterBean {
         response.setStatus(HttpStatus.OK.value());
         response.setContentType("application/json;charset=UTF-8");
         response.getWriter().write(new ObjectMapper().writeValueAsString(resultResponse));
-
-        response.sendRedirect("/login");
     }
 }
