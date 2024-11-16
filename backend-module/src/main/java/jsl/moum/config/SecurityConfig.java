@@ -1,6 +1,7 @@
 package jsl.moum.config;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jsl.moum.auth.domain.repository.MemberRepository;
 import jsl.moum.auth.domain.repository.RefreshRepository;
 import jsl.moum.auth.jwt.CustomLogoutFilter;
 import jsl.moum.auth.jwt.JwtFilter;
@@ -33,6 +34,7 @@ public class SecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JwtUtil jwtUtil;
     private final RefreshRepository refreshRepository;
+    private final MemberRepository memberRepository;
 
     //AuthenticationManager Bean 등록
     @Bean
@@ -72,7 +74,7 @@ public class SecurityConfig {
                 .addFilterBefore(new JwtFilter(jwtUtil), LoginFilter.class);
 
         http
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration),jwtUtil, refreshRepository), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration),jwtUtil, refreshRepository, memberRepository), UsernamePasswordAuthenticationFilter.class);
 
         http
                 .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshRepository), LogoutFilter.class);
