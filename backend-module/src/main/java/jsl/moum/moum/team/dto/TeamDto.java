@@ -1,5 +1,6 @@
 package jsl.moum.moum.team.dto;
 
+import io.micrometer.common.lang.Nullable;
 import jakarta.validation.constraints.NotNull;
 import jsl.moum.auth.domain.entity.MemberEntity;
 import jsl.moum.auth.dto.MemberDto;
@@ -30,6 +31,7 @@ public class TeamDto {
         private String fileUrl;
         private String genre;
         private String location;
+        @Nullable
         private List<RecordDto.Request> records;
         private String videoUrl;
 
@@ -104,6 +106,7 @@ public class TeamDto {
         private String location;
         private String fileUrl;
         private String videoUrl;
+        @Nullable
         private List<RecordDto.Request> records;
 
 

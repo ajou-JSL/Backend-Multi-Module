@@ -1,5 +1,6 @@
 package jsl.moum.moum.lifecycle.dto;
 
+import io.micrometer.common.lang.Nullable;
 import jakarta.validation.constraints.NotNull;
 import jsl.moum.auth.dto.MemberDto;
 import jsl.moum.moum.lifecycle.domain.LifecycleEntity;
@@ -37,6 +38,8 @@ public class LifecycleDto {
         private int teamId; // 어느 팀의 라이프사이클인지 알아야하니까
 
         private List<Integer> members;
+
+        @Nullable
         private List<RecordDto.Request> records;
         private Process process;
 
