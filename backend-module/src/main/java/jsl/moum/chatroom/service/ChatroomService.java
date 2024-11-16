@@ -85,9 +85,12 @@ public class ChatroomService {
             throw new CustomException(ErrorCode.CHATROOM_CREATE_FAIL);
         }
 
-        String originalFilename = chatroomImageFile.getOriginalFilename();
-        String key = "chatrooms/" + requestDto.getName() + "/" + originalFilename;
-        String fileUrl = storageService.uploadFile(key, chatroomImageFile);
+        if(chatroomImageFile!= null || !chatroomImageFile.isEmpty()){
+            log.error("Chatroom image file is empty");
+            throw new CustomException(ErrorCode.CHATROOM_CREATE_FAIL);
+        }
+
+        String fileUrl = uploadChatroomImage(requestDto.getName(), chatroomImageFile);
 
         Chatroom chatroom = new Chatroom();
         log.info("Created new chatroom entity");
@@ -123,8 +126,7 @@ public class ChatroomService {
                 storageService.deleteFile(existingFileName);
             }
 
-            String key = "chatrooms/" + chatroom.getName() + "/" + chatroomImageFile.getOriginalFilename();
-            String newFileUrl = storageService.uploadFile(key, chatroomImageFile);
+            String newFileUrl = uploadChatroomImage(chatroom.getName(), chatroomImageFile);
             chatroom.setFileUrl(newFileUrl);
         }
 
@@ -283,5 +285,14 @@ public class ChatroomService {
                 .build();
     }
 
+    private String uploadChatroomImage(String chatroomName, MultipartFile chatroomImageFile) throws IOException {
+        if(chatroomImageFile == null || chatroomImageFile.isEmpty()){
+            return null;
+        }
+        String originalFilename = chatroomImageFile.getOriginalFilename();
+        String key = "chatrooms/" + chatroomName + "/" + originalFilename;
+        String fileUrl = storageService.uploadFile(key, chatroomImageFile);
+        return fileUrl;
+    }
 
 }
