@@ -69,7 +69,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     //유저 정보
     String username = authentication.getName();
     int userId = ((CustomUserDetails) authentication.getPrincipal()).getMemberId();
-    MemberEntity loginUser = memberRepository.findByUsername(username);
+    MemberEntity loginUser = memberRepository.findById(userId).get();
 
     Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
     Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
