@@ -6,7 +6,9 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jsl.moum.auth.domain.CustomUserDetails;
+import jsl.moum.auth.domain.entity.MemberEntity;
 import jsl.moum.auth.domain.entity.RefreshEntity;
+import jsl.moum.auth.domain.repository.MemberRepository;
 import jsl.moum.auth.domain.repository.RefreshRepository;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,6 +37,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
     private final RefreshRepository refreshRepository;
+    private final MemberRepository memberRepository;
 
 //    @Value("${spring.jwt.expiration}")
 //    private long tempExpiration;
@@ -66,6 +69,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     //유저 정보
     String username = authentication.getName();
     int userId = ((CustomUserDetails) authentication.getPrincipal()).getMemberId();
+    MemberEntity loginUser = memberRepository.findByUsername(username);
 
     Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
     Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
@@ -80,10 +84,10 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     addRefreshEntity(username, refresh, 842000L); // 24h
 
     //응답 설정
-        ResultResponse resultResponse = ResultResponse.of(ResponseCode.LOGIN_SUCCESS, userId);
+        ResultResponse resultResponse = ResultResponse.of(ResponseCode.LOGIN_SUCCESS, loginUser);
     response.setHeader("access", access);
     response.addCookie(createCookie("refresh", refresh));
-    response.setStatus(HttpStatus.OK.value());
+    response.setStatus(resultResponse.getStatus());
     response.setContentType("application/json;charset=UTF-8");
     response.getWriter().write(new ObjectMapper().writeValueAsString(resultResponse));
     }
