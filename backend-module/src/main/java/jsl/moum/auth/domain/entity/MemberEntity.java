@@ -104,6 +104,7 @@ public class MemberEntity {
         //this.exp = this.exp + this.teams.size() + this.records.size() + newExp;
         this.exp += newExp;
         this.tier = Rank.getRank(this.exp);
+        log.info("======= updateMemberExpAndRank() tier,exp:{}, {}",tier, exp);
     }
 
 
