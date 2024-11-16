@@ -27,13 +27,13 @@ public class Chatroom {
     private String name;
 
     @Column
-    private int type;
+    private Integer type;
 
     @Column("team_id")
-    private int teamId;
+    private Integer teamId;
 
     @Column("leader_id")
-    private int leaderId;
+    private Integer leaderId;
 
     @Column("created_at")
     private LocalDateTime createdAt;
