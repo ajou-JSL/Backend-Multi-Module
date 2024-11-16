@@ -1,5 +1,6 @@
 package jsl.moum.member_profile.dto;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -49,6 +50,7 @@ public class ProfileDto {
         @NotEmpty @NotNull
         private String address;
 
+        @Nullable
         private List<RecordDto.Request> records;
         private String videoUrl;
 

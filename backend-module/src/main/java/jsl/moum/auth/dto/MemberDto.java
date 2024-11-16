@@ -1,6 +1,7 @@
 package jsl.moum.auth.dto;
 
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.*;
 import jsl.moum.auth.domain.entity.MemberEntity;
 import jsl.moum.rank.Rank;
@@ -55,6 +56,7 @@ public class MemberDto {
         @NotEmpty @NotNull(message = "사용 악기를 입력해주세요")
         private String instrument;
 
+        @Nullable
         private List<RecordDto.Request> records;
         private String videoUrl;
 
