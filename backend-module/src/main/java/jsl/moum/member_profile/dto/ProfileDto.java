@@ -84,7 +84,7 @@ public class ProfileDto {
         private Integer exp;
         private Rank tier;
         private List<TeamDto.Response> teams;
-        private List<RecordDto.Response> records;
+        private List<RecordDto.Response> memberRecords;
         private List<RecordDto.Response> moumRecords;
 
         public Response(MemberEntity member){
@@ -104,7 +104,7 @@ public class ProfileDto {
                     .map(TeamMemberEntity::getTeam) // TeamEntity 추출
                     .map(TeamDto.Response::new)    // TeamDto.Response로 변환
                     .collect(Collectors.toList());
-            this.records = member.getRecords().stream()
+            this.memberRecords = member.getRecords().stream()
                     .map(RecordDto.Response::new)
                     .collect(Collectors.toList());
             this.moumRecords = member.getMoumMemberRecords().stream()

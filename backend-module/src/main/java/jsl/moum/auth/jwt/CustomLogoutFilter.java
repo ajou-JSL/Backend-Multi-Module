@@ -88,7 +88,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
         if (refresh == null || refresh.isEmpty()) {
             log.info("===== 로그아웃 직후에 이 로그 뜨면 refresh null check 수정해야함");
             ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.MEMBER_ALREADY_LOGOUT);
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            response.setStatus(errorResponse.getStatus());
             response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write(new ObjectMapper().writeValueAsString(errorResponse));
             return;
@@ -99,7 +99,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
             jwtUtil.isExpired(refresh);
         } catch (ExpiredJwtException e) {
             ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.JWT_TOKEN_EXPIRED);
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            response.setStatus(errorResponse.getStatus());
             response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write(new ObjectMapper().writeValueAsString(errorResponse));
             return;
@@ -109,7 +109,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
         String category = jwtUtil.getCategory(refresh);
         if (!category.equals("refresh")) {
             ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.REFRESH_TOKEN_INVALID);
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            response.setStatus(errorResponse.getStatus());
             response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write(new ObjectMapper().writeValueAsString(errorResponse));
             return;
@@ -119,7 +119,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
         Boolean isExist = refreshRepository.existsByRefresh(refresh);
         if (!isExist) {
             ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.MEMBER_NOT_EXIST);
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            response.setStatus(errorResponse.getStatus());
             response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write(new ObjectMapper().writeValueAsString(errorResponse));
             return;

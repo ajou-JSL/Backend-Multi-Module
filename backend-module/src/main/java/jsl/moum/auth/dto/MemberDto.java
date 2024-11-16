@@ -93,7 +93,7 @@ public class MemberDto {
         private final Integer exp;
         private final Rank tier;
         private final String videoUrl;
-        private final List<RecordDto.Response> records;
+        private final List<RecordDto.Response> memberRecords;
         private final List<RecordDto.Response> moumRecords;
 
 
@@ -106,7 +106,7 @@ public class MemberDto {
             this.videoUrl = member.getVideoUrl();
             this.exp = member.getExp();
             this.tier = member.getTier();
-            this.records = member.getRecords().stream()
+            this.memberRecords = member.getRecords().stream()
                     .map(RecordDto.Response::new)
                     .collect(Collectors.toList());
             this.moumRecords = member.getMoumMemberRecords().stream()
