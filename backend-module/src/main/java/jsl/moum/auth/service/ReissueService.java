@@ -5,6 +5,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jsl.moum.auth.domain.entity.RefreshEntity;
 import jsl.moum.auth.domain.repository.RefreshRepository;
+import jsl.moum.global.error.ErrorCode;
+import jsl.moum.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -29,30 +31,26 @@ public class ReissueService {
 
 
     public ResultResponse reissue(HttpServletRequest request, HttpServletResponse response) {
-        // Get refresh token from cookies
+
         String refresh = getRefreshTokenFromCookies(request);
 
-        // Refresh token invalid
         if (refresh == null || !isRefreshTokenValid(refresh)) {
-            throw new IllegalArgumentException("Invalid refresh token");
+            throw new CustomException(ErrorCode.REFRESH_TOKEN_INVALID);
         }
 
         String username = jwtUtil.getUsername(refresh);
         String role = jwtUtil.getRole(refresh);
 
-        // Make new JWTs
         String newAccess = jwtUtil.createJwt("access", username, role, 360000L); // 60m
         String newRefresh = jwtUtil.createJwt("refresh", username, role, 842000L); // 24h
 
-        // Save new refresh token to DB
         refreshRepository.deleteByRefresh(refresh);
         addRefreshEntity(username, newRefresh, 842000L);
 
-        // Set response headers and cookies
         response.setHeader("access", newAccess);
         response.addCookie(createCookie("refresh", newRefresh));
 
-        return ResultResponse.of(ResponseCode.REISSUE_SUCCESS, null);
+        return ResultResponse.of(ResponseCode.REISSUE_SUCCESS, username);
     }
 
     private String getRefreshTokenFromCookies(HttpServletRequest request) {
