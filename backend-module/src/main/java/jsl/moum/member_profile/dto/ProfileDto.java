@@ -100,17 +100,26 @@ public class ProfileDto {
             this.address = member.getAddress();
             this.exp = member.getExp();
             this.tier = member.getTier();
-            this.teams = member.getTeams().stream() // TeamMemberEntity -> TeamEntity -> TeamDto.Response 변환
-                    .map(TeamMemberEntity::getTeam) // TeamEntity 추출
-                    .map(TeamDto.Response::new)    // TeamDto.Response로 변환
-                    .collect(Collectors.toList());
-            this.memberRecords = member.getRecords().stream()
+
+            this.teams = (member.getTeams() != null) ? member.getTeams().stream()
+                    .map(TeamMemberEntity::getTeam)
+                    .map(TeamDto.Response::new)
+                    .collect(Collectors.toList())
+                    : null;
+
+            this.memberRecords = (member.getRecords() != null)
+                    ? member.getRecords().stream()
                     .map(RecordDto.Response::new)
-                    .collect(Collectors.toList());
-            this.moumRecords = member.getMoumMemberRecords().stream()
+                    .collect(Collectors.toList())
+                    : null;
+
+
+            this.moumRecords = (member.getMoumMemberRecords() != null)
+                    ? member.getMoumMemberRecords().stream()
                     .map(MoumMemberRecordEntity::getRecord)
                     .map(RecordDto.Response::new)
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toList())
+                    : null;
         }
     }
 }
