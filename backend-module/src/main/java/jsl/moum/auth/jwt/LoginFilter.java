@@ -10,6 +10,7 @@ import jsl.moum.auth.domain.entity.MemberEntity;
 import jsl.moum.auth.domain.entity.RefreshEntity;
 import jsl.moum.auth.domain.repository.MemberRepository;
 import jsl.moum.auth.domain.repository.RefreshRepository;
+import jsl.moum.global.error.exception.CustomException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -67,7 +68,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     //유저 정보
     String username = authentication.getName();
     int userId = ((CustomUserDetails) authentication.getPrincipal()).getMemberId();
-    MemberEntity loginUser = memberRepository.findById(userId).get();
+    MemberEntity loginUser = memberRepository.findById(userId)
+            .orElseThrow(()-> new CustomException(ErrorCode.MEMBER_NOT_EXIST));
     String name = loginUser.getName();
 
     Map<String, String> userInfo = new HashMap<>();

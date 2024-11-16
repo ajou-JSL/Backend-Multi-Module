@@ -20,16 +20,16 @@ public enum Rank {
         if (exp >= 0 && exp <= 2) {
             log.info("======= getRank() exp: {}", exp);
             return BRONZE;
-        } else if (exp >= 3 && exp <= 4) {
+        } else if (exp >= 3 && exp <= 6) {
             log.info("======= getRank() exp: {}", exp);
             return SILVER;
-        } else if (exp >= 5 && exp <= 6) {
+        } else if (exp >= 7 && exp <= 10) {
             log.info("======= getRank() exp: {}", exp);
             return GOLD;
-        } else if (exp >= 7 && exp <=8) {
+        } else if (exp >= 11 && exp <=15) {
             log.info("======= getRank() exp: {}", exp);
             return PLATINUM;
-        } else if (exp >=9 ){
+        } else if (exp >=16 ){
             log.info("======= getRank() exp: {}", exp);
             return DIAMOND;
         }
