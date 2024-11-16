@@ -38,7 +38,6 @@ public class CustomLogoutFilter extends GenericFilterBean {
 
     private void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
 
-        log.info("========== do filter 진입 ============= ");
         // path and method verification
         // logout 요청이 아니면 다음 필터로 보냄
         String requestUri = request.getRequestURI();
@@ -57,7 +56,6 @@ public class CustomLogoutFilter extends GenericFilterBean {
         // Access 토큰 검증 추가
         String accessToken = request.getHeader("access");
         if (accessToken == null || accessToken.isEmpty()) {
-            log.info("========== access token 검증 로직 내부 ============= ");
             ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.JWT_TOKEN_INVALID);
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.setContentType("application/json;charset=UTF-8");
@@ -67,7 +65,6 @@ public class CustomLogoutFilter extends GenericFilterBean {
 
         try {
             jwtUtil.validateToken(accessToken);
-            log.info("========== validateToken() try ============= ");
         } catch (JwtException e) {
             ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.JWT_TOKEN_INVALID);
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
@@ -89,6 +86,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
 
         // refresh null check
         if (refresh == null) {
+            log.info("===== 로그아웃 직후에 이 로그 뜨면 refresh null check 수정해야함");
             ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.MEMBER_ALREADY_LOGOUT);
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             response.setContentType("application/json;charset=UTF-8");
@@ -110,7 +108,6 @@ public class CustomLogoutFilter extends GenericFilterBean {
         // 토큰이 refresh인지 확인 (payload에있음)
         String category = jwtUtil.getCategory(refresh);
         if (!category.equals("refresh")) {
-            // response status code
             ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.REFRESH_TOKEN_INVALID);
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             response.setContentType("application/json;charset=UTF-8");
