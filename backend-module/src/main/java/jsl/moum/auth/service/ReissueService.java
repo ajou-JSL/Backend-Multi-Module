@@ -8,6 +8,7 @@ import jsl.moum.auth.domain.repository.RefreshRepository;
 import jsl.moum.global.error.ErrorCode;
 import jsl.moum.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import jsl.moum.auth.jwt.JwtUtil;
@@ -18,6 +19,7 @@ import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ReissueService {
 
     private final JwtUtil jwtUtil;
@@ -34,6 +36,7 @@ public class ReissueService {
 
         String refresh = getRefreshTokenFromCookies(request);
 
+        log.info("=================== refresh token :{} ", refresh);
         if (refresh == null || !isRefreshTokenValid(refresh)) {
             throw new CustomException(ErrorCode.REFRESH_TOKEN_INVALID);
         }
