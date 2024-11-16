@@ -43,7 +43,7 @@ public class MemberEntity {
     //@Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*?_]).{8,20}$")
     private String password;
 
-    @Column(name = "profile_description", nullable = false)
+    @Column(name = "profile_description", nullable = true)
     private String profileDescription;
 
     @Column(name = "video_url", nullable = true)
