@@ -35,7 +35,7 @@ public class MemberEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Size(min = 3, max = 10)
+    @Size(min=4, max=20)
     @Column(name = "user_name", nullable = false)
     private String username;
 

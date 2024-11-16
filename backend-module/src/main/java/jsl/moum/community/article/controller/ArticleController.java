@@ -58,7 +58,7 @@ public class ArticleController {
             @RequestPart(value = "file", required = false) MultipartFile file, // MultipartFile 추가
             @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
 
-        if (customUserDetails == null) {
+        if (customUserDetails.getUsername() == null) {
             throw new NeedLoginException();
         }
 
@@ -139,7 +139,7 @@ public class ArticleController {
     public ResponseEntity<ResultResponse> getMyWishlist(@AuthenticationPrincipal CustomUserDetails customUserDetails,
                                                         @RequestParam(defaultValue = "0") int page,
                                                         @RequestParam(defaultValue = "10") int size){
-        if(customUserDetails == null){
+        if(customUserDetails.getUsername() == null){
             throw new NeedLoginException();
         }
 
@@ -157,7 +157,7 @@ public class ArticleController {
     public ResponseEntity<ResultResponse> getHotArticleList(@AuthenticationPrincipal CustomUserDetails customUserDetails,
                                                         @RequestParam(defaultValue = "0") int page,
                                                         @RequestParam(defaultValue = "10") int size){
-        if(customUserDetails == null){
+        if(customUserDetails.getUsername() == null){
             throw new NeedLoginException();
         }
 
