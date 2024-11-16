@@ -85,11 +85,6 @@ public class ChatroomService {
             throw new CustomException(ErrorCode.CHATROOM_CREATE_FAIL);
         }
 
-        if(chatroomImageFile!= null || !chatroomImageFile.isEmpty()){
-            log.error("Chatroom image file is empty");
-            throw new CustomException(ErrorCode.CHATROOM_CREATE_FAIL);
-        }
-
         String fileUrl = uploadChatroomImage(requestDto.getName(), chatroomImageFile);
 
         Chatroom chatroom = new Chatroom();
@@ -119,16 +114,13 @@ public class ChatroomService {
                 .orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_UPDATE_FAIL));
 
         String existingFileUrl = chatroom.getFileUrl();
-
-        if(chatroomImageFile != null && !chatroomImageFile.isEmpty()){
-            if(existingFileUrl != null && !existingFileUrl.isEmpty()){
-                String existingFileName = existingFileUrl.replace("https://kr.object.ncloudstorage.com/" + bucket + "/", "");
-                storageService.deleteFile(existingFileName);
-            }
-
-            String newFileUrl = uploadChatroomImage(chatroom.getName(), chatroomImageFile);
-            chatroom.setFileUrl(newFileUrl);
+        if(existingFileUrl != null && !existingFileUrl.isEmpty()){
+            String existingFileName = existingFileUrl.replace("https://kr.object.ncloudstorage.com/" + bucket + "/", "");
+            storageService.deleteFile(existingFileName);
         }
+
+        String newFileUrl = uploadChatroomImage(chatroom.getName(), chatroomImageFile);
+        chatroom.setFileUrl(newFileUrl);
 
         chatroom.setName(patchDto.getName());
         chatroomRepository.save(chatroom);
