@@ -57,7 +57,8 @@ public class JwtUtil {
         try {
             // 토큰 파싱 및 서명 검증
             Jwts.parser()
-                    .setSigningKey(secretKey)
+                    .verifyWith(secretKey)
+                    //.setSigningKey(secretKey)
                     .build()
                     .parseClaimsJws(token);
         } catch (MalformedJwtException e) {
