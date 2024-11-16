@@ -28,7 +28,7 @@ public class MemberDto {
         private String name;
 
         @NotEmpty @NotNull
-        @Size(min=4, max=20)
+        @Size(min = 3, max = 20)
         private String username;
 
         @NotEmpty @NotNull(message = "비밀번호를 입력해주세요")

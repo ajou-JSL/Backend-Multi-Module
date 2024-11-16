@@ -59,9 +59,6 @@ public class ArticleService {
     @Transactional
     public ArticleDto.Response postArticle(ArticleDto.Request articleRequestDto, MultipartFile file, String memberName) throws IOException {
         MemberEntity author = memberRepository.findByUsername(memberName);
-        if(author == null){
-            throw new NeedLoginException();
-        }
 
         // article 테이블 -> title 작성
         ArticleDto.Request articleRequest = ArticleDto.Request.builder()
