@@ -111,22 +111,33 @@ public class MemberEntity {
     public void removeTeamFromMember(TeamEntity team) {
         teams.removeIf(teamMemberEntity -> teamMemberEntity.getTeam().equals(team));
     }
-//
-//    public void assignRecord(RecordEntity record){
-//        if(record == null){
-//            return;
-//        }
-//        log.info("assign Record method called");
-//        this.records.add(record);
-//    }
-//
-//    public void removeRecord(RecordEntity record){
-//        if(record == null){
-//            return;
-//        }
-//        this.records.remove(record);
-//        record.setMember(null);
-//    }
+
+    public void assignRecord(List<RecordEntity> records) {
+        log.info("assign Record method called");
+        if (this.records == null) {
+            this.records = new ArrayList<>();
+        }
+
+        if (records == null || records.isEmpty()) {
+            return;
+        }
+
+        for (RecordEntity record : records) {
+            record.setMember(this);
+        }
+
+        this.records.addAll(records);
+    }
+
+
+
+    public void removeRecord(RecordEntity record){
+        if(record == null){
+            return;
+        }
+        this.records.remove(record);
+        record.setMember(null);
+    }
 
 
     public void updateProfileImage(String newUrl){

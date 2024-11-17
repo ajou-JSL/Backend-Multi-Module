@@ -13,6 +13,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -78,7 +79,12 @@ public class MemberDto {
                     .instrument(instrument)
                     .proficiency(proficiency)
                     .name(name)
-                    .records(records.stream().map(RecordDto.Request::toEntity).collect(Collectors.toList()))
+//                    .records(records.stream().map(RecordDto.Request::toEntity).collect(Collectors.toList()))
+//                    .records(records != null
+//                            ? records.stream()
+//                            .map(RecordDto.Request::toEntity)
+//                            .collect(Collectors.toList())
+//                            : Collections.emptyList())
                     .exp(0)
                     .tier(Rank.BRONZE)
                     .build();
