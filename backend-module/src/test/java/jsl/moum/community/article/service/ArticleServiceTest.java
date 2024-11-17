@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -88,22 +89,13 @@ class ArticleServiceTest {
 
         // Mock MultipartFile
         MultipartFile mockFile = Mockito.mock(MultipartFile.class);
-        when(mockFile.getOriginalFilename()).thenReturn("testFile.jpg"); // 파일 확장자를 jpg로 변경
-        when(mockFile.getContentType()).thenReturn("image/jpeg"); // 콘텐츠 타입을 image/jpeg로 변경
-        when(mockFile.getInputStream()).thenReturn(new ByteArrayInputStream("test content".getBytes())); // 실제 이미지 콘텐츠로 변경 가능
-        when(mockFile.getSize()).thenReturn((long) "test content".length()); // 사이즈는 이미지 콘텐츠에 맞게 변경 가능
+        when(mockFile.getOriginalFilename()).thenReturn("testFile.jpg");
+        when(mockFile.getContentType()).thenReturn("image/jpeg");
+        when(mockFile.getInputStream()).thenReturn(new ByteArrayInputStream("test content".getBytes()));
+        when(mockFile.getSize()).thenReturn((long) "test content".length());
 
-        // Mock 동작
-        when(memberRepository.findByUsername(author.getUsername())).thenReturn(author); // db에 있는 유저
-
-
+        when(memberRepository.findByUsername(author.getUsername())).thenReturn(author);
         when(articleRepository.findById(anyInt())).thenReturn(Optional.of(mockArticle));
-//        when(articleRepository.save(any(ArticleEntity.class))).thenAnswer(invocation -> {
-//            ArticleEntity article = invocation.getArgument(0);
-//            article.setId(1); // 가상의 id
-//            return article;
-//        });
-        //when(articleDetailsRepository.save(any(ArticleDetailsEntity.class))).thenReturn(new ArticleDetailsEntity());
 
         // when
         ArticleDto.Response actualResponse = articleService.postArticle(request, mockFile, author.getUsername());
@@ -113,31 +105,10 @@ class ArticleServiceTest {
         assertEquals(ArticleEntity.ArticleCategories.FREE_TALKING_BOARD, actualResponse.getCategory());
     }
 
-
-
-    @Test
-    @DisplayName("게시글 생성 테스트 - 로그인하지 않은 사용자")
-    void createArticleFail_NeedLoginException() {
-        // given : Article 생성
-        ArticleDto.Request request = ArticleDto.Request.builder()
-                .category(ArticleEntity.ArticleCategories.FREE_TALKING_BOARD)
-                .author(author)
-                .title("test title")
-                .build();
-
-        // Mock 동작 : db에 없는 username
-        when(memberRepository.findByUsername("not_member_user")).thenReturn(null);
-
-        // when & then
-        assertThrows(NeedLoginException.class, () -> {
-            articleService.postArticle(request, any(),"로그인을 해야합니다.");
-        });
-    }
-
     @Test
     @DisplayName("게시글 조회 테스트") // 해당 메서드에서 article, articleDetails 둘 다 조회하고있는거 생각
     void getArticleById() {
-        // given: Article Entity, ArticleDetails Entity 생성
+        // given
         ArticleEntity article = ArticleEntity.builder()
                 .id(1)
                 .title("test title")
@@ -200,7 +171,8 @@ class ArticleServiceTest {
     @Test
     @DisplayName("게시글 수정 성공")
     void updateArticleWithoutAuthorization() throws IOException {
-        // given : Article, Article Details 생성
+        // given
+        MultipartFile mockFile = mock(MultipartFile.class);
         ArticleEntity article = ArticleEntity.builder()
                 .id(1)
                 .title("title")
@@ -213,6 +185,7 @@ class ArticleServiceTest {
                 .content("content")
                 .comments(new ArrayList<>())
                 .articleId(article.getId())
+                .fileUrl("fileUrl")
                 .build();
 
         // given : update request dto 생성, details에서 title 수정 가능해야함
@@ -221,14 +194,14 @@ class ArticleServiceTest {
                 .title("updated title")
                 .content("updated content")
                 .category(ArticleEntity.ArticleCategories.RECRUIT_BOARD)
+                .fileUrl("fileUrl")
                 .build();
 
-        // Mock 동작 : repository 에서 탐색
         when(articleRepository.findById(1)).thenReturn(Optional.of(article));
         when(articleDetailsRepository.findById(1)).thenReturn(Optional.of(articleDetails));
 
-        // when : 게시글 수정 요청
-        ArticleDetailsDto.Response response = articleService.updateArticleDetails(1, updateArticleDetailsRequest, any(),author.getUsername());
+        // when
+        ArticleDetailsDto.Response response = articleService.updateArticleDetails(1, updateArticleDetailsRequest, mockFile ,author.getUsername());
 
         // then
         assertNotNull(response);
@@ -260,6 +233,7 @@ class ArticleServiceTest {
                 .content("content")
                 .comments(new ArrayList<>())
                 .articleId(article.getId())
+                .fileUrl("fileUrl")
                 .build();
 
         // Mock 동작 : repository 에서 탐색

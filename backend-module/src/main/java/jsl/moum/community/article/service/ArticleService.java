@@ -43,18 +43,7 @@ public class ArticleService {
     private String bucket;
 
     /**
-     * 게시글 작성 메서드.
-     *
-     * @param articleRequestDto 게시글 작성 요청 DTO
-     * @param memberName 작성자 사용자 이름
-     * @param file 멀티파트 파일
-     * @return 작성된 게시글의 응답 DTO
-     *
-     * 해당 메서드는 사용자가 게시글을 작성할 때 호출되며, 작성자의 정보를 확인하고 게시글과
-     * 게시글 상세 정보를 저장한 후 이를 반환
-     *
-     * - 작성자 확인 후 게시글 저장
-     * - 게시글의 상세 내용(ArticleDetails)도 함께 저장
+     * 게시글 작성
      */
     @Transactional
     public ArticleDto.Response postArticle(ArticleDto.Request articleRequestDto, MultipartFile file, String memberName) throws IOException {
@@ -71,11 +60,10 @@ public class ArticleService {
         ArticleEntity newArticle = articleRequest.toEntity();
         articleRepository.save(newArticle);
 
-        // 파일 업로드 후 URL 획득
-        // S3에 저장할 파일의 키를 설정 (예: "articles/{articleId}/{originalFileName}")
-        String originalFilename = file.getOriginalFilename();
-        String key = "articles/" + newArticle.getId() + "/" + originalFilename; // 키 생성
-        String fileUrl = storageService.uploadFile(key, file); // 업로드 메서드 호출
+        String fileUrl = "";
+        if(file != null || !file.isEmpty()){
+            fileUrl = uploadFile(newArticle.getId(), file);
+        }
 
         // article_details 테이블 -> content 작성
         ArticleDetailsDto.Request articleDetailsRequestDto = ArticleDetailsDto.Request.builder()
@@ -94,12 +82,7 @@ public class ArticleService {
     }
 
     /**
-     * 게시글 조회 메서드.
-     *
-     * @param articleDetailsId 게시글 상세 정보의 ID
-     * @return 게시글의 상세 내용과 게시글 정보를 담은 응답 DTO
-     *
-     * 게시글과 게시글 상세 정보를 조회하고, 조회수가 증가한 후 반환
+     * 게시글 조회
      */
     @Transactional
     public ArticleDetailsDto.Response getArticleById(int articleDetailsId){
@@ -112,18 +95,13 @@ public class ArticleService {
     }
 
     /**
-     * 게시글 목록 조회 메서드.
-     *
-     * @return 게시글 목록의 응답 DTO 리스트
-     *
-     * 데이터베이스에서 모든 게시글을 조회한 후, 각 게시글을 응답 DTO로 변환하여 리스트로 반환
+     * 게시글 목록 조회
      */
     @Transactional(readOnly = true)
     public List<ArticleDto.Response> getArticleList(int page, int size) {
-        // 데이터베이스에서 모든 게시글 조회
+
         List<ArticleEntity> articles = articleRepository.findAll(PageRequest.of(page, size)).getContent();
 
-        // 조회된 게시글들을 DTO로 변환
         List<ArticleDto.Response> articleResponseList = articles.stream()
                 .map(ArticleDto.Response::new)
                 .collect(Collectors.toList());
@@ -132,14 +110,7 @@ public class ArticleService {
     }
 
     /**
-     * 게시글 수정 메서드.
-     *
-     * @param articleDetailsId 게시글 상세 정보의 ID
-     * @param articleDetailsRequestDto 수정할 게시글 상세 내용 DTO
-     * @param memberName 수정 요청한 사용자 이름
-     * @return 수정된 게시글과 게시글 상세 정보를 담은 응답 DTO
-     *
-     * 게시글 작성자만 수정할 수 있으며, 제목과 내용을 수정한 후 이를 저장
+     * 게시글 수정
      */
     @Transactional
     public ArticleDetailsDto.Response updateArticleDetails(int articleDetailsId,
@@ -154,26 +125,23 @@ public class ArticleService {
         // 로그인유저 == 작성자 여부 체크
         checkAuthor(memberName, articleAuthor);
 
-        // 새로 요청된 수정 값들 추출
         String newTitle = articleDetailsRequestDto.getTitle();
         String newContent = articleDetailsRequestDto.getContent();
         ArticleEntity.ArticleCategories newCategory = articleDetailsRequestDto.getCategory();
 
-        // 기존 파일 URL
         String existingFileUrl = articleDetails.getFileUrl();
 
         // 새로운 파일이 있을 경우 처리
-        if (file != null && !file.isEmpty()) {
-            // S3에서 기존 파일 삭제
+        if (file != null || !file.isEmpty()) {
             if (existingFileUrl != null && !existingFileUrl.isEmpty()) {
                 String existingFileName = existingFileUrl.replace("https://kr.object.ncloudstorage.com/" + bucket + "/", "");
                 storageService.deleteFile(existingFileName); // S3에서 기존 파일 삭제
             }
 
-            // 새로운 파일 업로드
-            String newFileName = "articles/" + articleDetailsId + "/" + file.getOriginalFilename(); // 폴더 구조에 맞게 설정
-            String newFileUrl = storageService.uploadFile(newFileName, file); // S3에 파일 업로드
-            articleDetails.updateArticleImage(newFileUrl);
+            String newUrl = uploadFile(articleDetailsId, file);
+//            String newFileName = "articles/" + articleDetailsId + "/" + file.getOriginalFilename(); // 폴더 구조에 맞게 설정
+//            String newFileUrl = storageService.uploadFile(newFileName, file); // S3에 파일 업로드
+            articleDetails.updateArticleImage(newUrl);
         }
 
         // article_details, article 둘 다 update
@@ -188,13 +156,7 @@ public class ArticleService {
     }
 
     /**
-     * 게시글 삭제 메서드.
-     *
-     * @param articleDetailsId 게시글 상세 정보의 ID
-     * @param memberName 삭제 요청한 사용자 이름
-     * @return 삭제된 게시글의 응답 DTO
-     *
-     * 게시글 작성자만 삭제할 수 있으며, 게시글과 게시글 상세 정보를 삭제
+     * 게시글 삭제
      */
     @Transactional
     public ArticleDto.Response deleteArticleDetails(int articleDetailsId, String memberName){
@@ -207,7 +169,7 @@ public class ArticleService {
         checkAuthor(memberName, articleAuthor);
 
         String fileUrl = articleDetails.getFileUrl();
-        if (fileUrl != null && !fileUrl.isEmpty()) {
+        if (fileUrl != null || !fileUrl.isEmpty()) {
             // S3에서의 파일 경로 제거해서 key 추출하기 -> 경로 : /articles/{id}/{fileName} 이런식임
             String fileName = fileUrl.replace("https://kr.object.ncloudstorage.com/" + bucket + "/", "");
             fileName = URLDecoder.decode(fileName, StandardCharsets.UTF_8); // URL 디코딩
@@ -229,17 +191,13 @@ public class ArticleService {
     public List<ArticleDto.Response> getHotArticleList(int page, int size) {
         List<ArticleEntity> articles = articleRepositoryCustom.getAllHotArticles(page, size);
 
-        // 조회된 게시글들을 DTO로 변환
         return articles.stream()
                 .map(ArticleDto.Response::new)
                 .collect(Collectors.toList());
     }
 
     /**
-     * 카테고리에 따른 게시글 목록 조회 메서드
-     *
-     * @param category 게시글 카테고리
-     * @return 카테고리에 해당하는 게시글 리스트
+     * 카테고리에 따른 게시글 목록 조회
      */
     @Transactional(readOnly = true)
     public List<ArticleDto.Response> getArticlesByCategory(ArticleEntity.ArticleCategories category, int page, int size) {
@@ -253,23 +211,18 @@ public class ArticleService {
             throw new CustomException(ErrorCode.ARTICLE_NOT_FOUND);
         }
 
-        // 조회된 게시글들을 DTO로 변환
         return articles.stream()
                 .map(ArticleDto.Response::new)
                 .collect(Collectors.toList());
     }
 
     /**
-     * 주어진 키워드를 사용하여 게시글을 검색하는 메서드.
-     *
-     * @param keyword 검색어
-     * @return 검색된 게시글 리스트
+     * 주어진 키워드를 사용하여 게시글을 검색
      */
     @Transactional(readOnly = true)
     public List<ArticleDto.Response> getArticleWithTitleSearch(String keyword, String category,int page, int size) {
         List<ArticleEntity> articles = articleDetailsRepositoryCustom.searchArticlesByTitleKeyword(keyword, category, page, size);
 
-        // 조회된 게시글들을 DTO로 변환
         List<ArticleDto.Response> articleResponseList = articles.stream()
                 .map(ArticleDto.Response::new)
                 .collect(Collectors.toList());
@@ -278,12 +231,7 @@ public class ArticleService {
     }
 
     /**
-     * 주어진 키워드를 사용하여 게시글을 검색하는 메서드.
-     *
-     * @param memberName 사용자 이름
-     * @param page
-     * @param size
-     * @return 검색된 게시글 리스트
+     * 주어진 키워드를 사용하여 게시글을 검색
      */
     @Transactional(readOnly = true)
     public List<ArticleDto.Response> getMyWishlist(String memberName,int page, int size) {
@@ -292,7 +240,6 @@ public class ArticleService {
 
         List<ArticleEntity> articles = articleRepository.findLikedArticles(memberId);
 
-        // 조회된 게시글들을 DTO로 변환
         List<ArticleDto.Response> articleResponseList = articles.stream()
                 .map(ArticleDto.Response::new)
                 .collect(Collectors.toList());
@@ -315,6 +262,13 @@ public class ArticleService {
         if (!memberName.equals(articleAuthor)) {
             throw new NoAuthorityException();
         }
+    }
+
+    private String uploadFile(int targetId, MultipartFile file) throws IOException {
+        // "articles/{articleId}/{originalFileName}"
+        String originalFilename = file.getOriginalFilename();
+        String key = "articles/" + targetId + "/" + originalFilename;
+        return storageService.uploadFile(key, file);
     }
 
 }

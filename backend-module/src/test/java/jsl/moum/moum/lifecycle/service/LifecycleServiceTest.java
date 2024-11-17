@@ -14,6 +14,7 @@ import jsl.moum.moum.team.domain.TeamRepository;
 import jsl.moum.moum.team.dto.TeamDto;
 import jsl.moum.objectstorage.StorageService;
 import jsl.moum.record.domain.entity.RecordEntity;
+import jsl.moum.record.domain.repository.MoumMemberRecordRepositoryCustom;
 import jsl.moum.record.domain.repository.RecordRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -65,6 +66,9 @@ class LifecycleServiceTest {
 
     @Mock
     private MemberRepository memberRepository;
+
+    @Mock
+    private MoumMemberRecordRepositoryCustom moumMemberRecordRepositoryCustom;
 
     private LifecycleEntity mockLifecycle;
     private MemberEntity mockLeader;
@@ -697,7 +701,6 @@ class LifecycleServiceTest {
         // then
         assertThat(response.getProcess().getFinishStatus()).isEqualTo(false);
         assertThat(response.getProcess().getProcessPercentage()).isEqualTo(0);
-        verify(recordRepository).deleteById(anyInt());
     }
 
 

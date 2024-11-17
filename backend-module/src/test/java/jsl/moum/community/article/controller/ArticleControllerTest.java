@@ -1,6 +1,9 @@
 package jsl.moum.community.article.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jsl.moum.community.article.domain.article_details.ArticleDetailsEntity;
+import jsl.moum.community.article.dto.ArticleDetailsDto;
+import jsl.moum.community.perform.dto.PerformArticleDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,6 +29,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
@@ -49,6 +53,12 @@ class ArticleControllerTest {
     @Autowired
     private WebApplicationContext webApplicationContext;
 
+    private ArticleEntity mockArticle;
+    private ArticleEntity mockArticle2;
+    private ArticleEntity mockArticle3;
+    private MemberEntity mockAuthor;
+
+
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
@@ -56,28 +66,61 @@ class ArticleControllerTest {
                 .apply(springSecurity())
                 .alwaysDo(print())
                 .build();
+
+        mockAuthor = MemberEntity.builder()
+                .id(1)
+                .teams(new ArrayList<>())
+                .records(new ArrayList<>())
+                .address("address")
+                .username("mock author")
+                .email("test email")
+                .proficiency("중")
+                .instrument("바이올린")
+                .password("password")
+                .build();
+
+        mockArticle = ArticleEntity.builder()
+                .id(1)
+                .author(mockAuthor)
+                .title("title")
+                .category(ArticleEntity.ArticleCategories.FREE_TALKING_BOARD)
+                .build();
+
+        mockArticle2 = ArticleEntity.builder()
+                .id(2)
+                .author(mockAuthor)
+                .title("title2")
+                .category(ArticleEntity.ArticleCategories.FREE_TALKING_BOARD)
+                .build();
+        mockArticle3 = ArticleEntity.builder()
+                .id(3)
+                .author(mockAuthor)
+                .title("title3")
+                .category(ArticleEntity.ArticleCategories.FREE_TALKING_BOARD)
+                .build();
+
     }
 
     @Test
     @DisplayName("게시글 목록 조회 테스트")
     @WithAuthUser
     void getArticleList() throws Exception {
-        // given : 게시글 리스트 생성
-        List<ArticleDto.Response> mockResponse = List.of(
-                new ArticleDto.Response(1, "Title 1", ArticleEntity.ArticleCategories.FREE_TALKING_BOARD, 10, 5, 3, "author1"),
-                new ArticleDto.Response(2, "Title 2", ArticleEntity.ArticleCategories.FREE_TALKING_BOARD, 15, 3, 4, "author2"),
-                new ArticleDto.Response(3, "Title 3", ArticleEntity.ArticleCategories.FREE_TALKING_BOARD, 20, 2, 1, "author3")
+        // given
+        List<ArticleDto.Response> responseList = List.of(
+                new ArticleDto.Response(mockArticle),
+                new ArticleDto.Response(mockArticle2),
+                new ArticleDto.Response(mockArticle3)
         );
 
         // when
-        when(articleService.getArticleList(0,10)).thenReturn(mockResponse);
+        when(articleService.getArticleList(0,10)).thenReturn(responseList);
 
         // then
         mockMvc.perform(get("/api/articles"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data[0].title").value("Title 1"))
-                .andExpect(jsonPath("$.data[1].title").value("Title 2"))
-                .andExpect(jsonPath("$.data[2].title").value("Title 3"));
+                .andExpect(jsonPath("$.data[0].title").value("title"))
+                .andExpect(jsonPath("$.data[1].title").value("title2"))
+                .andExpect(jsonPath("$.data[2].title").value("title3"));
     }
 
     @Test
@@ -86,58 +129,53 @@ class ArticleControllerTest {
     void getArticlesByCategoryTest() throws Exception {
         ArticleEntity.ArticleCategories category = ArticleEntity.ArticleCategories.FREE_TALKING_BOARD;
 
-        // given: 게시글 리스트 생성
-        List<ArticleDto.Response> mockResponse = List.of(
-                new ArticleDto.Response(1, "Title 1", ArticleEntity.ArticleCategories.FREE_TALKING_BOARD, 10, 5, 3, "author1"),
-                new ArticleDto.Response(2, "Title 2", ArticleEntity.ArticleCategories.FREE_TALKING_BOARD, 15, 3, 4, "author2"),
-                new ArticleDto.Response(3, "Title 3", ArticleEntity.ArticleCategories.RECRUIT_BOARD, 20, 2, 1, "author3")
+        // given
+        List<ArticleDto.Response> responseList = List.of(
+                new ArticleDto.Response(mockArticle),
+                new ArticleDto.Response(mockArticle2),
+                new ArticleDto.Response(mockArticle3)
         );
 
-        // when: 서비스의 메서드 호출 시 mockResponse를 반환하도록 설정
-        when(articleService.getArticlesByCategory(category,0,10)).thenReturn(mockResponse);
+        // when
+        when(articleService.getArticlesByCategory(category,0,10)).thenReturn(responseList);
 
-        // then: 카테고리별 게시글 목록 조회
+        // then
         // mockMvc.perform(get("/api/articles/category")
-        //                .param("category", category.name()))  // 카테고리 값을 파라미터로 추가
+        //                .param("category", category.name()))
         mockMvc.perform(get("/api/articles/category?category=" + category))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data[0].title").value("Title 1"))
+                .andExpect(jsonPath("$.data[0].title").value("title"))
                 .andExpect(jsonPath("$.data[0].category").value("FREE_TALKING_BOARD"))
-                .andExpect(jsonPath("$.data[1].title").value("Title 2"))
+                .andExpect(jsonPath("$.data[1].title").value("title2"))
                 .andExpect(jsonPath("$.data[1].category").value("FREE_TALKING_BOARD"));
     }
 
-//
-//    @Test
-//    @DisplayName("게시글 상세 조회 테스트")
-//    @WithAuthUser
-//    void getArticleByIdTest() throws Exception {
-//        // given : Author 생성
-//        MemberEntity author = MemberEntity.builder()
-//                .id(1)
-//                .email("test@gmail.com")
-//                .username("testAuthor")
-//                .password("12345123")
-//                .role("ROLE_ADMIN")
-//                .build();
-//
-//        // given : Article 생성
-//        ArticleDetailsDto.Response mockResponse = new ArticleDetailsDto.Response(
-//                1, "Title", "FREE_TALKING_BOARD", "Content", 10, 2, 3, author.getUsername(), List.of()
-//        );
-//
-//        // when
-//        when(articleService.getArticleById(1)).thenReturn(mockResponse);
-//
-//        // then
-//        mockMvc.perform(get("/api/articles/1"))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.data.title").value("Title"))
-//                .andExpect(jsonPath("$.data.author").value("testAuthor"))
-//                .andExpect(jsonPath("$.data.category").value("FREE_TALKING_BOARD"))
-//                .andExpect(jsonPath("$.data.content").value("Content"));
-//
-//    }
+
+    @Test
+    @DisplayName("게시글 상세 조회 테스트")
+    @WithAuthUser
+    void getArticleByIdTest() throws Exception {
+        // given
+        ArticleDetailsEntity mockArticleDetails = ArticleDetailsEntity.builder()
+                .id(mockArticle.getId())
+                .articleId(mockArticle.getId())
+                .comments(new ArrayList<>())
+                .build();
+
+        ArticleDetailsDto.Response mockResponse = new ArticleDetailsDto.Response(mockArticleDetails, mockArticle);
+
+
+        // when
+        when(articleService.getArticleById(1)).thenReturn(mockResponse);
+
+        // then
+        mockMvc.perform(get("/api/articles/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.title").value("title"))
+                .andExpect(jsonPath("$.data.author").value("mock author"))
+                .andExpect(jsonPath("$.data.category").value("FREE_TALKING_BOARD"));
+
+    }
 
     @Test
     @DisplayName("게시글 검색 테스트")
@@ -145,45 +183,34 @@ class ArticleControllerTest {
     void searchArticlesTest() throws Exception {
         String keyword = "searchKeyword";
         String category = "FREE_TALKING_BOARD";
-        List<ArticleDto.Response> mockResponse = List.of(new ArticleDto.Response(1, "Title", ArticleEntity.ArticleCategories.FREE_TALKING_BOARD, 10, 5, 3, "author"));
+        List<ArticleDto.Response> mockResponse = List.of(new ArticleDto.Response(mockArticle));
 
         when(articleService.getArticleWithTitleSearch(keyword, category,0,10)).thenReturn(mockResponse);
 
         mockMvc.perform(get("/api/articles/search?keyword=" + keyword + "&category=" + category))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data[0].title").value("Title"));
+                .andExpect(jsonPath("$.data[0].title").value("title"));
     }
 
     @Test
     @DisplayName("게시글 작성 성공 테스트")
     @WithAuthUser(email = "test@user.com", username = "testuser")
     void postArticle_Success() throws Exception {
-        // given : Author 생성
-        MemberEntity author = MemberEntity.builder()
-                .id(1)
-                .email("test@gmail.com")
-                .username("testuser")
-                .password("12345123")
-                .role("ROLE_ADMIN")
-                .build();
-
-        // given : Article 생성
+        // given
         ArticleDto.Request articleRequest = ArticleDto.Request.builder()
                 .id(1)
                 .category(ArticleEntity.ArticleCategories.FREE_TALKING_BOARD)
-                .title("test title")
-                .author(author)
+                .title("title")
+                .author(mockAuthor)
                 .build();
 
-        ArticleDto.Response response = new ArticleDto.Response(1, "test title", ArticleEntity.ArticleCategories.FREE_TALKING_BOARD, 0, 0, 0, "testuser");
+        ArticleDto.Response response = new ArticleDto.Response(mockArticle);
 
         // when
         when(articleService.postArticle(any(), any(), anyString())).thenReturn(response);
 
-        // MockMultipartFile 생성
-        MockMultipartFile file = new MockMultipartFile("file", "testfile.jpg", MediaType.IMAGE_JPEG_VALUE, "test file content".getBytes());
 
-        // ArticleRequestDto를 JSON으로 변환하여 MockMultipartFile로 생성
+        MockMultipartFile file = new MockMultipartFile("file", "testfile.jpg", MediaType.IMAGE_JPEG_VALUE, "test file content".getBytes());
         MockMultipartFile articleRequestDtoFile = new MockMultipartFile("articleRequestDto",
                 "",
                 MediaType.APPLICATION_JSON_VALUE,
@@ -191,9 +218,9 @@ class ArticleControllerTest {
 
         // then
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/articles")
-                        .file(file) // 파일 추가
-                        .file(articleRequestDtoFile) // ArticleRequestDto 추가
-                        .contentType(MediaType.MULTIPART_FORM_DATA) // Content-Type 설정
+                        .file(file)
+                        .file(articleRequestDtoFile)
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
                         .with(csrf()))
                 .andDo(print())
                 .andExpect(jsonPath("$.status").value(201))
