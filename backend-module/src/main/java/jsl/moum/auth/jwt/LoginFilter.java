@@ -97,7 +97,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     response.getWriter().write(new ObjectMapper().writeValueAsString(resultResponse));
     }
 
-    private void addRefreshEntity(String username, String refresh, long expiredMs) {
+    void addRefreshEntity(String username, String refresh, long expiredMs) {
 
         Date date = new Date(System.currentTimeMillis() + expiredMs);
 

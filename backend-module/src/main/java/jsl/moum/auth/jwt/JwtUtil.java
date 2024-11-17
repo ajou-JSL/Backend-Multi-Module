@@ -1,6 +1,8 @@
 package jsl.moum.auth.jwt;
 
 import io.jsonwebtoken.*;
+import jsl.moum.global.error.ErrorCode;
+import jsl.moum.global.error.ErrorResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -9,6 +11,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.SignatureException;
 import java.util.Date;
+import java.util.List;
 
 @Component
 public class JwtUtil {
@@ -52,28 +55,34 @@ public class JwtUtil {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("category", String.class);
     }
 
-    // 토큰 유효성 검사 메서드 추가
-    public void validateToken(String token) throws JwtException {
+    public ErrorResponse validateToken(String token) {
         try {
-            // 토큰 파싱 및 서명 검증
             Jwts.parser()
                     .verifyWith(secretKey)
-                    //.setSigningKey(secretKey)
+                    .setSigningKey(secretKey)
                     .build()
                     .parseClaimsJws(token);
+            return null;
+
         } catch (MalformedJwtException e) {
             // JWT 형식이 잘못된 경우
-            throw new JwtException("Invalid JWT token", e);
+            List<ErrorResponse.FieldError> errors = ErrorResponse.FieldError.of("token", token, "Invalid JWT token");
+            return ErrorResponse.of(ErrorCode.JWT_TOKEN_INVALID, errors);
+
         } catch (ExpiredJwtException e) {
             // JWT가 만료된 경우
-            throw new JwtException("Expired JWT token", e);
+            List<ErrorResponse.FieldError> errors = ErrorResponse.FieldError.of("token", token, "JWT token expired");
+            return ErrorResponse.of(ErrorCode.JWT_TOKEN_EXPIRED, errors);
+
         } catch (UnsupportedJwtException e) {
             // 지원되지 않는 JWT 형식인 경우
-            throw new JwtException("Unsupported JWT token", e);
+            List<ErrorResponse.FieldError> errors = ErrorResponse.FieldError.of("token", token, "Unsupported JWT token");
+            return ErrorResponse.of(ErrorCode.JWT_TOKEN_INVALID, errors);
+
         } catch (IllegalArgumentException e) {
             // 토큰이 비어있거나 잘못된 경우
-            throw new JwtException("JWT token compact of handler are invalid", e);
+            List<ErrorResponse.FieldError> errors = ErrorResponse.FieldError.of("token", token, "JWT token compact of handler are invalid");
+            return ErrorResponse.of(ErrorCode.INVALID_INPUT_VALUE, errors);
         }
     }
-
 }
