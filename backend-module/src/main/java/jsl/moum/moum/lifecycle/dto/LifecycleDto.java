@@ -4,6 +4,7 @@ import io.micrometer.common.lang.Nullable;
 import jakarta.validation.constraints.NotNull;
 import jsl.moum.auth.dto.MemberDto;
 import jsl.moum.moum.lifecycle.domain.LifecycleEntity;
+import jsl.moum.moum.lifecycle.domain.Music;
 import jsl.moum.moum.lifecycle.domain.Process;
 import jsl.moum.moum.team.domain.TeamMemberEntity;
 import jsl.moum.moum.team.dto.TeamDto;
@@ -42,6 +43,7 @@ public class LifecycleDto {
         @Nullable
         private List<RecordDto.Request> records;
         private Process process;
+        private List<Music> music;
 
 
         public LifecycleEntity toEntity(){
@@ -56,6 +58,7 @@ public class LifecycleDto {
                     .leaderId(leaderId)
                     .records(records.stream().map(RecordDto.Request::toEntity).collect(Collectors.toList()))
                     .process(process)
+                    .music(music)
                     .build();
         }
     }
@@ -75,6 +78,7 @@ public class LifecycleDto {
         private String leaderName;
         private int teamId;
         private Process process;
+        private List<Music> music;
         private List<MemberDto.Response> members;
 
         public Response(LifecycleEntity lifecycle){
@@ -90,6 +94,7 @@ public class LifecycleDto {
             this.leaderName = lifecycle.getLeaderName();
             this.teamId = lifecycle.getTeam().getId();
             this.process = lifecycle.getProcess();
+            this.music = lifecycle.getMusic();
 
             this.members = lifecycle.getTeam().getMembers().stream()
                     .map(TeamMemberEntity::getMember)
