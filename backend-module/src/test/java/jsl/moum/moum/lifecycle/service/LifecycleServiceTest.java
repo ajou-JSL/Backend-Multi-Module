@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -85,7 +86,6 @@ class LifecycleServiceTest {
     private ProcessDto mockProcessDto;
     private RecordEntity mockRecord;
     private MoumMemberRecordEntity mockMoumMemberRecord;
-
 
     @BeforeEach
     void setUp() {
@@ -245,6 +245,8 @@ class LifecycleServiceTest {
     void create_moum_success() throws IOException {
         // given
         String imageUrl = "mockUrl";
+        Music music1 = new Music();
+        Music music2 = new Music();
 
         doReturn(mockTeam).when(lifecycleService).findTeam(anyInt());
         doReturn(true).when(lifecycleService).hasTeam(anyString());
@@ -261,6 +263,7 @@ class LifecycleServiceTest {
         LifecycleDto.Request moumRequestDto = LifecycleDto.Request.builder()
                 .moumName("test moum")
                 .records(new ArrayList<>())
+                .music(List.of(music1, music2))
                 .build();
         // when
         LifecycleDto.Response response = lifecycleService.addMoum(mockLeader.getUsername(), moumRequestDto, files);
@@ -421,6 +424,8 @@ class LifecycleServiceTest {
     void update_moum_success() throws IOException {
         // given
         String imageUrl = "mockUrl";
+        Music music1 = new Music();
+        Music music2 = new Music();
         LifecycleDto.Request updateRequestDto = LifecycleDto.Request.builder()
                 .teamId(123)
                 .leaderId(mockLeader.getId())
@@ -429,6 +434,7 @@ class LifecycleServiceTest {
                 .teamId(mockTeam.getId())
                 .imageUrls(List.of("imageUrl","imageUrl2"))
                 .members(new ArrayList<>())
+                .music(List.of(music1))
                 .build();
 
         // Mocking dependencies
@@ -457,7 +463,8 @@ class LifecycleServiceTest {
 
         // then
         assertThat(response.getMoumName()).isEqualTo(updateRequestDto.getMoumName());
-        assertThat(response.getImageUrls()).containsExactly("mockUrl", "mockUrl");  // assuming both files result in the same mock URL
+        assertThat(response.getImageUrls()).containsExactly("mockUrl", "mockUrl");
+        assertThat(response.getMusic().size()).isEqualTo(1);
     }
 
     @Test
