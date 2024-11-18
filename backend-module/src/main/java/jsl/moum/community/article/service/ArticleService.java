@@ -231,7 +231,7 @@ public class ArticleService {
     }
 
     /**
-     * 주어진 키워드를 사용하여 게시글을 검색
+     * 나의 즐겨찾기 리스트 조회
      */
     @Transactional(readOnly = true)
     public List<ArticleDto.Response> getMyWishlist(String memberName,int page, int size) {
