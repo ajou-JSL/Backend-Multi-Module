@@ -13,7 +13,9 @@ import jsl.moum.moum.team.domain.TeamMemberRepositoryCustom;
 import jsl.moum.moum.team.domain.TeamRepository;
 import jsl.moum.moum.team.dto.TeamDto;
 import jsl.moum.objectstorage.StorageService;
+import jsl.moum.record.domain.entity.MoumMemberRecordEntity;
 import jsl.moum.record.domain.entity.RecordEntity;
+import jsl.moum.record.domain.repository.MoumMemberRecordRepository;
 import jsl.moum.record.domain.repository.MoumMemberRecordRepositoryCustom;
 import jsl.moum.record.domain.repository.RecordRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -70,6 +72,9 @@ class LifecycleServiceTest {
     @Mock
     private MoumMemberRecordRepositoryCustom moumMemberRecordRepositoryCustom;
 
+    @Mock
+    private MoumMemberRecordRepository moumMemberRecordRepository;
+
     private LifecycleEntity mockLifecycle;
     private MemberEntity mockLeader;
     private MemberEntity mockMember;
@@ -79,6 +84,7 @@ class LifecycleServiceTest {
     private Process mockProcess;
     private ProcessDto mockProcessDto;
     private RecordEntity mockRecord;
+    private MoumMemberRecordEntity mockMoumMemberRecord;
 
 
     @BeforeEach
@@ -134,6 +140,12 @@ class LifecycleServiceTest {
                 .team(mockTeam)
                 .createdAt(LocalDateTime.now())
                 .recordName("test record")
+                .member(mockMember)
+                .build();
+
+        mockMoumMemberRecord = MoumMemberRecordEntity.builder()
+                .record(mockRecord)
+                .lifecycle(mockLifecycle)
                 .member(mockMember)
                 .build();
     }
