@@ -63,6 +63,10 @@ public class LifecycleEntity {
     @Embedded
     private Process process;
 
+    @ElementCollection
+    @CollectionTable(name = "lifecycle_music_list", joinColumns = @JoinColumn(name = "lifecycle_id"))
+    private List<Music> music;
+
     @OneToMany(mappedBy = "lifecycle", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RecordEntity> records;
 
@@ -102,6 +106,7 @@ public class LifecycleEntity {
         this.lifecycleDescription = updateRequest.getMoumDescription();
         this.performLocation = updateRequest.getPerformLocation();
         this.endDate = updateRequest.getEndDate();
+        this.music = updateRequest.getMusic();
     }
 
     // 양방향이라 서로간 저장-삭제 신경 써줘야함 : GPT
