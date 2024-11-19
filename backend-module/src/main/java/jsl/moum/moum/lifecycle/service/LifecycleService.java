@@ -165,11 +165,16 @@ public class LifecycleService {
 
         List<String> existingFileUrls = lifecycle.getImageUrls();
         if(files.get(0).getSize() != 0 || files != null){
-            log.info("files list{}:", files.get(0).getSize());
+            log.info("if(files.get(0).getSize() != 0 || files != null)");
             deleteExistingFiles(existingFileUrls);
             // "moums/{moumName}/{originalFileName}"
             List<String> newFileUrls = uploadFiles(files, requestDto.getMoumName());
             lifecycle.updateProfileImages(newFileUrls);
+        }
+
+        if(files == null){
+            log.info("files null");
+            lifecycle.updateProfileImages(existingFileUrls);
         }
 
 
