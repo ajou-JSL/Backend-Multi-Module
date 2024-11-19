@@ -3,21 +3,28 @@ package jsl.moum.auth.jwt;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jsl.moum.auth.domain.CustomUserDetails;
 import jsl.moum.auth.domain.entity.MemberEntity;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
+import java.util.Collections;
 
 @RequiredArgsConstructor
+@Slf4j
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
@@ -29,9 +36,20 @@ public class JwtFilter extends OncePerRequestFilter {
         String accessToken = request.getHeader("access");
 
         // 토큰이 없다면 다음 필터로 넘김
+        // 웹의 경우, accessToken이 Cookie에 있으므로 header 이후 cookie에서 검증
         if (accessToken == null) {
-            filterChain.doFilter(request, response);
-            return;
+            Cookie[] cookies = request.getCookies();
+            if(cookies != null){
+                for(Cookie cookie : cookies){
+                    if(cookie.getName().equals("access")){
+                        accessToken = cookie.getValue();
+                    }
+                }
+            }
+            if(accessToken == null){
+                filterChain.doFilter(request, response);
+                return;
+            }
         }
 
         // 토큰 만료 여부 확인, 만료시 다음 필터로 넘기지 않음
@@ -74,6 +92,9 @@ public class JwtFilter extends OncePerRequestFilter {
         // username, role 값을 획득
         String username = jwtUtil.getUsername(accessToken);
         String role = jwtUtil.getRole(accessToken);
+        if (!role.startsWith("ROLE_")) {
+            role = "ROLE_" + role; // Add ROLE_ prefix if missing
+        }
 
         MemberEntity memberEntity = new MemberEntity();
         memberEntity.setUsername(username);

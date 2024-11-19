@@ -9,13 +9,17 @@ import jsl.moum.rank.Rank;
 import jsl.moum.record.domain.entity.MoumMemberRecordEntity;
 import jsl.moum.record.domain.entity.RecordEntity;
 import jsl.moum.chatroom.domain.ChatroomMember;
+import jsl.moum.report.domain.MemberReport;
 import lombok.*;
 import jsl.moum.moum.team.domain.TeamEntity;
 import jsl.moum.moum.team.domain.TeamMemberEntity;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Builder
@@ -70,6 +74,12 @@ public class MemberEntity {
     // 멤버가 참여한 공연게시글들
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PerformMember> membersPerforms = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MemberReport> memberReports = new ArrayList<>();
+
+    @OneToMany(mappedBy = "reporter", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MemberReport> memberReporters = new ArrayList<>();
 
 
     // role은 회원가입 시 입력하게 할지?
@@ -179,6 +189,12 @@ public class MemberEntity {
         for (RecordEntity record : toRemove) {
             record.setMember(null);  // 해당 RecordEntity와의 팀 관계 끊기
         }
+    }
+
+    public List<SimpleGrantedAuthority> getAuthorities(){
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(this.role));
+        return authorities;
     }
 
 }
