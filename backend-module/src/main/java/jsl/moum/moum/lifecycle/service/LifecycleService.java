@@ -155,6 +155,8 @@ public class LifecycleService {
     @Transactional
     public LifecycleDto.Response updateMoum(String username, LifecycleDto.Request requestDto, List<MultipartFile> files, int moumId) throws IOException {
 
+        log.info("updateMoum() 진입");
+
         MemberEntity loginUser = memberRepository.findByUsername(username);
         TeamEntity team = findTeam(requestDto.getTeamId());
         LifecycleEntity lifecycle = findMoum(moumId);
@@ -164,17 +166,17 @@ public class LifecycleService {
         }
 
         List<String> existingFileUrls = lifecycle.getImageUrls();
+        if(files == null){
+            log.info("files null");
+            lifecycle.updateProfileImages(existingFileUrls);
+        }
+
         if(files.get(0).getSize() != 0 || files != null){
             log.info("if(files.get(0).getSize() != 0 || files != null)");
             deleteExistingFiles(existingFileUrls);
             // "moums/{moumName}/{originalFileName}"
             List<String> newFileUrls = uploadFiles(files, requestDto.getMoumName());
             lifecycle.updateProfileImages(newFileUrls);
-        }
-
-        if(files == null){
-            log.info("files null");
-            lifecycle.updateProfileImages(existingFileUrls);
         }
 
 
