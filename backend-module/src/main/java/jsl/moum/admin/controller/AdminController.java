@@ -32,6 +32,8 @@ public class AdminController {
         model.addAttribute("chatroomCount", adminService.getChatroomCount());
         model.addAttribute("memberCount", adminService.getMemberCount());
         model.addAttribute("teamCount", adminService.getTeamCount());
+        model.addAttribute("practiceRoomCount", adminService.getPracticeRoomCount());
+        model.addAttribute("performanceHallCount", adminService.getPerformanceHallCount());
 
         return "adminDashboard";
     }

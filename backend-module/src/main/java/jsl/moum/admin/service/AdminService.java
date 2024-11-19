@@ -1,6 +1,8 @@
 package jsl.moum.admin.service;
 
 import jsl.moum.auth.domain.repository.MemberRepository;
+import jsl.moum.business.domain.PerformanceHallRepository;
+import jsl.moum.business.domain.PracticeRoomRepository;
 import jsl.moum.chatroom.domain.ChatroomRepository;
 import jsl.moum.moum.team.domain.TeamRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +17,8 @@ public class AdminService {
     private final ChatroomRepository chatroomRepository;
     private final MemberRepository memberRepository;
     private final TeamRepository teamRepository;
-    // private final PracticeRoomRepository practiceRoomRepository;
-    // private final PerformanceHallRepository performanceHallRepository;
+     private final PracticeRoomRepository practiceRoomRepository;
+     private final PerformanceHallRepository performanceHallRepository;
 
     public Long getChatroomCount() {
         return chatroomRepository.count();
@@ -28,5 +30,13 @@ public class AdminService {
 
     public Long getTeamCount() {
         return teamRepository.count();
+    }
+
+    public Long getPracticeRoomCount() {
+        return practiceRoomRepository.count();
+    }
+
+    public Long getPerformanceHallCount() {
+        return performanceHallRepository.count();
     }
 }
