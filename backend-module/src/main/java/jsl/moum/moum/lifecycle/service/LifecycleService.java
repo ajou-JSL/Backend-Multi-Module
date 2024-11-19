@@ -164,11 +164,14 @@ public class LifecycleService {
         }
 
         List<String> existingFileUrls = lifecycle.getImageUrls();
-        deleteExistingFiles(existingFileUrls);
+        if(files.get(0).getSize() != 0){
+            log.info("files list{}:", files.get(0).getSize());
+            deleteExistingFiles(existingFileUrls);
+            // "moums/{moumName}/{originalFileName}"
+            List<String> newFileUrls = uploadFiles(files, requestDto.getMoumName());
+            lifecycle.updateProfileImages(newFileUrls);
+        }
 
-        // "moums/{moumName}/{originalFileName}"
-        List<String> newFileUrls = uploadFiles(files, requestDto.getMoumName());
-        lifecycle.updateProfileImages(newFileUrls);
 
         updateLifecycleRecords(requestDto, lifecycle);
 
@@ -318,7 +321,7 @@ public class LifecycleService {
 
     private List<String> uploadFiles(List<MultipartFile> files, String moumName) throws IOException {
         List<String> newFileUrls = new ArrayList<>();
-        if (files != null || !files.isEmpty()) {
+        if (files != null && !files.isEmpty()) {
             for (MultipartFile file : files) {
                 String originalFilename = file.getOriginalFilename();
                 String key = "moums/" + moumName + "/" + originalFilename;
