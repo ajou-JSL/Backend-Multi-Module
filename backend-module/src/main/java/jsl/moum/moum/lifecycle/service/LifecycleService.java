@@ -164,7 +164,7 @@ public class LifecycleService {
         }
 
         List<String> existingFileUrls = lifecycle.getImageUrls();
-        if(files.get(0).getSize() != 0){
+        if(files.get(0).getSize() != 0 || files != null){
             log.info("files list{}:", files.get(0).getSize());
             deleteExistingFiles(existingFileUrls);
             // "moums/{moumName}/{originalFileName}"
