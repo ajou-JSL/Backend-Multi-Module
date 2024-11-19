@@ -1,6 +1,7 @@
 package jsl.moum.admin.controller;
 
 import jsl.moum.admin.dto.AdminLoginRequest;
+import jsl.moum.admin.service.AdminService;
 import jsl.moum.global.response.ResultResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Slf4j
 public class AdminController {
 
+    private final AdminService adminService;
+
     @GetMapping("/login")
     public String adminLoginPage(Model model) {
         model.addAttribute("loginRequest", new AdminLoginRequest());
@@ -23,7 +26,13 @@ public class AdminController {
     }
 
     @GetMapping("/dashboard")
-    public String getDashboard(){
+    public String getDashboard(Model model){
+        log.info("AdminController getDashboard");
+
+        model.addAttribute("chatroomCount", adminService.getChatroomCount());
+        model.addAttribute("memberCount", adminService.getMemberCount());
+        model.addAttribute("teamCount", adminService.getTeamCount());
+
         return "adminDashboard";
     }
 
