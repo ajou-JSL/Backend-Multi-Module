@@ -15,6 +15,7 @@ public enum ErrorCode {
     BAD_CREDENTIALS(400, "F-C005", "bad credentials"),
     ILLEGAL_ARGUMENT(400, "F-C006", "유효하지 않은 데이터입니다."),
     FILE_UPLOAD_FAIL(400, "F-C007", "File upload failed"),
+    FILE_UPDATE_FAIL(400, "F-C008", "File update failed"),
 
     // Jwt
     JWT_TOKEN_INVALID(400,"F-J001","유효하지 않은 JWT토큰"),
