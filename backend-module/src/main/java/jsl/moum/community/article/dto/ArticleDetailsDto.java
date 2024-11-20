@@ -1,5 +1,6 @@
 package jsl.moum.community.article.dto;
 
+import jsl.moum.auth.dto.MusicGenre;
 import jsl.moum.community.comment.dto.CommentDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,6 +29,7 @@ public class ArticleDetailsDto {
         private String content;
 
         private String fileUrl;
+        private List<MusicGenre> genres;
 
         public ArticleDetailsEntity toEntity(){
             return ArticleDetailsEntity.builder()

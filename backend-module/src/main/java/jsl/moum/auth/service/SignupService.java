@@ -60,9 +60,12 @@ public class SignupService {
                 .profileDescription(memberRequestDto.getProfileDescription())
                 .role("ROLE_USER")
                 .profileImageUrl(fileUrl)
+                .genres(memberRequestDto.getGenres())
+                .role("ROLE_USER")
                 .build();
 
         MemberEntity newMember = request.toEntity();
+        log.info("user role : {}",newMember.getRole());
         memberRepository.save(newMember);
 
         if (memberRequestDto.getRecords() != null && !memberRequestDto.getRecords().isEmpty()) {

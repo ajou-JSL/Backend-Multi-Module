@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import jsl.moum.auth.domain.entity.MemberEntity;
 import jsl.moum.auth.dto.MemberDto;
+import jsl.moum.auth.dto.MusicGenre;
 import jsl.moum.rank.Rank;
 import jsl.moum.record.domain.dto.RecordDto;
 import jsl.moum.record.domain.entity.MoumMemberRecordEntity;
@@ -27,35 +28,19 @@ public class ProfileDto {
     @AllArgsConstructor
     @Getter
     public static class UpdateRequest{
-        @NotEmpty @NotNull
         private String name;
-
-        @NotEmpty @NotNull
         @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$", message = "이메일 형식이 올바르지 않습니다.")
         private String email;
-
-        @NotEmpty @NotNull
-        @Size(min = 3, max = 20)
+        @Size(min = 4, max = 20)
         private String username;
-
-        @NotEmpty @NotNull
         private String profileDescription;
-
         private String profileImageUrl;
-
-        @NotEmpty @NotNull
         private String proficiency;
-
-        @NotEmpty @NotNull
         private String instrument;
-
-        @NotEmpty @NotNull
         private String address;
-
-
-        @Nullable
         private List<RecordDto.Request> records;
         private String videoUrl;
+        private List<MusicGenre> genres;
 
         public MemberEntity toEntity(){
             return MemberEntity.builder()
@@ -67,6 +52,7 @@ public class ProfileDto {
                     .instrument(instrument)
                     .proficiency(proficiency)
                     .name(name)
+                    .genres(genres)
                     .videoUrl(videoUrl)
                     .records(records.stream().map(RecordDto.Request::toEntity).collect(Collectors.toList()))
                     .build();
@@ -76,21 +62,22 @@ public class ProfileDto {
     @Getter
     @AllArgsConstructor
     public static class Response{
-        private int id;
-        private String name;
-        private String username;
-        private String profileDescription;
-        private String email;
-        private String profileImageUrl;
-        private String videoUrl;
-        private String proficiency;
-        private String instrument;
-        private String address;
-        private Integer exp;
-        private Rank tier;
-        private List<TeamDto.Response> teams;
-        private List<RecordDto.Response> memberRecords;
-        private List<RecordDto.Response> moumRecords;
+        private final int id;
+        private final String name;
+        private final String username;
+        private final String profileDescription;
+        private final String email;
+        private final String profileImageUrl;
+        private final String videoUrl;
+        private final String proficiency;
+        private final String instrument;
+        private final String address;
+        private final List<MusicGenre> genres;
+        private final Integer exp;
+        private final Rank tier;
+        private final List<TeamDto.Response> teams;
+        private final List<RecordDto.Response> memberRecords;
+        private final List<RecordDto.Response> moumRecords;
 
         public Response(MemberEntity member){
             this.id = member.getId();
@@ -111,6 +98,9 @@ public class ProfileDto {
                     .map(TeamDto.Response::new)
                     .collect(Collectors.toList())
                     : null;
+
+            this.genres = (member.getGenres() != null)
+                    ? member.getGenres() : null;
 
             this.memberRecords = (member.getRecords() != null)
                     ? member.getRecords().stream()

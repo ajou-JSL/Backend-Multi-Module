@@ -41,6 +41,39 @@ public class ProfileService {
         return new ProfileDto.Response(targetMemberEntity);
     }
 
+//    /**
+//     프로필 리스트 조회(필터링 - 랭킹 순)
+//     */
+//    @Transactional
+//    public ProfileDto.Response getProfile(int targetMemberId) {
+//
+////        MemberEntity targetMemberEntity = findMember(targetMemberId);
+////
+////        return new ProfileDto.Response(targetMemberEntity);
+//    }
+//
+//    /**
+//     프로필 리스트 조회(필터링 - 이력 개수 순)
+//     */
+//    @Transactional
+//    public ProfileDto.Response getProfile(int targetMemberId) {
+//
+////        MemberEntity targetMemberEntity = findMember(targetMemberId);
+////
+////        return new ProfileDto.Response(targetMemberEntity);
+//    }
+//
+//    /**
+//     프로필 리스트 조회(필터링 - 검색 keyword : 악기 + 랭킹 순)
+//     */
+//    @Transactional
+//    public ProfileDto.Response getProfile(int targetMemberId) {
+//
+////        MemberEntity targetMemberEntity = findMember(targetMemberId);
+////
+////        return new ProfileDto.Response(targetMemberEntity);
+//    }
+
     /**
      프로필 수정
      */

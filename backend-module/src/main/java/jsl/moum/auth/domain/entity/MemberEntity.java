@@ -3,6 +3,7 @@ package jsl.moum.auth.domain.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
+import jsl.moum.auth.dto.MusicGenre;
 import jsl.moum.community.perform.domain.entity.PerformMember;
 import jsl.moum.member_profile.dto.ProfileDto;
 import jsl.moum.rank.Rank;
@@ -81,6 +82,11 @@ public class MemberEntity {
     @OneToMany(mappedBy = "reporter", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberReport> memberReporters = new ArrayList<>();
 
+    @ElementCollection(targetClass = MusicGenre.class)
+    @CollectionTable(name = "member_genre", joinColumns = @JoinColumn(name = "member_id"))
+    @Column(name = "genre", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private List<MusicGenre> genres = new ArrayList<>();
 
     // role은 회원가입 시 입력하게 할지?
     // admin, 일반사용자, 일반사용자중에서도 연주자,참여자 뭐 이런거 등등..
@@ -102,9 +108,8 @@ public class MemberEntity {
     @Column(name = "exp", nullable = false)
     private Integer exp = 0;
 
-
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "tier", nullable = false)
     private Rank tier = Rank.BRONZE;
 
     public void updateMemberExpAndRank(int newExp) {
@@ -154,15 +159,33 @@ public class MemberEntity {
         this.profileImageUrl = newUrl;
     }
 
-    public void updateMemberInfo(ProfileDto.UpdateRequest updateRequest){
-        this.name = updateRequest.getName();
-        this.username = updateRequest.getUsername();
-        this.profileDescription = updateRequest.getProfileDescription();
-        this.email = updateRequest.getEmail();
-        this.proficiency = updateRequest.getProficiency();
-        this.instrument = updateRequest.getInstrument();
-        this.address = updateRequest.getAddress();
+    public void updateMemberInfo(ProfileDto.UpdateRequest updateRequest) {
+        if (updateRequest.getName() != null) {
+            this.name = updateRequest.getName();
+        }
+        if (updateRequest.getUsername() != null) {
+            this.username = updateRequest.getUsername();
+        }
+        if (updateRequest.getProfileDescription() != null) {
+            this.profileDescription = updateRequest.getProfileDescription();
+        }
+        if (updateRequest.getEmail() != null) {
+            this.email = updateRequest.getEmail();
+        }
+        if (updateRequest.getProficiency() != null) {
+            this.proficiency = updateRequest.getProficiency();
+        }
+        if (updateRequest.getInstrument() != null) {
+            this.instrument = updateRequest.getInstrument();
+        }
+        if (updateRequest.getAddress() != null) {
+            this.address = updateRequest.getAddress();
+        }
+        if (updateRequest.getGenres() != null) {
+            this.genres = updateRequest.getGenres();
+        }
     }
+
 
     // 양방향이라 서로간 저장-삭제 신경 써줘야함 : GPT
     public void updateRecords(List<RecordEntity> updatedRecords) {

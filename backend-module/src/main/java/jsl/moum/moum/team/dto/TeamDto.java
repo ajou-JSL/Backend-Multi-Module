@@ -4,6 +4,7 @@ import io.micrometer.common.lang.Nullable;
 import jakarta.validation.constraints.NotNull;
 import jsl.moum.auth.domain.entity.MemberEntity;
 import jsl.moum.auth.dto.MemberDto;
+import jsl.moum.auth.dto.MusicGenre;
 import jsl.moum.moum.team.domain.TeamEntity;
 import jsl.moum.moum.team.domain.TeamMemberEntity;
 import jsl.moum.rank.Rank;
@@ -62,13 +63,13 @@ public class TeamDto {
         private final String description;
         private final String genre;
         private final String location;
-        private LocalDateTime createdAt;
-        private String fileUrl;
+        private final LocalDateTime createdAt;
+        private final String fileUrl;
         private final String videoUrl;
-        private Integer exp;
-        private Rank tier;
-        private List<MemberDto.Response> members;
-        private List<RecordDto.Response> records;
+        private final Integer exp;
+        private final Rank tier;
+        private final List<MemberDto.Response> members;
+        private final List<RecordDto.Response> records;
 
         public Response(TeamEntity teamEntity){
             this.teamId = teamEntity.getId();
