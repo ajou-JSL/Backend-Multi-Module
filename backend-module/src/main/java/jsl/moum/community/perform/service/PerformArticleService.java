@@ -71,6 +71,7 @@ public class PerformArticleService {
                 .performancePrice(requestDto.getPerformancePrice())
                 .performanceImageUrl(imageUrl)
                 .performMembers(performMembers)
+                .genres(requestDto.getGenres())
                 .build();
 
         // performMembers.forEach(pm -> pm.assignPerformanceArticle(newPerformArticleEntity));

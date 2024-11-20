@@ -1,6 +1,7 @@
 package jsl.moum.community.perform.domain.entity;
 
 import jakarta.persistence.*;
+import jsl.moum.auth.dto.MusicGenre;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -46,6 +47,12 @@ public class PerformArticleEntity {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @ElementCollection(targetClass = MusicGenre.class)
+    @CollectionTable(name = "perform_genre", joinColumns = @JoinColumn(name = "perform_id"))
+    @Column(name = "genre", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private List<MusicGenre> genres = new ArrayList<>();
 
     // 멤버가 참여해있는 공연들
     @OneToMany(mappedBy = "performanceArticle", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

@@ -6,6 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jsl.moum.auth.domain.entity.MemberEntity;
 import jsl.moum.auth.dto.MemberDto;
+import jsl.moum.auth.dto.MusicGenre;
 import jsl.moum.community.perform.domain.entity.PerformArticleEntity;
 import jsl.moum.community.perform.domain.entity.PerformMember;
 import lombok.AllArgsConstructor;
@@ -35,6 +36,7 @@ public class PerformArticleDto {
         private List<Integer> membersId;
         private int teamId;
         private int moumId;
+        private List<MusicGenre> genres;
 
         public PerformArticleEntity toEntity(){
             return PerformArticleEntity.builder()
@@ -45,6 +47,7 @@ public class PerformArticleDto {
                     .performanceEndDate(performanceEndDate)
                     .performancePrice(performancePrice)
                     .performanceImageUrl(performanceImageUrl)
+                    .genres(genres)
                     .build();
         }
     }
@@ -63,6 +66,7 @@ public class PerformArticleDto {
         private final String performanceImageUrl;
         //private final List<MemberDto.Response> members;
         private final List<Integer> membersId;
+        private final List<MusicGenre> genres;
 
         public Response(PerformArticleEntity performArticle){
             this.id = performArticle.getId();
@@ -73,6 +77,7 @@ public class PerformArticleDto {
             this.performanceEndDate = performArticle.getPerformanceEndDate();
             this.performancePrice = performArticle.getPerformancePrice();
             this.performanceImageUrl = performArticle.getPerformanceImageUrl();
+            this.genres = (performArticle.getGenres() != null) ? performArticle.getGenres() : null;
 
             // 멤버 id만 말고 객체 그대로 리턴할 경우에 이걸로
 //            this.members = performArticle.getPerformMembers().stream()
