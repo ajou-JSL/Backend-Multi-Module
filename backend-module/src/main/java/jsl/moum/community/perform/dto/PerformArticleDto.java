@@ -58,7 +58,9 @@ public class PerformArticleDto {
 
         private final int id;
         private final String teamName;
+        private final int teamId;
         private final String moumName;
+        private final int moumId;
         private final String performanceName;
         private final String performanceDescription;
         private final String performanceLocation;
@@ -73,7 +75,9 @@ public class PerformArticleDto {
         public Response(PerformArticleEntity performArticle){
             this.id = performArticle.getId();
             this.teamName = performArticle.getTeam().getTeamName();
+            this.teamId = performArticle.getTeam().getId();
             this.moumName = performArticle.getMoum().getLifecycleName();
+            this.moumId = performArticle.getMoum().getId();
             this.performanceName = performArticle.getPerformanceName();
             this.performanceDescription = performArticle.getPerformanceDescription();
             this.performanceLocation = performArticle.getPerformanceLocation();
