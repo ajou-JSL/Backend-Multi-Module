@@ -43,7 +43,7 @@ public class ArticleService {
     private String bucket;
 
     /**
-     * 게시글 작성
+     * 게시글 작성(생성)
      */
     @Transactional
     public ArticleDto.Response postArticle(ArticleDto.Request articleRequestDto, MultipartFile file, String memberName) throws IOException {
@@ -54,6 +54,7 @@ public class ArticleService {
                 .author(author)
                 .title(articleRequestDto.getTitle())
                 .category(articleRequestDto.getCategory())
+                .genres(articleRequestDto.getGenres())
                 .build();
 
         // article 테이블 저장
@@ -146,7 +147,7 @@ public class ArticleService {
 
         // article_details, article 둘 다 update
         articleDetails.updateArticleDetails(newContent);
-        article.updateArticle(newTitle,newCategory);
+        article.updateArticle(newTitle,newCategory,articleDetailsRequestDto.getGenres());
 
         // article_details, article 둘 다 저장
         articleDetailsRepository.save(articleDetails);

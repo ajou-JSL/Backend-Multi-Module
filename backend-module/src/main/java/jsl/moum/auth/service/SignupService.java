@@ -64,6 +64,7 @@ public class SignupService {
                 .build();
 
         MemberEntity newMember = request.toEntity();
+        log.info("user role : {}",newMember.getRole());
         memberRepository.save(newMember);
 
         if (memberRequestDto.getRecords() != null && !memberRequestDto.getRecords().isEmpty()) {

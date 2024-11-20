@@ -4,9 +4,13 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jsl.moum.auth.domain.entity.MemberEntity;
+import jsl.moum.auth.dto.MusicGenre;
 import lombok.*;
+import org.springframework.security.core.parameters.P;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Builder
 @AllArgsConstructor
@@ -45,6 +49,12 @@ public class ArticleEntity {
     @Column(name = "comments_count")
     private int commentCount;
 
+    @ElementCollection(targetClass = MusicGenre.class)
+    @CollectionTable(name = "article_genre", joinColumns = @JoinColumn(name = "article_id"))
+    @Column(name = "genre", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private List<MusicGenre> genres = new ArrayList<>();
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
@@ -63,10 +73,17 @@ public class ArticleEntity {
     public void updateLikesCount(int num) { this.likesCount += num; }
     public void commentsCountUp(){this.commentCount += 1;}
 
-    public void updateArticle(String title, ArticleCategories category)
+    public void updateArticle(String newTitle, ArticleCategories newCategory, List<MusicGenre> newGenres)
     {
-        this.title = title;
-        this.category = category;
+        if(newTitle != null){
+            this.title = newTitle;
+        }
+        if (newGenres != null) {
+            this.genres = newGenres;
+        }
+        if(newCategory != null){
+            this.category = newCategory;
+        }
         this.updatedAt = LocalDateTime.now();
     }
 

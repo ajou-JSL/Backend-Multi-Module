@@ -3,12 +3,15 @@ package jsl.moum.community.article.dto;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jsl.moum.auth.domain.entity.MemberEntity;
+import jsl.moum.auth.dto.MusicGenre;
+import jsl.moum.moum.lifecycle.domain.Music;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import jsl.moum.community.article.domain.article.ArticleEntity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class ArticleDto {
 
@@ -31,6 +34,7 @@ public class ArticleDto {
         private String fileUrl;
 
         private MemberEntity author;
+        private List<MusicGenre> genres;
 
 
         public ArticleEntity toEntity(){
@@ -39,6 +43,7 @@ public class ArticleDto {
                     .title(title)
                     .category(category)
                     .author(author)
+                    .genres(genres)
                     .build();
         }
     }
@@ -51,10 +56,12 @@ public class ArticleDto {
         private final ArticleEntity.ArticleCategories category;
         private final int viewCounts;
         private final int commentCounts;
+        private final List<MusicGenre> genres;
         private final int likeCounts;
         private final String author;
-        private LocalDateTime createdAt;
-        private LocalDateTime updatedAt;
+        private final LocalDateTime createdAt;
+        private final LocalDateTime updatedAt;
+
 
         public Response(ArticleEntity article){
             this.id = article.getId();
@@ -63,6 +70,7 @@ public class ArticleDto {
             this.author = article.getAuthor().getUsername();
             this.viewCounts = article.getViewCount();
             this.commentCounts = article.getCommentCount();
+            this.genres = (article.getGenres() != null) ? article.getGenres() : null;
             this.likeCounts = article.getLikesCount();
             this.createdAt = article.getCreatedAt();
             this.updatedAt = article.getUpdatedAt();
