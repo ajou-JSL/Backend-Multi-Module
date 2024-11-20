@@ -60,6 +60,7 @@ public class SignupService {
                 .profileDescription(memberRequestDto.getProfileDescription())
                 .profileImageUrl(fileUrl)
                 .genres(memberRequestDto.getGenres())
+                .role("ROLE_USER")
                 .build();
 
         MemberEntity newMember = request.toEntity();

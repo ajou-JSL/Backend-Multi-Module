@@ -28,33 +28,16 @@ public class ProfileDto {
     @AllArgsConstructor
     @Getter
     public static class UpdateRequest{
-        @NotEmpty @NotNull
         private String name;
-
-        @NotEmpty @NotNull
         @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$", message = "이메일 형식이 올바르지 않습니다.")
         private String email;
-
-        @NotEmpty @NotNull
-        @Size(min = 3, max = 20)
+        @Size(min = 4, max = 20)
         private String username;
-
-        @NotEmpty @NotNull
         private String profileDescription;
-
         private String profileImageUrl;
-
-        @NotEmpty @NotNull
         private String proficiency;
-
-        @NotEmpty @NotNull
         private String instrument;
-
-        @NotEmpty @NotNull
         private String address;
-
-
-        @Nullable
         private List<RecordDto.Request> records;
         private String videoUrl;
         private List<MusicGenre> genres;

@@ -64,6 +64,7 @@ public class MemberDto {
         private String videoUrl;
 
         private List<MusicGenre> genres;
+        private String role;
 
 
         public MemberEntity toEntity(){

@@ -109,7 +109,7 @@ public class MemberEntity {
     private Integer exp = 0;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "rank", nullable = false)
+    @Column(name = "tier", nullable = false)
     private Rank tier = Rank.BRONZE;
 
     public void updateMemberExpAndRank(int newExp) {
@@ -159,16 +159,33 @@ public class MemberEntity {
         this.profileImageUrl = newUrl;
     }
 
-    public void updateMemberInfo(ProfileDto.UpdateRequest updateRequest){
-        this.name = updateRequest.getName();
-        this.username = updateRequest.getUsername();
-        this.profileDescription = updateRequest.getProfileDescription();
-        this.email = updateRequest.getEmail();
-        this.proficiency = updateRequest.getProficiency();
-        this.instrument = updateRequest.getInstrument();
-        this.address = updateRequest.getAddress();
-        this.genres = updateRequest.getGenres();
+    public void updateMemberInfo(ProfileDto.UpdateRequest updateRequest) {
+        if (updateRequest.getName() != null) {
+            this.name = updateRequest.getName();
+        }
+        if (updateRequest.getUsername() != null) {
+            this.username = updateRequest.getUsername();
+        }
+        if (updateRequest.getProfileDescription() != null) {
+            this.profileDescription = updateRequest.getProfileDescription();
+        }
+        if (updateRequest.getEmail() != null) {
+            this.email = updateRequest.getEmail();
+        }
+        if (updateRequest.getProficiency() != null) {
+            this.proficiency = updateRequest.getProficiency();
+        }
+        if (updateRequest.getInstrument() != null) {
+            this.instrument = updateRequest.getInstrument();
+        }
+        if (updateRequest.getAddress() != null) {
+            this.address = updateRequest.getAddress();
+        }
+        if (updateRequest.getGenres() != null) {
+            this.genres = updateRequest.getGenres();
+        }
     }
+
 
     // 양방향이라 서로간 저장-삭제 신경 써줘야함 : GPT
     public void updateRecords(List<RecordEntity> updatedRecords) {
