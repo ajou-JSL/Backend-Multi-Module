@@ -16,6 +16,8 @@ import jsl.moum.moum.team.domain.TeamRepository;
 import jsl.moum.moum.team.dto.TeamDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -57,6 +59,10 @@ public class AdminService {
 
     public List<MemberDto.Response> getMembers(){
         return memberRepository.findAll().stream().map(MemberDto.Response::new).toList();
+    }
+
+    public Page<MemberEntity> getMembersPaged(PageRequest pageRequest){
+        return memberRepository.findAll(pageRequest);
     }
 
     public MemberDto.Response getMemberById(int id){

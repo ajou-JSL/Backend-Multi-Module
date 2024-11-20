@@ -2,6 +2,7 @@ package jsl.moum.admin.controller;
 
 import jsl.moum.admin.dto.AdminLoginRequest;
 import jsl.moum.admin.service.AdminService;
+import jsl.moum.auth.domain.entity.MemberEntity;
 import jsl.moum.auth.dto.MemberDto;
 import jsl.moum.business.dto.PerformanceHallDto;
 import jsl.moum.business.dto.PracticeRoomDto;
@@ -9,13 +10,16 @@ import jsl.moum.global.response.ResultResponse;
 import jsl.moum.moum.team.dto.TeamDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -60,6 +64,22 @@ public class AdminController {
         model.addAttribute("memberCount", adminService.getMemberCount());
         model.addAttribute("members", adminService.getMembers());
         return "adminMember";
+    }
+
+    @GetMapping("/members")
+    public ResponseEntity<Map<String, Object>> getMembers(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        PageRequest pageRequest = PageRequest.of(page - 1, size);
+        Page<MemberEntity> membersPage = adminService.getMembersPaged(pageRequest);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("members", membersPage.getContent());
+        response.put("currentPage", membersPage.getNumber() + 1);
+        response.put("totalPages", membersPage.getTotalPages());
+        response.put("totalMembers", membersPage.getTotalElements());
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/member/view/{id}")
