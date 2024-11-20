@@ -10,7 +10,9 @@ import jsl.moum.rank.Rank;
 import jsl.moum.record.domain.entity.MoumMemberRecordEntity;
 import jsl.moum.record.domain.entity.RecordEntity;
 import jsl.moum.chatroom.domain.ChatroomMember;
+import jsl.moum.report.domain.ArticleReport;
 import jsl.moum.report.domain.MemberReport;
+import jsl.moum.report.domain.TeamReport;
 import lombok.*;
 import jsl.moum.moum.team.domain.TeamEntity;
 import jsl.moum.moum.team.domain.TeamMemberEntity;
@@ -81,6 +83,12 @@ public class MemberEntity {
 
     @OneToMany(mappedBy = "reporter", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberReport> memberReporters = new ArrayList<>();
+
+    @OneToMany(mappedBy = "reporter", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TeamReport> teamReports = new ArrayList<>();
+
+    @OneToMany(mappedBy = "reporter", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ArticleReport> articleReports = new ArrayList<>();
 
     @ElementCollection(targetClass = MusicGenre.class)
     @CollectionTable(name = "member_genre", joinColumns = @JoinColumn(name = "member_id"))

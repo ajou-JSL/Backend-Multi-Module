@@ -2,6 +2,7 @@ package jsl.moum.report.domain;
 
 import jakarta.persistence.*;
 import jsl.moum.auth.domain.entity.MemberEntity;
+import jsl.moum.community.article.domain.article.ArticleEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,21 +13,21 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "member_report")
-public class MemberReport {
+@Table(name = "article_report")
+public class ArticleReport {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    // Foreign key reference to the member
+    // Foreign key reference to the article
     @ManyToOne
-    @JoinColumn(name = "member_id", referencedColumnName = "id", nullable = false)
-    private MemberEntity member;
+    @JoinColumn(name = "article_id", referencedColumnName = "id", nullable = false)
+    private ArticleEntity article;
 
-    // Storing the member's username directly
-    @Column(name = "member_username", nullable = false)
-    private String memberUsername;
+    // Storing the article title directly
+    @Column(name = "article_title", nullable = false)
+    private String articleTitle;
 
     // Foreign key reference to the reporter
     @ManyToOne

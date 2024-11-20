@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jsl.moum.auth.domain.entity.MemberEntity;
 import jsl.moum.auth.dto.MusicGenre;
+import jsl.moum.report.domain.ArticleReport;
+import jsl.moum.report.domain.TeamReport;
 import lombok.*;
 import org.springframework.security.core.parameters.P;
 
@@ -60,6 +62,9 @@ public class ArticleEntity {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "article", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ArticleReport> articleReports = new ArrayList<>();
 
     @PrePersist
     public void createDate(){

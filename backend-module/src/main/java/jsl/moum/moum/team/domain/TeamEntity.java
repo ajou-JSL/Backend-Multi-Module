@@ -7,6 +7,7 @@ import jsl.moum.moum.team.dto.TeamDto;
 import jsl.moum.rank.Rank;
 import jsl.moum.record.domain.entity.RecordEntity;
 import jsl.moum.chatroom.domain.Chatroom;
+import jsl.moum.report.domain.TeamReport;
 import lombok.*;
 import org.springframework.security.core.parameters.P;
 
@@ -57,6 +58,9 @@ public class TeamEntity {
 
     @OneToMany(mappedBy = "team", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RecordEntity> records;
+
+    @OneToMany(mappedBy = "team", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TeamReport> teamReports = new ArrayList<>();
 
     @OneToOne(mappedBy = "team", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Chatroom chatroom;
