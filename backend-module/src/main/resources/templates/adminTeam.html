@@ -54,9 +54,9 @@
     </div>
     <nav class="mt-3">
         <a href="#" th:href="@{/admin/dashboard}">대시보드</a>
-        <a href="#" th:href="@{/admin/chatroom}">채팅방 관리</a>
         <a href="#" th:href="@{/admin/member}">사용자 관리</a>
         <a href="#" th:href="@{/admin/team}">음악단체 관리</a>
+        <a href="#" th:href="@{/admin/chatroom}">채팅방 관리</a>
         <a href="#" th:href="@{/admin/practice-room}">연습실 관리</a>
         <a href="#" th:href="@{/admin/performance-hall}">공연장 관리</a>
         <a href="#" th:href="@{/admin/logout}" id="logout-link">로그아웃</a>
@@ -68,7 +68,7 @@
         <h1 class="mt-3 mb-5">음악단체 관리</h1>
         <div class="row">
             <div class="col-md-4">
-                <div class="card text-white bg-success mb-3" style="max-width: 18rem;">
+                <div class="card text-white bg-primary mb-3" style="max-width: 18rem;">
                     <div class="card-header">Team Count</div>
                     <div class="card-body">
                         <h5 class="card-title" th:text="${teamCount}">0</h5>
@@ -78,9 +78,20 @@
             </div>
         </div>
 
-        <!-- Team List -->
+        <!-- Team List with Pagination -->
         <div class="mt-5">
             <h2>음악단체 목록</h2>
+
+            <!-- Dropdown to select the number of teams per page -->
+            <div class="mb-3">
+                <label for="itemsPerPage">Teams per page:</label>
+                <select id="itemsPerPage" class="form-select" style="width: auto; display: inline-block;" onchange="loadTeams(1)">
+                    <option value="5">5</option>
+                    <option value="10" selected>10</option>
+                    <option value="20">20</option>
+                </select>
+            </div>
+
             <table class="table table-striped">
                 <thead>
                 <tr>
@@ -91,22 +102,22 @@
                     <th>상세</th>
                 </tr>
                 </thead>
-                <tbody>
-                <!-- Iterate through the list of teams -->
-                <tr th:each="team, iterStat : ${teams}">
-                    <td th:text="${iterStat.index + 1}">1</td>
-                    <td th:text="${team.teamName}">Team Name</td>
-                    <td th:text="${team.genre}">Genre</td>
-                    <td th:text="${team.location}">Location</td>
-                    <td>
-                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#teamModal"
-                                th:attr="data-team-id=${team.teamId}" onclick="fetchTeamDetails(event, this)">
-                            View
-                        </button>
-                    </td>
-                </tr>
+                <tbody id="teamsTable">
+                <!-- Teams will be dynamically inserted here -->
                 </tbody>
             </table>
+
+            <!-- Pagination Controls -->
+            <nav>
+                <ul class="pagination">
+                    <li class="page-item" id="prevPage">
+                        <button class="page-link" onclick="changePage(-1)">Previous</button>
+                    </li>
+                    <li class="page-item" id="nextPage">
+                        <button class="page-link" onclick="changePage(1)">Next</button>
+                    </li>
+                </ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -128,6 +139,134 @@
         </div>
     </div>
 </div>
+
+
+<!-- JavaScript -->
+<script>
+    let currentPage = 1;
+    let totalPages = 1;
+
+    // Function to load teams for a specific page
+    function loadTeams(page) {
+        const itemsPerPage = document.getElementById("itemsPerPage").value;
+        const teamsTable = document.getElementById("teamsTable");
+
+        fetch(`/admin/teams?page=${page}&size=${itemsPerPage}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Failed to fetch teams");
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Clear the current table
+                teamsTable.innerHTML = "";
+
+                // Update pagination variables
+                currentPage = data.currentPage;
+                totalPages = data.totalPages;
+
+                // Populate the table with teams
+                data.teams.forEach((team, index) => {
+                    const row = `
+                        <tr>
+                            <td>${(currentPage - 1) * itemsPerPage + index + 1}</td>
+                            <td>${team.teamName}</td>
+                            <td>${team.genre}</td>
+                            <td>${team.location}</td>
+                            <td>
+                                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#teamModal"
+                                        data-team-id="${team.teamId}" onclick="fetchTeamDetails(event, this)">
+                                    View
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                    teamsTable.innerHTML += row;
+                });
+
+                // Update pagination controls
+                document.getElementById("prevPage").classList.toggle("disabled", currentPage === 1);
+                document.getElementById("nextPage").classList.toggle("disabled", currentPage === totalPages);
+            })
+            .catch(error => {
+                console.error("Error loading teams:", error);
+            });
+    }
+
+    // Function to change pages
+    function changePage(offset) {
+        const newPage = currentPage + offset;
+        if (newPage >= 1 && newPage <= totalPages) {
+            loadTeams(newPage);
+        }
+    }
+
+    // Function to fetch and display team details in the modal
+    function fetchTeamDetails(event, button) {
+        event.preventDefault();
+        const teamId = button.getAttribute("data-team-id");
+        const teamDetailsDiv = document.getElementById("teamDetails");
+
+        fetch(`/admin/team/view/${teamId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Failed to fetch team details");
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Populate the modal with team details
+                teamDetailsDiv.innerHTML = `
+                <p><strong>Team ID:</strong> ${data.teamId}</p>
+                <p><strong>Leader ID:</strong> ${data.leaderId}</p>
+                <p><strong>Team Name:</strong> ${data.teamName}</p>
+                <p><strong>Description:</strong> ${data.description || "N/A"}</p>
+                <p><strong>Genres:</strong></p>
+                <ul>
+                    ${data.genres?.map(genre => `
+                        <li>${genre.name}</li>
+                    `).join('') || '<p>No genres.</p>'}
+                </ul>
+                <p><strong>Location:</strong> ${data.location}</p>
+                <p><strong>Created At:</strong> ${new Date(data.createdAt).toLocaleString()}</p>
+                <p><strong>File URL:</strong> <a href="${data.fileUrl}" target="_blank">${data.fileUrl}</a></p>
+                <p><strong>Video URL:</strong> <a href="${data.videoUrl}" target="_blank">${data.videoUrl}</a></p>
+                <p><strong>Experience Points (EXP):</strong> ${data.exp}</p>
+                <p><strong>Tier:</strong> ${data.tier}</p>
+                <h5>Team Members</h5>
+                <ul>
+                    ${data.members?.map(member => `
+                        <li>
+                            <p><strong>Member ID:</strong> ${member.id}</p>
+                            <p><strong>Username:</strong> ${member.username}</p>
+                            <p><strong>Nickname:</strong> ${member.name}</p>
+                        </li>
+                    `).join('') || '<p>No members available.</p>'}
+                </ul>
+                <h5>Team Records</h5>
+                <ul>
+                    ${data.records?.map(record => `
+                        <li>
+                            <p><strong>Record ID:</strong> ${record.id}</p>
+                            <p><strong>Record Title:</strong> ${record.title}</p>
+                            <p><strong>Record Date:</strong> ${new Date(record.date).toLocaleDateString()}</p>
+                        </li>
+                    `).join('') || '<p>No records available.</p>'}
+                </ul>
+            `;
+            })
+            .catch(error => {
+                teamDetailsDiv.innerHTML = `<p class="text-danger">Failed to load team details. Please try again.</p>`;
+                console.error(error);
+            });
+    }
+
+    // Initial load
+    loadTeams(1);
+</script>
+
+
 
 <!-- JavaScript -->
 <script>
@@ -166,62 +305,6 @@
         // Redirect to the logout endpoint
         window.location.href = "/admin/logout";
     });
-</script>
-
-<script>
-    // Function to fetch and display team details in the modal
-    function fetchTeamDetails(event, button) {
-        event.preventDefault();
-        const teamId = button.getAttribute("data-team-id");
-        const teamDetailsDiv = document.getElementById("teamDetails");
-
-        fetch(`/admin/team/view/${teamId}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Failed to fetch team details");
-                }
-                return response.json();
-            })
-            .then(data => {
-                teamDetailsDiv.innerHTML = `
-                <p><strong>Team ID:</strong> ${data.teamId}</p>
-                <p><strong>Leader ID:</strong> ${data.leaderId}</p>
-                <p><strong>Team Name:</strong> ${data.teamName}</p>
-                <p><strong>Description:</strong> ${data.description || "N/A"}</p>
-                <p><strong>Genre:</strong> ${data.genre}</p>
-                <p><strong>Location:</strong> ${data.location}</p>
-                <p><strong>Created At:</strong> ${new Date(data.createdAt).toLocaleString()}</p>
-                <p><strong>File URL:</strong> <a href="${data.fileUrl}" target="_blank">${data.fileUrl}</a></p>
-                <p><strong>Video URL:</strong> <a href="${data.videoUrl}" target="_blank">${data.videoUrl}</a></p>
-                <p><strong>Experience Points (EXP):</strong> ${data.exp}</p>
-                <p><strong>Tier:</strong> ${data.tier}</p>
-                <h5>Team Members</h5>
-                <ul>
-                    ${data.members?.map(member => `
-                        <li>
-                            <p><strong>Member ID:</strong> ${member.id}</p>
-                            <p><strong>Username:</strong> ${member.username}</p>
-                            <p><strong>Nickname:</strong> ${member.name}</p>
-                        </li>
-                    `).join('') || '<p>No members available.</p>'}
-                </ul>
-                <h5>Team Records</h5>
-                <ul>
-                    ${data.records?.map(record => `
-                        <li>
-                            <p><strong>Record ID:</strong> ${record.id}</p>
-                            <p><strong>Record Title:</strong> ${record.title}</p>
-                            <p><strong>Record Date:</strong> ${new Date(record.date).toLocaleDateString()}</p>
-                        </li>
-                    `).join('') || '<p>No records available.</p>'}
-                </ul>
-            `;
-            })
-            .catch(error => {
-                teamDetailsDiv.innerHTML = `<p class="text-danger">Failed to load team details. Please try again.</p>`;
-                console.error(error);
-            });
-    }
 </script>
 
 <!-- Bootstrap Bundle with Popper -->

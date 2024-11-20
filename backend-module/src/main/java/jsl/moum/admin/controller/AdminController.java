@@ -94,7 +94,7 @@ public class AdminController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size) {
         PageRequest pageRequest = PageRequest.of(page - 1, size);
-        Page<MemberEntity> membersPage = adminService.getMembersPaged(pageRequest);
+        Page<MemberDto.Response> membersPage = adminService.getMembersPaged(pageRequest);
 
         Map<String, Object> response = new HashMap<>();
         response.put("members", membersPage.getContent());
@@ -111,6 +111,7 @@ public class AdminController {
         return adminService.getMemberById(id);
     }
 
+
     @GetMapping("/team")
     public String getTeamDashboard(Model model){
         log.info("AdminController getTeamDashboard");
@@ -118,6 +119,22 @@ public class AdminController {
         model.addAttribute("teamCount", adminService.getTeamCount());
         model.addAttribute("teams", adminService.getTeams());
         return "adminTeam";
+    }
+
+    @GetMapping("/teams")
+    public ResponseEntity<Map<String, Object>> getTeams(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        PageRequest pageRequest = PageRequest.of(page - 1, size);
+        Page<TeamDto.Response> teamsPage = adminService.getTeamsPaged(pageRequest);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("teams", teamsPage.getContent());
+        response.put("currentPage", teamsPage.getNumber() + 1);
+        response.put("totalPages", teamsPage.getTotalPages());
+        response.put("totalTeams", teamsPage.getTotalElements());
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/team/view/{id}")
