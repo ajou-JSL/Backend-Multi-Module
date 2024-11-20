@@ -84,7 +84,7 @@ public class MemberEntity {
 
     // role은 회원가입 시 입력하게 할지?
     // admin, 일반사용자, 일반사용자중에서도 연주자,참여자 뭐 이런거 등등..
-    @Column(name = "role", nullable = true)
+    @Column(name = "role", nullable = false)
     private String role;
 
     @Column(name = "profile_image_url", nullable = true)
