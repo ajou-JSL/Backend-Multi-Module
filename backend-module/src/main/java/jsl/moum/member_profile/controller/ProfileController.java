@@ -2,6 +2,7 @@ package jsl.moum.member_profile.controller;
 
 import jakarta.validation.Valid;
 import jsl.moum.auth.domain.CustomUserDetails;
+import jsl.moum.auth.dto.MemberSortDto;
 import jsl.moum.member_profile.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatusCode;
@@ -15,6 +16,7 @@ import jsl.moum.global.response.ResponseCode;
 import jsl.moum.global.response.ResultResponse;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -47,6 +49,34 @@ public class ProfileController {
         String loginUserName = loginCheck(customUserDetails.getUsername());
         ProfileDto.Response responseDto = profileService.updateProfile(loginUserName, memberId, profileUpdateDto, file);
         ResultResponse response = ResultResponse.of(ResponseCode.UPDATE_PROFILE_SUCCESS, responseDto);
+        return new ResponseEntity<>(response, HttpStatusCode.valueOf(response.getStatus()));
+    }
+
+    /**
+     랭킹(exp) 순 멤버 리스트 조회
+     */
+    @GetMapping("/api/profiles-all/rank")
+    public ResponseEntity<ResultResponse> getProfilesSortByExp(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                                         @RequestParam(defaultValue = "0") int page,
+                                                         @RequestParam(defaultValue = "10") int size){
+
+        loginCheck(customUserDetails.getUsername());
+        List<MemberSortDto.ExpResponse> responseDto = profileService.getProfilesSortByExp(page, size);
+        ResultResponse response = ResultResponse.of(ResponseCode.GET_PROFILE_SUCCESS, responseDto);
+        return new ResponseEntity<>(response, HttpStatusCode.valueOf(response.getStatus()));
+    }
+
+    /**
+     이력 개수 순 멤버 리스트 조회
+     */
+    @GetMapping("/api/profiles-all/records")
+    public ResponseEntity<ResultResponse> getProfilesSortByRecordsCount(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                                         @RequestParam(defaultValue = "0") int page,
+                                                         @RequestParam(defaultValue = "10") int size){
+
+        loginCheck(customUserDetails.getUsername());
+        List<MemberSortDto.RecordsCountResponse> responseDto = profileService.getProfilesSortByRecordsCount(page, size);
+        ResultResponse response = ResultResponse.of(ResponseCode.GET_PROFILE_SUCCESS, responseDto);
         return new ResponseEntity<>(response, HttpStatusCode.valueOf(response.getStatus()));
     }
 

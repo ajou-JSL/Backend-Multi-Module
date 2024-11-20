@@ -10,4 +10,5 @@ import java.lang.annotation.RetentionPolicy;
 public @interface WithAuthUser {
     String email() default "test@user.com";
     String username() default "testuser";
+    String role() default "ROLE_USER";
 }

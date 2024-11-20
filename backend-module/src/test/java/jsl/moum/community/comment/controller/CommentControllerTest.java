@@ -66,6 +66,7 @@ class CommentControllerTest {
                 .email("test@gmail.com")
                 .username("testuser")
                 .password("12345123")
+                .role("ROLE_USER")
                 .build();
 
         articleDetails = ArticleDetailsEntity.builder()
@@ -84,7 +85,7 @@ class CommentControllerTest {
     }
     @Test
     @DisplayName("댓글 작성 성공 테스트")
-    @WithAuthUser(email = "test@user.com", username = "testuser")
+    @WithAuthUser()
     void create_comment_success() throws Exception {
         //given
         CommentDto.Request commentRequest = CommentDto.Request.builder()
@@ -114,7 +115,7 @@ class CommentControllerTest {
 
     @Test
     @DisplayName("댓글 수정 성공 테스트")
-    @WithAuthUser(email = "test@user.com", username = "testuser")
+    @WithAuthUser()
     void update_comment_success() throws Exception {
         // given
         CommentDto.Request commentRequest = CommentDto.Request.builder()

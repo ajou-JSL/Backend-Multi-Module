@@ -12,10 +12,12 @@ public class WithAuthUserSecurityContextFactory implements WithSecurityContextFa
     @Override
     public SecurityContext createSecurityContext(WithAuthUser annotation) {
         String email = annotation.email();
+        String role = annotation.role();
 
         CustomUserDetails user = new CustomUserDetails(MemberEntity.builder()
                 .email(email)
                 .username("testuser")
+                .role(role)
                 .build());
         UsernamePasswordAuthenticationToken token =
                 new UsernamePasswordAuthenticationToken(user, "", user.getAuthorities());

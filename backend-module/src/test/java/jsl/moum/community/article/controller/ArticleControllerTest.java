@@ -77,6 +77,7 @@ class ArticleControllerTest {
                 .proficiency("중")
                 .instrument("바이올린")
                 .password("password")
+                .role("ROLE_USER")
                 .build();
 
         mockArticle = ArticleEntity.builder()
@@ -194,7 +195,7 @@ class ArticleControllerTest {
 
     @Test
     @DisplayName("게시글 작성 성공 테스트")
-    @WithAuthUser(email = "test@user.com", username = "testuser")
+    @WithAuthUser(email = "test@user.com", username = "testuser", role="ROLE_USER")
     void postArticle_Success() throws Exception {
         // given
         ArticleDto.Request articleRequest = ArticleDto.Request.builder()

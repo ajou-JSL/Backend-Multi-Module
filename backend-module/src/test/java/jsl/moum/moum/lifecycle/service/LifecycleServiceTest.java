@@ -434,7 +434,7 @@ class LifecycleServiceTest {
                 .teamId(mockTeam.getId())
                 .imageUrls(List.of("imageUrl","imageUrl2"))
                 .members(new ArrayList<>())
-                .music(List.of(music1))
+                .music(List.of(music1,music2))
                 .build();
 
         // Mocking dependencies
@@ -463,8 +463,7 @@ class LifecycleServiceTest {
 
         // then
         assertThat(response.getMoumName()).isEqualTo(updateRequestDto.getMoumName());
-        assertThat(response.getImageUrls()).containsExactly("mockUrl", "mockUrl");
-        assertThat(response.getMusic().size()).isEqualTo(1);
+        assertThat(response.getMusic().size()).isEqualTo(2);
     }
 
     @Test

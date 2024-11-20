@@ -112,6 +112,9 @@ public class MemberEntity {
     @Column(name = "tier", nullable = false)
     private Rank tier = Rank.BRONZE;
 
+    @Transient
+    private int totalRecordCount;
+
     public void updateMemberExpAndRank(int newExp) {
         if (this.exp == null) {
             this.exp = 0;

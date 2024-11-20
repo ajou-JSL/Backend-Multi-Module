@@ -1,6 +1,8 @@
 package jsl.moum.member_profile.service;
 
 import jsl.moum.auth.domain.entity.MemberEntity;
+import jsl.moum.auth.domain.repository.MemberRepositoryCustom;
+import jsl.moum.auth.dto.MemberSortDto;
 import jsl.moum.record.domain.dto.RecordDto;
 import jsl.moum.record.domain.entity.RecordEntity;
 import jsl.moum.record.domain.repository.RecordRepository;
@@ -26,6 +28,7 @@ public class ProfileService {
     private final MemberRepository memberRepository;
     private final StorageService storageService;
     private final RecordRepository recordRepository;
+    private final MemberRepositoryCustom memberRepositoryCustom;
 
     @Value("${ncp.object-storage.bucket}")
     private String bucket;
@@ -41,27 +44,25 @@ public class ProfileService {
         return new ProfileDto.Response(targetMemberEntity);
     }
 
-//    /**
-//     프로필 리스트 조회(필터링 - 랭킹 순)
-//     */
-//    @Transactional
-//    public ProfileDto.Response getProfile(int targetMemberId) {
-//
-////        MemberEntity targetMemberEntity = findMember(targetMemberId);
-////
-////        return new ProfileDto.Response(targetMemberEntity);
-//    }
-//
-//    /**
-//     프로필 리스트 조회(필터링 - 이력 개수 순)
-//     */
-//    @Transactional
-//    public ProfileDto.Response getProfile(int targetMemberId) {
-//
-////        MemberEntity targetMemberEntity = findMember(targetMemberId);
-////
-////        return new ProfileDto.Response(targetMemberEntity);
-//    }
+    /**
+     프로필 리스트 조회(필터링 - 랭킹 순)
+     */
+    @Transactional
+    public List<MemberSortDto.ExpResponse> getProfilesSortByExp(int page, int size) {
+
+        List<MemberSortDto.ExpResponse> members = memberRepositoryCustom.getMembersSortByExp(page, size);
+        return members;
+    }
+
+    /**
+     프로필 리스트 조회(필터링 - 이력 개수 순)
+     */
+    @Transactional
+    public List<MemberSortDto.RecordsCountResponse> getProfilesSortByRecordsCount(int page, int size) {
+
+        List<MemberSortDto.RecordsCountResponse> members = memberRepositoryCustom.getMembersSortByRecordsCount(page, size);
+        return members;
+    }
 //
 //    /**
 //     프로필 리스트 조회(필터링 - 검색 keyword : 악기 + 랭킹 순)

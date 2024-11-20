@@ -88,7 +88,6 @@ class ProfileControllerTest {
     @Test
     @DisplayName("프로필 수정 성공")
     @WithAuthUser
-    @Disabled("임시 보류")
     void update_profile_success() throws Exception {
         // given
         ProfileDto.UpdateRequest updateRequestDto = ProfileDto.UpdateRequest.builder()
