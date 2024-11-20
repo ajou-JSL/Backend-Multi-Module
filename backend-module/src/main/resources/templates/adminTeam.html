@@ -172,7 +172,9 @@
                         <tr>
                             <td>${(currentPage - 1) * itemsPerPage + index + 1}</td>
                             <td>${team.teamName}</td>
-                            <td>${team.genre}</td>
+                            <td>
+                                ${team.genres?.length ? team.genres.map(genre => genre).join(', ') : 'No genres'}
+                            </td>
                             <td>${team.location}</td>
                             <td>
                                 <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#teamModal"
@@ -224,13 +226,18 @@
                 <p><strong>Description:</strong> ${data.description || "N/A"}</p>
                 <p><strong>Genres:</strong></p>
                 <ul>
-                    ${data.genres?.map(genre => `
-                        <li>${genre.name}</li>
-                    `).join('') || '<p>No genres.</p>'}
+                    ${data.genres?.length ? data.genres.map(genre => `
+                        <li>${genre}</li>
+                    `).join('') : '<p>No genres.</p>'}
                 </ul>
                 <p><strong>Location:</strong> ${data.location}</p>
                 <p><strong>Created At:</strong> ${new Date(data.createdAt).toLocaleString()}</p>
-                <p><strong>File URL:</strong> <a href="${data.fileUrl}" target="_blank">${data.fileUrl}</a></p>
+                <p><strong>Team Image:</strong></p>
+                <img src="${data.fileUrl}"
+                     alt="File Image"
+                     style="max-width: 100%; max-height: 300px; height: auto;"
+                     onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <p style="display: none;">No Team Image</p>
                 <p><strong>Video URL:</strong> <a href="${data.videoUrl}" target="_blank">${data.videoUrl}</a></p>
                 <p><strong>Experience Points (EXP):</strong> ${data.exp}</p>
                 <p><strong>Tier:</strong> ${data.tier}</p>
