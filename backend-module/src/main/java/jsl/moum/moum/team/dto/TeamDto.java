@@ -30,7 +30,7 @@ public class TeamDto {
         private int leaderId;
         private List<TeamMemberEntity> members;
         private String fileUrl;
-        private List<MusicGenre> genres;
+        private String genre;
         private String location;
         @Nullable
         private List<RecordDto.Request> records;
@@ -40,7 +40,7 @@ public class TeamDto {
             return TeamEntity.builder()
                     .members(members)
                     .teamName(teamName)
-                    .genres(genres)
+                    .genre(genre)
                     .location(location)
                     .description(description)
                     .leaderId(leaderId)
@@ -61,7 +61,7 @@ public class TeamDto {
         private final int leaderId;
         private final String teamName;
         private final String description;
-        private final List<MusicGenre> genres;
+        private final String genre;
         private final String location;
         private final LocalDateTime createdAt;
         private final String fileUrl;
@@ -76,7 +76,7 @@ public class TeamDto {
             this.leaderId = teamEntity.getLeaderId();
             this.teamName = teamEntity.getTeamName();
             this.description = teamEntity.getDescription();
-            this.genres = teamEntity.getGenres();
+            this.genre = teamEntity.getGenre();
             this.location = teamEntity.getLocation();
             this.createdAt = teamEntity.getCreatedAt();
             this.fileUrl = teamEntity.getFileUrl();
@@ -108,14 +108,14 @@ public class TeamDto {
         private String videoUrl;
         @Nullable
         private List<RecordDto.Request> records;
-        private List<MusicGenre> genres;
+        private String genre;
 
 
         public TeamEntity toEntity(){
             return TeamEntity.builder()
                     .teamName(teamName)
                     .description(description)
-                    .genres(genres)
+                    .genre(genre)
                     .location(location)
                     .fileUrl(fileUrl)
                     .videoUrl(videoUrl)
@@ -131,7 +131,7 @@ public class TeamDto {
         private final int leaderId;
         private final String teamName;
         private final String description;
-        private final List<MusicGenre> genres;
+        private final String genre;
         private final String location;
         private final LocalDateTime createdAt;
         private final String fileUrl;
@@ -143,7 +143,7 @@ public class TeamDto {
             this.leaderId = teamEntity.getLeaderId();
             this.teamName = teamEntity.getTeamName();
             this.description = teamEntity.getDescription();
-            this.genres = teamEntity.getGenres();
+            this.genre = teamEntity.getGenre();
             this.location = teamEntity.getLocation();
             this.createdAt = teamEntity.getCreatedAt();
             this.fileUrl = teamEntity.getFileUrl();

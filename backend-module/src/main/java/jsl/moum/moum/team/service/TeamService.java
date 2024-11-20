@@ -96,18 +96,15 @@ public class TeamService {
                 .members(new ArrayList<>())
                 .teamName(teamRequestDto.getTeamName())
                 .description(teamRequestDto.getDescription())
-                .genres(teamRequestDto.getGenres())
+                .genre(teamRequestDto.getGenre())
                 .location(teamRequestDto.getLocation())
                 .leaderId(loginUser.getId())
                 .fileUrl(fileUrl)
                 .videoUrl(teamRequestDto.getVideoUrl())
                 .records(teamRequestDto.getRecords())
-                .genres(teamRequestDto.getGenres())
                 .build();
 
         TeamEntity newTeam = request.toEntity();
-        log.info("new teams genres: {}", newTeam.getGenres());
-        log.info("requestDto.genres: {}", teamRequestDto.getGenres());
 
         List<RecordEntity> records = newTeam.getRecords();
         if (records != null && !records.isEmpty()) {

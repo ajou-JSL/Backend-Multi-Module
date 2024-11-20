@@ -3,6 +3,7 @@ package jsl.moum.moum.lifecycle.dto;
 import io.micrometer.common.lang.Nullable;
 import jakarta.validation.constraints.NotNull;
 import jsl.moum.auth.dto.MemberDto;
+import jsl.moum.auth.dto.MusicGenre;
 import jsl.moum.moum.lifecycle.domain.LifecycleEntity;
 import jsl.moum.moum.lifecycle.domain.Music;
 import jsl.moum.moum.lifecycle.domain.Process;
@@ -44,6 +45,7 @@ public class LifecycleDto {
         private List<RecordDto.Request> records;
         private Process process;
         private List<Music> music;
+        private List<MusicGenre> genres;
 
 
         public LifecycleEntity toEntity(){
@@ -59,6 +61,7 @@ public class LifecycleDto {
                     .records(records.stream().map(RecordDto.Request::toEntity).collect(Collectors.toList()))
                     .process(process)
                     .music(music)
+                    .genres(genres)
                     .build();
         }
     }
@@ -66,25 +69,27 @@ public class LifecycleDto {
     @Getter
     @AllArgsConstructor
     public static class Response{
-        private int moumId;
-        private String moumName;
-        private String moumDescription;
-        private String performLocation;
-        private LocalDate startDate;
-        private LocalDate endDate;
-        private Integer price;
-        private List<String> imageUrls;
-        private int leaderId;
-        private String leaderName;
-        private int teamId;
-        private Process process;
-        private List<Music> music;
-        private List<MemberDto.Response> members;
+        private final int moumId;
+        private final String moumName;
+        private final String moumDescription;
+        private final String performLocation;
+        private final LocalDate startDate;
+        private final LocalDate endDate;
+        private final Integer price;
+        private final List<String> imageUrls;
+        private final int leaderId;
+        private final String leaderName;
+        private final int teamId;
+        private final Process process;
+        private final List<Music> music;
+        private final List<MemberDto.Response> members;
+        private final List<MusicGenre> genres;
 
         public Response(LifecycleEntity lifecycle){
             this.moumId = lifecycle.getId();
             this.moumName = lifecycle.getLifecycleName();
             this.moumDescription = lifecycle.getLifecycleDescription();
+            this.genres = lifecycle.getGenres();
             this.performLocation = lifecycle.getPerformLocation();
             this.startDate = lifecycle.getStartDate();
             this.endDate = lifecycle.getEndDate();

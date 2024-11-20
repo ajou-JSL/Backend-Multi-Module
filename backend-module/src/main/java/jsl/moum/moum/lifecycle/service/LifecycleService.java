@@ -131,6 +131,7 @@ public class LifecycleService {
                 .leaderId(loginUser.getId())
                 .records(requestDto.getRecords())
                 .music(requestDto.getMusic())
+                .genres(requestDto.getGenres())
                 .build().toEntity();
 
         newMoum.assignTeam(team);

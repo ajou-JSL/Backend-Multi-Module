@@ -41,11 +41,8 @@ public class TeamEntity {
     @Column(name = "description")
     private String description;
 
-    @ElementCollection(targetClass = MusicGenre.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "team_genre", joinColumns = @JoinColumn(name = "team_id"))
-    @Column(name = "genre", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private List<MusicGenre> genres = new ArrayList<>();
+    @Column(name = "genre")
+    private String genre;
 
     @Column(name = "location")
     private String location;
@@ -117,8 +114,8 @@ public class TeamEntity {
         if(requestDto.getDescription() != null){
             this.description = requestDto.getDescription();
         }
-        if(requestDto.getGenres() != null){
-            this.genres = requestDto.getGenres();
+        if(requestDto.getGenre() != null){
+            this.genre = requestDto.getGenre();
         }
         if(requestDto.getLocation() != null){
             this.location = requestDto.getLocation();

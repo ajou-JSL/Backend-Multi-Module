@@ -1,6 +1,7 @@
 package jsl.moum.moum.lifecycle.domain;
 
 import jakarta.persistence.*;
+import jsl.moum.auth.dto.MusicGenre;
 import jsl.moum.moum.lifecycle.dto.LifecycleDto;
 import jsl.moum.moum.team.domain.TeamEntity;
 
@@ -56,6 +57,12 @@ public class LifecycleEntity {
     @Column(name = "image_url")
     private List<String> imageUrls = new ArrayList<>();
 
+    @ElementCollection(targetClass = MusicGenre.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "moum_genre", joinColumns = @JoinColumn(name = "moum_id"))
+    @Column(name = "genre", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private List<MusicGenre> genres = new ArrayList<>();
+
     @ManyToOne
     @JoinColumn(name = "fk_team_id")
     private TeamEntity team;
@@ -101,6 +108,9 @@ public class LifecycleEntity {
     }
 
     public void updateLifecycleInfo(LifecycleDto.Request updateRequest){
+        if(updateRequest.getGenres() != null){
+            this.genres = updateRequest.getGenres();
+        }
         if (updateRequest.getMoumName() != null) {
             this.lifecycleName = updateRequest.getMoumName();
         }
