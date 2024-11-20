@@ -60,6 +60,9 @@ spring:
       port: 6379
       repositories:
         enabled: false
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
 
 logging:
   level:

@@ -50,6 +50,9 @@ dependencies {
     // NCP object storage 사용을 위한 의존성. aws s3에서 제공하는 java용 SDK
     implementation 'software.amazon.awssdk:s3:2.20.56'
 
+    // Thymeleaf
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
 }
 
 tasks.named('test') {

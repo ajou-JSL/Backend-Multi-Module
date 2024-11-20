@@ -67,7 +67,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/login", "/test","/", "/join","/join2","/reissue","/send-mail","verify-code").permitAll()
                         .requestMatchers("/storage/upload").permitAll()
-                        .requestMatchers("/admin").hasRole("ADMIN")
+                        .requestMatchers("/public/**").permitAll()
+                        .requestMatchers("*/favicon.ico").permitAll()
+                        .requestMatchers("/admin/login", "/admin/logout").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()); // 나머지는 로그인한 유저만 인가허용
 
         http

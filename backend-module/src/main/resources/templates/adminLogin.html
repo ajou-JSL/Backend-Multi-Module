@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+
+    <!-- favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
+
+    <title>Admin Login</title>
+
+    <style>
+        .floating_form {
+            margin: 0px 30px;
+        }
+
+        .floating_label {
+            margin-top: -4px;
+            font-size: 14px;
+        }
+
+        .floating_input {
+            height: 50px !important;
+            padding-top: 20px !important;
+            font-size: 14px !important;
+        }
+
+        #error-message {
+            color: red;
+            font-weight: bold;
+            margin-bottom: 15px;
+            display: none; /* Initially hidden */
+        }
+    </style>
+</head>
+<body style="background-color: #FAFAFA; height: 100%;">
+<form id="loginRequest" name="loginRequest" th:object="${loginRequest}" onsubmit="adminLogin(event)">
+    <div style="font-size: 14px; text-align: center; width: 100%; min-height: 100vh; display: flex; flex-direction: row; align-items: center; justify-content: center">
+        <div>
+            <!-- Error message -->
+            <div id="error-message"></div>
+
+            <!-- Login form -->
+            <div class="mb-3"
+                 style="background-color: white; width: 350px; height: 380px; border: 1px solid rgba(0, 0, 0, 0.18);">
+                <div style="display: flex; align-items: center; justify-content: center">
+                    <img style="height: 70px; object-fit: contain; margin: 30px 0" src="/public/Logo_MOUM_Transparent_Background.png" alt="logo">
+                </div>
+                <div class="form-floating mb-2 floating_form">
+                    <input type="text" id="username" name="username" th:field="${loginRequest.username}"
+                           class="floating_input form-control"
+                           placeholder="username" required>
+                    <label for="username" class="floating_label">Username</label>
+                </div>
+                <div class="form-floating mb-3 floating_form">
+                    <input type="password" id="password" name="password" th:field="${loginRequest.password}"
+                           class="floating_input form-control" placeholder="Password" required>
+                    <label for="password" class="floating_label">Password</label>
+                </div>
+                <div class="floating_form mb-3">
+                    <button type="submit" class="btn btn-primary" style="width: 100%">로그인</button>
+                </div>
+            </div>
+            <div style="background-color: white; width: 350px; height: 70px; border: 1px solid rgba(0, 0, 0, 0.18);">
+                <div style="margin-top: 25px">
+                    관리자 계정 전용 로그인 페이지입니다.
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div id="response"></div>
+
+<script>
+    // Function to set a cookie
+    function setCookie(name, value) {
+        document.cookie = name + "=" + value + "; path=/";
+    }
+
+    // Function to handle login
+    function adminLogin(event) {
+        event.preventDefault();
+
+        // Create a FormData object and append the username and password
+        const formData = new FormData();
+        formData.append("username", document.getElementById("username").value);
+        formData.append("password", document.getElementById("password").value);
+
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "/login", true);
+
+        xhr.onload = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    // Successful login
+                    const token = xhr.getResponseHeader("access");
+
+                    if (token) {
+                        // Save the token as a cookie
+                        setCookie("access", token);
+
+                        // Redirect to the dashboard
+                        window.location.href = "/admin/dashboard";
+                    } else {
+                        // Token not found in response headers
+                        showErrorMessage("Authentication failed. Please try again.");
+                    }
+                } else if (xhr.status === 400 || xhr.status === 401 || xhr.status === 403) {
+                    // Unauthorized
+                    showErrorMessage("Invalid username or password. Please try again.");
+                } else {
+                    // Other errors
+                    showErrorMessage("An error occurred. Please try again later.");
+                }
+            }
+        };
+
+        // Send the FormData object
+        xhr.send(formData);
+    }
+
+    function showErrorMessage(message) {
+        const errorDiv = document.getElementById("error-message");
+        errorDiv.style.display = "block"; // Show the error message
+        errorDiv.textContent = message;
+
+        // Optionally clear the form inputs
+        document.getElementById("username").value = "";
+        document.getElementById("password").value = "";
+
+        // Optionally hide the error message after a few seconds
+        setTimeout(() => {
+            errorDiv.style.display = "none";
+        }, 3000);
+    }
+
+    // Function to get a cookie value
+    function getCookie(name) {
+        const nameEQ = name + "=";
+        const cookies = document.cookie.split(";");
+        for (let i = 0; i < cookies.length; i++) {
+            let c = cookies[i].trim();
+            if (c.indexOf(nameEQ) === 0) {
+                return c.substring(nameEQ.length, c.length);
+            }
+        }
+        return null;
+    }
+</script>
+
+<!-- Bootstrap Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
+        crossorigin="anonymous"></script>
+</body>
+</html>
