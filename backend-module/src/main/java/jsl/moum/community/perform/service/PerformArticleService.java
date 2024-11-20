@@ -11,11 +11,14 @@ import jsl.moum.community.perform.domain.repository.PerformArticleRepositoryCust
 import jsl.moum.community.perform.dto.PerformArticleDto;
 import jsl.moum.global.error.ErrorCode;
 import jsl.moum.global.error.exception.CustomException;
+import jsl.moum.moum.lifecycle.domain.LifecycleEntity;
+import jsl.moum.moum.lifecycle.domain.LifecycleRepository;
 import jsl.moum.moum.team.domain.TeamEntity;
 import jsl.moum.moum.team.domain.TeamMemberRepositoryCustom;
 import jsl.moum.moum.team.domain.TeamRepository;
 import jsl.moum.objectstorage.StorageService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +30,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PerformArticleService {
 
     private final PerformArticleRepository performArticleRepository;
@@ -35,6 +39,7 @@ public class PerformArticleService {
     private final StorageService storageService;
     private final TeamMemberRepositoryCustom teamMemberRepositoryCustom;
     private final PerformArticleRepositoryCustom performArticleRepositoryCustom;
+    private final LifecycleRepository lifecycleRepository;
 
     /*
         생성
@@ -43,6 +48,7 @@ public class PerformArticleService {
     public PerformArticleDto.Response createPerformArticle(String username, PerformArticleDto.Request requestDto, MultipartFile file) throws IOException {
         MemberEntity member = findMember(username);
         TeamEntity team = findTeam(requestDto.getTeamId());
+        LifecycleEntity moum = findMoum(requestDto.getMoumId());
 
         if (!isLeader(team, member)) {
             throw new CustomException(ErrorCode.NO_AUTHORITY);
@@ -72,6 +78,8 @@ public class PerformArticleService {
                 .performanceImageUrl(imageUrl)
                 .performMembers(performMembers)
                 .genres(requestDto.getGenres())
+                .team(team)
+                .moum(moum)
                 .build();
 
         // performMembers.forEach(pm -> pm.assignPerformanceArticle(newPerformArticleEntity));
@@ -134,6 +142,13 @@ public class PerformArticleService {
                 .orElseThrow(()-> new CustomException(ErrorCode.TEAM_NOT_FOUND));
 
         return team;
+    }
+
+    public LifecycleEntity findMoum(int moumId){
+        LifecycleEntity moum = lifecycleRepository.findById(moumId)
+                .orElseThrow(()-> new CustomException(ErrorCode.MOUM_NOT_FOUND));
+
+        return moum;
     }
 
     public Boolean isLeader(TeamEntity team, MemberEntity loginUser){

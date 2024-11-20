@@ -31,7 +31,7 @@ public class PerformArticleDto {
         private String performanceLocation;
         private Date performanceStartDate;
         private Date performanceEndDate;
-        private String performancePrice;
+        private int performancePrice;
         private String performanceImageUrl;
         private List<Integer> membersId;
         private int teamId;
@@ -57,12 +57,14 @@ public class PerformArticleDto {
     public static class Response{
 
         private final int id;
+        private final String teamName;
+        private final String moumName;
         private final String performanceName;
         private final String performanceDescription;
         private final String performanceLocation;
         private final Date performanceStartDate;
         private final Date performanceEndDate;
-        private final String performancePrice;
+        private final int performancePrice;
         private final String performanceImageUrl;
         //private final List<MemberDto.Response> members;
         private final List<Integer> membersId;
@@ -70,6 +72,8 @@ public class PerformArticleDto {
 
         public Response(PerformArticleEntity performArticle){
             this.id = performArticle.getId();
+            this.teamName = performArticle.getTeam().getTeamName();
+            this.moumName = performArticle.getMoum().getLifecycleName();
             this.performanceName = performArticle.getPerformanceName();
             this.performanceDescription = performArticle.getPerformanceDescription();
             this.performanceLocation = performArticle.getPerformanceLocation();
