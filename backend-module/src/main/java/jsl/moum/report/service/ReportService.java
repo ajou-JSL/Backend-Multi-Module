@@ -4,11 +4,11 @@ import jsl.moum.auth.domain.entity.MemberEntity;
 import jsl.moum.auth.domain.repository.MemberRepository;
 import jsl.moum.global.error.ErrorCode;
 import jsl.moum.global.error.exception.CustomException;
-import jsl.moum.report.domain.ArticleReportRepository;
-import jsl.moum.report.domain.MemberReport;
-import jsl.moum.report.domain.MemberReportRepository;
-import jsl.moum.report.domain.TeamReportRepository;
+import jsl.moum.moum.team.domain.TeamEntity;
+import jsl.moum.moum.team.domain.TeamRepository;
+import jsl.moum.report.domain.*;
 import jsl.moum.report.dto.MemberReportDto;
+import jsl.moum.report.dto.TeamReportDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,6 +22,7 @@ public class ReportService {
     private final MemberReportRepository memberReportRepository;
     private final ArticleReportRepository articleReportRepository;
     private final MemberRepository memberRepository;
+    private final TeamRepository teamRepository;
 
 
     public MemberReportDto.Response reportMember(Integer memberId, MemberReportDto.Request request) {
@@ -33,6 +34,14 @@ public class ReportService {
         return response;
     }
 
+    public TeamReportDto.Response reportTeam(Integer teamId, TeamReportDto.Request request) {
+
+        TeamReport teamReport = buildTeamReport(teamId, request);
+        teamReport = teamReportRepository.save(teamReport);
+
+        TeamReportDto.Response response = new TeamReportDto.Response(teamReport);
+        return response;
+    }
 
     /**
      *
@@ -40,11 +49,36 @@ public class ReportService {
      *
      */
 
+    private TeamReport buildTeamReport(Integer teamId, TeamReportDto.Request request) {
+        TeamEntity team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new CustomException(ErrorCode.REPORT_TEAM_FAIL));
+        MemberEntity reporter = memberRepository.findById(request.getReporterId())
+                .orElseThrow(() -> new CustomException(ErrorCode.REPORT_TEAM_FAIL));
+
+        if(teamReportRepository.existsByReporterAndTeam(reporter.getId(), team.getId())){
+            throw new CustomException(ErrorCode.REPORT_TEAM_EXISTS);
+        }
+
+        TeamReport teamReport = TeamReport.builder()
+                .team(team)
+                .reporter(reporter)
+                .type(request.getType())
+                .details(request.getDetails())
+                .reply(null)
+                .isResolved(false)
+                .build();
+        return teamReport;
+    }
+
     private MemberReport buildMemberReport(Integer memberId, MemberReportDto.Request request){
         MemberEntity member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.REPORT_MEMBER_FAIL));
         MemberEntity reporter = memberRepository.findById(request.getReporterId())
                 .orElseThrow(() -> new CustomException(ErrorCode.REPORT_MEMBER_FAIL));
+
+        if(memberReportRepository.existsByReporterAndMember(reporter.getId(), member.getId())){
+            throw new CustomException(ErrorCode.REPORT_MEMBER_EXISTS);
+        }
 
         MemberReport memberReport = MemberReport.builder()
                 .member(member)

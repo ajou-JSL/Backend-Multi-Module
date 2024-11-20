@@ -3,6 +3,7 @@ package jsl.moum.report.controller;
 import jsl.moum.global.response.ResponseCode;
 import jsl.moum.global.response.ResultResponse;
 import jsl.moum.report.dto.MemberReportDto;
+import jsl.moum.report.dto.TeamReportDto;
 import jsl.moum.report.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,16 @@ public class ReportController {
         MemberReportDto.Response report = reportService.reportMember(id, request);
 
         ResultResponse resultResponse = ResultResponse.of(ResponseCode.REPORT_MEMBER_SUCCESS, report);
+        return ResponseEntity.ok(resultResponse);
+    }
+
+    @PostMapping("/team/{id}")
+    public ResponseEntity<ResultResponse> reportTeam(@PathVariable(name = "id") Integer id,
+                                                     @RequestBody TeamReportDto.Request request) {
+
+        TeamReportDto.Response report = reportService.reportTeam(id, request);
+
+        ResultResponse resultResponse = ResultResponse.of(ResponseCode.REPORT_TEAM_SUCCESS, report);
         return ResponseEntity.ok(resultResponse);
     }
 
