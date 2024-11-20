@@ -1,6 +1,7 @@
 package jsl.moum.moum.team.domain;
 
 import jakarta.persistence.*;
+import jsl.moum.auth.dto.MusicGenre;
 import jsl.moum.moum.lifecycle.domain.LifecycleEntity;
 import jsl.moum.moum.team.dto.TeamDto;
 import jsl.moum.rank.Rank;
@@ -40,8 +41,11 @@ public class TeamEntity {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "genre")
-    private String genre;
+    @ElementCollection(targetClass = MusicGenre.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "team_genre", joinColumns = @JoinColumn(name = "team_id"))
+    @Column(name = "genre", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private List<MusicGenre> genres = new ArrayList<>();
 
     @Column(name = "location")
     private String location;
@@ -107,11 +111,21 @@ public class TeamEntity {
     }
 
     public void updateTeamInfo(TeamDto.UpdateRequest requestDto) {
-        this.teamName = requestDto.getTeamName();
-        this.description = requestDto.getDescription();
-        this.genre = requestDto.getGenre();
-        this.location = requestDto.getLocation();
-        this.videoUrl = requestDto.getVideoUrl();
+        if(requestDto.getTeamName() != null){
+            this.teamName = requestDto.getTeamName();
+        }
+        if(requestDto.getDescription() != null){
+            this.description = requestDto.getDescription();
+        }
+        if(requestDto.getGenres() != null){
+            this.genres = requestDto.getGenres();
+        }
+        if(requestDto.getLocation() != null){
+            this.location = requestDto.getLocation();
+        }
+        if(requestDto.getVideoUrl() != null){
+            this.videoUrl = requestDto.getVideoUrl();
+        }
     }
 
     public void updateProfileImage(String newUrl){

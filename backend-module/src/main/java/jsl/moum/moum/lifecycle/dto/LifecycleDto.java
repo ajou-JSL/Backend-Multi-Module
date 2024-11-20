@@ -29,7 +29,7 @@ public class LifecycleDto {
         private String performLocation;
         private LocalDate startDate;
         private LocalDate endDate;
-        private int price;
+        private Integer price;
         private List<String> imageUrls = new ArrayList<>();
 
         @NotNull
@@ -72,7 +72,7 @@ public class LifecycleDto {
         private String performLocation;
         private LocalDate startDate;
         private LocalDate endDate;
-        private int price;
+        private Integer price;
         private List<String> imageUrls;
         private int leaderId;
         private String leaderName;

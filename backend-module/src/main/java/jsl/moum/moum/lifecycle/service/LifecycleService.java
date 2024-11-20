@@ -127,6 +127,7 @@ public class LifecycleService {
                 .imageUrls(fileUrls)
                 .performLocation(requestDto.getPerformLocation())
                 .startDate(requestDto.getStartDate())
+                .endDate(requestDto.getEndDate())
                 .leaderId(loginUser.getId())
                 .records(requestDto.getRecords())
                 .music(requestDto.getMusic())

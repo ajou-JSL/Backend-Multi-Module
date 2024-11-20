@@ -49,7 +49,7 @@ public class LifecycleEntity {
     private LocalDate endDate;
 
     @Column(name = "price")
-    private int price;
+    private Integer price;
 
     @ElementCollection // 다중 값 저장
     @CollectionTable(name = "lifecycle_images", joinColumns = @JoinColumn(name = "lifecycle_id"))
@@ -101,13 +101,26 @@ public class LifecycleEntity {
     }
 
     public void updateLifecycleInfo(LifecycleDto.Request updateRequest){
-        this.lifecycleName = updateRequest.getMoumName();
-        this.price = updateRequest.getPrice();
-        this.lifecycleDescription = updateRequest.getMoumDescription();
-        this.performLocation = updateRequest.getPerformLocation();
-        this.endDate = updateRequest.getEndDate();
-        this.music = updateRequest.getMusic();
+        if (updateRequest.getMoumName() != null) {
+            this.lifecycleName = updateRequest.getMoumName();
+        }
+        if (updateRequest.getPrice() != null) {
+            this.price = updateRequest.getPrice();
+        }
+        if (updateRequest.getMoumDescription() != null) {
+            this.lifecycleDescription = updateRequest.getMoumDescription();
+        }
+        if (updateRequest.getPerformLocation() != null) {
+            this.performLocation = updateRequest.getPerformLocation();
+        }
+        if (updateRequest.getEndDate() != null) {
+            this.endDate = updateRequest.getEndDate();
+        }
+        if (updateRequest.getMusic() != null) {
+            this.music = updateRequest.getMusic();
+        }
     }
+
 
     // 양방향이라 서로간 저장-삭제 신경 써줘야함 : GPT
     public void updateRecords(List<RecordEntity> updatedRecords) {
