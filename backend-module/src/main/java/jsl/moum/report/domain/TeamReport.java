@@ -25,18 +25,10 @@ public class TeamReport {
     @JoinColumn(name = "team_id", referencedColumnName = "id", nullable = false)
     private TeamEntity team;
 
-    // Storing the team name directly
-    @Column(name = "team_name", nullable = false)
-    private String teamName;
-
     // Foreign key reference to the reporter
     @ManyToOne
     @JoinColumn(name = "reporter_id", referencedColumnName = "id", nullable = false)
     private MemberEntity reporter;
-
-    // Storing the reporter's username directly
-    @Column(name = "reporter_username", nullable = false)
-    private String reporterUsername;
 
     @Column(name = "type")
     private String type;

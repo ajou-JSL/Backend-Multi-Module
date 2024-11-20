@@ -24,27 +24,19 @@ public class MemberReport {
     @JoinColumn(name = "member_id", referencedColumnName = "id", nullable = false)
     private MemberEntity member;
 
-    // Storing the member's username directly
-    @Column(name = "member_username", nullable = false)
-    private String memberUsername;
-
     // Foreign key reference to the reporter
     @ManyToOne
     @JoinColumn(name = "reporter_id", referencedColumnName = "id", nullable = false)
     private MemberEntity reporter;
 
-    // Storing the reporter's username directly
-    @Column(name = "reporter_username", nullable = false)
-    private String reporterUsername;
-
     @Column(name = "type")
     private String type;
 
-    @Column(name = "reply")
-    private String reply;
-
     @Column(name = "details")
     private String details;
+
+    @Column(name = "reply")
+    private String reply;
 
     @Column(name = "is_resolved", columnDefinition = "boolean default false")
     private boolean isResolved;

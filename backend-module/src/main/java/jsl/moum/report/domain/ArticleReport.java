@@ -25,18 +25,10 @@ public class ArticleReport {
     @JoinColumn(name = "article_id", referencedColumnName = "id", nullable = false)
     private ArticleEntity article;
 
-    // Storing the article title directly
-    @Column(name = "article_title", nullable = false)
-    private String articleTitle;
-
     // Foreign key reference to the reporter
     @ManyToOne
     @JoinColumn(name = "reporter_id", referencedColumnName = "id", nullable = false)
     private MemberEntity reporter;
-
-    // Storing the reporter's username directly
-    @Column(name = "reporter_username", nullable = false)
-    private String reporterUsername;
 
     @Column(name = "type")
     private String type;

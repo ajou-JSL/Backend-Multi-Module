@@ -76,6 +76,12 @@ public enum ResponseCode {
     REOPEN_MOUM_SUCCESS(201,"S-MM006", "모음 되살리기 성공"),
     UPDATE_MOUM_PROCESS_SUCCESS(201,"S-MM007", "모음 진행률 상태 수정 성공"),
 
+    //
+    REPORT_CREATE_SUCCESS(201,"S-RP001","신고 생성 성공"),
+    REPORT_MEMBER_SUCCESS(200,"S-RP002","사용자 신고 성공"),
+    REPORT_TEAM_SUCCESS(200,"S-RP003","음악 단체 신고 성공"),
+    REPORT_ARTICLE_SUCCESS(200,"S-RP004","게시글 신고 성공"),
+
     // Perform
     CREATE_PERFORM_ARTICLE_SUCCESS(201,"S-PF001","공연게시글 생성 성공"),
     UPDATE_PERFORM_ARTICLE_SUCCESS(201,"S-PF002","공연게시글 수정 성공"),

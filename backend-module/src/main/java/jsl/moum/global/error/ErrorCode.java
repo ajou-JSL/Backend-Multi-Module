@@ -71,6 +71,12 @@ public enum ErrorCode {
     NEED_TEAM(401, "F-T005", "팀에 먼저 가입해야 합니다."),
     MAX_TEAM_LIMIT_EXCEEDED(400, "F-T006","팀 생성 최대 개수 초과하였습니다."),
 
+    // Report
+    REPORT_NOT_FOUND(404, "F-RP001", "신고 내역을 찾을 수 없습니다."),
+    REPORT_MEMBER_FAIL(400, "F-RP002", "사용자 신고 오류"),
+    REPORT_TEAM_FAIL(400, "F-RP003", "음악단체 신고 오류"),
+    REPORT_ARTICLE_FAIL(400, "F-RP004", "게시글 신고 오류"),
+
     // Moum
     MAX_MOUM_LIMIT_EXCEEDED(400, "F-MM001","모음 생성 최대 개수 초과하였습니다."),
     ALREADY_FINISHED_MOUM(401,"F-MM002","이미 끝난 모음입니다."),
