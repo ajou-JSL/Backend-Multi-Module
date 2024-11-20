@@ -9,6 +9,7 @@ import jsl.moum.business.domain.PracticeRoom;
 import jsl.moum.business.domain.PracticeRoomRepository;
 import jsl.moum.business.dto.PerformanceHallDto;
 import jsl.moum.business.dto.PracticeRoomDto;
+import jsl.moum.chatroom.domain.Chatroom;
 import jsl.moum.chatroom.domain.ChatroomRepository;
 import jsl.moum.chatroom.dto.ChatroomDto;
 import jsl.moum.moum.team.domain.TeamEntity;
@@ -55,6 +56,16 @@ public class AdminService {
 
     public List<ChatroomDto> getChatrooms(){
         return chatroomRepository.findAll().stream().map(ChatroomDto::new).toList();
+    }
+
+    public Page<ChatroomDto> getChatroomsPaged(PageRequest pageRequest){
+        return chatroomRepository.findAll(pageRequest).map(ChatroomDto::new);
+    }
+
+    public ChatroomDto getChatroomById(int id){
+        Chatroom chatroom = chatroomRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 채팅방 정보가 존재하지 않습니다."));
+        return new ChatroomDto(chatroom);
     }
 
     public List<MemberDto.Response> getMembers(){
