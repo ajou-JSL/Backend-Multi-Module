@@ -78,9 +78,11 @@ public enum ResponseCode {
 
     // Perform
     CREATE_PERFORM_ARTICLE_SUCCESS(201,"S-PF001","공연게시글 생성 성공"),
-    GET_PERFORM_ARTICLE_SUCCESS(200,"S-PF002","공연게시글 단건 조회 성공"),
-    GET_ALL_PERFORM_ARTICLE_SUCCESS(200,"S-PF003","공연게시글 리스트 조회 성공"),
-    GET_THIS_MONTH_PERFORM_ARTICLE_SUCCESS(200,"S-PF004","이달의 공연게시글 리스트 조회 성공");
+    UPDATE_PERFORM_ARTICLE_SUCCESS(201,"S-PF002","공연게시글 수정 성공"),
+    DELETE_PERFORM_ARTICLE_SUCCESS(200,"S-PF003","공연게시글 삭제 성공"),
+    GET_PERFORM_ARTICLE_SUCCESS(200,"S-PF004","공연게시글 단건 조회 성공"),
+    GET_ALL_PERFORM_ARTICLE_SUCCESS(200,"S-PF005","공연게시글 리스트 조회 성공"),
+    GET_THIS_MONTH_PERFORM_ARTICLE_SUCCESS(200,"S-PF006","이달의 공연게시글 리스트 조회 성공");
 
 
     private final int status;

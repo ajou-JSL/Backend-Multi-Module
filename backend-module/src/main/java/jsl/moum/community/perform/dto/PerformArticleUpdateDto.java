@@ -1,11 +1,6 @@
 package jsl.moum.community.perform.dto;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jsl.moum.auth.domain.entity.MemberEntity;
-import jsl.moum.auth.dto.MemberDto;
 import jsl.moum.auth.dto.MusicGenre;
 import jsl.moum.community.perform.domain.entity.PerformArticleEntity;
 import jsl.moum.community.perform.domain.entity.PerformMember;
@@ -19,7 +14,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PerformArticleDto {
+public class PerformArticleUpdateDto {
 
     @Builder
     @AllArgsConstructor
@@ -34,8 +29,6 @@ public class PerformArticleDto {
         private Integer performancePrice;
         private String performanceImageUrl;
         private List<Integer> membersId;
-        private int teamId;
-        private int moumId;
         private List<MusicGenre> genres;
 
         public PerformArticleEntity toEntity(){
@@ -82,18 +75,6 @@ public class PerformArticleDto {
             this.performancePrice = performArticle.getPerformancePrice();
             this.performanceImageUrl = performArticle.getPerformanceImageUrl();
             this.genres = (performArticle.getGenres() != null) ? performArticle.getGenres() : null;
-
-            // 멤버 id만 말고 객체 그대로 리턴할 경우에 이걸로
-//            this.members = performArticle.getPerformMembers().stream()
-//                    .map(PerformMember::getMember)
-//                    .map(MemberDto.Response::new)
-//                    .collect(Collectors.toList());
-
-            // 멤버 id만 리턴할경우 이걸로
-//            this.membersId = performArticle.getPerformMembers().stream()
-//                    .map(PerformMember::getMember)
-//                    .map(MemberEntity::getId)
-//                    .collect(Collectors.toList());
 //
             this.membersId = performArticle.getPerformMembers() != null
                     ? performArticle.getPerformMembers().stream()

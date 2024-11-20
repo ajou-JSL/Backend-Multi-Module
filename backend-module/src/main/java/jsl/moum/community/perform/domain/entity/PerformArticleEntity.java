@@ -2,6 +2,7 @@ package jsl.moum.community.perform.domain.entity;
 
 import jakarta.persistence.*;
 import jsl.moum.auth.dto.MusicGenre;
+import jsl.moum.community.perform.dto.PerformArticleUpdateDto;
 import jsl.moum.moum.lifecycle.domain.LifecycleEntity;
 import jsl.moum.moum.team.domain.TeamEntity;
 import lombok.AllArgsConstructor;
@@ -42,7 +43,7 @@ public class PerformArticleEntity {
     private Date performanceEndDate;
 
     @Column(name = "performance_price")
-    private int performancePrice;
+    private Integer performancePrice;
 
     @Column(name = "performance_image_url")
     private String performanceImageUrl;
@@ -50,7 +51,7 @@ public class PerformArticleEntity {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @ElementCollection(targetClass = MusicGenre.class)
+    @ElementCollection(targetClass = MusicGenre.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "perform_genre", joinColumns = @JoinColumn(name = "perform_id"))
     @Column(name = "genre", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -72,6 +73,36 @@ public class PerformArticleEntity {
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
     }
+
+    public void updatePerformArticle(PerformArticleUpdateDto.Request updateDto) {
+        if (updateDto.getPerformanceName() != null) {
+            this.performanceName = updateDto.getPerformanceName();
+        }
+        if (updateDto.getPerformanceDescription() != null) {
+            this.performanceDescription = updateDto.getPerformanceDescription();
+        }
+        if (updateDto.getPerformanceLocation() != null) {
+            this.performanceLocation = updateDto.getPerformanceLocation();
+        }
+        if (updateDto.getPerformanceStartDate() != null) {
+            this.performanceStartDate = updateDto.getPerformanceStartDate();
+        }
+        if (updateDto.getPerformanceEndDate() != null) {
+            this.performanceEndDate = updateDto.getPerformanceEndDate();
+        }
+        if (updateDto.getPerformancePrice() != null) {
+            this.performancePrice = updateDto.getPerformancePrice();
+        }
+        if (updateDto.getPerformanceImageUrl() != null) {
+            this.performanceImageUrl = updateDto.getPerformanceImageUrl();
+        }
+        if (updateDto.getGenres() != null) {
+            this.genres = updateDto.getGenres();
+        }
+    }
+
+
+
 
 
 }

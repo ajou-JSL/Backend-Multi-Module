@@ -9,6 +9,7 @@ import jsl.moum.community.perform.domain.entity.PerformMember;
 import jsl.moum.community.perform.domain.repository.PerformArticleRepository;
 import jsl.moum.community.perform.domain.repository.PerformArticleRepositoryCustom;
 import jsl.moum.community.perform.dto.PerformArticleDto;
+import jsl.moum.community.perform.dto.PerformArticleUpdateDto;
 import jsl.moum.global.error.ErrorCode;
 import jsl.moum.global.error.exception.CustomException;
 import jsl.moum.moum.lifecycle.domain.LifecycleEntity;
@@ -19,12 +20,15 @@ import jsl.moum.moum.team.domain.TeamRepository;
 import jsl.moum.objectstorage.StorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,6 +44,10 @@ public class PerformArticleService {
     private final TeamMemberRepositoryCustom teamMemberRepositoryCustom;
     private final PerformArticleRepositoryCustom performArticleRepositoryCustom;
     private final LifecycleRepository lifecycleRepository;
+
+    @Value("${ncp.object-storage.bucket}")
+    private String bucket;
+
 
     /*
         생성
@@ -90,6 +98,51 @@ public class PerformArticleService {
         performArticleRepository.save(newPerformArticleEntity);
         return new PerformArticleDto.Response(newPerformArticleEntity);
     }
+
+    /*
+        수정
+     */
+    @Transactional
+    public PerformArticleUpdateDto.Response updatePerformArticle(String username,int performArticleId ,PerformArticleUpdateDto.Request requestDto, MultipartFile file) throws IOException {
+        MemberEntity member = findMember(username);
+        PerformArticleEntity performArticleEntity = findPerformArticle(performArticleId);
+        TeamEntity team = findTeam(performArticleEntity.getTeam().getId());
+        LifecycleEntity moum = findMoum(performArticleEntity.getMoum().getId());
+
+        if (!isLeader(team, member)) {
+            throw new CustomException(ErrorCode.NO_AUTHORITY);
+        }
+
+
+        String imageUrl = null;
+        if (file != null && !file.isEmpty()) {
+            imageUrl = uploadImage(requestDto.getPerformanceName(), file);
+        }
+
+        List<Integer> requestedMemberIds = requestDto.getMembersId();
+        if (requestedMemberIds != null) {
+            List<MemberEntity> allMembers = teamMemberRepositoryCustom.findAllMembersByTeamId(team.getId());
+
+            List<PerformMember> updatedPerformMembers = allMembers.stream()
+                    .filter(m -> requestedMemberIds.contains(m.getId()))
+                    .map(m -> PerformMember.builder()
+                            .performanceArticle(performArticleEntity)
+                            .member(m)
+                            .build())
+                    .toList();
+
+            performArticleEntity.getPerformMembers().clear();
+            performArticleEntity.getPerformMembers().addAll(updatedPerformMembers);
+        }
+
+        // 공연 수정된 엔티티 저장
+        performArticleEntity.updatePerformArticle(requestDto);
+        performArticleRepository.save(performArticleEntity);
+
+        return new PerformArticleUpdateDto.Response(performArticleEntity);
+
+    }
+
     /*
         단건 조회
      */
@@ -129,6 +182,30 @@ public class PerformArticleService {
         return responseList;
     }
 
+    /*
+     공연 게시글 삭제
+    */
+    @Transactional
+    public PerformArticleDto.Response deletePerformArticle(String username, int performArticleId) {
+        MemberEntity member = findMember(username);
+        PerformArticleEntity performArticleEntity = findPerformArticle(performArticleId);
+        TeamEntity team = findTeam(performArticleEntity.getTeam().getId());
+
+        if(!isLeader(team,member)){
+            throw new CustomException(ErrorCode.NO_AUTHORITY);
+        }
+
+        String fileUrl = performArticleEntity.getPerformanceImageUrl();
+        if (fileUrl != null || !fileUrl.isEmpty()) {
+            String fileName = fileUrl.replace("https://kr.object.ncloudstorage.com/" + bucket + "/", "");
+            fileName = URLDecoder.decode(fileName, StandardCharsets.UTF_8);
+            storageService.deleteFile(fileName);
+        }
+
+        performArticleRepository.deleteById(performArticleEntity.getId());
+        return new PerformArticleDto.Response(performArticleEntity);
+    }
+
     public MemberEntity findMember(String username){
         MemberEntity member = memberRepository.findByUsername(username);
         if(member == null){
@@ -149,6 +226,11 @@ public class PerformArticleService {
                 .orElseThrow(()-> new CustomException(ErrorCode.MOUM_NOT_FOUND));
 
         return moum;
+    }
+
+    public PerformArticleEntity findPerformArticle(int id){
+        return performArticleRepository.findById(id)
+                .orElseThrow(()->new CustomException(ErrorCode.ILLEGAL_ARGUMENT));
     }
 
     public Boolean isLeader(TeamEntity team, MemberEntity loginUser){

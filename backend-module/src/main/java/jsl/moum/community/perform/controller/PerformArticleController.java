@@ -2,6 +2,7 @@ package jsl.moum.community.perform.controller;
 
 import jsl.moum.auth.domain.CustomUserDetails;
 import jsl.moum.community.perform.dto.PerformArticleDto;
+import jsl.moum.community.perform.dto.PerformArticleUpdateDto;
 import jsl.moum.community.perform.service.PerformArticleService;
 import jsl.moum.global.error.exception.NeedLoginException;
 import jsl.moum.global.response.ResponseCode;
@@ -33,6 +34,32 @@ public class PerformArticleController {
         String username = loginCheck(customUserDetails.getUsername());
         PerformArticleDto.Response responseDto = performArticleService.createPerformArticle(username, requestDto, file);
         ResultResponse result = ResultResponse.of(ResponseCode.CREATE_PERFORM_ARTICLE_SUCCESS,responseDto);
+        return new ResponseEntity<>(result, HttpStatusCode.valueOf(result.getStatus()));
+    }
+
+    /*
+        수정
+    */
+    @PatchMapping("/api/performs/{performArticleId}")
+    public ResponseEntity<ResultResponse> updatePerformArticle(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                                               @PathVariable int performArticleId,
+                                                               @RequestPart(value = "requestDto") PerformArticleUpdateDto.Request requestDto,
+                                                               @RequestPart(value = "file", required = false)MultipartFile file) throws IOException {
+        String username = loginCheck(customUserDetails.getUsername());
+        PerformArticleUpdateDto.Response responseDto = performArticleService.updatePerformArticle(username, performArticleId, requestDto, file);
+        ResultResponse result = ResultResponse.of(ResponseCode.UPDATE_PERFORM_ARTICLE_SUCCESS,responseDto);
+        return new ResponseEntity<>(result, HttpStatusCode.valueOf(result.getStatus()));
+    }
+
+    /*
+        삭제
+    */
+    @DeleteMapping("/api/performs/{performArticleId}")
+    public ResponseEntity<ResultResponse> deletePerformArticle(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                                               @PathVariable int performArticleId){
+        String username = loginCheck(customUserDetails.getUsername());
+        PerformArticleDto.Response responseDto = performArticleService.deletePerformArticle(username, performArticleId);
+        ResultResponse result = ResultResponse.of(ResponseCode.DELETE_PERFORM_ARTICLE_SUCCESS,responseDto);
         return new ResponseEntity<>(result, HttpStatusCode.valueOf(result.getStatus()));
     }
 
