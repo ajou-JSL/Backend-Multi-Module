@@ -3,6 +3,7 @@ package jsl.moum.auth.domain.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
+import jsl.moum.auth.dto.MusicGenre;
 import jsl.moum.community.perform.domain.entity.PerformMember;
 import jsl.moum.member_profile.dto.ProfileDto;
 import jsl.moum.rank.Rank;
@@ -81,6 +82,11 @@ public class MemberEntity {
     @OneToMany(mappedBy = "reporter", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberReport> memberReporters = new ArrayList<>();
 
+    @ElementCollection(targetClass = MusicGenre.class)
+    @CollectionTable(name = "member_genre", joinColumns = @JoinColumn(name = "member_id"))
+    @Column(name = "genre", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private List<MusicGenre> genres = new ArrayList<>();
 
     // role은 회원가입 시 입력하게 할지?
     // admin, 일반사용자, 일반사용자중에서도 연주자,참여자 뭐 이런거 등등..
@@ -102,9 +108,8 @@ public class MemberEntity {
     @Column(name = "exp", nullable = false)
     private Integer exp = 0;
 
-
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "rank", nullable = false)
     private Rank tier = Rank.BRONZE;
 
     public void updateMemberExpAndRank(int newExp) {
@@ -162,6 +167,7 @@ public class MemberEntity {
         this.proficiency = updateRequest.getProficiency();
         this.instrument = updateRequest.getInstrument();
         this.address = updateRequest.getAddress();
+        this.genres = updateRequest.getGenres();
     }
 
     // 양방향이라 서로간 저장-삭제 신경 써줘야함 : GPT

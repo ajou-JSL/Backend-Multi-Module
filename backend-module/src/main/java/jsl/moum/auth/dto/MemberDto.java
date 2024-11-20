@@ -4,6 +4,7 @@ package jsl.moum.auth.dto;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.*;
 import jsl.moum.auth.domain.entity.MemberEntity;
+import jsl.moum.moum.lifecycle.domain.Music;
 import jsl.moum.rank.Rank;
 import jsl.moum.record.domain.dto.RecordDto;
 import jsl.moum.record.domain.entity.MoumMemberRecordEntity;
@@ -62,9 +63,8 @@ public class MemberDto {
         private List<RecordDto.Request> records;
         private String videoUrl;
 
+        private List<MusicGenre> genres;
 
-
-        // private String verifyCode;
 
         public MemberEntity toEntity(){
             return MemberEntity.builder()
@@ -85,6 +85,7 @@ public class MemberDto {
 //                            .map(RecordDto.Request::toEntity)
 //                            .collect(Collectors.toList())
 //                            : Collections.emptyList())
+                    .genres(genres)
                     .exp(0)
                     .tier(Rank.BRONZE)
                     .build();
@@ -100,6 +101,7 @@ public class MemberDto {
         private final String profileDescription;
         private final String profileImageUrl;
         private final Integer exp;
+        private final List<MusicGenre> genres;
         private final Rank tier;
         private final String videoUrl;
         private final List<RecordDto.Response> memberRecords;
@@ -122,6 +124,9 @@ public class MemberDto {
 //                    .map(MoumMemberRecordEntity::getRecord)
 //                    .map(RecordDto.Response::new)
 //                    .collect(Collectors.toList());
+
+            this.genres = (member.getGenres() != null)
+                    ? member.getGenres() : null;
 
             this.memberRecords = (member.getRecords() != null)
                     ? member.getRecords().stream()

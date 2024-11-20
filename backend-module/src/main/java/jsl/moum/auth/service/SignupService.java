@@ -59,6 +59,7 @@ public class SignupService {
                 .proficiency(memberRequestDto.getProficiency())
                 .profileDescription(memberRequestDto.getProfileDescription())
                 .profileImageUrl(fileUrl)
+                .genres(memberRequestDto.getGenres())
                 .build();
 
         MemberEntity newMember = request.toEntity();
