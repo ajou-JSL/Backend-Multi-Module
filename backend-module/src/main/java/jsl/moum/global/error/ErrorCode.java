@@ -76,6 +76,9 @@ public enum ErrorCode {
     REPORT_MEMBER_FAIL(400, "F-RP002", "사용자 신고 오류"),
     REPORT_TEAM_FAIL(400, "F-RP003", "음악단체 신고 오류"),
     REPORT_ARTICLE_FAIL(400, "F-RP004", "게시글 신고 오류"),
+    REPORT_MEMBER_EXISTS(400, "F-RP012", "사용자를 이미 신고했습니다"),
+    REPORT_TEAM_EXISTS(400, "F-RP013", "음악단체를 이미 신고했습니다"),
+    REPORT_ARTICLE_EXISTS(400, "F-RP014", "게시글를 이미 신고했습니다"),
 
     // Moum
     MAX_MOUM_LIMIT_EXCEEDED(400, "F-MM001","모음 생성 최대 개수 초과하였습니다."),
