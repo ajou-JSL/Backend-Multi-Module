@@ -6,6 +6,7 @@ import jsl.moum.auth.domain.entity.MemberEntity;
 import jsl.moum.auth.dto.MemberDto;
 import jsl.moum.business.dto.PerformanceHallDto;
 import jsl.moum.business.dto.PracticeRoomDto;
+import jsl.moum.chatroom.dto.ChatroomDto;
 import jsl.moum.global.response.ResultResponse;
 import jsl.moum.moum.team.dto.TeamDto;
 import lombok.RequiredArgsConstructor;
@@ -55,6 +56,28 @@ public class AdminController {
         model.addAttribute("chatroomCount", adminService.getChatroomCount());
         model.addAttribute("chatrooms", adminService.getChatrooms());
         return "adminChatroom";
+    }
+
+    @GetMapping("/chatrooms")
+    public ResponseEntity<Map<String, Object>> getChatrooms(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        PageRequest pageRequest = PageRequest.of(page - 1, size);
+        Page<ChatroomDto> chatroomsPage = adminService.getChatroomsPaged(pageRequest);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("chatrooms", chatroomsPage.getContent());
+        response.put("currentPage", chatroomsPage.getNumber() + 1);
+        response.put("totalPages", chatroomsPage.getTotalPages());
+        response.put("totalChatrooms", chatroomsPage.getTotalElements());
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/chatroom/view/{id}")
+    @ResponseBody
+    public ChatroomDto getChatroomDetails(@PathVariable int id) {
+        return adminService.getChatroomById(id);
     }
 
     @GetMapping("/member")

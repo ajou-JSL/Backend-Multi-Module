@@ -144,44 +144,6 @@
 
 <!-- JavaScript -->
 <script>
-    // Check if the user is authenticated by verifying the presence of the access token in cookies
-    window.onload = function () {
-        const token = getCookie("access");
-        if (!token) {
-            alert("You are not authorized to view this page. Redirecting to login.");
-            window.location.href = "/admin/login";
-        }
-    };
-
-    // Function to retrieve a cookie by name
-    function getCookie(name) {
-        const nameEQ = name + "=";
-        const cookies = document.cookie.split(";");
-        for (let i = 0; i < cookies.length; i++) {
-            let c = cookies[i].trim();
-            if (c.indexOf(nameEQ) === 0) {
-                return c.substring(nameEQ.length, c.length);
-            }
-        }
-        return null;
-    }
-
-    // Handle Logout
-    document.getElementById("logout-link").addEventListener("click", function (event) {
-        event.preventDefault(); // Prevent default link behavior
-
-        // Display logout message
-        alert("You have logged out.");
-
-        // Clear the access token cookie
-        document.cookie = "access=; Max-Age=0; path=/";
-
-        // Redirect to the logout endpoint
-        window.location.href = "/admin/logout";
-    });
-</script>
-
-<script>
     let currentPage = 1;
     let totalPages = 1;
 
@@ -299,6 +261,46 @@
 
     // Initial load
     loadMembers(1);
+</script>
+
+
+<!-- JavaScript -->
+<script>
+    // Check if the user is authenticated by verifying the presence of the access token in cookies
+    window.onload = function () {
+        const token = getCookie("access");
+        if (!token) {
+            alert("You are not authorized to view this page. Redirecting to login.");
+            window.location.href = "/admin/login";
+        }
+    };
+
+    // Function to retrieve a cookie by name
+    function getCookie(name) {
+        const nameEQ = name + "=";
+        const cookies = document.cookie.split(";");
+        for (let i = 0; i < cookies.length; i++) {
+            let c = cookies[i].trim();
+            if (c.indexOf(nameEQ) === 0) {
+                return c.substring(nameEQ.length, c.length);
+            }
+        }
+        return null;
+    }
+
+    // Handle Logout
+    document.getElementById("logout-link").addEventListener("click", function (event) {
+        event.preventDefault(); // Prevent default link behavior
+
+        // Display logout message
+        alert("You have logged out.");
+
+        // Clear the access token cookie
+        document.cookie = "access=; Max-Age=0; path=/";
+
+        // Redirect to the logout endpoint
+        window.location.href = "/admin/logout";
+    });
 </script>
 
 <!-- Bootstrap Bundle with Popper -->

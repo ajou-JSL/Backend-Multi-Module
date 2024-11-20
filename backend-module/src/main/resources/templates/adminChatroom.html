@@ -79,9 +79,20 @@
       </div>
     </div>
 
-    <!-- Chatroom List -->
+    <!-- Chatroom List with Pagination -->
     <div class="mt-5">
       <h2>채팅방 목록</h2>
+
+      <!-- Dropdown to select the number of chatrooms per page -->
+      <div class="mb-3">
+        <label for="itemsPerPage">Chatrooms per page:</label>
+        <select id="itemsPerPage" class="form-select" style="width: auto; display: inline-block;" onchange="loadChatrooms(1)">
+          <option value="5">5</option>
+          <option value="10" selected>10</option>
+          <option value="20">20</option>
+        </select>
+      </div>
+
       <table class="table table-striped">
         <thead>
         <tr>
@@ -89,26 +100,141 @@
           <th>채팅방 이름</th>
           <th>생성 날짜</th>
           <th>팀 ID</th>
-<!--          <th>Actions</th>-->
+          <th>상세</th>
         </tr>
         </thead>
-        <tbody>
-        <!-- Iterate through the list of chatrooms -->
-        <tr th:each="chatroom, iterStat : ${chatrooms}">
-          <td th:text="${iterStat.index + 1}">1</td>
-          <td th:text="${chatroom.name}">Chatroom Name</td>
-          <td th:text="${#dates.format(chatroom.lastTimestamp, 'yyyy-MM-dd HH:mm')}">2024-01-01 10:00</td>
-          <td th:text="${chatroom.teamId}">0</td>
-<!--          <td>-->
-<!--            <a th:href="@{/admin/chatroom/view/{id}(id=${chatroom.id})}" class="btn btn-primary btn-sm">View</a>-->
-<!--            <a th:href="@{/admin/chatroom/delete/{id}(id=${chatroom.id})}" class="btn btn-danger btn-sm">Delete</a>-->
-<!--          </td>-->
-        </tr>
+        <tbody id="chatroomsTable">
+        <!-- Chatrooms will be dynamically inserted here -->
         </tbody>
       </table>
+
+      <!-- Pagination Controls -->
+      <nav>
+        <ul class="pagination">
+          <li class="page-item" id="prevPage">
+            <button class="page-link" onclick="changePage(-1)">Previous</button>
+          </li>
+          <li class="page-item" id="nextPage">
+            <button class="page-link" onclick="changePage(1)">Next</button>
+          </li>
+        </ul>
+      </nav>
     </div>
   </div>
 </div>
+
+<!-- Modal for Chatroom Details -->
+<div class="modal fade" id="chatroomModal" tabindex="-1" aria-labelledby="chatroomModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="chatroomModalLabel">Chatroom Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Chatroom details will be dynamically inserted here -->
+        <div id="chatroomDetails" class="p-3">
+          <p>Loading...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+  let currentPage = 1;
+  let totalPages = 1;
+
+  // Function to load chatrooms for a specific page
+  function loadChatrooms(page) {
+    const itemsPerPage = document.getElementById("itemsPerPage").value;
+    const chatroomsTable = document.getElementById("chatroomsTable");
+
+    fetch(`/admin/chatrooms?page=${page}&size=${itemsPerPage}`)
+            .then(response => {
+              if (!response.ok) {
+                throw new Error("Failed to fetch chatrooms");
+              }
+              return response.json();
+            })
+            .then(data => {
+              // Clear the current table
+              chatroomsTable.innerHTML = "";
+
+              // Update pagination variables
+              currentPage = data.currentPage;
+              totalPages = data.totalPages;
+
+              // Populate the table with chatrooms
+              data.chatrooms.forEach((chatroom, index) => {
+                const row = `
+            <tr>
+              <td>${(currentPage - 1) * itemsPerPage + index + 1}</td>
+              <td>${chatroom.name}</td>
+              <td>${new Date(chatroom.lastTimestamp).toLocaleDateString()}</td>
+              <td>${chatroom.teamId}</td>
+              <td>
+                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#chatroomModal"
+                        data-chatroom-id="${chatroom.id}" onclick="fetchChatroomDetails(event, this)">
+                  View
+                </button>
+              </td>
+            </tr>
+          `;
+                chatroomsTable.innerHTML += row;
+              });
+
+              // Update pagination controls
+              document.getElementById("prevPage").classList.toggle("disabled", currentPage === 1);
+              document.getElementById("nextPage").classList.toggle("disabled", currentPage === totalPages);
+            })
+            .catch(error => {
+              console.error("Error loading chatrooms:", error);
+            });
+  }
+
+  // Function to change pages
+  function changePage(offset) {
+    const newPage = currentPage + offset;
+    if (newPage >= 1 && newPage <= totalPages) {
+      loadChatrooms(newPage);
+    }
+  }
+
+  // Function to fetch and display chatroom details in the modal
+  function fetchChatroomDetails(event, button) {
+    event.preventDefault();
+    const chatroomId = button.getAttribute("data-chatroom-id");
+    const chatroomDetailsDiv = document.getElementById("chatroomDetails");
+
+    // Make an AJAX request to fetch chatroom details
+    fetch(`/admin/chatroom/view/${chatroomId}`)
+            .then(response => {
+              if (!response.ok) {
+                throw new Error("Failed to fetch chatroom details");
+              }
+              return response.json();
+            })
+            .then(data => {
+              // Populate the modal with chatroom details
+              chatroomDetailsDiv.innerHTML = `
+          <p><strong>Chatroom Name:</strong> ${data.name}</p>
+          <p><strong>Created Date:</strong> ${new Date(data.createdDate).toLocaleDateString()}</p>
+          <p><strong>Team ID:</strong> ${data.teamId}</p>
+          <p><strong>Last Active:</strong> ${new Date(data.lastTimestamp).toLocaleString()}</p>
+        `;
+            })
+            .catch(error => {
+              chatroomDetailsDiv.innerHTML = `<p class="text-danger">Failed to load chatroom details. Please try again.</p>`;
+              console.error(error);
+            });
+  }
+
+  // Initial load
+  loadChatrooms(1);
+</script>
+
 
 <!-- JavaScript -->
 <script>
