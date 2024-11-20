@@ -77,10 +77,10 @@ public enum ResponseCode {
     UPDATE_MOUM_PROCESS_SUCCESS(201,"S-MM007", "모음 진행률 상태 수정 성공"),
 
     // Perform
-    CREATE_PERFORM_ARTICLE_SUCCESS(201,"S-P001","공연게시글 생성 성공"),
-    GET_PERFORM_ARTICLE_SUCCESS(200,"S-P002","공연게시글 단건 조회 성공"),
-    GET_ALL_PERFORM_ARTICLE_SUCCESS(200,"S-P003","공연게시글 리스트 조회 성공"),
-    GET_THIS_MONTH_PERFORM_ARTICLE_SUCCESS(200,"S-P004","이달의 공연게시글 리스트 조회 성공");
+    CREATE_PERFORM_ARTICLE_SUCCESS(201,"S-PF001","공연게시글 생성 성공"),
+    GET_PERFORM_ARTICLE_SUCCESS(200,"S-PF002","공연게시글 단건 조회 성공"),
+    GET_ALL_PERFORM_ARTICLE_SUCCESS(200,"S-PF003","공연게시글 리스트 조회 성공"),
+    GET_THIS_MONTH_PERFORM_ARTICLE_SUCCESS(200,"S-PF004","이달의 공연게시글 리스트 조회 성공");
 
 
     private final int status;

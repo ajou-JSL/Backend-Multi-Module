@@ -49,9 +49,7 @@ public class ProfileService {
      */
     @Transactional
     public List<MemberSortDto.ExpResponse> getProfilesSortByExp(int page, int size) {
-
-        List<MemberSortDto.ExpResponse> members = memberRepositoryCustom.getMembersSortByExp(page, size);
-        return members;
+        return memberRepositoryCustom.getMembersSortByExp(page, size);
     }
 
     /**
@@ -60,8 +58,7 @@ public class ProfileService {
     @Transactional
     public List<MemberSortDto.RecordsCountResponse> getProfilesSortByRecordsCount(int page, int size) {
 
-        List<MemberSortDto.RecordsCountResponse> members = memberRepositoryCustom.getMembersSortByRecordsCount(page, size);
-        return members;
+        return memberRepositoryCustom.getMembersSortByRecordsCount(page, size);
     }
 //
 //    /**
