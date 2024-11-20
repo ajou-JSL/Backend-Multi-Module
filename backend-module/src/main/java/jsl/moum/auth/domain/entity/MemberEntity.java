@@ -82,7 +82,7 @@ public class MemberEntity {
     @OneToMany(mappedBy = "reporter", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberReport> memberReporters = new ArrayList<>();
 
-    @ElementCollection(targetClass = MusicGenre.class)
+    @ElementCollection(targetClass = MusicGenre.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "member_genre", joinColumns = @JoinColumn(name = "member_id"))
     @Column(name = "genre", nullable = false)
     @Enumerated(EnumType.STRING)
