@@ -72,8 +72,8 @@ public class AdminService {
         return memberRepository.findAll().stream().map(MemberDto.Response::new).toList();
     }
 
-    public Page<MemberEntity> getMembersPaged(PageRequest pageRequest){
-        return memberRepository.findAll(pageRequest);
+    public Page<MemberDto.Response> getMembersPaged(PageRequest pageRequest){
+        return memberRepository.findAll(pageRequest).map(MemberDto.Response::new);
     }
 
     public MemberDto.Response getMemberById(int id){
@@ -84,6 +84,10 @@ public class AdminService {
 
     public List<TeamDto.Response> getTeams(){
         return teamRepository.findAll().stream().map(TeamDto.Response::new).toList();
+    }
+
+    public Page<TeamDto.Response> getTeamsPaged(PageRequest pageRequest){
+        return teamRepository.findAll(pageRequest).map(TeamDto.Response::new);
     }
 
     public TeamDto.Response getTeamById(int id){
