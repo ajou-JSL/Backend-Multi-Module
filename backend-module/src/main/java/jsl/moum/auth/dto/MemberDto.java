@@ -66,7 +66,6 @@ public class MemberDto {
         private String videoUrl;
 
         private List<MusicGenre> genres;
-        private String role;
 
 
         public MemberEntity toEntity(){
@@ -83,7 +82,6 @@ public class MemberDto {
                     .instrument(instrument)
                     .proficiency(proficiency)
                     .name(name)
-                    .role(role)
 //                    .records(records.stream().map(RecordDto.Request::toEntity).collect(Collectors.toList()))
 //                    .records(records != null
 //                            ? records.stream()
