@@ -50,6 +50,8 @@ public class MemberDto {
         @NotEmpty @NotNull(message = "주소를 입력해주세요")
         private String address;
 
+        private String role;
+
         private String profileImageUrl;
 
         @NotEmpty @NotNull(message = "악기 숙련도를 입력해주세요")
@@ -74,6 +76,7 @@ public class MemberDto {
                     .password(password)
                     .address(address)
                     .videoUrl(videoUrl)
+                    .role(role)
                     .profileImageUrl(profileImageUrl)
                     .profileDescription(profileDescription)
                     .instrument(instrument)

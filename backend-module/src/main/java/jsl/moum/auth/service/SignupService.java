@@ -58,6 +58,7 @@ public class SignupService {
                 .instrument(memberRequestDto.getInstrument())
                 .proficiency(memberRequestDto.getProficiency())
                 .profileDescription(memberRequestDto.getProfileDescription())
+                .role("ROLE_USER")
                 .profileImageUrl(fileUrl)
                 .build();
 
