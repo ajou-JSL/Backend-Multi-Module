@@ -13,7 +13,10 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
-@Table(name = "comment")
+@Table(
+        name = "comment",
+        indexes = @Index(name = "idx_comment_article_id", columnList = "article_id")
+)
 public class CommentEntity {
 
     @Id

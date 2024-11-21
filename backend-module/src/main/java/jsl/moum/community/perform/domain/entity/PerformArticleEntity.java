@@ -20,7 +20,10 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Getter
-@Table(name = "perform_article")
+@Table(name = "perform_article",
+        indexes = {
+                @Index(name = "idx_perform_created_at", columnList = "created_at DESC"),
+        })
 public class PerformArticleEntity {
 
     @Id
