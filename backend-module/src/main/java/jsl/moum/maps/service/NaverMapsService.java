@@ -1,7 +1,11 @@
 package jsl.moum.maps.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jsl.moum.global.error.ErrorCode;
+import jsl.moum.global.error.exception.CustomException;
 import jsl.moum.maps.dto.NaverMapsDto;
-import jsl.moum.maps.dto.NaverMapsTestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,28 +37,76 @@ public class NaverMapsService {
     private final RestTemplate restTemplate = new RestTemplate();
 
 
-
-    public NaverMapsTestDto getLocationInfoTest(String shortUrl) {
+    public NaverMapsDto.GeoInfo getGeoInfoByShortUrl(String shortUrl) {
         try {
             // Expand the short URL
             String longUrl = expandUrl(shortUrl);
 
-            // Get the coordinates from the URL
-            NaverMapsDto.Coords coords = getCoords(longUrl);
+            // Get response from Naver Maps API
+            ResponseEntity<String> response = fetchMapsFullUrlResponse(longUrl);
+
+            // Get the coordinates from the response body
+            NaverMapsDto.Coords coords = extractCoordsFromFullUrlResponse(response);
 
             // Get the address from the coordinates
-            String address = getAddressReverseGeocode(coords.getLatitude(), coords.getLongitude());
+            ResponseEntity<String> reverseGeocodeResponse = fetchReverseGeocodeResponse(coords.getLatitude(), coords.getLongitude());
+            String address = extractAddressFromReverseGeocodeResponse(reverseGeocodeResponse);
 
-            return NaverMapsTestDto.builder()
+            return NaverMapsDto.GeoInfo.builder()
+                    .address(address)
+//                    .address(json.path("results").get(0).path("region").path("area2").path("name").asText())
                     .latitude(coords.getLatitude())
                     .longitude(coords.getLongitude())
-                    .address(address)
                     .build();
 
         } catch (Exception e) {
             log.error("Failed to get location info from URL: {}, {}", shortUrl, e);
             return null;
         }
+    }
+
+    private String extractAddressFromReverseGeocodeResponse(ResponseEntity<String> response) throws JsonProcessingException {
+
+        // Navigate to the first result in the "results" array
+        JsonNode json = new ObjectMapper().readTree(response.getBody());
+        JsonNode resultNode = json.path("results").get(0);
+
+        // Extract address components
+        String area1 = resultNode.path("region").path("area1").path("name").asText(); // 경기도
+        String area2 = resultNode.path("region").path("area2").path("name").asText(); // 수원시 영통구
+        String area3 = resultNode.path("region").path("area3").path("name").asText(); // 이의동
+        String number1 = resultNode.path("land").path("number1").asText(); // 839
+        String number2 = resultNode.path("land").path("number2").asText(); // 3
+
+        // Construct the address
+        if(number2 == null || number2.isEmpty()){
+            return String.format("%s %s %s %s", area1, area2, area3, number1);
+        } else {
+            return String.format("%s %s %s %s-%s", area1, area2, area3, number1, number2);
+        }
+    }
+
+    public NaverMapsDto.GeoInfo getGeoInfoByQuery(String query) {
+        try {
+            // Get response from Naver Maps API
+            ResponseEntity<String> geocodeResponse = fetchGeocodeResponse(query);
+            NaverMapsDto.GeoInfo geoInfoDto = extractGeoInfoFromResponse(geocodeResponse, query);
+            return geoInfoDto;
+
+        } catch (JsonProcessingException e) {
+            log.error("Failed to get location info from URL: {}, {}", query, e);
+            return null;
+        }
+    }
+
+    public NaverMapsDto.Coords getPlaceDetailsCoords(String fullUrl) {
+        log.info("getPlaceDetails from URL: {}", fullUrl);
+
+        ResponseEntity<String> response = fetchMapsFullUrlResponse(fullUrl);
+
+        // Extract the coordinates from the response
+        NaverMapsDto.Coords coords = extractCoordsFromFullUrlResponse(response);
+        return coords;
     }
 
 
@@ -85,21 +137,86 @@ public class NaverMapsService {
         }
     }
 
-    private NaverMapsDto.Coords getCoords(String longUrl) {
-        log.info("getCoords from URL: {}", longUrl);
-        Pattern pattern = Pattern.compile("c=(\\d+\\.\\d+),(\\d+\\.\\d+)");
-        Matcher matcher = pattern.matcher(longUrl);
+    private NaverMapsDto.GeoInfo extractGeoInfoFromResponse(ResponseEntity<String> response, String query) throws JsonProcessingException {
+        log.info("extractGeoInfoFromResponse from query: {}", query);
 
-        if (matcher.find()) {
-            double latitude = Double.valueOf(matcher.group(2));
-            double longitude = Double.valueOf(matcher.group(1));
-            return new NaverMapsDto.Coords(latitude, longitude);
-        }
-        return null;
+        // Parse JSON response into JsonNode
+        JsonNode json = new ObjectMapper().readTree(response.getBody());
+//        log.info("JsonNode: {}", json);
+
+        // Navigate to "addresses" array and extract the first object
+        JsonNode addressNode = json.path("addresses").get(0);
+
+        // Extract required fields
+        String roadAddress = addressNode.path("roadAddress").asText();
+        String longitudeStr = addressNode.path("x").asText();
+        String latitudeStr = addressNode.path("y").asText();
+
+        Double longitude = Double.parseDouble(longitudeStr);
+        Double latitude = Double.parseDouble(latitudeStr);
+
+        return NaverMapsDto.GeoInfo.builder()
+                .address(roadAddress)
+                .latitude(latitude)
+                .longitude(longitude)
+                .build();
     }
 
-    private String getAddressReverseGeocode(double latitude, double longitude) {
-        log.info("getAddressReverseGeocode from coordinates: {}, {}", latitude, longitude);
+    private NaverMapsDto.Coords extractCoordsFromFullUrlResponse(ResponseEntity<String> response) {
+        log.info("extractCoordsFromFullUrlResponse from body");
+
+        String body = response.getBody();
+        // Pattern to match "latitude%5E" followed by numbers
+        Pattern latitudePattern = Pattern.compile("latitude%5E([0-9.]+)");
+        // Pattern to match "longitude%5E" followed by numbers
+        Pattern longitudePattern = Pattern.compile("longitude%5E([0-9.]+)");
+
+        // Pattern Matchers
+        Matcher latitudeMatcher = latitudePattern.matcher(body);
+        Matcher longitudeMatcher = longitudePattern.matcher(body);
+
+        String latitudeString = null;
+        String longitudeString = null;
+
+        if (latitudeMatcher.find()) {
+            latitudeString = latitudeMatcher.group(1);
+        } else {
+            log.error("No match found for latitude in the body.");
+        }
+        if (longitudeMatcher.find()) {
+            longitudeString = longitudeMatcher.group(1);
+        } else {
+            log.error("No match found for longitude in the body.");
+        }
+
+        try {
+            Double latitude = Double.parseDouble(latitudeString);
+            Double longitude = Double.parseDouble(longitudeString);
+            return new NaverMapsDto.Coords(latitude, longitude);
+        } catch (Exception e){
+            log.error("Failed to parse coordinates: {}", e.getMessage());
+            throw new CustomException(ErrorCode.GET_LOCATION_INFO_FAIL);
+        }
+    }
+
+
+    private ResponseEntity<String> fetchMapsFullUrlResponse(String fullUrl){
+        log.info("fetchMapsFullUrlResponse from URL: {}", fullUrl);
+        // Set headers for authentication
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("X-NCP-APIGW-API-KEY-ID", clientId);
+        headers.set("X-NCP-APIGW-API-KEY", clientSecret);
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        // Make the API call
+        ResponseEntity<String> response = restTemplate.exchange(fullUrl, org.springframework.http.HttpMethod.GET, entity, String.class);
+        return response;
+    }
+
+
+    private ResponseEntity<String> fetchReverseGeocodeResponse(double latitude, double longitude) {
+        log.info("fetchReverseGeocodeResponse from coordinates: {}, {}", latitude, longitude);
         String url = apiUrl + "/map-reversegeocode/v2/gc?coords=" + longitude + "," + latitude + "&orders=addr&output=json";
 
         HttpHeaders headers = new HttpHeaders();
@@ -108,7 +225,19 @@ public class NaverMapsService {
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response = restTemplate.exchange(url, org.springframework.http.HttpMethod.GET, entity, String.class);
+        return response;
+    }
 
-        return response.getBody();
+    private ResponseEntity<String> fetchGeocodeResponse(String query) {
+        log.info("fetchGeocodeResponse from query : {}", query);
+        String url = apiUrl + "/map-geocode/v2/geocode?query=" + query;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("X-NCP-APIGW-API-KEY-ID", clientId);
+        headers.set("X-NCP-APIGW-API-KEY", clientSecret);
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        ResponseEntity<String> response = restTemplate.exchange(url, org.springframework.http.HttpMethod.GET, entity, String.class);
+        return response;
     }
 }

@@ -27,4 +27,22 @@ public class NaverMapsDto {
             this.longitude = longitude;
         }
     }
+
+    @Builder
+    @Getter
+    @Setter
+    @RequiredArgsConstructor
+    public static class GeoInfo {
+        private String address;
+        private double latitude;
+        private double longitude;
+
+        public GeoInfo(String address, double latitude, double longitude) {
+            this.address = address;
+            this.latitude = latitude;
+            this.longitude = longitude;
+        }
+    }
+
+
 }

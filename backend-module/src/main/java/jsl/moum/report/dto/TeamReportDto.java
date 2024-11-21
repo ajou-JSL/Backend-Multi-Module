@@ -37,6 +37,7 @@ public class TeamReportDto {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Response {
+        private int id;
         private int teamId;
         private String teamName;
         private int reporterId;
@@ -47,6 +48,7 @@ public class TeamReportDto {
         private boolean isResolved;
 
         public Response(TeamReport teamReport) {
+            this.id = teamReport.getId();
             this.teamId = teamReport.getTeam().getId();
             this.teamName = teamReport.getTeam().getTeamName();
             this.reporterId = teamReport.getReporter().getId();

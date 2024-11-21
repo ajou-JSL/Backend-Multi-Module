@@ -8,6 +8,7 @@ import jsl.moum.report.dto.TeamReportDto;
 import jsl.moum.report.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -37,10 +38,45 @@ public class ReportController {
         return ResponseEntity.ok(resultResponse);
     }
 
+    @GetMapping("/member/{id}/sent-member")
+    public ResponseEntity<ResultResponse> memberReportsSentPaged(@PathVariable(name = "id") Integer id,
+                                                                    @RequestParam(name = "page", defaultValue = "0") Integer page,
+                                                                    @RequestParam(name = "size", defaultValue = "10") Integer size) {
+        Page<MemberReportDto.Response> reports = reportService.memberReportsSentPaged(id, page, size);
+        ResultResponse resultResponse = ResultResponse.of(ResponseCode.VIEW_REPORT_MEMBER_SUCCESS, reports.getContent());
+        return ResponseEntity.ok(resultResponse);
+    }
+
+    @GetMapping("/member/{id}/sent-team")
+    public ResponseEntity<ResultResponse> teamReportsSentPaged(@PathVariable(name = "id") Integer id,
+                                                                  @RequestParam(name = "page", defaultValue = "0") Integer page,
+                                                                  @RequestParam(name = "size", defaultValue = "10") Integer size) {
+        Page<TeamReportDto.Response> reports = reportService.teamReportsSentPaged(id, page, size);
+        ResultResponse resultResponse = ResultResponse.of(ResponseCode.VIEW_REPORT_TEAM_SUCCESS, reports.getContent());
+        return ResponseEntity.ok(resultResponse);
+    }
+
+    @GetMapping("/member/{id}/sent-article")
+    public ResponseEntity<ResultResponse> articleReportsSentPaged(@PathVariable(name = "id") Integer id,
+                                                                     @RequestParam(name = "page", defaultValue = "0") Integer page,
+                                                                     @RequestParam(name = "size", defaultValue = "10") Integer size) {
+        Page<ArticleReportDto.Response> reports = reportService.articleReportsSentPaged(id, page, size);
+        ResultResponse resultResponse = ResultResponse.of(ResponseCode.VIEW_REPORT_ARTICLE_SUCCESS, reports.getContent());
+        return ResponseEntity.ok(resultResponse);
+    }
+
+    @GetMapping("/member/{id}/received")
+    public ResponseEntity<ResultResponse> memberReportsReceivedPaged(@PathVariable(name = "id") Integer id,
+                                                                        @RequestParam(name = "page", defaultValue = "0") Integer page,
+                                                                        @RequestParam(name = "size", defaultValue = "10") Integer size) {
+        Page<MemberReportDto.Response> reports = reportService.memberReportsReceivedPaged(id, page, size);
+        ResultResponse resultResponse = ResultResponse.of(ResponseCode.VIEW_REPORT_MEMBER_SUCCESS, reports.getContent());
+        return ResponseEntity.ok(resultResponse);
+    }
+
     @PostMapping("/team/{id}")
     public ResponseEntity<ResultResponse> reportTeam(@PathVariable(name = "id") Integer id,
                                                      @RequestBody TeamReportDto.Request request) {
-
         TeamReportDto.Response report = reportService.reportTeam(id, request);
 
         ResultResponse resultResponse = ResultResponse.of(ResponseCode.REPORT_TEAM_SUCCESS, report);
@@ -53,6 +89,16 @@ public class ReportController {
         ResultResponse resultResponse = ResultResponse.of(ResponseCode.VIEW_REPORT_TEAM_SUCCESS, report);
         return ResponseEntity.ok(resultResponse);
     }
+
+    @GetMapping("/team/{id}/received")
+    public ResponseEntity<ResultResponse> teamReportsReceivedPaged(@PathVariable(name = "id") Integer id,
+                                                                        @RequestParam(name = "page", defaultValue = "0") Integer page,
+                                                                        @RequestParam(name = "size", defaultValue = "10") Integer size) {
+        Page<TeamReportDto.Response> reports = reportService.teamReportsReceivedPaged(id, page, size);
+        ResultResponse resultResponse = ResultResponse.of(ResponseCode.VIEW_REPORT_TEAM_SUCCESS, reports.getContent());
+        return ResponseEntity.ok(resultResponse);
+    }
+
 
     @PostMapping("/article/{id}")
     public ResponseEntity<ResultResponse> reportArticle(@PathVariable(name = "id") Integer id,
@@ -70,4 +116,15 @@ public class ReportController {
         ResultResponse resultResponse = ResultResponse.of(ResponseCode.VIEW_REPORT_ARTICLE_SUCCESS, report);
         return ResponseEntity.ok(resultResponse);
     }
+
+    @GetMapping("/article/{id}/received")
+    public ResponseEntity<ResultResponse> articleReportsReceivedPaged(@PathVariable(name = "id") Integer id,
+                                                                      @RequestParam(name = "page", defaultValue = "0") Integer page,
+                                                                      @RequestParam(name = "size", defaultValue = "10") Integer size) {
+        Page<ArticleReportDto.Response> reports = reportService.articleReportsReceivedPaged(id, page, size);
+        ResultResponse resultResponse = ResultResponse.of(ResponseCode.VIEW_REPORT_TEAM_SUCCESS, reports.getContent());
+        return ResponseEntity.ok(resultResponse);
+    }
+
+
 }
