@@ -88,6 +88,9 @@ public enum ResponseCode {
     VIEW_REPORT_TEAM_SUCCESS(200,"S-RP023","음악단체 신고 조회 성공"),
     VIEW_REPORT_ARTICLE_SUCCESS(200,"S-RP024","게시글 신고 조회 성공"),
 
+    // Naver Maps
+    GET_LOCATION_INFO_SUCCESS(200,"S-NM001","위치 정보 조회 성공"),
+
     // Perform
     CREATE_PERFORM_ARTICLE_SUCCESS(201,"S-PF001","공연게시글 생성 성공"),
     UPDATE_PERFORM_ARTICLE_SUCCESS(201,"S-PF002","공연게시글 수정 성공"),
