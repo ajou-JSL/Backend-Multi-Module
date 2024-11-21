@@ -130,7 +130,7 @@ public class LifecycleService {
                 .endDate(requestDto.getEndDate())
                 .leaderId(loginUser.getId())
                 .records(requestDto.getRecords())
-                .music(requestDto.getMusic())
+                //.music(requestDto.getMusic())
                 .genre(requestDto.getGenre())
                 .build().toEntity();
 

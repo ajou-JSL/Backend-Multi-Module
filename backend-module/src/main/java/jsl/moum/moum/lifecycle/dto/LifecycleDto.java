@@ -44,7 +44,7 @@ public class LifecycleDto {
         @Nullable
         private List<RecordDto.Request> records;
         private Process process;
-        private List<Music> music;
+        //private List<Music> music;
         private MusicGenre genre;
 
 
@@ -60,7 +60,7 @@ public class LifecycleDto {
                     .leaderId(leaderId)
                     .records(records.stream().map(RecordDto.Request::toEntity).collect(Collectors.toList()))
                     .process(process)
-                    .music(music)
+                   // .music(music)
                     .genre(genre)
                     .build();
         }
@@ -81,7 +81,7 @@ public class LifecycleDto {
         private final String leaderName;
         private final int teamId;
         private final Process process;
-        private final List<Music> music;
+        //private final List<Music> music;
         private final List<MemberDto.Response> members;
         private final MusicGenre genre;
 
@@ -99,7 +99,7 @@ public class LifecycleDto {
             this.leaderName = lifecycle.getLeaderName();
             this.teamId = lifecycle.getTeam().getId();
             this.process = lifecycle.getProcess();
-            this.music = lifecycle.getMusic();
+            //this.music = lifecycle.getMusic();
 
             this.members = lifecycle.getTeam().getMembers().stream()
                     .map(TeamMemberEntity::getMember)
