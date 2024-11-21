@@ -21,7 +21,7 @@ public class NaverMapsController {
     private final NaverMapsService naverMapsService;
 
     @PostMapping("/location-info")
-    public ResponseEntity<ResultResponse> getLocationInfoTest(@RequestParam String shortUrl) {
+    public ResponseEntity<ResultResponse> getLocationInfoTest(@RequestParam(name = "shortUrl") String shortUrl) {
         NaverMapsTestDto locationInfo = naverMapsService.getLocationInfoTest(shortUrl);
 
         ResultResponse resultResponse = ResultResponse.of(ResponseCode.GET_LOCATION_INFO_SUCCESS, locationInfo);
