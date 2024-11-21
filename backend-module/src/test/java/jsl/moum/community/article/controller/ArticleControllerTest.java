@@ -195,7 +195,7 @@ class ArticleControllerTest {
 
     @Test
     @DisplayName("게시글 작성 성공 테스트")
-    @WithAuthUser(email = "test@user.com", username = "testuser", role="ROLE_USER")
+    @WithAuthUser
     void postArticle_Success() throws Exception {
         // given
         ArticleDto.Request articleRequest = ArticleDto.Request.builder()

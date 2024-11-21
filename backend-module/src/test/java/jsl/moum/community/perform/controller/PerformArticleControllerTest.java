@@ -11,6 +11,9 @@ import jsl.moum.custom.WithAuthUser;
 import jsl.moum.global.error.exception.NeedLoginException;
 import jsl.moum.global.response.ResponseCode;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import jsl.moum.moum.lifecycle.domain.LifecycleEntity;
+import jsl.moum.moum.team.domain.TeamEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -67,6 +70,8 @@ class PerformArticleControllerTest {
     private PerformMember mockPerformMemberB;
     private MemberEntity mockMemberA;
     private MemberEntity mockMemberB;
+    private TeamEntity mockTeam;
+    private LifecycleEntity mockMoum;
 
 
     @BeforeEach
@@ -77,8 +82,16 @@ class PerformArticleControllerTest {
                 .alwaysDo(print())
                 .build();
 
+        mockPerformArticle = PerformArticleEntity.builder()
+                .id(11)
+                .moum(mockMoum)
+                .team(mockTeam)
+                .build();
+
         mockPerformArticleRequestDto = PerformArticleDto.Request.builder()
                 .performanceName("공연게시글A")
+                .teamId(1)
+                .moumId(1)
                 .membersId(List.of(1, 2))
                 .build();
 
@@ -108,10 +121,20 @@ class PerformArticleControllerTest {
                 .username("멤버B")
                 .build();
 
+        mockMoum = LifecycleEntity.builder()
+                .id(1)
+                .build();
+
+        mockTeam = TeamEntity.builder()
+                .id(1)
+                .build();
+
         mockPerformArticle = PerformArticleEntity.builder()
                 .id(1)
                 .performanceName("공연게시글A")
                 .performMembers(List.of(mockPerformMemberA,mockPerformMemberB))
+                .team(mockTeam)
+                .moum(mockMoum)
                 .build();
 
 
@@ -122,8 +145,8 @@ class PerformArticleControllerTest {
     @WithAuthUser
     void create_perform() throws Exception {
         // given
-        PerformArticleEntity performArticle = mockPerformArticleRequestDto.toEntity();
-        PerformArticleDto.Response response = new PerformArticleDto.Response(performArticle);
+        //PerformArticleEntity performArticle = mockPerformArticleRequestDto.toEntity();
+        PerformArticleDto.Response response = new PerformArticleDto.Response(mockPerformArticle);
 
         // then
         when(performArticleService.createPerformArticle(anyString(),any(),any())).thenReturn(response);
@@ -149,7 +172,7 @@ class PerformArticleControllerTest {
 
     @Test
     @DisplayName("공연게시글 단건 조회")
-    @Disabled(" 왜 갑자기 안되는건지.. ")
+//    @Disabled(" 왜 갑자기 안되는건지.. ")
     @WithAuthUser
     void get_perform_by_id() throws Exception {
         // given
@@ -168,7 +191,7 @@ class PerformArticleControllerTest {
 
     @Test
     @DisplayName("공연게시글 리스트 조회")
-    @Disabled(" 왜 갑자기 안되는건지.. ")
+//    @Disabled(" 왜 갑자기 안되는건지.. ")
     @WithAuthUser
     void get_perform_list() throws Exception {
         // given
@@ -197,7 +220,6 @@ class PerformArticleControllerTest {
     @Test
     @DisplayName("이번 달 공연 게시글 리스트 조회 테스트")
     @WithAuthUser
-    @Disabled(" 테스트 왜 에러나는지 모르겠다 ")
     void getAllThisMonthPerformArticlesTest() throws Exception {
         // 이번 달 공연
         PerformArticleEntity mockArticleA = PerformArticleEntity.builder()

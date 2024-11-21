@@ -240,18 +240,17 @@ class TeamServiceTest {
 
     @Test
     @DisplayName("팀 정보 수정 성공")
-    @Disabled("임시 보류")
     void updateTeamInfo_Success() throws IOException {
         // given
         MultipartFile file = mock(MultipartFile.class);
-        when(file.getOriginalFilename()).thenReturn("new.jpg");
+        when(file.getOriginalFilename()).thenReturn("existing fileUrl");
         when(file.isEmpty()).thenReturn(false);
 
         when(memberRepository.findByUsername(mockLeader.getUsername())).thenReturn(mockLeader);
         when(teamRepository.findById(mockTeam.getId())).thenReturn(Optional.of(mockTeam));
         when(teamRepository.save(any(TeamEntity.class))).thenReturn(mockTeam);
         when(storageService.uploadFile(anyString(), any(MultipartFile.class)))
-                .thenReturn("new.jpg");
+                .thenReturn("Updated fileUrl");
 
         doReturn(true).when(teamService).checkLeader(any(), any());
         doReturn(mockTeam).when(teamService).findTeam(anyInt());
@@ -356,7 +355,6 @@ class TeamServiceTest {
 
     @Test
     @DisplayName("팀 멤버 강퇴 성공")
-    @Disabled("테스트코드 수정 필요")
     void kickMember_Success() {
         // given
         when(memberRepository.findById(mockMember.getId())).thenReturn(Optional.of(mockMember));

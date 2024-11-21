@@ -90,7 +90,6 @@ class LoginFilterTest {
 
     @Test
     @DisplayName("로그인 성공시 access 토큰과 refresh 토큰 발급 및 응답 설정")
-    @Disabled("에러가 왜 나는건지 모르겠다")
     void successfulAuthentication_whenValidCredentials_thenGenerateTokensAndSetResponse() throws IOException {
         // Given
         Authentication authentication = mock(Authentication.class);

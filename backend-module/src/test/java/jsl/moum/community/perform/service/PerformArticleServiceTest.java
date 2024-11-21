@@ -7,6 +7,8 @@ import jsl.moum.community.perform.domain.repository.PerformArticleRepository;
 import jsl.moum.community.perform.domain.repository.PerformArticleRepositoryCustom;
 import jsl.moum.community.perform.dto.PerformArticleDto;
 import jsl.moum.global.error.exception.CustomException;
+import jsl.moum.moum.lifecycle.domain.LifecycleEntity;
+import jsl.moum.moum.lifecycle.domain.LifecycleRepository;
 import jsl.moum.moum.team.domain.TeamEntity;
 import jsl.moum.moum.team.domain.TeamMemberRepositoryCustom;
 import jsl.moum.moum.team.domain.TeamRepository;
@@ -55,9 +57,13 @@ class PerformArticleServiceTest {
     @Mock
     private PerformArticleRepositoryCustom performArticleRepositoryCustom;
 
+    @Mock
+    private LifecycleRepository lifecycleRepository;
+
     private MemberEntity mockMember;
     private TeamEntity mockTeam;
     private PerformArticleDto.Request mockRequestDto;
+    private LifecycleEntity mockMoum;
 
     @BeforeEach
     void setUp() {
@@ -77,11 +83,15 @@ class PerformArticleServiceTest {
                 .members(new ArrayList<>())
                 .build();
 
+        mockMoum = LifecycleEntity.builder()
+                .id(1)
+                .build();
+
         mockRequestDto = PerformArticleDto.Request.builder()
                 .performanceName("Test Performance")
                 .performanceDescription("Description")
                 .performanceLocation("Location")
-                .performancePrice("100")
+                .performancePrice(100)
                 .teamId(1)
                 .membersId(List.of(1))
                 .build();
@@ -96,6 +106,7 @@ class PerformArticleServiceTest {
         when(storageService.uploadFile(anyString(), eq(mockFile))).thenReturn(mockImageUrl);
         when(memberRepository.findByUsername(anyString())).thenReturn(mockMember);
         when(teamRepository.findById(anyInt())).thenReturn(Optional.of(mockTeam));
+        when(lifecycleRepository.findById(anyInt())).thenReturn(Optional.of(mockMoum));
         when(teamMemberRepositoryCustom.findAllMembersByTeamId(anyInt())).thenReturn(List.of(mockMember));
         doReturn(mockTeam).when(performArticleService).findTeam(anyInt());
         doReturn(true).when(performArticleService).isLeader(any(),any());
@@ -115,6 +126,7 @@ class PerformArticleServiceTest {
         when(memberRepository.findByUsername(anyString())).thenReturn(mockMember);
         when(teamRepository.findById(anyInt())).thenReturn(Optional.of(mockTeam));
         when(performArticleService.findTeam(anyInt())).thenReturn(mockTeam);
+        when(lifecycleRepository.findById(anyInt())).thenReturn(Optional.of(mockMoum));
         doReturn(mockTeam).when(performArticleService).findTeam(anyInt());
         doReturn(false).when(performArticleService).isLeader(any(),any());
         MultipartFile mockFile = mock(MultipartFile.class);
@@ -134,6 +146,8 @@ class PerformArticleServiceTest {
         PerformArticleEntity mockArticle = PerformArticleEntity.builder()
                 .id(1)
                 .performanceName("Test Performance")
+                .team(mockTeam)
+                .moum(mockMoum)
                 .build();
         when(performArticleRepository.findById(anyInt())).thenReturn(Optional.of(mockArticle));
 
@@ -166,10 +180,14 @@ class PerformArticleServiceTest {
         PerformArticleEntity mockArticle1 = PerformArticleEntity.builder()
                 .id(1)
                 .performanceName("Test Performance 1")
+                .team(mockTeam)
+                .moum(mockMoum)
                 .build();
         PerformArticleEntity mockArticle2 = PerformArticleEntity.builder()
                 .id(2)
                 .performanceName("Test Performance 2")
+                .team(mockTeam)
+                .moum(mockMoum)
                 .build();
         Page<PerformArticleEntity> page = new PageImpl<>(List.of(mockArticle1, mockArticle2));
 
@@ -194,11 +212,15 @@ class PerformArticleServiceTest {
                 .id(1)
                 .performanceName("Performance 1")
                 .performanceStartDate(new Date())
+                .moum(mockMoum)
+                .team(mockTeam)
                 .build();
         PerformArticleEntity mockArticle2 = PerformArticleEntity.builder()
                 .id(2)
                 .performanceName("Performance 2")
                 .performanceStartDate(new Date())
+                .moum(mockMoum)
+                .team(mockTeam)
                 .build();
 
         // 시작일자 2025년인거
@@ -206,17 +228,22 @@ class PerformArticleServiceTest {
                 .id(1)
                 .performanceName("Performance 1")
                 .performanceStartDate(java.sql.Date.valueOf("2025-11-15"))
+                .team(mockTeam)
+                .moum(mockMoum)
                 .build();
 
         PerformArticleEntity mockArticleB = PerformArticleEntity.builder()
                 .id(2)
                 .performanceName("Performance 2")
                 .performanceStartDate(java.sql.Date.valueOf("2025-11-15"))
+                .team(mockTeam)
+                .moum(mockMoum)
                 .build();
 
         List<PerformArticleEntity> mockArticles = List.of(mockArticle1, mockArticle2);
         when(performArticleRepositoryCustom.getThisMonthPerformArticles(anyInt(), anyInt()))
                 .thenReturn(mockArticles);
+        when(teamRepository.findById(anyInt())).thenReturn(Optional.of(mockTeam));
 
         // when
         List<PerformArticleDto.Response> responseList = performArticleService.getAllThisMonthPerformArticles(0, 10);

@@ -46,19 +46,17 @@ class SignupControllerTest {
     @Test
     @DisplayName("회원가입 - 성공")
     @WithMockUser(username = "testUser")
-    @Disabled("임시 보류")
     void signupMember_ShouldReturnSuccess() throws Exception {
         // Given
         MemberDto.Request memberRequestDto = MemberDto.Request.builder()
                 .id(1)
                 .username("testUser")
                 .verifyCode("123456")
-                .name("name")
+                .name("tsetusername")
                 .password("zpzzgjdg@$^1")
                 .email("testuser123@gmail.com")
                 .build();
 
-        // ArticleRequestDto를 JSON으로 변환하여 MockMultipartFile로 생성
         MockMultipartFile memberRequestDtoFile = new MockMultipartFile("memberRequestDto",
                 "",
                 MediaType.APPLICATION_JSON_VALUE,
@@ -81,7 +79,6 @@ class SignupControllerTest {
     @Test
     @DisplayName("회원가입 실패 - 유효성 검증 실패")
     @WithMockUser(username = "testUser")
-    @Disabled("임시 보류")
     void signupMember_fail_validationError() throws Exception {
         // Given
         MemberDto.Request memberRequestDto = MemberDto.Request.builder()
