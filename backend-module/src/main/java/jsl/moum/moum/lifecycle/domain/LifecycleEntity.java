@@ -52,7 +52,7 @@ public class LifecycleEntity {
     @Column(name = "price")
     private Integer price;
 
-    @ElementCollection(targetClass = Music.class, fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "lifecycle_images", joinColumns = @JoinColumn(name = "lifecycle_id"))
     @Column(name = "image_url")
     private List<String> imageUrls = new ArrayList<>();
@@ -67,10 +67,10 @@ public class LifecycleEntity {
     @Embedded
     private Process process;
 
-//    // todo : 이거 수정하기
-//    @ElementCollection(fetch = FetchType.EAGER)
-//    @CollectionTable(name = "lifecycle_music_list", joinColumns = @JoinColumn(name = "lifecycle_id"))
-//    private List<Music> music;
+    // todo : 이거 수정하기
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "lifecycle_music_list", joinColumns = @JoinColumn(name = "lifecycle_id"))
+    private List<Music> music;
 
     @OneToMany(mappedBy = "lifecycle", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RecordEntity> records;
@@ -124,9 +124,9 @@ public class LifecycleEntity {
         if (updateRequest.getEndDate() != null) {
             this.endDate = updateRequest.getEndDate();
         }
-//        if (updateRequest.getMusic() != null) {
-//            this.music = updateRequest.getMusic();
-//        }
+        if (updateRequest.getMusic() != null) {
+            this.music = updateRequest.getMusic();
+        }
     }
 
 
