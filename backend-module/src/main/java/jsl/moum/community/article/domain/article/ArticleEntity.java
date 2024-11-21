@@ -21,7 +21,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@Table( // 조회수순 최신순 댓글순 좋아요순
+@Table(
         name = "article",
         indexes = {
                 @Index(name = "idx_article_view_comment_created_at", columnList = "view_count, comment_count, created_at DESC"),

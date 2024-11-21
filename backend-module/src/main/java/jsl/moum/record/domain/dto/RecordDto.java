@@ -41,7 +41,7 @@ public class RecordDto {
             this.recordId = recordEntity.getId();
             this.recordName = recordEntity.getRecordName();
             this.startDate = recordEntity.getStartDate();
-            this.endDate = recordEntity.getEndDate();
+            this.endDate = (recordEntity.getEndDate() != null) ? recordEntity.getEndDate() : null;
         }
 
     }
