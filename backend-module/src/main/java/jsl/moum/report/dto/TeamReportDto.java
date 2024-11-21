@@ -44,6 +44,7 @@ public class TeamReportDto {
         private String type;
         private String details;
         private String reply;
+        private boolean isResolved;
 
         public Response(TeamReport teamReport) {
             this.teamId = teamReport.getTeam().getId();
@@ -53,6 +54,7 @@ public class TeamReportDto {
             this.type = teamReport.getType();
             this.details = teamReport.getDetails();
             this.reply = teamReport.getReply();
+            this.isResolved = teamReport.isResolved();
         }
     }
 
@@ -63,5 +65,12 @@ public class TeamReportDto {
         private int reporterId;
         private String type;
         private String details;
+    }
+
+    @Getter
+    @Setter
+    @RequiredArgsConstructor
+    public static class Reply {
+        private String reply;
     }
 }

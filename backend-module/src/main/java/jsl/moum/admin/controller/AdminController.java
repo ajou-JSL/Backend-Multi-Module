@@ -2,19 +2,22 @@ package jsl.moum.admin.controller;
 
 import jsl.moum.admin.dto.AdminLoginRequest;
 import jsl.moum.admin.service.AdminService;
-import jsl.moum.auth.domain.entity.MemberEntity;
 import jsl.moum.auth.dto.MemberDto;
 import jsl.moum.business.dto.PerformanceHallDto;
 import jsl.moum.business.dto.PracticeRoomDto;
 import jsl.moum.chatroom.dto.ChatroomDto;
+import jsl.moum.global.response.ResponseCode;
 import jsl.moum.global.response.ResultResponse;
 import jsl.moum.moum.team.dto.TeamDto;
+import jsl.moum.report.dto.ArticleReportDto;
+import jsl.moum.report.dto.MemberReportDto;
+import jsl.moum.report.dto.TeamReportDto;
+import jsl.moum.report.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +32,7 @@ import java.util.Map;
 public class AdminController {
 
     private final AdminService adminService;
+    private final ReportService reportService;
 
     @GetMapping("/login")
     public String adminLoginPage(Model model) {
@@ -181,4 +185,41 @@ public class AdminController {
         return "redirect:/admin/login";
     }
 
+
+    /**
+     *
+     * Report related APIs
+     *
+     */
+
+
+    @PostMapping("/report/member/{reportId}/reply")
+    public ResponseEntity<ResultResponse> replyMemberReport(@PathVariable(name = "reportId") Integer reportId,
+                                                            @RequestBody MemberReportDto.Reply reply) {
+
+        MemberReportDto report = reportService.reportMemberReply(reportId, reply);
+
+        ResultResponse resultResponse = ResultResponse.of(ResponseCode.REPORT_MEMBER_REPLY_SUCCESS, report);
+        return ResponseEntity.ok(resultResponse);
+    }
+
+    @PostMapping("/report/team/{reportId}/reply")
+    public ResponseEntity<ResultResponse> replyTeamReport(@PathVariable(name = "reportId") Integer reportId,
+                                                          @RequestBody TeamReportDto.Reply reply) {
+
+        TeamReportDto report = reportService.reportTeamReply(reportId, reply);
+
+        ResultResponse resultResponse = ResultResponse.of(ResponseCode.REPORT_TEAM_REPLY_SUCCESS, report);
+        return ResponseEntity.ok(resultResponse);
+    }
+
+    @PostMapping("/report/article/{reportId}/reply")
+    public ResponseEntity<ResultResponse> replyArticleReport(@PathVariable(name = "reportId") Integer reportId,
+                                                             @RequestBody ArticleReportDto.Reply reply) {
+
+        ArticleReportDto report = reportService.reportArticleReply(reportId, reply);
+
+        ResultResponse resultResponse = ResultResponse.of(ResponseCode.REPORT_ARTICLE_REPLY_SUCCESS, report);
+        return ResponseEntity.ok(resultResponse);
+    }
 }
