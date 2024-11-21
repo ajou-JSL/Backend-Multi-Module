@@ -44,6 +44,7 @@ public class MemberReportDto {
         private String type;
         private String details;
         private String reply;
+        private boolean isResolved;
 
         public Response(MemberReport memberReport) {
             this.memberId = memberReport.getMember().getId();
@@ -53,6 +54,7 @@ public class MemberReportDto {
             this.type = memberReport.getType();
             this.details = memberReport.getDetails();
             this.reply = memberReport.getReply();
+            this.isResolved = memberReport.isResolved();
         }
     }
 
@@ -63,5 +65,12 @@ public class MemberReportDto {
         private int reporterId;
         private String type;
         private String details;
+    }
+
+    @Getter
+    @Setter
+    @RequiredArgsConstructor
+    public static class Reply {
+        private String reply;
     }
 }
