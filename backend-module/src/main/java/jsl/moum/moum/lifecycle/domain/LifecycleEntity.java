@@ -52,7 +52,7 @@ public class LifecycleEntity {
     @Column(name = "price")
     private Integer price;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(targetClass = Music.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "lifecycle_images", joinColumns = @JoinColumn(name = "lifecycle_id"))
     @Column(name = "image_url")
     private List<String> imageUrls = new ArrayList<>();
