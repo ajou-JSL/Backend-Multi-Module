@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @Embeddable
 @Getter
 public class Music {
-    private String musicName;
-    private String artistName;
+    public String musicName;
+    public String artistName;
 }
