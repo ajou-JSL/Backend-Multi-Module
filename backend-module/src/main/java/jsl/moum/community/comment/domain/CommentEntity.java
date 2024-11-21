@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Setter
 @Table(
         name = "comment",
-        indexes = @Index(name = "idx_comment_article_id", columnList = "article_id")
+        indexes = @Index(name = "idx_comment_article_id", columnList = "fk_article_details_id")
 )
 public class CommentEntity {
 
