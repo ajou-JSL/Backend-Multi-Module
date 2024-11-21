@@ -36,6 +36,7 @@ public class ArticleReportDto {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Response {
+        private int id;
         private int articleId;
         private String articleTitle;
         private int reporterId;
@@ -46,6 +47,7 @@ public class ArticleReportDto {
         private boolean isResolved;
 
         public Response(jsl.moum.report.domain.ArticleReport articleReport) {
+            this.id = articleReport.getId();
             this.articleId = articleReport.getArticle().getId();
             this.articleTitle = articleReport.getArticle().getTitle();
             this.reporterId = articleReport.getReporter().getId();

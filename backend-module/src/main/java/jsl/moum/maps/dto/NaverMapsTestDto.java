@@ -1,5 +1,6 @@
 package jsl.moum.maps.dto;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.*;
 
 @Builder
@@ -12,6 +13,7 @@ public class NaverMapsTestDto {
 
     private String name;
     private String address;
+    private JsonNode json;
     private double latitude;
     private double longitude;
 
