@@ -24,7 +24,7 @@ import java.util.List;
 @Table(
         name = "article",
         indexes = {
-                @Index(name = "idx_article_view_comment_created_at", columnList = "view_count, comment_count, created_at DESC"),
+                @Index(name = "idx_article_view_comment_created_at", columnList = "view_count, comments_count, created_at DESC"),
         }
 )
 public class ArticleEntity {
