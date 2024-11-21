@@ -51,6 +51,7 @@ public class LifecycleEntity {
 
     @Column(name = "price")
     private Integer price;
+
     @ElementCollection(targetClass = Music.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "lifecycle_images", joinColumns = @JoinColumn(name = "lifecycle_id"))
     @Column(name = "image_url")
@@ -66,7 +67,8 @@ public class LifecycleEntity {
     @Embedded
     private Process process;
 
-    @ElementCollection(targetClass = Music.class, fetch = FetchType.EAGER)
+    // todo : 이거 수정하기
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "lifecycle_music_list", joinColumns = @JoinColumn(name = "lifecycle_id"))
     private List<Music> music;
 
