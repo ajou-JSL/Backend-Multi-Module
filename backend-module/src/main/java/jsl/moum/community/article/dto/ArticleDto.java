@@ -20,30 +20,19 @@ public class ArticleDto {
     @Getter
     public static class Request{
         private int id;
-
-        @NotEmpty @NotNull
-        private String title;
-
-        @NotNull
-        private ArticleEntity.ArticleCategories category;
-
-        // ArticleDetails로 빼서 저장해줄거임 request.dto에만 존재
-        private String content;
-
-        // 애도 content랑 마찬가지
+        @NotEmpty @NotNull private String title;
+        @NotEmpty @NotNull private ArticleEntity.ArticleCategories category;
+        @NotEmpty @NotNull private String content;
         private String fileUrl;
-
         private MemberEntity author;
-        private List<MusicGenre> genres;
-
+        private MusicGenre genre;
 
         public ArticleEntity toEntity(){
             return ArticleEntity.builder()
-                    .id(id)
                     .title(title)
                     .category(category)
                     .author(author)
-                    .genres(genres)
+                    .genre(genre)
                     .build();
         }
     }
@@ -56,7 +45,7 @@ public class ArticleDto {
         private final ArticleEntity.ArticleCategories category;
         private final int viewCounts;
         private final int commentCounts;
-        private final List<MusicGenre> genres;
+        private final MusicGenre genre;
         private final int likeCounts;
         private final String author;
         private final LocalDateTime createdAt;
@@ -70,7 +59,7 @@ public class ArticleDto {
             this.author = article.getAuthor().getUsername();
             this.viewCounts = article.getViewCount();
             this.commentCounts = article.getCommentCount();
-            this.genres = (article.getGenres() != null) ? article.getGenres() : null;
+            this.genre = article.getGenre();
             this.likeCounts = article.getLikesCount();
             this.createdAt = article.getCreatedAt();
             this.updatedAt = article.getUpdatedAt();

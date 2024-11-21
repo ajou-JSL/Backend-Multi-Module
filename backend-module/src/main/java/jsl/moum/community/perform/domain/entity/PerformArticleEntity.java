@@ -54,11 +54,8 @@ public class PerformArticleEntity {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @ElementCollection(targetClass = MusicGenre.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "perform_genre", joinColumns = @JoinColumn(name = "perform_id"))
     @Column(name = "genre", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private List<MusicGenre> genres = new ArrayList<>();
+    private MusicGenre genre;
 
     // 멤버가 참여해있는 공연들
     @OneToMany(mappedBy = "performanceArticle", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -99,8 +96,8 @@ public class PerformArticleEntity {
         if (updateDto.getPerformanceImageUrl() != null) {
             this.performanceImageUrl = updateDto.getPerformanceImageUrl();
         }
-        if (updateDto.getGenres() != null) {
-            this.genres = updateDto.getGenres();
+        if (updateDto.getGenre() != null) {
+            this.genre = updateDto.getGenre();
         }
     }
 

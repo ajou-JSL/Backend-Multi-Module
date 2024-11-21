@@ -85,7 +85,7 @@ public class PerformArticleService {
                 .performancePrice(requestDto.getPerformancePrice())
                 .performanceImageUrl(imageUrl)
                 .performMembers(performMembers)
-                .genres(requestDto.getGenres())
+                .genre(requestDto.getGenre())
                 .team(team)
                 .moum(moum)
                 .build();

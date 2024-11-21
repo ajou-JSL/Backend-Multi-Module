@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jsl.moum.auth.domain.entity.MemberEntity;
 import jsl.moum.auth.dto.MusicGenre;
+import jsl.moum.community.article.dto.UpdateArticleDto;
 import jsl.moum.report.domain.ArticleReport;
 import jsl.moum.report.domain.TeamReport;
 import lombok.*;
@@ -20,7 +21,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@Table(
+@Table( // 조회수순 최신순 댓글순 좋아요순
         name = "article",
         indexes = {
                 @Index(name = "idx_article_view_comment_created_at", columnList = "view_count, comment_count, created_at DESC"),
@@ -53,11 +54,9 @@ public class ArticleEntity {
     @Column(name = "comments_count")
     private int commentCount;
 
-    @ElementCollection(targetClass = MusicGenre.class)
-    @CollectionTable(name = "article_genre", joinColumns = @JoinColumn(name = "article_id"))
     @Column(name = "genre", nullable = false)
     @Enumerated(EnumType.STRING)
-    private List<MusicGenre> genres = new ArrayList<>();
+    private MusicGenre genre;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -80,16 +79,15 @@ public class ArticleEntity {
     public void updateLikesCount(int num) { this.likesCount += num; }
     public void commentsCountUp(){this.commentCount += 1;}
 
-    public void updateArticle(String newTitle, ArticleCategories newCategory, List<MusicGenre> newGenres)
-    {
-        if(newTitle != null){
-            this.title = newTitle;
+    public void updateArticle(UpdateArticleDto.Request updateArticleDto) {
+        if (updateArticleDto.getTitle() != null) {
+            this.title = updateArticleDto.getTitle();
         }
-        if (newGenres != null) {
-            this.genres = newGenres;
+        if (updateArticleDto.getGenre() != null) {
+            this.genre = updateArticleDto.getGenre();
         }
-        if(newCategory != null){
-            this.category = newCategory;
+        if (updateArticleDto.getCategory() != null) {
+            this.category = updateArticleDto.getCategory();
         }
         this.updatedAt = LocalDateTime.now();
     }

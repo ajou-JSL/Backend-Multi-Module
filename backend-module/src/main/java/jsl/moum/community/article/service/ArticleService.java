@@ -7,6 +7,7 @@ import jsl.moum.community.article.domain.article_details.ArticleDetailsEntity;
 import jsl.moum.community.article.domain.article_details.ArticleDetailsRepositoryCustom;
 import jsl.moum.community.article.dto.ArticleDetailsDto;
 import jsl.moum.community.article.dto.ArticleDto;
+import jsl.moum.community.article.dto.UpdateArticleDto;
 import jsl.moum.objectstorage.StorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -54,7 +55,7 @@ public class ArticleService {
                 .author(author)
                 .title(articleRequestDto.getTitle())
                 .category(articleRequestDto.getCategory())
-                .genres(articleRequestDto.getGenres())
+                .genre(articleRequestDto.getGenre())
                 .build();
 
         // article 테이블 저장
@@ -122,6 +123,11 @@ public class ArticleService {
         ArticleDetailsEntity articleDetails = getArticleDetails(articleDetailsId);
         ArticleEntity article = getArticle(articleDetailsId);
         String articleAuthor = article.getAuthor().getUsername();
+        UpdateArticleDto.Request updateArticleDto = UpdateArticleDto.Request.builder()
+                .genre(articleDetailsRequestDto.getGenre())
+                .title(articleDetailsRequestDto.getTitle())
+                .category(articleDetailsRequestDto.getCategory())
+                .build();
 
         // 로그인유저 == 작성자 여부 체크
         checkAuthor(memberName, articleAuthor);
@@ -147,7 +153,7 @@ public class ArticleService {
 
         // article_details, article 둘 다 update
         articleDetails.updateArticleDetails(newContent);
-        article.updateArticle(newTitle,newCategory,articleDetailsRequestDto.getGenres());
+        article.updateArticle(updateArticleDto);
 
         // article_details, article 둘 다 저장
         articleDetailsRepository.save(articleDetails);

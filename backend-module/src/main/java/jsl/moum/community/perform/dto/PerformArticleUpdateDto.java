@@ -29,7 +29,7 @@ public class PerformArticleUpdateDto {
         private Integer performancePrice;
         private String performanceImageUrl;
         private List<Integer> membersId;
-        private List<MusicGenre> genres;
+        private MusicGenre genre;
 
         public PerformArticleEntity toEntity(){
             return PerformArticleEntity.builder()
@@ -40,7 +40,7 @@ public class PerformArticleUpdateDto {
                     .performanceEndDate(performanceEndDate)
                     .performancePrice(performancePrice)
                     .performanceImageUrl(performanceImageUrl)
-                    .genres(genres)
+                    .genre(genre)
                     .build();
         }
     }
@@ -61,7 +61,7 @@ public class PerformArticleUpdateDto {
         private final String performanceImageUrl;
         //private final List<MemberDto.Response> members;
         private final List<Integer> membersId;
-        private final List<MusicGenre> genres;
+        private final MusicGenre genre;
 
         public Response(PerformArticleEntity performArticle){
             this.id = performArticle.getId();
@@ -74,7 +74,7 @@ public class PerformArticleUpdateDto {
             this.performanceEndDate = performArticle.getPerformanceEndDate();
             this.performancePrice = performArticle.getPerformancePrice();
             this.performanceImageUrl = performArticle.getPerformanceImageUrl();
-            this.genres = (performArticle.getGenres() != null) ? performArticle.getGenres() : null;
+            this.genre = (performArticle.getGenre() != null) ? performArticle.getGenre() : null;
 //
             this.membersId = performArticle.getPerformMembers() != null
                     ? performArticle.getPerformMembers().stream()

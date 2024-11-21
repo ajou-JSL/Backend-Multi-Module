@@ -21,15 +21,11 @@ public class ArticleDetailsDto {
         private int id;
 
         private ArticleEntity.ArticleCategories category;
-
-        // only update request 용도
         private String title;
-
-        // ArticleDetails로 빼서 저장해줄거임 request.dto에만 존재
         private String content;
 
         private String fileUrl;
-        private List<MusicGenre> genres;
+        private MusicGenre genre;
 
         public ArticleDetailsEntity toEntity(){
             return ArticleDetailsEntity.builder()
@@ -51,8 +47,8 @@ public class ArticleDetailsDto {
         private final int commentCounts;
         private final int likeCounts;
         private final String author;
-        private String fileUrl;
-        private List<CommentDto.Response> comments = new ArrayList<>();
+        private final String fileUrl;
+        private final List<CommentDto.Response> comments;
 
         public Response(ArticleDetailsEntity articleDetails, ArticleEntity article){
             this.id = article.getId();

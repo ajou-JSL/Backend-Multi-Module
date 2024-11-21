@@ -4,6 +4,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jsl.moum.auth.domain.entity.MemberEntity;
 import jsl.moum.auth.dto.MemberDto;
 import jsl.moum.auth.dto.MusicGenre;
@@ -36,7 +38,7 @@ public class PerformArticleDto {
         private List<Integer> membersId;
         private int teamId;
         private int moumId;
-        private List<MusicGenre> genres;
+        private MusicGenre genre;
 
         public PerformArticleEntity toEntity(){
             return PerformArticleEntity.builder()
@@ -47,7 +49,7 @@ public class PerformArticleDto {
                     .performanceEndDate(performanceEndDate)
                     .performancePrice(performancePrice)
                     .performanceImageUrl(performanceImageUrl)
-                    .genres(genres)
+                    .genre(genre)
                     .build();
         }
     }
@@ -70,7 +72,7 @@ public class PerformArticleDto {
         private final String performanceImageUrl;
         //private final List<MemberDto.Response> members;
         private final List<Integer> membersId;
-        private final List<MusicGenre> genres;
+        private final MusicGenre genre;
 
         public Response(PerformArticleEntity performArticle){
             this.id = performArticle.getId();
@@ -85,7 +87,7 @@ public class PerformArticleDto {
             this.performanceEndDate = performArticle.getPerformanceEndDate();
             this.performancePrice = performArticle.getPerformancePrice();
             this.performanceImageUrl = performArticle.getPerformanceImageUrl();
-            this.genres = (performArticle.getGenres() != null) ? performArticle.getGenres() : null;
+            this.genre = (performArticle.getGenre() != null) ? performArticle.getGenre() : null;
 
             // 멤버 id만 말고 객체 그대로 리턴할 경우에 이걸로
 //            this.members = performArticle.getPerformMembers().stream()
