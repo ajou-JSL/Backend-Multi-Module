@@ -56,11 +56,8 @@ public class LifecycleEntity {
     @Column(name = "image_url")
     private List<String> imageUrls = new ArrayList<>();
 
-    @ElementCollection(targetClass = MusicGenre.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "moum_genre", joinColumns = @JoinColumn(name = "moum_id"))
     @Column(name = "genre", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private List<MusicGenre> genres = new ArrayList<>();
+    private MusicGenre genre;
 
     @ManyToOne
     @JoinColumn(name = "fk_team_id")
@@ -107,8 +104,8 @@ public class LifecycleEntity {
     }
 
     public void updateLifecycleInfo(LifecycleDto.Request updateRequest){
-        if(updateRequest.getGenres() != null){
-            this.genres = updateRequest.getGenres();
+        if(updateRequest.getGenre() != null){
+            this.genre = updateRequest.getGenre();
         }
         if (updateRequest.getMoumName() != null) {
             this.lifecycleName = updateRequest.getMoumName();

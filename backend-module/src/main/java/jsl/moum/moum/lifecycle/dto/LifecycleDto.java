@@ -45,7 +45,7 @@ public class LifecycleDto {
         private List<RecordDto.Request> records;
         private Process process;
         private List<Music> music;
-        private List<MusicGenre> genres;
+        private MusicGenre genre;
 
 
         public LifecycleEntity toEntity(){
@@ -61,7 +61,7 @@ public class LifecycleDto {
                     .records(records.stream().map(RecordDto.Request::toEntity).collect(Collectors.toList()))
                     .process(process)
                     .music(music)
-                    .genres(genres)
+                    .genre(genre)
                     .build();
         }
     }
@@ -83,13 +83,13 @@ public class LifecycleDto {
         private final Process process;
         private final List<Music> music;
         private final List<MemberDto.Response> members;
-        private final List<MusicGenre> genres;
+        private final MusicGenre genre;
 
         public Response(LifecycleEntity lifecycle){
             this.moumId = lifecycle.getId();
             this.moumName = lifecycle.getLifecycleName();
             this.moumDescription = lifecycle.getLifecycleDescription();
-            this.genres = lifecycle.getGenres();
+            this.genre = lifecycle.getGenre();
             this.performLocation = lifecycle.getPerformLocation();
             this.startDate = lifecycle.getStartDate();
             this.endDate = lifecycle.getEndDate();
