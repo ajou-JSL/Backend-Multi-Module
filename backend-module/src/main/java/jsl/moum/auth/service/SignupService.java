@@ -45,10 +45,8 @@ public class SignupService {
             throw new CustomException(ErrorCode.EMAIL_VERIFY_FAILED);
         }
 
-        // 파일 업로드 후 URL 획득
         String fileUrl = uploadMemberImage(memberRequestDto.getUsername(), file);
 
-        // dto -> entity
         MemberDto.Request request = MemberDto.Request.builder()
                 .name(memberRequestDto.getName())
                 .username(memberRequestDto.getUsername())
@@ -88,7 +86,7 @@ public class SignupService {
         }
 
         String originalFilename = file.getOriginalFilename();
-        String key = "profiles/" + memberName + "/" + originalFilename; // 키 생성
-        return storageService.uploadFile(key, file); // 업로드 메서드 호출
+        String key = "profiles/" + memberName + "/" + originalFilename;
+        return storageService.uploadFile(key, file);
     }
 }
