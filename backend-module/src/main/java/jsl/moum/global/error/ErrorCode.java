@@ -43,6 +43,7 @@ public enum ErrorCode {
     // PerForm Article
     PERFORM_ARTICLE_NOT_FOUND(404,"F-PA001","공연 게시글을 찾을 수 없습니다."),
     PERFORM_ARTICLE_ALREADY_DELETED(404,"F-PAT002","이미 삭제된 공연 게시글입니다."),
+    PERFORM_ARTICLE_ALREADY_EXIST(403,"F-PAT002","이미 게시된 공연 게시글이 존재합니다."),
 
     // Wishlist
     ALREADY_IN_WISHLIST(400,"F-W001","이미 위시리스트에 추가된 게시글입니다."),

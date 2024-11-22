@@ -114,6 +114,4 @@ public class PerformArticleEntity {
     public void updateViewCount(int count){
         this.viewCount += count;
     }
-
-
 }

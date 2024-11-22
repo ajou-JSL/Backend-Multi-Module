@@ -38,4 +38,19 @@ public class PerformArticleRepositoryCustom {
                 .limit(size)
                 .fetch();
     }
+
+    /**
+     * 모음 이름으로 등록된 공연 게시글의 개수 세기
+     * select COUNT(*)
+     * from perform_article
+     * where fk_moum_id =: moumId;
+     */
+    public boolean isAlreadyExistPerformArticleByMoumId(int moumId) {
+        long count = jpaQueryFactory
+                .selectFrom(performArticleEntity)
+                .where(performArticleEntity.moum.id.eq(moumId))
+                .fetch().size();
+
+        return count > 0;
+    }
 }
