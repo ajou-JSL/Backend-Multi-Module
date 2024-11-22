@@ -251,7 +251,7 @@
         })
             .then((response) => {
                 if (!response.ok) {
-                    throw new Error("Failed to reply to the report.");
+                    throw new Error("Failed to submit reply.");
                 }
                 return response.json();
             })
@@ -262,7 +262,7 @@
             })
             .catch((error) => {
                 console.error("Error:", error);
-                alert("Failed to submit the reply. Please try again.");
+                alert("Failed to submit reply. Please try again.");
             });
     }
 
