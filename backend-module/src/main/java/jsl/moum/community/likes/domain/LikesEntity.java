@@ -36,10 +36,10 @@ public class LikesEntity {
     private MemberEntity member;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "article_id")
+    @JoinColumn(name = "article_id", nullable = true)
     private ArticleEntity article;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "perform_article_id")
+    @JoinColumn(name = "perform_article_id", nullable = true)
     private PerformArticleEntity performArticle;
 }
