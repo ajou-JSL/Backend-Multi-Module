@@ -30,8 +30,8 @@ public class PerformanceHallDto {
     private boolean hasMic;
     private boolean hasDrums;
     private String details;
-    private Float latitude;
-    private Float longitude;
+    private Double latitude;
+    private Double longitude;
 
     public PerformanceHallDto(PerformanceHall hall){
         this.id = hall.getId();

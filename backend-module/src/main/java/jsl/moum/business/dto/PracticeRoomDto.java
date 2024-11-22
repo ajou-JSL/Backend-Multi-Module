@@ -29,8 +29,8 @@ public class PracticeRoomDto {
     private boolean hasMic;
     private boolean hasDrums;
     private String details;
-    private Float latitude;
-    private Float longitude;
+    private Double latitude;
+    private Double longitude;
 
     public PracticeRoomDto(PracticeRoom room){
         this.id = room.getId();
@@ -60,7 +60,7 @@ public class PracticeRoomDto {
     @Setter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class Request{
+    public static class Register {
         private String name;
         private int price;
         private int capacity;
@@ -77,8 +77,31 @@ public class PracticeRoomDto {
         private boolean hasMic;
         private boolean hasDrums;
         private String details;
-        private Float latitude;
-        private Float longitude;
+        private Double latitude;
+        private Double longitude;
+
+        public PracticeRoom toEntity(){
+            return PracticeRoom.builder()
+                    .name(name)
+                    .price(price)
+                    .capacity(capacity)
+                    .address(address)
+                    .owner(owner)
+                    .phone(phone)
+                    .email(email)
+                    .mapUrl(mapUrl)
+                    .type(type)
+                    .stand(stand)
+                    .hasPiano(hasPiano)
+                    .hasAmp(hasAmp)
+                    .hasSpeaker(hasSpeaker)
+                    .hasMic(hasMic)
+                    .hasDrums(hasDrums)
+                    .details(details)
+                    .latitude(latitude)
+                    .longitude(longitude)
+                    .build();
+        }
     }
 
     @Builder

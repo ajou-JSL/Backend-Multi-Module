@@ -75,9 +75,9 @@ public class PracticeRoom {
     @Column
     private String details;
 
-    @Column
-    private Float latitude;
+    @Column(columnDefinition = "DOUBLE")
+    private Double latitude;
 
-    @Column
-    private Float longitude;
+    @Column(columnDefinition = "DOUBLE")
+    private Double longitude;
 }

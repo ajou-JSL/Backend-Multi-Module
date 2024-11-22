@@ -226,6 +226,12 @@ public class AdminService {
         return new PracticeRoomDto(room);
     }
 
+    public PracticeRoomDto registerPracticeRoom(PracticeRoomDto.Register registerDto){
+        PracticeRoom room = registerDto.toEntity();
+        room = practiceRoomRepository.save(room);
+        return new PracticeRoomDto(room);
+    }
+
     /**
      *
      * Performance Hall Dashboard

@@ -344,14 +344,19 @@ public class AdminController {
         return adminService.getPracticeRoomById(id);
     }
 
-//    @PostMapping("/practice-room/{id}")
-//    public ResponseEntity<ResultResponse> savePracticeRoom(@PathVariable(name = "id") int id,
-//                                                           @RequestBody PracticeRoomDto.Request update) {
-//        PracticeRoomDto practiceRoom = adminService.updatePracticeRoom(id, update);
-//
-//        ResultResponse resultResponse = ResultResponse.of(ResponseCode.PRACTICE_ROOM_UPDATE_SUCCESS, practiceRoom);
-//        return ResponseEntity.ok(resultResponse);
-//    }
+    @GetMapping("/practice-room/register/model-view")
+    public String registerPracticeRoom(Model model) {
+//        model.addAttribute("practiceRoom", new PracticeRoomDto.Request());
+        return "adminPracticeRoomRegister";
+    }
+
+    @PostMapping("/practice-room/register")
+    public ResponseEntity<ResultResponse> registerPracticeRoom(@RequestBody PracticeRoomDto.Register registerDto) {
+        PracticeRoomDto practiceRoom = adminService.registerPracticeRoom(registerDto);
+
+        ResultResponse resultResponse = ResultResponse.of(ResponseCode.REGISTER_PRACTICE_ROOM_SUCCESS, practiceRoom);
+        return ResponseEntity.ok(resultResponse);
+    }
 
     /**
      *

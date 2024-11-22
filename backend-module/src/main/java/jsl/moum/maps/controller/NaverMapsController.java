@@ -26,7 +26,7 @@ public class NaverMapsController {
 
 
     @PostMapping("/search/geo-info")
-    public ResponseEntity<ResultResponse> getGeoInfoByQuery(@RequestParam(name = "query") String query) {
+    public ResponseEntity<ResultResponse> getGeoInfoByAddressQuery(@RequestParam(name = "query") String query) {
         NaverMapsDto.GeoInfo locationInfo = naverMapsService.getGeoInfoByQuery(query);
 
         ResultResponse resultResponse = ResultResponse.of(ResponseCode.GET_LOCATION_INFO_SUCCESS, locationInfo);
@@ -34,7 +34,7 @@ public class NaverMapsController {
     }
 
     @PostMapping("/search/geo-info/list")
-    public ResponseEntity<ResultResponse> getGeoInfoListByQuery(@RequestParam(name = "query") String query) {
+    public ResponseEntity<ResultResponse> getGeoInfoListByAddressQuery(@RequestParam(name = "query") String query) {
         List<NaverMapsDto.GeoInfo> locationInfo = naverMapsService.getGeoInfoListByQuery(query);
 
         ResultResponse resultResponse = ResultResponse.of(ResponseCode.GET_LOCATION_INFO_SUCCESS, locationInfo);
