@@ -15,6 +15,9 @@ import jsl.moum.chatroom.dto.ChatroomDto;
 import jsl.moum.moum.team.domain.TeamEntity;
 import jsl.moum.moum.team.domain.TeamRepository;
 import jsl.moum.moum.team.dto.TeamDto;
+import jsl.moum.report.domain.MemberReport;
+import jsl.moum.report.domain.MemberReportRepository;
+import jsl.moum.report.dto.MemberReportDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -31,8 +34,15 @@ public class AdminService {
     private final ChatroomRepository chatroomRepository;
     private final MemberRepository memberRepository;
     private final TeamRepository teamRepository;
-     private final PracticeRoomRepository practiceRoomRepository;
-     private final PerformanceHallRepository performanceHallRepository;
+    private final PracticeRoomRepository practiceRoomRepository;
+    private final PerformanceHallRepository performanceHallRepository;
+    private final MemberReportRepository memberReportRepository;
+
+    /**
+     *
+     * Main Dashboard total counts
+     *
+     */
 
     public Long getChatroomCount() {
         return chatroomRepository.count();
@@ -54,6 +64,16 @@ public class AdminService {
         return performanceHallRepository.count();
     }
 
+    public Long getMemberReportCount(){
+        return memberReportRepository.count();
+    }
+
+    /**
+     *
+     * Chatroom Dashboard
+     *
+     */
+
     public List<ChatroomDto> getChatrooms(){
         return chatroomRepository.findAll().stream().map(ChatroomDto::new).toList();
     }
@@ -68,18 +88,38 @@ public class AdminService {
         return new ChatroomDto(chatroom);
     }
 
+    /**
+     *
+     * Member Dashboard
+     *
+     */
+
     public List<MemberDto.Response> getMembers(){
         return memberRepository.findAll().stream().map(MemberDto.Response::new).toList();
+    }
+
+    public List<MemberReportDto.Response> getMemberReports(){
+        return memberReportRepository.findAll().stream().map(MemberReportDto.Response::new).toList();
     }
 
     public Page<MemberDto.Response> getMembersPaged(PageRequest pageRequest){
         return memberRepository.findAll(pageRequest).map(MemberDto.Response::new);
     }
 
+    public Page<MemberReportDto.Response> getMemberReportsPaged(PageRequest pageRequest){
+        return memberReportRepository.findAll(pageRequest).map(MemberReportDto.Response::new);
+    }
+
     public MemberDto.Response getMemberById(int id){
         MemberEntity member = memberRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 회원 정보가 존재하지 않습니다."));
         return new MemberDto.Response(member);
+    }
+
+    public MemberReportDto.Response getMemberReportById(int id){
+        MemberReport report = memberReportRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 신고 내역이 존재하지 않습니다."));
+        return new MemberReportDto.Response(report);
     }
 
     public List<TeamDto.Response> getTeams(){

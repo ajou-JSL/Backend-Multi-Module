@@ -64,8 +64,8 @@ public class AdminController {
 
     @GetMapping("/chatrooms")
     public ResponseEntity<Map<String, Object>> getChatrooms(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
         PageRequest pageRequest = PageRequest.of(page - 1, size);
         Page<ChatroomDto> chatroomsPage = adminService.getChatroomsPaged(pageRequest);
 
@@ -89,14 +89,32 @@ public class AdminController {
         log.info("AdminController getMemberDashboard");
 
         model.addAttribute("memberCount", adminService.getMemberCount());
+        model.addAttribute("memberReportCount", adminService.getMemberReportCount());
+        return "adminMemberDashboard";
+    }
+
+    @GetMapping("/member/list")
+    public String getMemberList(Model model){
+        log.info("AdminController getMemberList");
+
+        model.addAttribute("memberCount", adminService.getMemberCount());
         model.addAttribute("members", adminService.getMembers());
-        return "adminMember";
+        return "adminMemberList";
+    }
+
+    @GetMapping("/member/report/list")
+    public String getMemberReportList(Model model){
+        log.info("AdminController getMemberList");
+
+        model.addAttribute("memberReportCount", adminService.getMemberReportCount());
+        model.addAttribute("memberReports", adminService.getMemberReports());
+        return "adminMemberReports";
     }
 
     @GetMapping("/members")
     public ResponseEntity<Map<String, Object>> getMembers(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
         PageRequest pageRequest = PageRequest.of(page - 1, size);
         Page<MemberDto.Response> membersPage = adminService.getMembersPaged(pageRequest);
 
@@ -109,10 +127,32 @@ public class AdminController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/member/reports")
+    public ResponseEntity<Map<String, Object>> getMemberReports(
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
+        PageRequest pageRequest = PageRequest.of(page - 1, size);
+        Page<MemberReportDto.Response> memberReportsPage = adminService.getMemberReportsPaged(pageRequest);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("memberReports", memberReportsPage.getContent());
+        response.put("currentPage", memberReportsPage.getNumber() + 1);
+        response.put("totalPages", memberReportsPage.getTotalPages());
+        response.put("totalReports", memberReportsPage.getTotalElements());
+
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/member/view/{id}")
     @ResponseBody
-    public MemberDto.Response getMemberDetails(@PathVariable int id) {
+    public MemberDto.Response getMemberDetails(@PathVariable(name = "id") int id) {
         return adminService.getMemberById(id);
+    }
+
+    @GetMapping("/member/report/view/{id}")
+    @ResponseBody
+    public MemberReportDto.Response getMemberReportDetails(@PathVariable(name = "id") int id) {
+        return adminService.getMemberReportById(id);
     }
 
 
@@ -127,8 +167,8 @@ public class AdminController {
 
     @GetMapping("/teams")
     public ResponseEntity<Map<String, Object>> getTeams(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
         PageRequest pageRequest = PageRequest.of(page - 1, size);
         Page<TeamDto.Response> teamsPage = adminService.getTeamsPaged(pageRequest);
 
@@ -143,7 +183,7 @@ public class AdminController {
 
     @GetMapping("/team/view/{id}")
     @ResponseBody
-    public TeamDto.Response getTeamDetails(@PathVariable int id) {
+    public TeamDto.Response getTeamDetails(@PathVariable(name = "id") int id) {
         return adminService.getTeamById(id);
     }
 
@@ -159,7 +199,7 @@ public class AdminController {
 
     @GetMapping("/performance-hall/view/{id}")
     @ResponseBody
-    public PerformanceHallDto getPerformanceHallDetails(@PathVariable int id) {
+    public PerformanceHallDto getPerformanceHallDetails(@PathVariable(name = "id") int id) {
         return adminService.getPerformanceHallById(id);
     }
 
@@ -175,7 +215,7 @@ public class AdminController {
 
     @GetMapping("/practice-room/view/{id}")
     @ResponseBody
-    public PracticeRoomDto getPracticeRoomDetails(@PathVariable int id) {
+    public PracticeRoomDto getPracticeRoomDetails(@PathVariable(name = "id") int id) {
         return adminService.getPracticeRoomById(id);
     }
 
