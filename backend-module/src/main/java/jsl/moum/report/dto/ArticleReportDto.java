@@ -1,5 +1,6 @@
 package jsl.moum.report.dto;
 
+import jsl.moum.report.domain.ArticleReport;
 import lombok.*;
 
 @Builder
@@ -18,7 +19,7 @@ public class ArticleReportDto {
     private String reply;
     private boolean isResolved;
 
-    public ArticleReportDto(jsl.moum.report.domain.ArticleReport articleReport) {
+    public ArticleReportDto(ArticleReport articleReport) {
         this.id = articleReport.getId();
         this.articleId = articleReport.getArticle().getId();
         this.articleTitle = articleReport.getArticle().getTitle();
@@ -46,7 +47,7 @@ public class ArticleReportDto {
         private String reply;
         private boolean isResolved;
 
-        public Response(jsl.moum.report.domain.ArticleReport articleReport) {
+        public Response(ArticleReport articleReport) {
             this.id = articleReport.getId();
             this.articleId = articleReport.getArticle().getId();
             this.articleTitle = articleReport.getArticle().getTitle();

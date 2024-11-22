@@ -12,7 +12,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
 
-    <title>Admin Member Dashboard</title>
+    <title>Admin Article Dashboard</title>
 
     <style>
         body {
@@ -76,34 +76,34 @@
 <div th:replace="~{adminSidebar.html :: sidebar}"></div>
 
 <div class="content">
-    <h1 class="text-center">Admin Member Dashboard</h1>
+    <h1 class="text-center">Admin Article Dashboard</h1>
 
     <!-- Total Counts and Dashboard Buttons -->
     <div class="row mt-4">
-        <!-- Total Members -->
+        <!-- Total Articles -->
         <div class="col-md-4">
             <div class="card text-white bg-primary mb-3" style="max-width: 18rem;">
-                <div class="card-header">Member Count</div>
+                <div class="card-header">Article Count</div>
                 <div class="card-body">
-                    <h5 class="card-title" th:text="${memberCount}">0</h5>
-                    <p class="card-text">총 사용자 수</p>
+                    <h5 class="card-title" th:text="${articleCount}">0</h5>
+                    <p class="card-text">총 게시글 수</p>
                 </div>
             </div>
-            <!-- 사용자 정보 관리 Button -->
-            <a href="#" th:href="@{/admin/member/list}" class="btn btn-primary btn-block mt-2" style="padding: 10px 5px; width: 77%;">사용자 정보 관리</a>
+            <!-- 게시글 정보 관리 Button -->
+            <a href="#" th:href="@{/admin/article/list}" class="btn btn-primary btn-block mt-2" style="padding: 10px 10px; width: 77%;">게시글 정보 관리</a>
         </div>
 
-        <!-- Total Member Reports -->
+        <!-- Total Article Reports -->
         <div class="col-md-4">
             <div class="card text-white bg-danger mb-3" style="max-width: 18rem;">
-                <div class="card-header">Member Report Count</div>
+                <div class="card-header">Article Report Count</div>
                 <div class="card-body">
-                    <h5 class="card-title" th:text="${memberReportCount}">0</h5>
-                    <p class="card-text">총 사용자 신고 수</p>
+                    <h5 class="card-title" th:text="${articleReportCount}">0</h5>
+                    <p class="card-text">총 게시글 신고 수</p>
                 </div>
             </div>
-            <!-- 사용자 신고 관리 Button -->
-            <a href="#" th:href="@{/admin/member/report/list}" class="btn btn-danger btn-block mt-2" style="padding: 10px 10px; width: 77%;">사용자 신고 관리</a>
+            <!-- 게시글 신고 관리 Button -->
+            <a href="#" th:href="@{/admin/article/report/list}" class="btn btn-danger btn-block mt-2" style="padding: 10px 10px; width: 77%;">게시글 신고 관리</a>
         </div>
     </div>
 </div>
