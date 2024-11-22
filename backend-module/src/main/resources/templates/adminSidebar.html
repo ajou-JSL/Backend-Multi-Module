@@ -1,0 +1,15 @@
+<div class="sidebar" th:fragment="sidebar">
+    <div class="p-3 text-center border-bottom">
+        <img src="/public/Logo_MOUM_Transparent_Background.png" alt="Admin Panel Logo" style="max-height: 110px; object-fit: contain;">
+    </div>
+    <nav class="mt-3">
+        <a href="#" th:href="@{/admin/dashboard}">대시보드</a>
+        <a href="#" th:href="@{/admin/member}">사용자 관리</a>
+        <a href="#" th:href="@{/admin/team}">음악단체 관리</a>
+        <a href="#" th:href="@{/admin/article}">게시글 관리</a>
+        <a href="#" th:href="@{/admin/chatroom}">채팅방 관리</a>
+        <a href="#" th:href="@{/admin/practice-room}">연습실 관리</a>
+        <a href="#" th:href="@{/admin/performance-hall}">공연장 관리</a>
+        <a href="#" th:href="@{/admin/logout}" id="logout-link">로그아웃</a>
+    </nav>
+</div>

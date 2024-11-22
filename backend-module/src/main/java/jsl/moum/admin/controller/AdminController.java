@@ -6,6 +6,7 @@ import jsl.moum.auth.dto.MemberDto;
 import jsl.moum.business.dto.PerformanceHallDto;
 import jsl.moum.business.dto.PracticeRoomDto;
 import jsl.moum.chatroom.dto.ChatroomDto;
+import jsl.moum.community.article.dto.ArticleDto;
 import jsl.moum.global.response.ResponseCode;
 import jsl.moum.global.response.ResultResponse;
 import jsl.moum.moum.team.dto.TeamDto;
@@ -53,36 +54,11 @@ public class AdminController {
         return "adminDashboard";
     }
 
-    @GetMapping("/chatroom")
-    public String getChatroomDashboard(Model model){
-        log.info("AdminController getChatroomDashboard");
-
-        model.addAttribute("chatroomCount", adminService.getChatroomCount());
-        model.addAttribute("chatrooms", adminService.getChatrooms());
-        return "adminChatroom";
-    }
-
-    @GetMapping("/chatrooms")
-    public ResponseEntity<Map<String, Object>> getChatrooms(
-            @RequestParam(name = "page", defaultValue = "1") int page,
-            @RequestParam(name = "size", defaultValue = "10") int size) {
-        PageRequest pageRequest = PageRequest.of(page - 1, size);
-        Page<ChatroomDto> chatroomsPage = adminService.getChatroomsPaged(pageRequest);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("chatrooms", chatroomsPage.getContent());
-        response.put("currentPage", chatroomsPage.getNumber() + 1);
-        response.put("totalPages", chatroomsPage.getTotalPages());
-        response.put("totalChatrooms", chatroomsPage.getTotalElements());
-
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/chatroom/view/{id}")
-    @ResponseBody
-    public ChatroomDto getChatroomDetails(@PathVariable int id) {
-        return adminService.getChatroomById(id);
-    }
+    /**
+     *
+     * Member Dashboard APIs
+     *
+     */
 
     @GetMapping("/member")
     public String getMemberDashboard(Model model){
@@ -155,14 +131,37 @@ public class AdminController {
         return adminService.getMemberReportById(id);
     }
 
+    /**
+     *
+     * Team Dashboard APIs
+     *
+     */
 
     @GetMapping("/team")
     public String getTeamDashboard(Model model){
         log.info("AdminController getTeamDashboard");
 
         model.addAttribute("teamCount", adminService.getTeamCount());
+        model.addAttribute("teamReportCount", adminService.getTeamReportCount());
+        return "adminTeamDashboard";
+    }
+
+    @GetMapping("/team/list")
+    public String getTeamList(Model model){
+        log.info("AdminController getTeamList");
+
+        model.addAttribute("teamCount", adminService.getTeamCount());
         model.addAttribute("teams", adminService.getTeams());
-        return "adminTeam";
+        return "adminTeamList";
+    }
+
+    @GetMapping("/team/report/list")
+    public String getTeamReportList(Model model){
+        log.info("AdminController getTeamReportList");
+
+        model.addAttribute("teamReportCount", adminService.getTeamReportCount());
+        model.addAttribute("teamReports", adminService.getTeamReports());
+        return "adminTeamReports";
     }
 
     @GetMapping("/teams")
@@ -181,11 +180,175 @@ public class AdminController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/team/reports")
+    public ResponseEntity<Map<String, Object>> getTeamReports(
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
+        PageRequest pageRequest = PageRequest.of(page - 1, size);
+        Page<TeamReportDto.Response> teamReportsPage = adminService.getTeamReportsPaged(pageRequest);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("teamReports", teamReportsPage.getContent());
+        response.put("currentPage", teamReportsPage.getNumber() + 1);
+        response.put("totalPages", teamReportsPage.getTotalPages());
+        response.put("totalReports", teamReportsPage.getTotalElements());
+
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/team/view/{id}")
     @ResponseBody
     public TeamDto.Response getTeamDetails(@PathVariable(name = "id") int id) {
         return adminService.getTeamById(id);
     }
+
+    @GetMapping("/team/report/view/{id}")
+    @ResponseBody
+    public TeamReportDto.Response getTeamReportDetails(@PathVariable(name = "id") int id) {
+        return adminService.getTeamReportById(id);
+    }
+
+    /**
+     *
+     * Article Dashboard APIs
+     *
+     */
+
+    @GetMapping("/article")
+    public String getArticleDashboard(Model model){
+        log.info("AdminController getArticleDashboard");
+
+        model.addAttribute("articleCount", adminService.getArticleCount());
+        model.addAttribute("articleReportCount", adminService.getArticleReportCount());
+        return "adminArticleDashboard";
+    }
+
+    @GetMapping("/article/list")
+    public String getArticleList(Model model){
+        log.info("AdminController getArticleList");
+
+        model.addAttribute("articleCount", adminService.getArticleCount());
+        model.addAttribute("articles", adminService.getArticles());
+        return "adminArticleList";
+    }
+
+    @GetMapping("/article/report/list")
+    public String getArticleReportList(Model model){
+        log.info("AdminController getArticleReportList");
+
+        model.addAttribute("articleReportCount", adminService.getArticleReportCount());
+        model.addAttribute("articleReports", adminService.getArticleReports());
+        return "adminArticleReports";
+    }
+
+    @GetMapping("/articles")
+    public ResponseEntity<Map<String, Object>> getArticles(
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
+        PageRequest pageRequest = PageRequest.of(page - 1, size);
+        Page<ArticleDto.Response> articlesPage = adminService.getArticlesPaged(pageRequest);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("articles", articlesPage.getContent());
+        response.put("currentPage", articlesPage.getNumber() + 1);
+        response.put("totalPages", articlesPage.getTotalPages());
+        response.put("totalArticles", articlesPage.getTotalElements());
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/article/reports")
+    public ResponseEntity<Map<String, Object>> getArticleReports(
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
+        PageRequest pageRequest = PageRequest.of(page - 1, size);
+        Page<ArticleReportDto.Response> articleReportsPage = adminService.getArticleReportsPaged(pageRequest);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("articleReports", articleReportsPage.getContent());
+        response.put("currentPage", articleReportsPage.getNumber() + 1);
+        response.put("totalPages", articleReportsPage.getTotalPages());
+        response.put("totalReports", articleReportsPage.getTotalElements());
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/article/view/{id}")
+    @ResponseBody
+    public ArticleDto.Response getArticleDetails(@PathVariable(name = "id") int id) {
+        return adminService.getArticleById(id);
+    }
+
+    @GetMapping("/article/report/view/{id}")
+    @ResponseBody
+    public ArticleReportDto.Response getArticleReportDetails(@PathVariable(name = "id") int id) {
+        return adminService.getArticleReportById(id);
+    }
+
+    /**
+     *
+     * Chatroom Dashboard APIs
+     *
+     */
+
+    @GetMapping("/chatroom")
+    public String getChatroomDashboard(Model model){
+        log.info("AdminController getChatroomDashboard");
+
+        model.addAttribute("chatroomCount", adminService.getChatroomCount());
+        model.addAttribute("chatrooms", adminService.getChatrooms());
+        return "adminChatroom";
+    }
+
+    @GetMapping("/chatrooms")
+    public ResponseEntity<Map<String, Object>> getChatrooms(
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
+        PageRequest pageRequest = PageRequest.of(page - 1, size);
+        Page<ChatroomDto> chatroomsPage = adminService.getChatroomsPaged(pageRequest);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("chatrooms", chatroomsPage.getContent());
+        response.put("currentPage", chatroomsPage.getNumber() + 1);
+        response.put("totalPages", chatroomsPage.getTotalPages());
+        response.put("totalChatrooms", chatroomsPage.getTotalElements());
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/chatroom/view/{id}")
+    @ResponseBody
+    public ChatroomDto getChatroomDetails(@PathVariable int id) {
+        return adminService.getChatroomById(id);
+    }
+
+    /**
+     *
+     * Practice Room Dashboard APIs
+     *
+     */
+
+    @GetMapping("/practice-room")
+    public String getPracticeRoomDashboard(Model model){
+        log.info("AdminController getPracticeRoomDashboard");
+
+        model.addAttribute("practiceRoomCount", adminService.getPracticeRoomCount());
+        model.addAttribute("practiceRooms", adminService.getPracticeRooms());
+
+        return "adminPracticeRoom";
+    }
+
+    @GetMapping("/practice-room/view/{id}")
+    @ResponseBody
+    public PracticeRoomDto getPracticeRoomDetails(@PathVariable(name = "id") int id) {
+        return adminService.getPracticeRoomById(id);
+    }
+
+    /**
+     *
+     * Performance Hall Dashboard APIs
+     *
+     */
 
     @GetMapping("/performance-hall")
     public String getPerformanceHallDashboard(Model model){
@@ -203,21 +366,6 @@ public class AdminController {
         return adminService.getPerformanceHallById(id);
     }
 
-    @GetMapping("/practice-room")
-    public String getPracticeRoomDashboard(Model model){
-        log.info("AdminController getPracticeRoomDashboard");
-
-        model.addAttribute("practiceRoomCount", adminService.getPracticeRoomCount());
-        model.addAttribute("practiceRooms", adminService.getPracticeRooms());
-
-        return "adminPracticeRoom";
-    }
-
-    @GetMapping("/practice-room/view/{id}")
-    @ResponseBody
-    public PracticeRoomDto getPracticeRoomDetails(@PathVariable(name = "id") int id) {
-        return adminService.getPracticeRoomById(id);
-    }
 
     @GetMapping("/logout")
     public String logout(){

@@ -12,12 +12,16 @@ import jsl.moum.business.dto.PracticeRoomDto;
 import jsl.moum.chatroom.domain.Chatroom;
 import jsl.moum.chatroom.domain.ChatroomRepository;
 import jsl.moum.chatroom.dto.ChatroomDto;
+import jsl.moum.community.article.domain.article.ArticleEntity;
+import jsl.moum.community.article.domain.article.ArticleRepository;
+import jsl.moum.community.article.dto.ArticleDto;
 import jsl.moum.moum.team.domain.TeamEntity;
 import jsl.moum.moum.team.domain.TeamRepository;
 import jsl.moum.moum.team.dto.TeamDto;
-import jsl.moum.report.domain.MemberReport;
-import jsl.moum.report.domain.MemberReportRepository;
+import jsl.moum.report.domain.*;
+import jsl.moum.report.dto.ArticleReportDto;
 import jsl.moum.report.dto.MemberReportDto;
+import jsl.moum.report.dto.TeamReportDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -37,6 +41,9 @@ public class AdminService {
     private final PracticeRoomRepository practiceRoomRepository;
     private final PerformanceHallRepository performanceHallRepository;
     private final MemberReportRepository memberReportRepository;
+    private final TeamReportRepository teamReportRepository;
+    private final ArticleReportRepository articleReportRepository;
+    private final ArticleRepository articleRepository;
 
     /**
      *
@@ -44,16 +51,20 @@ public class AdminService {
      *
      */
 
-    public Long getChatroomCount() {
-        return chatroomRepository.count();
-    }
-
     public Long getMemberCount() {
         return memberRepository.count();
     }
 
     public Long getTeamCount() {
         return teamRepository.count();
+    }
+
+    public Long getArticleCount(){
+        return articleReportRepository.count();
+    }
+
+    public Long getChatroomCount() {
+        return chatroomRepository.count();
     }
 
     public Long getPracticeRoomCount() {
@@ -68,24 +79,12 @@ public class AdminService {
         return memberReportRepository.count();
     }
 
-    /**
-     *
-     * Chatroom Dashboard
-     *
-     */
-
-    public List<ChatroomDto> getChatrooms(){
-        return chatroomRepository.findAll().stream().map(ChatroomDto::new).toList();
+    public Long getTeamReportCount(){
+        return teamReportRepository.count();
     }
 
-    public Page<ChatroomDto> getChatroomsPaged(PageRequest pageRequest){
-        return chatroomRepository.findAll(pageRequest).map(ChatroomDto::new);
-    }
-
-    public ChatroomDto getChatroomById(int id){
-        Chatroom chatroom = chatroomRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 채팅방 정보가 존재하지 않습니다."));
-        return new ChatroomDto(chatroom);
+    public Long getArticleReportCount(){
+        return articleReportRepository.count();
     }
 
     /**
@@ -122,12 +121,26 @@ public class AdminService {
         return new MemberReportDto.Response(report);
     }
 
+    /**
+     *
+     * Team Dashboard
+     *
+     */
+
     public List<TeamDto.Response> getTeams(){
         return teamRepository.findAll().stream().map(TeamDto.Response::new).toList();
     }
 
+    public List<TeamReportDto.Response> getTeamReports(){
+        return teamReportRepository.findAll().stream().map(TeamReportDto.Response::new).toList();
+    }
+
     public Page<TeamDto.Response> getTeamsPaged(PageRequest pageRequest){
         return teamRepository.findAll(pageRequest).map(TeamDto.Response::new);
+    }
+
+    public Page<TeamReportDto.Response> getTeamReportsPaged(PageRequest pageRequest){
+        return teamReportRepository.findAll(pageRequest).map(TeamReportDto.Response::new);
     }
 
     public TeamDto.Response getTeamById(int id){
@@ -136,15 +149,72 @@ public class AdminService {
         return new TeamDto.Response(team);
     }
 
-    public List<PerformanceHallDto> getPerformanceHalls(){
-        return performanceHallRepository.findAll().stream().map(PerformanceHallDto::new).toList();
+    public TeamReportDto.Response getTeamReportById(int id){
+        TeamReport report = teamReportRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 신고 내역이 존재하지 않습니다."));
+        return new TeamReportDto.Response(report);
     }
 
-    public PerformanceHallDto getPerformanceHallById(int id){
-        PerformanceHall hall = performanceHallRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 공연장 정보가 존재하지 않습니다."));
-        return new PerformanceHallDto(hall);
+    /**
+     *
+     * Article Dashboard
+     *
+     */
+
+    public List<ArticleDto.Response> getArticles(){
+        return articleRepository.findAll().stream().map(ArticleDto.Response::new).toList();
     }
+
+    public List<ArticleReportDto.Response> getArticleReports(){
+        return articleReportRepository.findAll().stream().map(ArticleReportDto.Response::new).toList();
+    }
+
+    public Page<ArticleDto.Response> getArticlesPaged(PageRequest pageRequest){
+        return articleRepository.findAll(pageRequest).map(ArticleDto.Response::new);
+    }
+
+    public Page<ArticleReportDto.Response> getArticleReportsPaged(PageRequest pageRequest){
+        return articleReportRepository.findAll(pageRequest).map(ArticleReportDto.Response::new);
+    }
+
+    public ArticleDto.Response getArticleById(int id){
+        ArticleEntity article = articleRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시글 정보가 존재하지 않습니다."));
+        return new ArticleDto.Response(article);
+    }
+
+    public ArticleReportDto.Response getArticleReportById(int id){
+        ArticleReport report = articleReportRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 신고 내역이 존재하지 않습니다."));
+        return new ArticleReportDto.Response(report);
+    }
+
+
+    /**
+     *
+     * Chatroom Dashboard
+     *
+     */
+
+    public List<ChatroomDto> getChatrooms(){
+        return chatroomRepository.findAll().stream().map(ChatroomDto::new).toList();
+    }
+
+    public Page<ChatroomDto> getChatroomsPaged(PageRequest pageRequest){
+        return chatroomRepository.findAll(pageRequest).map(ChatroomDto::new);
+    }
+
+    public ChatroomDto getChatroomById(int id){
+        Chatroom chatroom = chatroomRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 채팅방 정보가 존재하지 않습니다."));
+        return new ChatroomDto(chatroom);
+    }
+
+    /**
+     *
+     * Practice Room Dashboard
+     *
+     */
 
     public List<PracticeRoomDto> getPracticeRooms(){
         return practiceRoomRepository.findAll().stream().map(PracticeRoomDto::new).toList();
@@ -154,5 +224,21 @@ public class AdminService {
         PracticeRoom room = practiceRoomRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 연습실 정보가 존재하지 않습니다."));
         return new PracticeRoomDto(room);
+    }
+
+    /**
+     *
+     * Performance Hall Dashboard
+     *
+     */
+
+    public List<PerformanceHallDto> getPerformanceHalls(){
+        return performanceHallRepository.findAll().stream().map(PerformanceHallDto::new).toList();
+    }
+
+    public PerformanceHallDto getPerformanceHallById(int id){
+        PerformanceHall hall = performanceHallRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 공연장 정보가 존재하지 않습니다."));
+        return new PerformanceHallDto(hall);
     }
 }
