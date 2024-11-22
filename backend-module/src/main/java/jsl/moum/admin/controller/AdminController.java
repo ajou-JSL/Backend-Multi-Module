@@ -297,7 +297,7 @@ public class AdminController {
 
         model.addAttribute("chatroomCount", adminService.getChatroomCount());
         model.addAttribute("chatrooms", adminService.getChatrooms());
-        return "adminChatroom";
+        return "adminChatroomDashboard";
     }
 
     @GetMapping("/chatrooms")
@@ -335,7 +335,7 @@ public class AdminController {
         model.addAttribute("practiceRoomCount", adminService.getPracticeRoomCount());
         model.addAttribute("practiceRooms", adminService.getPracticeRooms());
 
-        return "adminPracticeRoom";
+        return "adminPracticeRoomDashboard";
     }
 
     @GetMapping("/practice-room/view/{id}")
@@ -357,7 +357,7 @@ public class AdminController {
         model.addAttribute("performanceHallCount", adminService.getPerformanceHallCount());
         model.addAttribute("performanceHalls", adminService.getPerformanceHalls());
 
-        return "adminPerformanceHall";
+        return "adminPerformanceHallDashboard";
     }
 
     @GetMapping("/performance-hall/view/{id}")

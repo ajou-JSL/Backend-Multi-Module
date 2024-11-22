@@ -112,12 +112,12 @@
     </div>
 </div>
 
-<!-- Modal for Report Details -->
+<!-- Modal for Team Report Details -->
 <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="reportModalLabel">Report Details</h5>
+                <h5 class="modal-title" id="reportModalLabel">Team Report Details</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -125,6 +125,11 @@
                 <div id="reportDetails" class="p-3">
                     <p>Loading...</p>
                 </div>
+            </div>
+            <div class="modal-footer">
+                <textarea id="replyMessage" class="form-control" rows="3" placeholder="Write your reply here..."></textarea>
+                <button type="button" class="btn btn-success" onclick="replyToReport()">Reply</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -134,7 +139,7 @@
     let currentPage = 1;
     let totalPages = 1;
 
-    // Function to load reports for a specific page
+    // Function to load team reports for a specific page
     function loadReports(page) {
         const itemsPerPage = document.getElementById("itemsPerPage").value;
         const reportsTable = document.getElementById("reportsTable");
@@ -142,7 +147,7 @@
         fetch(`/admin/team/reports?page=${page}&size=${itemsPerPage}`)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error("Failed to fetch reports");
+                    throw new Error("Failed to fetch team reports");
                 }
                 return response.json();
             })
@@ -154,7 +159,7 @@
                 currentPage = data.currentPage;
                 totalPages = data.totalPages;
 
-                // Populate the table with reports
+                // Populate the table with team reports
                 data.teamReports.forEach((report, index) => {
                     const row = `
                     <tr>
@@ -179,7 +184,7 @@
                 document.getElementById("nextPage").classList.toggle("disabled", currentPage === totalPages);
             })
             .catch(error => {
-                console.error("Error loading reports:", error);
+                console.error("Error loading team reports:", error);
             });
     }
 
@@ -191,12 +196,15 @@
         }
     }
 
-    // Function to fetch and display report details in the modal
+    // Function to fetch and display team report details in the modal
     function fetchReportDetails(event, button) {
-        event.preventDefault();
+        if (event) event.preventDefault();
         const reportId = button.getAttribute("data-report-id");
         const reportDetailsDiv = document.getElementById("reportDetails");
 
+        reportDetailsDiv.setAttribute("data-report-id", reportId); // Store the report ID for reply
+
+        // Fetch and populate report details
         fetch(`/admin/team/report/view/${reportId}`)
             .then(response => {
                 if (!response.ok) {
@@ -206,13 +214,13 @@
             })
             .then(data => {
                 reportDetailsDiv.innerHTML = `
-                <p><strong>Reporter:</strong> ${data.reporterUsername}</p>
-                <p><strong>Team:</strong> ${data.teamName}</p>
-                <p><strong>Type:</strong> ${data.type}</p>
-                <p><strong>Details:</strong> ${data.details || "N/A"}</p>
-                <p><strong>Reply:</strong> ${data.reply || "No reply yet"}</p>
-                <p><strong>Resolved:</strong> ${data.isResolved ? "Yes" : "No"}</p>
-            `;
+                    <p><strong>Reporter:</strong> ${data.reporterUsername}</p>
+                    <p><strong>Team Name:</strong> ${data.teamName}</p>
+                    <p><strong>Type:</strong> ${data.type}</p>
+                    <p><strong>Details:</strong> ${data.details || "N/A"}</p>
+                    <p><strong>Reply:</strong> ${data.reply || "No reply yet"}</p>
+                    <p><strong>Resolved:</strong> ${data.isResolved ? "Yes" : "No"}</p>
+                `;
             })
             .catch(error => {
                 reportDetailsDiv.innerHTML = `<p class="text-danger">Failed to load report details. Please try again.</p>`;
@@ -220,9 +228,46 @@
             });
     }
 
+    // Function to reply to a team report
+    function replyToReport() {
+        const replyMessage = document.getElementById("replyMessage").value;
+        const reportId = document
+            .getElementById("reportDetails")
+            .getAttribute("data-report-id");
+
+        if (!replyMessage.trim()) {
+            alert("Please write a reply before submitting.");
+            return;
+        }
+
+        fetch(`/admin/report/team/${reportId}/reply`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ reply: replyMessage }),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Failed to submit reply.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert("Reply submitted successfully.");
+                document.getElementById("replyMessage").value = ""; // Clear textarea
+                fetchReportDetails(null, { getAttribute: () => reportId }); // Refresh modal content
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Failed to submit reply. Please try again.");
+            });
+    }
+
     // Initial load
     loadReports(1);
 </script>
+
 
 <!-- Bootstrap Bundle with Popper -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
