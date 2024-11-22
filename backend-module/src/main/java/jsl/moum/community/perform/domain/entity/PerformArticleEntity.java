@@ -28,7 +28,7 @@ public class PerformArticleEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @Column(name = "performance_name")
     private String performanceName;
@@ -56,6 +56,12 @@ public class PerformArticleEntity {
 
     @Column(name = "genre", nullable = false)
     private MusicGenre genre;
+
+    @Column(name = "likes_count")
+    private int likesCount;
+
+    @Column(name = "view_count")
+    private int viewCount;
 
     // 멤버가 참여해있는 공연들
     @OneToMany(mappedBy = "performanceArticle", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -101,8 +107,13 @@ public class PerformArticleEntity {
         }
     }
 
+    public void updateLikesCount(int count){
+        this.likesCount += count;
+    }
 
-
+    public void updateViewCount(int count){
+        this.viewCount += count;
+    }
 
 
 }

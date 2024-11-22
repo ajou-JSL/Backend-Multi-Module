@@ -7,6 +7,8 @@ import jsl.moum.community.article.domain.article.ArticleRepository;
 import jsl.moum.community.likes.domain.LikesEntity;
 import jsl.moum.community.likes.domain.LikesRepository;
 import jsl.moum.community.likes.dto.LikesDto;
+import jsl.moum.community.perform.domain.entity.PerformArticleEntity;
+import jsl.moum.community.perform.domain.repository.PerformArticleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,9 +22,10 @@ public class LikesService {
     private final LikesRepository likesRepository;
     private final MemberRepository memberRepository;
     private final ArticleRepository articleRepository;
+    private final PerformArticleRepository performArticleRepository;
 
     /**
-     좋아요 등록(생성)
+     일반 게시글 좋아요 등록(생성)
      */
     @Transactional
     public LikesDto.Response createLikes(String memberName, int articleId) {
@@ -53,10 +56,10 @@ public class LikesService {
     }
 
     /**
-     좋아요 삭제
+     일반 게시글 좋아요 삭제
      */
     @Transactional
-    public LikesDto.Response deleteLikes(int articleId, String memberName) {
+    public LikesDto.Response deleteLikes(String memberName, int articleId) {
 
         MemberEntity member = findMember(memberName);
 
@@ -82,9 +85,71 @@ public class LikesService {
         return new LikesDto.Response(likesEntity);
     }
 
+
+    /**
+     공연 게시글 좋아요 등록(생성)
+     */
+    @Transactional
+    public LikesDto.Response createPerformLikes(String memberName, int performArticleId) {
+
+        PerformArticleEntity performArticle = findPerformArticle(performArticleId);
+        MemberEntity member = findMember(memberName);
+
+        LikesDto.Request likesRequest = LikesDto.Request.builder()
+                .member(member)
+                .performArticle(performArticle)
+                .build();
+
+        LikesEntity newLikes = likesRequest.toEntity();
+        likesRepository.save(newLikes);
+
+        // 좋아요 +1 후 저장
+        performArticle.updateLikesCount(1);
+        performArticleRepository.save(performArticle);
+
+        performArticle.getTeam().updateTeamExpAndRank(1);
+
+        return new LikesDto.Response(newLikes);
+    }
+
+    /**
+     공연 게시글 좋아요 삭제
+     */
+    @Transactional
+    public LikesDto.Response deletePerformLikes(String memberName, int performArticleId) {
+
+        MemberEntity member = findMember(memberName);
+
+        // 해당 게시글에 대해 이 멤버가 누른 좋아요 찾기
+        LikesEntity likesEntity = likesRepository.findByPerformArticleIdAndMemberId(performArticleId, member.getId())
+                .orElseThrow(() -> new CustomException(ErrorCode.LIKES_NOT_FOUND));
+
+        // 유저 이름이랑 좋아요를 누른 사람의 이름이 다르면 에러
+        if (!memberName.equals(likesEntity.getMember().getUsername())) {
+            throw new CustomException(ErrorCode.CANNOT_DELETE_OTHERS_LIKES);
+        }
+
+        // 좋아요 삭제
+        likesRepository.deleteLikeByPerformArticleIdAndMemberId(performArticleId, member.getId());
+
+        // 게시글 좋아요 수 감소 및 저장
+        PerformArticleEntity performArticle = findPerformArticle(performArticleId);
+        performArticle.updateLikesCount(-1);
+        performArticleRepository.save(performArticle);
+
+        performArticle.getTeam().updateTeamExpAndRank(-1);
+
+        return new LikesDto.Response(likesEntity);
+    }
+
     public ArticleEntity findArticle(int articleId){
         return articleRepository.findById(articleId)
                 .orElseThrow(()-> new CustomException(ErrorCode.ARTICLE_NOT_FOUND));
+    }
+
+    public PerformArticleEntity findPerformArticle(int performArticleId){
+        return performArticleRepository.findById(performArticleId)
+                .orElseThrow(()-> new CustomException(ErrorCode.PERFORM_ARTICLE_NOT_FOUND));
     }
 
     public MemberEntity findMember(String memberName){
