@@ -146,11 +146,12 @@ public class PerformArticleService {
     /*
         단건 조회
      */
-    @Transactional(readOnly = true)
+    @Transactional
     public PerformArticleDto.Response getPerformArticleById(int performArticleId){
         PerformArticleEntity target = performArticleRepository.findById(performArticleId)
                 .orElseThrow(()-> new CustomException(ErrorCode.ILLEGAL_ARGUMENT));
 
+        target.updateViewCount(1);
         return new PerformArticleDto.Response(target);
     }
 

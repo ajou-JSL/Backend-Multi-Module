@@ -190,7 +190,7 @@ public class LikesServiceTest {
 
         // when & then
         assertThrows(CustomException.class, () -> {
-            likesService.deleteLikes(anotherUserLikes.getId(),memberName); // 자신의 좋아요가 아님
+            likesService.deleteLikes(memberName,anotherUserLikes.getId()); // 자신의 좋아요가 아님
         });
 
         // likesRepository.deleteById(1)가 호출되지 않았는지 확인

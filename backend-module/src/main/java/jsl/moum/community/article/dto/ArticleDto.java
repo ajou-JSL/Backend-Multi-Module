@@ -20,9 +20,9 @@ public class ArticleDto {
     @Getter
     public static class Request{
         private int id;
-        @NotEmpty @NotNull private String title;
-        @NotEmpty @NotNull private ArticleEntity.ArticleCategories category;
-        @NotEmpty @NotNull private String content;
+        @NotEmpty private String title;
+        private ArticleEntity.ArticleCategories category;
+        @NotEmpty private String content;
         private String fileUrl;
         private MemberEntity author;
         private MusicGenre genre;
