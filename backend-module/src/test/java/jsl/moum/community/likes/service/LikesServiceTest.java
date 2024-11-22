@@ -1,8 +1,11 @@
 package jsl.moum.community.likes.service;
 
+import jsl.moum.community.likes.domain.LikesRepositoryCustom;
 import jsl.moum.community.perform.domain.entity.PerformArticleEntity;
 import jsl.moum.community.perform.domain.repository.PerformArticleRepository;
 import jsl.moum.custom.WithAuthUser;
+import jsl.moum.moum.lifecycle.domain.LifecycleEntity;
+import jsl.moum.moum.team.domain.TeamEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,10 +46,15 @@ public class LikesServiceTest {
     @Mock
     private MemberRepository memberRepository;
 
+    @Mock
+    private LikesRepositoryCustom likesRepositoryCustom;
+
     private MemberEntity member;
     private ArticleEntity article;
     private LikesEntity likes;
     private PerformArticleEntity performArticle;
+    private TeamEntity team;
+    private LifecycleEntity moum;
 
     @BeforeEach
     void setUp() {
@@ -55,6 +63,15 @@ public class LikesServiceTest {
         member = MemberEntity.builder()
                 .id(3)
                 .username("testuser")
+                .build();
+
+        moum = LifecycleEntity.builder()
+                .id(1)
+                .build();
+
+        team = TeamEntity.builder()
+                .id(1)
+                .teamName("team")
                 .build();
 
         article = ArticleEntity.builder()
@@ -66,6 +83,8 @@ public class LikesServiceTest {
         performArticle = PerformArticleEntity.builder()
                 .id(1)
                 .performanceName("perform article")
+                .team(team)
+                .moum(moum)
                 .build();
 
         likes = LikesEntity.builder()
@@ -86,6 +105,7 @@ public class LikesServiceTest {
         given(memberRepository.findByUsername(memberName)).willReturn(member);
         given(articleRepository.findById(articleId)).willReturn(Optional.of(article));
         given(likesRepository.save(any(LikesEntity.class))).willReturn(likes);
+        given(likesRepositoryCustom.isAlreadyLikesOnPerformArticle(anyInt(), anyInt())).willReturn(false);
 
         LikesDto.Response response = likesService.createLikes(memberName, articleId);
 
@@ -206,10 +226,10 @@ public class LikesServiceTest {
         String memberName = "anothor_member";
         int performArticleId = performArticle.getId();
 
-        // repository 기능 mocking
         given(memberRepository.findByUsername(memberName)).willReturn(member);
         given(performArticleRepository.findById(performArticleId)).willReturn(Optional.of(performArticle));
         given(likesRepository.save(any(LikesEntity.class))).willReturn(likes);
+        given(likesRepositoryCustom.isAlreadyLikesOnPerformArticle(anyInt(), anyInt())).willReturn(false);
 
         LikesDto.Response response = likesService.createPerformLikes(memberName, performArticleId);
 
