@@ -344,6 +344,15 @@ public class AdminController {
         return adminService.getPracticeRoomById(id);
     }
 
+//    @PostMapping("/practice-room/{id}")
+//    public ResponseEntity<ResultResponse> savePracticeRoom(@PathVariable(name = "id") int id,
+//                                                           @RequestBody PracticeRoomDto.Request update) {
+//        PracticeRoomDto practiceRoom = adminService.updatePracticeRoom(id, update);
+//
+//        ResultResponse resultResponse = ResultResponse.of(ResponseCode.PRACTICE_ROOM_UPDATE_SUCCESS, practiceRoom);
+//        return ResponseEntity.ok(resultResponse);
+//    }
+
     /**
      *
      * Performance Hall Dashboard APIs
