@@ -17,6 +17,9 @@ import org.springframework.web.client.RestTemplate;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -87,11 +90,27 @@ public class NaverMapsService {
     }
 
     public NaverMapsDto.GeoInfo getGeoInfoByQuery(String query) {
+        log.info("getGeoInfoByQuery from query: {}", query);
         try {
             // Get response from Naver Maps API
             ResponseEntity<String> geocodeResponse = fetchGeocodeResponse(query);
             NaverMapsDto.GeoInfo geoInfoDto = extractGeoInfoFromResponse(geocodeResponse, query);
             return geoInfoDto;
+
+        } catch (JsonProcessingException e) {
+            log.error("Failed to get location info from URL: {}, {}", query, e);
+            return null;
+        }
+    }
+
+    public List<NaverMapsDto.GeoInfo> getGeoInfoListByQuery(String query){
+        log.info("getGeoInfoListByQuery from query: {}", query);
+        try {
+            // Get response from Naver Maps API
+            ResponseEntity<String> geocodeResponse = fetchGeocodeResponse(query);
+            List<NaverMapsDto.GeoInfo> geoInfoList = extractGeoInfoListFromResponse(geocodeResponse, query);
+
+            return geoInfoList;
 
         } catch (JsonProcessingException e) {
             log.error("Failed to get location info from URL: {}, {}", query, e);
@@ -109,6 +128,13 @@ public class NaverMapsService {
         return coords;
     }
 
+    public NaverMapsDto.ClientInfo getClientInfo() {
+        return NaverMapsDto.ClientInfo.builder()
+                .clientId(clientId)
+                .clientSecret(clientSecret)
+                .apiUrl(apiUrl)
+                .build();
+    }
 
     /**
      *
@@ -161,6 +187,45 @@ public class NaverMapsService {
                 .longitude(longitude)
                 .build();
     }
+
+    private List<NaverMapsDto.GeoInfo> extractGeoInfoListFromResponse(ResponseEntity<String> response, String query) throws JsonProcessingException {
+        log.info("extractGeoInfoFromResponse from query: {}", query);
+
+        // Parse JSON response into JsonNode
+        JsonNode json = new ObjectMapper().readTree(response.getBody());
+        log.info("extractGeoInfoListFromResponse parse JSON response: {}", json);
+
+        // Navigate to "addresses" array
+        JsonNode addressesNode = json.path("addresses");
+
+        if (addressesNode == null || !addressesNode.isArray()) {
+            log.warn("No addresses found for query: {}", query);
+            return Collections.emptyList();
+        }
+
+        // Iterate through the array and build a list of GeoInfo
+        List<NaverMapsDto.GeoInfo> geoInfoList = new ArrayList<>();
+        for (JsonNode addressNode : addressesNode) {
+            // Extract required fields
+            String roadAddress = addressNode.path("roadAddress").asText("");
+            String longitudeStr = addressNode.path("x").asText("");
+            String latitudeStr = addressNode.path("y").asText("");
+
+            // Convert to Double if not empty
+            Double longitude = longitudeStr.isEmpty() ? null : Double.parseDouble(longitudeStr);
+            Double latitude = latitudeStr.isEmpty() ? null : Double.parseDouble(latitudeStr);
+
+            // Add GeoInfo to the list
+            geoInfoList.add(NaverMapsDto.GeoInfo.builder()
+                    .address(roadAddress)
+                    .latitude(latitude)
+                    .longitude(longitude)
+                    .build());
+        }
+
+        return geoInfoList;
+    }
+
 
     private NaverMapsDto.Coords extractCoordsFromFullUrlResponse(ResponseEntity<String> response) {
         log.info("extractCoordsFromFullUrlResponse from body");

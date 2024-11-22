@@ -54,4 +54,40 @@ public class PracticeRoomDto {
         this.latitude = room.getLatitude();
         this.longitude = room.getLongitude();
     }
+
+    @Builder
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Request{
+        private String name;
+        private int price;
+        private int capacity;
+        private String address;
+        private String owner;
+        private String phone;
+        private String email;
+        private String mapUrl;
+        private int type;
+        private int stand;
+        private boolean hasPiano;
+        private boolean hasAmp;
+        private boolean hasSpeaker;
+        private boolean hasMic;
+        private boolean hasDrums;
+        private String details;
+        private Float latitude;
+        private Float longitude;
+    }
+
+    @Builder
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Images{
+        private List<String> imageUrls;
+    }
+
 }
