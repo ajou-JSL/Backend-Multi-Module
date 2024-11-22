@@ -62,13 +62,13 @@ public class PracticeRoomDto {
     @AllArgsConstructor
     public static class Register {
         private String name;
-        private int price;
-        private int capacity;
         private String address;
         private String owner;
         private String phone;
         private String email;
         private String mapUrl;
+        private int price;
+        private int capacity;
         private int type;
         private int stand;
         private boolean hasPiano;

@@ -22,8 +22,23 @@ public class PracticeRoom {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column
+    @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
+    private String address;
+
+    @Column(nullable = false)
+    private String owner;
+
+    @Column(nullable = false)
+    private String phone;
+
+    @Column(nullable = false)
+    private String email;
+
+    @Column(name = "map_url", nullable = false)
+    private String mapUrl;
 
     @Column
     private int price;
@@ -31,20 +46,6 @@ public class PracticeRoom {
     @Column
     private int capacity;
 
-    @Column
-    private String address;
-
-    @Column
-    private String owner;
-
-    @Column
-    private String phone;
-
-    @Column
-    private String email;
-
-    @Column(name = "map_url")
-    private String mapUrl;
 
     @ElementCollection // 다중 값 저장
     @CollectionTable(name = "practice_room_images", joinColumns = @JoinColumn(name = "practice_room_id"))
