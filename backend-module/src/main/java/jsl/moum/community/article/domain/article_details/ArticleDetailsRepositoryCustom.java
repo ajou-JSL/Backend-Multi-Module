@@ -61,10 +61,7 @@ public class ArticleDetailsRepositoryCustom {
     }
 
     /**
-     * 키워드를 포함하는 게시글을 제목 또는 내용으로 검색
-     *  @param keyword 검색할 키워드
-     *  @return 검색된 게시글 목록
-     *
+     * 검색 조회(제목, 카테고리)
      *  select a.*
      *  from article a
      *  where lower(a.title) like lower('%:keyword%') and category = :category;

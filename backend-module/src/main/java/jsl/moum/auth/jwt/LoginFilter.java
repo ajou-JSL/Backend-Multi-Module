@@ -41,14 +41,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private final RefreshRepository refreshRepository;
     private final MemberRepository memberRepository;
 
-//    @Value("${spring.jwt.expiration}")
-//    private long tempExpiration;
-//
-//    @Value("${spring.jwt.refresh-token.expiration}")
-//    private long tempExpirationRefresh;
-//
-
-
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
@@ -60,19 +52,16 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
 
-        //스프링 시큐리티에서 username과 password를 검증하기 위해서는 token에 담아야 함
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(username, password, authorities);
-
-        //token에 담은 검증을 위한 AuthenticationManager로 전달
         return authenticationManager.authenticate(authToken);
     }
 
-    //로그인 성공시 실행하는 메소드 (여기서 JWT를 발급하면 됨)
-    // Access : 헤더에 발급 후 프론트에서 로컬 스토리지 저장
-    // Refresh : 쿠키에 발급
+    //로그인 성공시, jwt발급
+    // access -> haeders
+    // refresh : cookie
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException {
-    //유저 정보
+
     String username = authentication.getName();
     int userId = ((CustomUserDetails) authentication.getPrincipal()).getMemberId();
     MemberEntity loginUser = memberRepository.findById(userId)
@@ -88,15 +77,13 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     GrantedAuthority auth = iterator.next();
     String role = auth.getAuthority();
 
-    //토큰 생성
     String access = jwtUtil.createJwt("access", username, role, 36000000L);
     String refresh = jwtUtil.createJwt("refresh", username, role, 842000L);
 
-    // Refresh 토큰 저장
-    addRefreshEntity(username, refresh, 842000L); // 24h
 
-    //응답 설정
-        ResultResponse resultResponse = ResultResponse.of(ResponseCode.LOGIN_SUCCESS, userInfo);
+    addRefreshEntity(username, refresh, 842000L);
+
+    ResultResponse resultResponse = ResultResponse.of(ResponseCode.LOGIN_SUCCESS, userInfo);
     response.setHeader("access", access);
     response.addCookie(createCookie("refresh", refresh));
     response.setStatus(resultResponse.getStatus());
@@ -116,7 +103,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         refreshRepository.save(refreshEntity);
     }
 
-    //로그인 실패시 실행하는 메소드
+    // 로그인 실패시
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
         ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.LOGIN_FAIL);

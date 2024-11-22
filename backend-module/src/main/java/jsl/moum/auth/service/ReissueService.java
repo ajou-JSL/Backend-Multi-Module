@@ -25,13 +25,6 @@ public class ReissueService {
     private final JwtUtil jwtUtil;
     private final RefreshRepository refreshRepository;
 
-//    @Value("${spring.jwt.expiration}")
-//    private Long tempExpiration;
-//
-//    @Value("${spring.jwt.refresh-token.expiration}")
-//    private Long tempExpirationRefresh;
-
-
     public ResultResponse reissue(HttpServletRequest request, HttpServletResponse response) {
 
         String refresh = getRefreshTokenFromCookies(request);
