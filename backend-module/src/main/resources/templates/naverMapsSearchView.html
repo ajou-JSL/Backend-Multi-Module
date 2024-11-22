@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+
+    <!-- favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
+
+    <title>Naver Maps Geocoding Search</title>
+</head>
+
+<body>
+<div class="container mt-5">
+    <h1 class="text-center">Search for Locations</h1>
+
+    <!-- Search Input -->
+    <div class="input-group mt-4">
+        <input type="text" id="searchInput" class="form-control" placeholder="Enter location name">
+        <button class="btn btn-primary" onclick="searchLocations()">Search</button>
+    </div>
+
+    <!-- Results Section -->
+    <div class="mt-4">
+        <h3>Search Results:</h3>
+        <ul id="resultsList" class="list-group"></ul>
+    </div>
+</div>
+
+<script>
+    function searchLocations() {
+        const query = document.getElementById("searchInput").value.trim();
+
+        if (!query) {
+            alert("Please enter a location name.");
+            return;
+        }
+
+        // Fetch data from the backend proxy API
+        fetch('/api/maps/search/geo-info/list', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({ query: query })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.status} - ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Ensure the response format is correct
+                if (data && data.status === 200 && Array.isArray(data.data)) {
+                    displayResults(data.data);
+                } else {
+                    displayError("Invalid response format or no data found.");
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching location data:", error);
+                displayError("Failed to retrieve location data. Please try again.");
+            });
+    }
+
+    function displayResults(locations) {
+        const resultsList = document.getElementById("resultsList");
+        resultsList.innerHTML = ""; // Clear previous results
+
+        if (locations.length === 0) {
+            displayError("No locations found.");
+            return;
+        }
+
+        locations.forEach(location => {
+            const listItem = document.createElement("li");
+            listItem.className = "list-group-item";
+            listItem.innerHTML = `
+                <strong>Address:</strong> ${location.address}<br>
+                <strong>Latitude:</strong> ${location.latitude}<br>
+                <strong>Longitude:</strong> ${location.longitude}
+            `;
+            resultsList.appendChild(listItem);
+        });
+    }
+
+    function displayError(message) {
+        const resultsList = document.getElementById("resultsList");
+        resultsList.innerHTML = ""; // Clear previous results
+
+        const errorItem = document.createElement("li");
+        errorItem.className = "list-group-item text-danger";
+        errorItem.textContent = message;
+        resultsList.appendChild(errorItem);
+    }
+</script>
+
+<!-- Bootstrap Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
+        crossorigin="anonymous"></script>
+</body>
+</html>

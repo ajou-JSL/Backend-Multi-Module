@@ -48,44 +48,32 @@
 </head>
 <body>
 
-<div class="sidebar">
-    <div class="p-3 text-center border-bottom">
-        <img src="/public/Logo_MOUM_Transparent_Background.png" alt="Admin Panel Logo" style="max-height: 110px; object-fit: contain;">
-    </div>
-    <nav class="mt-3">
-        <a href="#" th:href="@{/admin/dashboard}">대시보드</a>
-        <a href="#" th:href="@{/admin/member}">사용자 관리</a>
-        <a href="#" th:href="@{/admin/team}">음악단체 관리</a>
-        <a href="#" th:href="@{/admin/chatroom}">채팅방 관리</a>
-        <a href="#" th:href="@{/admin/practice-room}">연습실 관리</a>
-        <a href="#" th:href="@{/admin/performance-hall}">공연장 관리</a>
-        <a href="#" th:href="@{/admin/logout}" id="logout-link">로그아웃</a>
-    </nav>
-</div>
+<!-- Thymeleaf Fragments sidebar -->
+<div th:replace="~{adminSidebar.html :: sidebar}"></div>
 
 <div class="content">
     <div class="container">
-        <h1 class="mt-3 mb-5">음악단체 관리</h1>
+        <h1 class="mt-3 mb-5">공연장 관리</h1>
         <div class="row">
             <div class="col-md-4">
                 <div class="card text-white bg-secondary mb-3" style="max-width: 18rem;">
-                    <div class="card-header">Practice Room Count</div>
+                    <div class="card-header">Performance Hall Count</div>
                     <div class="card-body">
-                        <h5 class="card-title" th:text="${practiceRoomCount}">0</h5>
-                        <p class="card-text">제휴 연습실 개수</p>
+                        <h5 class="card-title" th:text="${performanceHallCount}">0</h5>
+                        <p class="card-text">제휴 공연장 개수</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Practice Room List -->
+        <!-- Performance Hall List -->
         <div class="mt-5">
-            <h2>연습실 목록</h2>
+            <h2>공연장 목록</h2>
             <table class="table table-striped">
                 <thead>
                 <tr>
                     <th>#</th>
-                    <th>연습실 이름</th>
+                    <th>공연장 이름</th>
                     <th>주소</th>
                     <th>소유주</th>
                     <th>연락처</th>
@@ -93,16 +81,16 @@
                 </tr>
                 </thead>
                 <tbody>
-                <!-- Iterate through the list of practice rooms -->
-                <tr th:each="room, iterStat : ${practiceRooms}">
+                <!-- Iterate through the list of performance halls -->
+                <tr th:each="hall, iterStat : ${performanceHalls}">
                     <td th:text="${iterStat.index + 1}">1</td>
-                    <td th:text="${room.name}">Practice Room Name</td>
-                    <td th:text="${room.address}">Address</td>
-                    <td th:text="${room.owner}">Owner</td>
-                    <td th:text="${room.phone}">Phone</td>
+                    <td th:text="${hall.name}">Performance Hall Name</td>
+                    <td th:text="${hall.address}">Address</td>
+                    <td th:text="${hall.owner}">Owner</td>
+                    <td th:text="${hall.phone}">Phone</td>
                     <td>
-                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#practiceRoomModal"
-                                th:attr="data-room-id=${room.id}" onclick="fetchPracticeRoomDetails(event, this)">
+                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#performanceHallModal"
+                                th:attr="data-hall-id=${hall.id}" onclick="fetchPerformanceHallDetails(event, this)">
                             View
                         </button>
                     </td>
@@ -113,17 +101,17 @@
     </div>
 </div>
 
-<!-- Modal for Practice Room Details -->
-<div class="modal fade" id="practiceRoomModal" tabindex="-1" aria-labelledby="practiceRoomModalLabel" aria-hidden="true">
+<!-- Modal for Performance Hall Details -->
+<div class="modal fade" id="performanceHallModal" tabindex="-1" aria-labelledby="performanceHallModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="practiceRoomModalLabel">Practice Room Details</h5>
+                <h5 class="modal-title" id="performanceHallModalLabel">Performance Hall Details</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <!-- Practice Room details will be dynamically inserted here -->
-                <div id="practiceRoomDetails" class="p-3">
+                <!-- Performance Hall details will be dynamically inserted here -->
+                <div id="performanceHallDetails" class="p-3">
                     <p>Loading...</p>
                 </div>
             </div>
@@ -171,25 +159,26 @@
 </script>
 
 <script>
-    // Function to fetch and display practice room details in the modal
-    function fetchPracticeRoomDetails(event, button) {
+    // Function to fetch and display performance hall details in the modal
+    function fetchPerformanceHallDetails(event, button) {
         event.preventDefault();
-        const roomId = button.getAttribute("data-room-id");
-        const practiceRoomDetailsDiv = document.getElementById("practiceRoomDetails");
+        const hallId = button.getAttribute("data-hall-id");
+        const performanceHallDetailsDiv = document.getElementById("performanceHallDetails");
 
-        fetch(`/admin/practice-room/view/${roomId}`)
+        fetch(`/admin/performance-hall/view/${hallId}`)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error("Failed to fetch practice room details");
+                    throw new Error("Failed to fetch performance hall details");
                 }
                 return response.json();
             })
             .then(data => {
-                practiceRoomDetailsDiv.innerHTML = `
+                performanceHallDetailsDiv.innerHTML = `
                 <p><strong>ID:</strong> ${data.id}</p>
                 <p><strong>Name:</strong> ${data.name}</p>
-                <p><strong>Price:</strong> ${data.price} 원</p>
-                <p><strong>Capacity:</strong> ${data.capacity} people</p>
+                <p><strong>Price:</strong> ${data.price}</p>
+                <p><strong>Size:</strong> ${data.size} sqm</p>
+                <p><strong>Capacity:</strong> ${data.capacity}</p>
                 <p><strong>Address:</strong> ${data.address}</p>
                 <p><strong>Owner:</strong> ${data.owner}</p>
                 <p><strong>Phone:</strong> ${data.phone}</p>
@@ -214,7 +203,7 @@
             `;
             })
             .catch(error => {
-                practiceRoomDetailsDiv.innerHTML = `<p class="text-danger">Failed to load practice room details. Please try again.</p>`;
+                performanceHallDetailsDiv.innerHTML = `<p class="text-danger">Failed to load performance hall details. Please try again.</p>`;
                 console.error(error);
             });
     }

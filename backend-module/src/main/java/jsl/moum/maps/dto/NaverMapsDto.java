@@ -44,5 +44,21 @@ public class NaverMapsDto {
         }
     }
 
+    @Builder
+    @Getter
+    @Setter
+    @RequiredArgsConstructor
+    public static class ClientInfo {
+        private String clientId;
+        private String clientSecret;
+        private String apiUrl;
+
+        public ClientInfo(String clientId, String clientSecret, String apiUrl) {
+            this.clientId = clientId;
+            this.clientSecret = clientSecret;
+            this.apiUrl = apiUrl;
+        }
+    }
+
 
 }

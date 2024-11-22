@@ -48,45 +48,32 @@
 </head>
 <body>
 
-<div class="sidebar">
-    <div class="p-3 text-center border-bottom">
-        <img src="/public/Logo_MOUM_Transparent_Background.png" alt="Admin Panel Logo" style="max-height: 110px; object-fit: contain;">
-    </div>
-    <nav class="mt-3">
-        <a href="#" th:href="@{/admin/dashboard}">대시보드</a>
-        <a href="#" th:href="@{/admin/member}">사용자 관리</a>
-        <a href="#" th:href="@{/admin/team}">음악단체 관리</a>
-        <a href="#" th:href="@{/admin/chatroom}">채팅방 관리</a>
-        <a href="#" th:href="@{/admin/practice-room}">연습실 관리</a>
-        <a href="#" th:href="@{/admin/performance-hall}">공연장 관리</a>
-        <a href="#" th:href="@{/admin/logout}" id="logout-link">로그아웃</a>
-    </nav>
-</div>
+<!-- Thymeleaf Fragments sidebar -->
+<div th:replace="~{adminSidebar.html :: sidebar}"></div>
 
 <div class="content">
     <div class="container">
-        <h1 class="mt-3 mb-5">사용자 관리</h1>
+        <h1 class="mt-3 mb-5">음악단체 관리</h1>
         <div class="row">
-            <!-- Total Chatrooms -->
             <div class="col-md-4">
                 <div class="card text-white bg-primary mb-3" style="max-width: 18rem;">
-                    <div class="card-header">Member Count</div>
+                    <div class="card-header">Team Count</div>
                     <div class="card-body">
-                        <h5 class="card-title" th:text="${memberCount}">0</h5>
-                        <p class="card-text">총 사용자 수</p>
+                        <h5 class="card-title" th:text="${teamCount}">0</h5>
+                        <p class="card-text">총 음악단체 수</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Member List with Pagination -->
+        <!-- Team List with Pagination -->
         <div class="mt-5">
-            <h2>사용자 목록</h2>
+            <h2>음악단체 목록</h2>
 
-            <!-- Dropdown to select the number of members per page -->
+            <!-- Dropdown to select the number of teams per page -->
             <div class="mb-3">
-                <label for="itemsPerPage">Members per page:</label>
-                <select id="itemsPerPage" class="form-select" style="width: auto; display: inline-block;" onchange="loadMembers(1)">
+                <label for="itemsPerPage">Teams per page:</label>
+                <select id="itemsPerPage" class="form-select" style="width: auto; display: inline-block;" onchange="loadTeams(1)">
                     <option value="5">5</option>
                     <option value="10" selected>10</option>
                     <option value="20">20</option>
@@ -97,14 +84,14 @@
                 <thead>
                 <tr>
                     <th>#</th>
-                    <th>사용자 ID</th>
-                    <th>닉네임</th>
-                    <th>티어</th>
+                    <th>음악단체 이름</th>
+                    <th>장르</th>
+                    <th>위치</th>
                     <th>상세</th>
                 </tr>
                 </thead>
-                <tbody id="membersTable">
-                <!-- Members will be dynamically inserted here -->
+                <tbody id="teamsTable">
+                <!-- Teams will be dynamically inserted here -->
                 </tbody>
             </table>
 
@@ -123,18 +110,17 @@
     </div>
 </div>
 
-
-<!-- Modal for Member Details -->
-<div class="modal fade" id="memberModal" tabindex="-1" aria-labelledby="memberModalLabel" aria-hidden="true">
+<!-- Modal for Team Details -->
+<div class="modal fade" id="teamModal" tabindex="-1" aria-labelledby="teamModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="memberModalLabel">Member Details</h5>
+                <h5 class="modal-title" id="teamModalLabel">Team Details</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <!-- Member details will be dynamically inserted here -->
-                <div id="memberDetails" class="p-3">
+                <!-- Team details will be dynamically inserted here -->
+                <div id="teamDetails" class="p-3">
                     <p>Loading...</p>
                 </div>
             </div>
@@ -142,48 +128,51 @@
     </div>
 </div>
 
+
 <!-- JavaScript -->
 <script>
     let currentPage = 1;
     let totalPages = 1;
 
-    // Function to load members for a specific page
-    function loadMembers(page) {
+    // Function to load teams for a specific page
+    function loadTeams(page) {
         const itemsPerPage = document.getElementById("itemsPerPage").value;
-        const membersTable = document.getElementById("membersTable");
+        const teamsTable = document.getElementById("teamsTable");
 
-        fetch(`/admin/members?page=${page}&size=${itemsPerPage}`)
+        fetch(`/admin/teams?page=${page}&size=${itemsPerPage}`)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error("Failed to fetch members");
+                    throw new Error("Failed to fetch teams");
                 }
                 return response.json();
             })
             .then(data => {
                 // Clear the current table
-                membersTable.innerHTML = "";
+                teamsTable.innerHTML = "";
 
                 // Update pagination variables
                 currentPage = data.currentPage;
                 totalPages = data.totalPages;
 
-                // Populate the table with members
-                data.members.forEach((member, index) => {
+                // Populate the table with teams
+                data.teams.forEach((team, index) => {
                     const row = `
                         <tr>
                             <td>${(currentPage - 1) * itemsPerPage + index + 1}</td>
-                            <td>${member.username}</td>
-                            <td>${member.name}</td>
-                            <td>${member.tier}</td>
+                            <td>${team.teamName}</td>
                             <td>
-                                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#memberModal"
-                                        data-member-id="${member.id}" onclick="fetchMemberDetails(event, this)">
+                                ${team.genres?.length ? team.genres.map(genre => genre).join(', ') : 'No genres'}
+                            </td>
+                            <td>${team.location}</td>
+                            <td>
+                                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#teamModal"
+                                        data-team-id="${team.teamId}" onclick="fetchTeamDetails(event, this)">
                                     View
                                 </button>
                             </td>
                         </tr>
                     `;
-                    membersTable.innerHTML += row;
+                    teamsTable.innerHTML += row;
                 });
 
                 // Update pagination controls
@@ -191,7 +180,7 @@
                 document.getElementById("nextPage").classList.toggle("disabled", currentPage === totalPages);
             })
             .catch(error => {
-                console.error("Error loading members:", error);
+                console.error("Error loading teams:", error);
             });
     }
 
@@ -199,41 +188,60 @@
     function changePage(offset) {
         const newPage = currentPage + offset;
         if (newPage >= 1 && newPage <= totalPages) {
-            loadMembers(newPage);
+            loadTeams(newPage);
         }
     }
 
-    // Function to fetch and display member details in the modal
-    function fetchMemberDetails(event, button) {
+    // Function to fetch and display team details in the modal
+    function fetchTeamDetails(event, button) {
         event.preventDefault();
-        const memberId = button.getAttribute("data-member-id");
-        const memberDetailsDiv = document.getElementById("memberDetails");
+        const teamId = button.getAttribute("data-team-id");
+        const teamDetailsDiv = document.getElementById("teamDetails");
 
-        // Make an AJAX request to fetch member details
-        fetch(`/admin/member/view/${memberId}`)
+        fetch(`/admin/team/view/${teamId}`)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error("Failed to fetch member details");
+                    throw new Error("Failed to fetch team details");
                 }
                 return response.json();
             })
             .then(data => {
-                // Populate the modal with member details
-                memberDetailsDiv.innerHTML = `
-                <p><strong>Username:</strong> ${data.username}</p>
-                <p><strong>Nickname:</strong> ${data.name}</p>
-                <p><strong>Profile Description:</strong> ${data.profileDescription || "N/A"}</p>
-                <p><strong>Profile Image:</strong></p>
-                <img src="${data.profileImageUrl || '/public/blank_profile.png'}"
-                     alt="Profile Image"
-                     style="max-width: 100px; max-height: 100px;"
-                     onerror="this.onerror=null; this.src='/public/blank_profile.png';">
+                // Populate the modal with team details
+                teamDetailsDiv.innerHTML = `
+                <p><strong>Team ID:</strong> ${data.teamId}</p>
+                <p><strong>Leader ID:</strong> ${data.leaderId}</p>
+                <p><strong>Team Name:</strong> ${data.teamName}</p>
+                <p><strong>Description:</strong> ${data.description || "N/A"}</p>
+                <p><strong>Genres:</strong></p>
+                <ul>
+                    ${data.genres?.length ? data.genres.map(genre => `
+                        <li>${genre}</li>
+                    `).join('') : '<p>No genres.</p>'}
+                </ul>
+                <p><strong>Location:</strong> ${data.location}</p>
+                <p><strong>Created At:</strong> ${new Date(data.createdAt).toLocaleString()}</p>
+                <p><strong>Team Image:</strong></p>
+                <img src="${data.fileUrl}"
+                     alt="File Image"
+                     style="max-width: 100%; max-height: 300px; height: auto;"
+                     onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <p style="display: none;">No Team Image</p>
+                <p><strong>Video URL:</strong> <a href="${data.videoUrl}" target="_blank">${data.videoUrl}</a></p>
                 <p><strong>Experience Points (EXP):</strong> ${data.exp}</p>
                 <p><strong>Tier:</strong> ${data.tier}</p>
-                <p><strong>Video URL:</strong> <a href="${data.videoUrl}" target="_blank">${data.videoUrl}</a></p>
-                <h5>Member Records</h5>
+                <h5>Team Members</h5>
                 <ul>
-                    ${data.memberRecords?.map(record => `
+                    ${data.members?.map(member => `
+                        <li>
+                            <p><strong>Member ID:</strong> ${member.id}</p>
+                            <p><strong>Username:</strong> ${member.username}</p>
+                            <p><strong>Nickname:</strong> ${member.name}</p>
+                        </li>
+                    `).join('') || '<p>No members available.</p>'}
+                </ul>
+                <h5>Team Records</h5>
+                <ul>
+                    ${data.records?.map(record => `
                         <li>
                             <p><strong>Record ID:</strong> ${record.id}</p>
                             <p><strong>Record Title:</strong> ${record.title}</p>
@@ -241,27 +249,18 @@
                         </li>
                     `).join('') || '<p>No records available.</p>'}
                 </ul>
-                <h5>Moum Records</h5>
-                <ul>
-                    ${data.moumRecords?.map(record => `
-                        <li>
-                            <p><strong>Record ID:</strong> ${record.id}</p>
-                            <p><strong>Record Title:</strong> ${record.title}</p>
-                            <p><strong>Record Date:</strong> ${new Date(record.date).toLocaleDateString()}</p>
-                        </li>
-                    `).join('') || '<p>No moum records available.</p>'}
-                </ul>
             `;
             })
             .catch(error => {
-                memberDetailsDiv.innerHTML = `<p class="text-danger">Failed to load member details. Please try again.</p>`;
+                teamDetailsDiv.innerHTML = `<p class="text-danger">Failed to load team details. Please try again.</p>`;
                 console.error(error);
             });
     }
 
     // Initial load
-    loadMembers(1);
+    loadTeams(1);
 </script>
+
 
 
 <!-- JavaScript -->
