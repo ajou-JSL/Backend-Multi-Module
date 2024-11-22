@@ -15,6 +15,8 @@ import jsl.moum.chatroom.dto.ChatroomDto;
 import jsl.moum.community.article.domain.article.ArticleEntity;
 import jsl.moum.community.article.domain.article.ArticleRepository;
 import jsl.moum.community.article.dto.ArticleDto;
+import jsl.moum.global.error.ErrorCode;
+import jsl.moum.global.error.exception.CustomException;
 import jsl.moum.moum.team.domain.TeamEntity;
 import jsl.moum.moum.team.domain.TeamRepository;
 import jsl.moum.moum.team.dto.TeamDto;
@@ -227,9 +229,28 @@ public class AdminService {
     }
 
     public PracticeRoomDto registerPracticeRoom(PracticeRoomDto.Register registerDto){
-        PracticeRoom room = registerDto.toEntity();
-        room = practiceRoomRepository.save(room);
-        return new PracticeRoomDto(room);
+        if(!requiredFieldsCheck(registerDto)){
+            throw new CustomException(ErrorCode.REQUIRED_FIELDS_MISSING);
+        }
+        try {
+            PracticeRoom room = registerDto.toEntity();
+            room = practiceRoomRepository.save(room);
+            return new PracticeRoomDto(room);
+        } catch (Exception e){
+            log.error("연습실 등록 중 오류 발생", e);
+            throw new CustomException(ErrorCode.REGISTER_PRACTICE_ROOM_FAIL);
+        }
+    }
+
+    private boolean requiredFieldsCheck(PracticeRoomDto.Register registerDto){
+        return registerDto.getName() != null
+                && registerDto.getAddress() != null
+                && registerDto.getOwner() != null
+                && registerDto.getPhone() != null
+                && registerDto.getEmail() != null
+                && registerDto.getMapUrl() != null
+                && registerDto.getLatitude() != null
+                && registerDto.getLongitude() != null;
     }
 
     /**
