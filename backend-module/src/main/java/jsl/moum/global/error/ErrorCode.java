@@ -80,6 +80,10 @@ public enum ErrorCode {
     REPORT_TEAM_EXISTS(400, "F-RP013", "해당 음악단체를 이미 신고했습니다"),
     REPORT_ARTICLE_EXISTS(400, "F-RP014", "해당 게시글를 이미 신고했습니다"),
 
+    // Naver Maps
+    GET_LOCATION_INFO_FAIL(404,"F-NM001","위치 정보 조회 실패"),
+    
+
     // Moum
     MAX_MOUM_LIMIT_EXCEEDED(400, "F-MM001","모음 생성 최대 개수 초과하였습니다."),
     ALREADY_FINISHED_MOUM(401,"F-MM002","이미 끝난 모음입니다."),

@@ -37,6 +37,7 @@ public class MemberReportDto {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Response {
+        private int id;
         private int memberId;
         private String memberUsername;
         private int reporterId;
@@ -47,6 +48,7 @@ public class MemberReportDto {
         private boolean isResolved;
 
         public Response(MemberReport memberReport) {
+            this.id = memberReport.getId();
             this.memberId = memberReport.getMember().getId();
             this.memberUsername = memberReport.getMember().getUsername();
             this.reporterId = memberReport.getReporter().getId();

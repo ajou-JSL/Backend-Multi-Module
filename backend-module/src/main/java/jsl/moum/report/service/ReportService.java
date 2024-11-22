@@ -14,6 +14,8 @@ import jsl.moum.report.dto.MemberReportDto;
 import jsl.moum.report.dto.TeamReportDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -57,6 +59,20 @@ public class ReportService {
         return response;
     }
 
+    public Page<MemberReportDto.Response> memberReportsSentPaged(Integer memberId, Integer page, Integer size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<MemberReport> memberReports = memberReportRepository.findAllByReporterId(memberId, pageRequest);
+
+        return memberReports.map(MemberReportDto.Response::new);
+    }
+
+    public Page<MemberReportDto.Response> memberReportsReceivedPaged(Integer memberId, Integer page, Integer size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<MemberReport> memberReports = memberReportRepository.findAllByMemberId(memberId, pageRequest);
+
+        return memberReports.map(MemberReportDto.Response::new);
+    }
+
     public TeamReportDto.Response reportTeam(Integer teamId, TeamReportDto.Request request) {
 
         TeamReport teamReport = buildTeamReport(teamId, request);
@@ -83,6 +99,20 @@ public class ReportService {
 
         TeamReportDto.Response response = new TeamReportDto.Response(teamReport);
         return response;
+    }
+
+    public Page<TeamReportDto.Response> teamReportsSentPaged(Integer memberId, Integer page, Integer size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<TeamReport> teamReports = teamReportRepository.findAllByReporterId(memberId, pageRequest);
+
+        return teamReports.map(TeamReportDto.Response::new);
+    }
+
+    public Page<TeamReportDto.Response> teamReportsReceivedPaged(Integer teamId, Integer page, Integer size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<TeamReport> teamReports = teamReportRepository.findAllByTeamId(teamId, pageRequest);
+
+        return teamReports.map(TeamReportDto.Response::new);
     }
 
 
@@ -113,9 +143,25 @@ public class ReportService {
         return response;
     }
 
+    public Page<ArticleReportDto.Response> articleReportsSentPaged(Integer memberId, Integer page, Integer size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<ArticleReport> articleReports = articleReportRepository.findAllByReporterId(memberId, pageRequest);
+
+        return articleReports.map(ArticleReportDto.Response::new);
+    }
+
+    public Page<ArticleReportDto.Response> articleReportsReceivedPaged(Integer articleId, Integer page, Integer size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<ArticleReport> articleReports = articleReportRepository.findAllByArticleId(articleId, pageRequest);
+
+        return articleReports.map(ArticleReportDto.Response::new);
+    }
+
 
     /**
+     *
      * Private access methods
+     *
      */
 
     private TeamReport buildTeamReport(Integer teamId, TeamReportDto.Request request) {

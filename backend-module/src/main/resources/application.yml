@@ -76,3 +76,11 @@ ncp:
     secret-key: ncp_iam_BPKMKRCDtYOBhPsxfs0g1Rtl1OV6bBsPtG
     bucket: moumstorage
 
+naver:
+#  client-id
+  X-NCP-APIGW-API-KEY-ID: 3kitedtcgg
+#  client-secret
+  X-NCP-APIGW-API-KEY: FPL9KPlKtuGgTcr4mFV2HLVIpVDT1mTjyQgAWMrt
+#  Naver Maps API url
+  maps-api-url: https://naveropenapi.apigw.ntruss.com
+
