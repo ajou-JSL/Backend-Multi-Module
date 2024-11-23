@@ -80,8 +80,6 @@ public class PerformArticleEntity {
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
-        this.likesCount = 0;
-        this.viewCount = 0;
     }
 
     public void updatePerformArticle(PerformArticleUpdateDto.Request updateDto) {

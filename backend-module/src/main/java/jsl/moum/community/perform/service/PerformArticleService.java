@@ -93,6 +93,8 @@ public class PerformArticleService {
                 .genre(requestDto.getGenre())
                 .team(team)
                 .moum(moum)
+                .viewCount(0)
+                .likesCount(0)
                 .build();
 
         for (PerformMember performMember : performMembers) {
