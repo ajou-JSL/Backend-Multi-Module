@@ -32,19 +32,15 @@ public class LikesDto {
     @AllArgsConstructor
     public static class Response{
         private final int likesId;
-        private final Integer memberId;
-        private final Integer articleId;
-        private final Integer performArticleId;
+        private final int memberId;
+        private final int articleId;
+        private final int performArticleId;
 
         public Response(LikesEntity likesEntity) {
             this.likesId = likesEntity.getId();
             this.memberId = likesEntity.getMember().getId();
-            this.articleId = (likesEntity.getArticle() != null && likesEntity.getArticle().getId() != null)
-                    ? likesEntity.getArticle().getId()
-                    : null;
-            this.performArticleId = (likesEntity.getPerformArticle() != null && likesEntity.getPerformArticle().getId() != null)
-                    ? likesEntity.getPerformArticle().getId()
-                    : null;
+            this.articleId = (likesEntity.getArticle() == null) ? 0 : likesEntity.getArticle().getId();
+            this.performArticleId = (likesEntity.getPerformArticle() == null) ? 0 : likesEntity.getPerformArticle().getId();
         }
 
     }

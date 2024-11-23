@@ -28,7 +28,7 @@ public class PerformArticleEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private int id;
 
     @Column(name = "performance_name")
     private String performanceName;
