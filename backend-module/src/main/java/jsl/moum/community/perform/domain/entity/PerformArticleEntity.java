@@ -9,12 +9,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+@Slf4j
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -108,10 +110,15 @@ public class PerformArticleEntity {
     }
 
     public void updateLikesCount(int count){
+        log.info("#1 : updateLikesCount() method called, likesCount: {}", this.likesCount);
         this.likesCount += count;
+        log.info("#2 : updateLikesCount() method called, likesCount: {}", this.likesCount);
     }
 
     public void updateViewCount(int count){
+        log.info("#1 : updateViewCount() method called, viewCount: {}", this.viewCount);
         this.viewCount += count;
+        log.info("#2 : updateViewCount() method called, viewCount: {}", this.viewCount);
+
     }
 }
