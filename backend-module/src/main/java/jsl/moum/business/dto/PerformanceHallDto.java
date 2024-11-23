@@ -13,15 +13,15 @@ import java.util.List;
 public class PerformanceHallDto {
     private int id;
     private String name;
-    private int price;
-    private int size;
-    private int capacity;
     private String address;
     private String owner;
     private String phone;
     private String email;
     private String mapUrl;
     private List<String> imageUrls;
+    private int price;
+    private int size;
+    private int capacity;
     private int type;
     private int stand;
     private boolean hasPiano;
@@ -64,14 +64,14 @@ public class PerformanceHallDto {
     @AllArgsConstructor
     public static class Register {
         private String name;
-        private int price;
-        private int size;
-        private int capacity;
         private String address;
         private String owner;
         private String phone;
         private String email;
         private String mapUrl;
+        private int price;
+        private int size;
+        private int capacity;
         private int type;
         private int stand;
         private boolean hasPiano;
@@ -125,15 +125,15 @@ public class PerformanceHallDto {
     public static class Response {
         private int id;
         private String name;
-        private int price;
-        private int size;
-        private int capacity;
         private String address;
         private String owner;
         private String phone;
         private String email;
         private String mapUrl;
         private List<String> imageUrls;
+        private int price;
+        private int size;
+        private int capacity;
         private int type;
         private int stand;
         private boolean hasPiano;

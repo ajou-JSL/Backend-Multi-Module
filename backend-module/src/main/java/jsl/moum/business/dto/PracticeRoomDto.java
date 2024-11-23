@@ -13,14 +13,14 @@ import java.util.List;
 public class PracticeRoomDto {
     private int id;
     private String name;
-    private int price;
-    private int capacity;
     private String address;
     private String owner;
     private String phone;
     private String email;
     private String mapUrl;
     private List<String> imageUrls;
+    private int price;
+    private int capacity;
     private int type;
     private int stand;
     private boolean hasPiano;
@@ -121,14 +121,14 @@ public class PracticeRoomDto {
     public static class Response{
         private int id;
         private String name;
-        private int price;
-        private int capacity;
         private String address;
         private String owner;
         private String phone;
         private String email;
         private String mapUrl;
         private List<String> imageUrls;
+        private int price;
+        private int capacity;
         private int type;
         private int stand;
         private boolean hasPiano;
