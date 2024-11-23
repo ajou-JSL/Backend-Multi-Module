@@ -59,11 +59,11 @@ public class PerformArticleEntity {
     @Column(name = "genre", nullable = false)
     private MusicGenre genre;
 
-//    @Column(name = "likes_count")
-//    private int likesCount;
-//
-//    @Column(name = "view_count")
-//    private int viewCount;
+    @Column(name = "likes_count")
+    private int likesCount = 0;
+
+    @Column(name = "view_count")
+    private int viewCount = 0;
 
     // 멤버가 참여해있는 공연들
     @OneToMany(mappedBy = "performanceArticle", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -80,6 +80,8 @@ public class PerformArticleEntity {
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
+        this.viewCount = 0;
+        this.likesCount = 0;
     }
 
     public void updatePerformArticle(PerformArticleUpdateDto.Request updateDto) {
