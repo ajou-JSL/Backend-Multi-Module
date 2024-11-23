@@ -112,15 +112,16 @@ public class PerformArticleEntity {
     }
 
     public void updateLikesCount(int count){
-        log.info("#1 : updateLikesCount() method called, likesCount: {}", this.likesCount);
-        this.likesCount += count;
-        log.info("#2 : updateLikesCount() method called, likesCount: {}", this.likesCount);
+        if(this.likesCount != null){
+            this.likesCount += count;
+        }
+        log.info("updateLikesCount() method called, likesCount: {}", this.likesCount);
     }
 
     public void updateViewCount(int count){
-        log.info("#1 : updateViewCount() method called, viewCount: {}", this.viewCount);
-        this.viewCount += count;
-        log.info("#2 : updateViewCount() method called, viewCount: {}", this.viewCount);
-
+        if(this.viewCount != null){
+            this.viewCount += count;
+        }
+        log.info("updateViewCount() method called, viewCount: {}", this.viewCount);
     }
 }
