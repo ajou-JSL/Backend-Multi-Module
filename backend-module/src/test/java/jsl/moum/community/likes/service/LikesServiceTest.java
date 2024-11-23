@@ -210,7 +210,11 @@ public class LikesServiceTest {
 
         // when & then
         assertThrows(CustomException.class, () -> {
+<<<<<<< HEAD
             likesService.deleteLikes(memberName,anotherUserLikes.getId());
+=======
+            likesService.deleteLikes(memberName,anotherUserLikes.getId()); // 자신의 좋아요가 아님
+>>>>>>> 99ffebd (✨ #33 공연게시글 좋아요,조회수 적용)
         });
 
         // likesRepository.deleteById(1)가 호출되지 않았는지 확인
