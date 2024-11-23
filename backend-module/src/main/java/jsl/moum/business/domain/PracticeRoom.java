@@ -2,10 +2,7 @@ package jsl.moum.business.domain;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Getter
+@Setter
 @Table(name = "practice_room")
 public class PracticeRoom {
 
@@ -22,8 +20,23 @@ public class PracticeRoom {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column
+    @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
+    private String address;
+
+    @Column(nullable = false)
+    private String owner;
+
+    @Column(nullable = false)
+    private String phone;
+
+    @Column(nullable = false)
+    private String email;
+
+    @Column(name = "map_url", nullable = false)
+    private String mapUrl;
 
     @Column
     private int price;
@@ -31,20 +44,6 @@ public class PracticeRoom {
     @Column
     private int capacity;
 
-    @Column
-    private String address;
-
-    @Column
-    private String owner;
-
-    @Column
-    private String phone;
-
-    @Column
-    private String email;
-
-    @Column(name = "map_url")
-    private String mapUrl;
 
     @ElementCollection // 다중 값 저장
     @CollectionTable(name = "practice_room_images", joinColumns = @JoinColumn(name = "practice_room_id"))
@@ -75,9 +74,9 @@ public class PracticeRoom {
     @Column
     private String details;
 
-    @Column
-    private Float latitude;
+    @Column(columnDefinition = "DOUBLE")
+    private Double latitude;
 
-    @Column
-    private Float longitude;
+    @Column(columnDefinition = "DOUBLE")
+    private Double longitude;
 }

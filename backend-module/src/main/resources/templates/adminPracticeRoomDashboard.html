@@ -12,7 +12,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
 
-    <title>Admin Dashboard</title>
+    <title>제휴 연습실 관리 대시보드</title>
 
     <style>
         body {
@@ -53,51 +53,66 @@
 
 <div class="content">
     <div class="container">
-        <h1 class="mt-3 mb-5">음악단체 관리</h1>
-        <div class="row">
+        <h1 class="mt-3 mb-5">연습실 관리 대시보드</h1>
+
+        <div class="row mb-4">
+            <!-- Practice Room Count -->
             <div class="col-md-4">
                 <div class="card text-white bg-secondary mb-3" style="max-width: 18rem;">
                     <div class="card-header">Practice Room Count</div>
                     <div class="card-body">
                         <h5 class="card-title" th:text="${practiceRoomCount}">0</h5>
-                        <p class="card-text">제휴 연습실 개수</p>
+                        <p class="card-text">Total practice rooms</p>
                     </div>
                 </div>
             </div>
+
+            <!-- Register New Practice Room -->
+            <div class="col-md-4 d-flex align-items-center">
+                <a href="/admin/practice-room/register/model-view" class="btn btn-success btn-lg text-white w-100">
+                    Register New Practice Room
+                </a>
+            </div>
         </div>
 
-        <!-- Practice Room List -->
-        <div class="mt-5">
-            <h2>연습실 목록</h2>
-            <table class="table table-striped">
-                <thead>
-                <tr>
-                    <th>#</th>
-                    <th>연습실 이름</th>
-                    <th>주소</th>
-                    <th>소유주</th>
-                    <th>연락처</th>
-                    <th>상세</th>
-                </tr>
-                </thead>
-                <tbody>
-                <!-- Iterate through the list of practice rooms -->
-                <tr th:each="room, iterStat : ${practiceRooms}">
-                    <td th:text="${iterStat.index + 1}">1</td>
-                    <td th:text="${room.name}">Practice Room Name</td>
-                    <td th:text="${room.address}">Address</td>
-                    <td th:text="${room.owner}">Owner</td>
-                    <td th:text="${room.phone}">Phone</td>
-                    <td>
-                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#practiceRoomModal"
-                                th:attr="data-room-id=${room.id}" onclick="fetchPracticeRoomDetails(event, this)">
-                            View
-                        </button>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+        <!-- Pagination Controls -->
+        <div class="mb-3">
+            <label for="itemsPerPage">Practice Rooms per page:</label>
+            <select id="itemsPerPage" class="form-select d-inline-block w-auto" onchange="loadPracticeRooms(1)">
+                <option value="5">5</option>
+                <option value="10" selected>10</option>
+                <option value="20">20</option>
+            </select>
         </div>
+
+        <!-- Practice Room Table -->
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Address</th>
+                <th>Owner</th>
+                <th>Phone</th>
+                <th>Details</th>
+            </tr>
+            </thead>
+            <tbody id="practiceRoomTable">
+            <!-- Rows will be dynamically inserted here -->
+            </tbody>
+        </table>
+
+        <!-- Pagination -->
+        <nav>
+            <ul class="pagination">
+                <li class="page-item" id="prevPage">
+                    <button class="page-link" onclick="changePage(-1)">Previous</button>
+                </li>
+                <li class="page-item" id="nextPage">
+                    <button class="page-link" onclick="changePage(1)">Next</button>
+                </li>
+            </ul>
+        </nav>
     </div>
 </div>
 
@@ -118,6 +133,7 @@
         </div>
     </div>
 </div>
+
 
 <!-- JavaScript -->
 <script>
@@ -159,6 +175,63 @@
 </script>
 
 <script>
+    let currentPage = 1;
+    let totalPages = 1;
+
+    function loadPracticeRooms(page) {
+        const itemsPerPage = document.getElementById("itemsPerPage").value;
+        const practiceRoomTable = document.getElementById("practiceRoomTable");
+
+        fetch(`/admin/practice-rooms?page=${page}&size=${itemsPerPage}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Failed to fetch practice rooms.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                practiceRoomTable.innerHTML = "";
+
+                currentPage = data.currentPage;
+                totalPages = data.totalPages;
+
+                data.practiceRooms.forEach((room, index) => {
+                    const row = `
+                        <tr>
+                            <td>${(currentPage - 1) * itemsPerPage + index + 1}</td>
+                            <td>${room.name}</td>
+                            <td>${room.address}</td>
+                            <td>${room.owner}</td>
+                            <td>${room.phone}</td>
+                            <td>
+                                <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                        data-bs-target="#practiceRoomModal" data-room-id="${room.id}"
+                                        onclick="fetchPracticeRoomDetails(event, this)">View</button>
+                            </td>
+                        </tr>`;
+                    practiceRoomTable.innerHTML += row;
+                });
+
+                document.getElementById("prevPage").classList.toggle("disabled", currentPage === 1);
+                document.getElementById("nextPage").classList.toggle("disabled", currentPage === totalPages);
+            })
+            .catch(error => {
+                console.error("Error loading practice rooms:", error);
+            });
+    }
+
+    function changePage(offset) {
+        const newPage = currentPage + offset;
+        if (newPage >= 1 && newPage <= totalPages) {
+            loadPracticeRooms(newPage);
+        }
+    }
+
+    // Initial load
+    loadPracticeRooms(1);
+</script>
+
+<script>
     // Function to fetch and display practice room details in the modal
     function fetchPracticeRoomDetails(event, button) {
         event.preventDefault();
@@ -176,13 +249,13 @@
                 practiceRoomDetailsDiv.innerHTML = `
                 <p><strong>ID:</strong> ${data.id}</p>
                 <p><strong>Name:</strong> ${data.name}</p>
-                <p><strong>Price:</strong> ${data.price} 원</p>
-                <p><strong>Capacity:</strong> ${data.capacity} people</p>
                 <p><strong>Address:</strong> ${data.address}</p>
                 <p><strong>Owner:</strong> ${data.owner}</p>
                 <p><strong>Phone:</strong> ${data.phone}</p>
                 <p><strong>Email:</strong> <a href="mailto:${data.email}">${data.email}</a></p>
                 <p><strong>Map URL:</strong> <a href="${data.mapUrl}" target="_blank">${data.mapUrl}</a></p>
+                <p><strong>Price:</strong> ${data.price} 원</p>
+                <p><strong>Capacity:</strong> ${data.capacity} people</p>
                 <p><strong>Type:</strong> ${data.type}</p>
                 <p><strong>Stand:</strong> ${data.stand}</p>
                 <p><strong>Has Piano:</strong> ${data.hasPiano ? "Yes" : "No"}</p>

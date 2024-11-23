@@ -5,8 +5,10 @@ import jsl.moum.admin.service.AdminService;
 import jsl.moum.auth.dto.MemberDto;
 import jsl.moum.business.dto.PerformanceHallDto;
 import jsl.moum.business.dto.PracticeRoomDto;
+import jsl.moum.business.service.BusinessService;
 import jsl.moum.chatroom.dto.ChatroomDto;
 import jsl.moum.community.article.dto.ArticleDto;
+import jsl.moum.global.error.exception.CustomException;
 import jsl.moum.global.response.ResponseCode;
 import jsl.moum.global.response.ResultResponse;
 import jsl.moum.moum.team.dto.TeamDto;
@@ -16,14 +18,18 @@ import jsl.moum.report.dto.TeamReportDto;
 import jsl.moum.report.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -34,6 +40,7 @@ public class AdminController {
 
     private final AdminService adminService;
     private final ReportService reportService;
+    private final BusinessService businessService;
 
     @GetMapping("/login")
     public String adminLoginPage(Model model) {
@@ -341,17 +348,46 @@ public class AdminController {
     @GetMapping("/practice-room/view/{id}")
     @ResponseBody
     public PracticeRoomDto getPracticeRoomDetails(@PathVariable(name = "id") int id) {
-        return adminService.getPracticeRoomById(id);
+        return businessService.getPracticeRoomById(id);
     }
 
-//    @PostMapping("/practice-room/{id}")
-//    public ResponseEntity<ResultResponse> savePracticeRoom(@PathVariable(name = "id") int id,
-//                                                           @RequestBody PracticeRoomDto.Request update) {
-//        PracticeRoomDto practiceRoom = adminService.updatePracticeRoom(id, update);
-//
-//        ResultResponse resultResponse = ResultResponse.of(ResponseCode.PRACTICE_ROOM_UPDATE_SUCCESS, practiceRoom);
-//        return ResponseEntity.ok(resultResponse);
-//    }
+    @GetMapping("/practice-rooms")
+    public ResponseEntity<Map<String, Object>> getPracticeRooms(
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
+        PageRequest pageRequest = PageRequest.of(page - 1, size);
+        Page<PracticeRoomDto.Response> practiceRoomsPage = adminService.getPracticeRoomsPaged(pageRequest);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("practiceRooms", practiceRoomsPage.getContent());
+        response.put("currentPage", practiceRoomsPage.getNumber() + 1);
+        response.put("totalPages", practiceRoomsPage.getTotalPages());
+        response.put("totalPracticeRooms", practiceRoomsPage.getTotalElements());
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/practice-room/register/model-view")
+    public String registerPracticeRoom(Model model) {
+        return "adminPracticeRoomRegister";
+    }
+
+    @PostMapping("/practice-room/register")
+    public ResponseEntity<ResultResponse> registerPracticeRoom(@RequestBody PracticeRoomDto.Register registerDto) {
+        PracticeRoomDto practiceRoom = adminService.registerPracticeRoom(registerDto);
+
+        ResultResponse resultResponse = ResultResponse.of(ResponseCode.REGISTER_PRACTICE_ROOM_SUCCESS, practiceRoom);
+        return ResponseEntity.ok(resultResponse);
+    }
+
+    @PostMapping(value = "/practice-room/images", consumes = {"multipart/form-data"})
+    public ResponseEntity<ResultResponse> uploadPracticeRoomImages(@RequestParam(name = "practiceRoomId") Integer practiceRoomId,
+                                                                   @RequestPart(name = "images", required = true) List<MultipartFile> images) throws BadRequestException {
+        PracticeRoomDto practiceRoom = adminService.savePracticeRoomImages(practiceRoomId, images);
+
+        ResultResponse resultResponse = ResultResponse.of(ResponseCode.UPLOAD_PRACTICE_ROOM_IMAGE_SUCCESS, practiceRoom);
+        return ResponseEntity.ok(resultResponse);
+    }
 
     /**
      *
@@ -372,8 +408,48 @@ public class AdminController {
     @GetMapping("/performance-hall/view/{id}")
     @ResponseBody
     public PerformanceHallDto getPerformanceHallDetails(@PathVariable(name = "id") int id) {
-        return adminService.getPerformanceHallById(id);
+        return businessService.getPerformanceHallById(id);
     }
+
+    @GetMapping("/performance-halls")
+    public ResponseEntity<Map<String, Object>> getPerformanceHalls(
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
+        PageRequest pageRequest = PageRequest.of(page - 1, size);
+        Page<PerformanceHallDto.Response> performanceHallsPage = adminService.getPerformanceHallsPaged(pageRequest);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("performanceHalls", performanceHallsPage.getContent());
+        response.put("currentPage", performanceHallsPage.getNumber() + 1);
+        response.put("totalPages", performanceHallsPage.getTotalPages());
+        response.put("totalPerformanceHalls", performanceHallsPage.getTotalElements());
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/performance-hall/register/model-view")
+    public String registerPerformanceHall(Model model) {
+        return "adminPerformanceHallRegister";
+    }
+
+    @PostMapping("/performance-hall/register")
+    public ResponseEntity<ResultResponse> registerPerformanceHall(@RequestBody PerformanceHallDto.Register registerDto) {
+        PerformanceHallDto performanceHall = adminService.registerPerformanceHall(registerDto);
+
+        ResultResponse resultResponse = ResultResponse.of(ResponseCode.REGISTER_PERFORMANCE_HALL_SUCCESS, performanceHall);
+        return ResponseEntity.ok(resultResponse);
+    }
+
+    @PostMapping(value = "/performance-hall/images", consumes = {"multipart/form-data"})
+    public ResponseEntity<ResultResponse> uploadPerformanceHallImages(@RequestParam(name = "performanceHallId") Integer performanceHallId,
+                                                                      @RequestPart(name = "images", required = true) List<MultipartFile> images) throws BadRequestException {
+        PerformanceHallDto performanceHall = adminService.savePerformanceHallImages(performanceHallId, images);
+
+        ResultResponse resultResponse = ResultResponse.of(ResponseCode.UPLOAD_PERFORMANCE_HALL_IMAGE_SUCCESS, performanceHall);
+        return ResponseEntity.ok(resultResponse);
+    }
+
+
 
 
     @GetMapping("/logout")

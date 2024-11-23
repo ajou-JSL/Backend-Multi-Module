@@ -1,10 +1,7 @@
 package jsl.moum.business.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Getter
+@Setter
 @Table(name = "performance_hall")
 public class PerformanceHall {
 
@@ -77,9 +75,9 @@ public class PerformanceHall {
     @Column
     private String details;
 
-    @Column
-    private Float latitude;
+    @Column(columnDefinition = "DOUBLE")
+    private Double latitude;
 
-    @Column
-    private Float longitude;
+    @Column(columnDefinition = "DOUBLE")
+    private Double longitude;
 }

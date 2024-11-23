@@ -41,8 +41,6 @@ public class LikesDto {
             this.memberId = likesEntity.getMember().getId();
             this.articleId = (likesEntity.getArticle() == null) ? 0 : likesEntity.getArticle().getId();
             this.performArticleId = (likesEntity.getPerformArticle() == null) ? 0 : likesEntity.getPerformArticle().getId();
-            //this.articleId = (likesEntity.getArticle() != null && likesEntity.getArticle().getId() != null) ? likesEntity.getArticle().getId() : null;
-            //this.performArticleId = (likesEntity.getPerformArticle() != null && likesEntity.getPerformArticle().getId() != null) ? likesEntity.getPerformArticle().getId() : null;
         }
 
     }

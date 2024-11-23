@@ -86,6 +86,14 @@ public enum ErrorCode {
     REPORT_TEAM_EXISTS(400, "F-RP013", "해당 음악단체를 이미 신고했습니다"),
     REPORT_ARTICLE_EXISTS(400, "F-RP014", "해당 게시글를 이미 신고했습니다"),
 
+    // Business
+    REQUIRED_FIELDS_MISSING(400, "F-B001", "필수 입력값이 누락되었습니다."),
+    REGISTER_PRACTICE_ROOM_FAIL(400, "F-B002", "연습실 등록 오류"),
+    REGISTER_PERFORMANCE_HALL_FAIL(400, "F-B003", "공연장 등록 오류"),
+    PRACTICE_ROOM_NOT_FOUND(404, "F-B004", "해당 연습실을 찾을 수 없습니다."),
+    PERFORMANCE_HALL_NOT_FOUND(404, "F-B005", "해당 공연장을 찾을 수 없습니다."),
+    IMAGE_LIMIT_EXCEEDED(400, "F-B011", "이미지 업로드 개수 제한을 초과하였습니다."),
+
     // Naver Maps
     GET_LOCATION_INFO_FAIL(404,"F-NM001","위치 정보 조회 실패"),
     
