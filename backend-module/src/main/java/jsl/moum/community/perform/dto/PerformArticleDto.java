@@ -73,8 +73,8 @@ public class PerformArticleDto {
         //private final List<MemberDto.Response> members;
         private final List<Integer> membersId;
         private final MusicGenre genre;
-      //  private final int likesCount;
-     //   private final int viewCount;
+        private final int likesCount;
+        private final int viewCount;
 
         public Response(PerformArticleEntity performArticle){
             this.id = performArticle.getId();
@@ -90,8 +90,8 @@ public class PerformArticleDto {
             this.performancePrice = performArticle.getPerformancePrice();
             this.performanceImageUrl = performArticle.getPerformanceImageUrl();
             this.genre = (performArticle.getGenre() != null) ? performArticle.getGenre() : null;
-//            this.viewCount = performArticle.getViewCount();
-//            this.likesCount = performArticle.getLikesCount();
+            this.viewCount = performArticle.getViewCount();
+            this.likesCount = performArticle.getLikesCount();
 
             // 멤버 id만 말고 객체 그대로 리턴할 경우에 이걸로
 //            this.members = performArticle.getPerformMembers().stream()
