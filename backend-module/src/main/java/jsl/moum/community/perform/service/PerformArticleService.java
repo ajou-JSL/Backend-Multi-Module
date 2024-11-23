@@ -1,5 +1,7 @@
 package jsl.moum.community.perform.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jsl.moum.auth.domain.entity.MemberEntity;
 import jsl.moum.auth.domain.repository.MemberRepository;
 import jsl.moum.community.perform.domain.entity.PerformArticleEntity;
@@ -15,6 +17,7 @@ import jsl.moum.moum.lifecycle.domain.LifecycleRepository;
 import jsl.moum.moum.team.domain.TeamEntity;
 import jsl.moum.moum.team.domain.TeamMemberRepositoryCustom;
 import jsl.moum.moum.team.domain.TeamRepository;
+import jsl.moum.moum.team.dto.TeamDto;
 import jsl.moum.objectstorage.StorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,6 +46,7 @@ public class PerformArticleService {
     private final TeamMemberRepositoryCustom teamMemberRepositoryCustom;
     private final PerformArticleRepositoryCustom performArticleRepositoryCustom;
     private final LifecycleRepository lifecycleRepository;
+    private final ObjectMapper objectMapper;
 
     @Value("${ncp.object-storage.bucket}")
     private String bucket;
@@ -223,6 +228,36 @@ public class PerformArticleService {
         performArticleRepository.deleteById(performArticleEntity.getId());
         return new PerformArticleDto.Response(performArticleEntity);
     }
+
+    /*
+        필터링으로 공연 게시글 조회
+     */
+    @Transactional
+    public List<PerformArticleDto.Response> getPerformArticleWithFiltering(String encodedString, int page, int size) {
+
+        PerformArticleDto.SearchDto searchDto = null;
+        log.info("encodedString : {}", encodedString);
+        if (encodedString != null) {
+            try {
+                log.info("try 진입");
+                String decodedString = new String(Base64.getDecoder().decode(encodedString));
+                log.info("decodedString : {}", decodedString);
+                searchDto = objectMapper.readValue(decodedString, PerformArticleDto.SearchDto.class);
+                log.info("searchDto : {}", searchDto);
+            } catch (IllegalArgumentException | JsonProcessingException e) {
+                log.error(e.getMessage());
+                throw new CustomException(ErrorCode.BASE64_PROCESS_FAIL);
+            }
+        }
+        List<PerformArticleEntity> teams = performArticleRepositoryCustom.searchPerformArticlesWithFiltering(searchDto, page, size);
+
+        List<PerformArticleDto.Response> performArticleList = teams.stream()
+                .map(PerformArticleDto.Response::new)
+                .collect(Collectors.toList());
+
+        return performArticleList;
+    }
+
 
     public MemberEntity findMember(String username){
         MemberEntity member = memberRepository.findByUsername(username);

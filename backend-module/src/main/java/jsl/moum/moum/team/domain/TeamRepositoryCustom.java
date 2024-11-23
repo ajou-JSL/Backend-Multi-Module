@@ -37,7 +37,7 @@ public class TeamRepositoryCustom {
     }
 
     /**
-     * 팀 목록 필터링 조회하기 : 랭킹순조회, 멤버수순조회, 검색조회(장르+팀이름)
+     * 팀 목록 필터링 조회하기 : 랭킹순조회, 멤버수순조회, 검색조회(팀이름+팀설명), 장르별, 지역별
      */
     public List<TeamEntity> searchTeamsWithFiltering(TeamDto.SearchDto dto, int page, int size) {
         List<TeamEntity> teams = jpaQueryFactory
@@ -59,10 +59,16 @@ public class TeamRepositoryCustom {
     private BooleanExpression whereConditions(TeamDto.SearchDto dto) {
         BooleanExpression condition = Expressions.asBoolean(true).isTrue();
 
-        if (dto.getTeamName() != null && !dto.getTeamName().isEmpty()) {
+        if (dto.getKeyword() != null && !dto.getKeyword().isEmpty()) {
             condition = condition.and(
-                    teamEntity.teamName.containsIgnoreCase(dto.getTeamName())
+                    teamEntity.teamName.containsIgnoreCase(dto.getKeyword())
+                            .and(teamEntity.description.containsIgnoreCase(dto.getKeyword()))
             );
+        }
+
+        // 지역
+        if (dto.getLocation() != null) {
+            condition = condition.and(teamEntity.location.containsIgnoreCase(dto.getLocation()));
         }
 
         // 장르

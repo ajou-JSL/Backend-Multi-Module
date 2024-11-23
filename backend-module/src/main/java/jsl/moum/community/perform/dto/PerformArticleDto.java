@@ -116,4 +116,20 @@ public class PerformArticleDto {
 
         }
     }
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    public static class SearchDto {
+        private Boolean filterByCreatedAt;
+        private Boolean filterByLikesCount;
+        private Boolean filterByViewCount;
+        private String keyword;
+        private MusicGenre genre;
+
+        private String location;
+        private Date startDate;
+        private Date endDate;
+    }
+
 }
