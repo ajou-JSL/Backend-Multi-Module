@@ -39,8 +39,6 @@ public class LikesDto {
         public Response(LikesEntity likesEntity) {
             this.likesId = likesEntity.getId();
             this.memberId = likesEntity.getMember().getId();
-//            this.articleId = likesEntity.getArticle().getId();
-//            this.performArticleId = likesEntity.getPerformArticle().getId();
             this.articleId = (likesEntity.getArticle() == null) ? 0 : likesEntity.getArticle().getId();
             this.performArticleId = (likesEntity.getPerformArticle() == null) ? 0 : likesEntity.getPerformArticle().getId();
             //this.articleId = (likesEntity.getArticle() != null && likesEntity.getArticle().getId() != null) ? likesEntity.getArticle().getId() : null;
