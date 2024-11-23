@@ -260,7 +260,7 @@ public class AdminService {
         log.info("adminService savePracticeRoomImages for room : {}", id);
         if (images.size() > 5) {
             log.error("업로드 이미지 개수 초과 (5개 초과)");
-            throw new BadRequestException("이미지는 최대 5개까지만 업로드 가능합니다.");
+            throw new CustomException(ErrorCode.IMAGE_LIMIT_EXCEEDED);
         }
 
         PracticeRoom room = practiceRoomRepository.findById(id)
@@ -338,7 +338,7 @@ public class AdminService {
         log.info("adminService savePerformanceHallImages for hall : {}", id);
         if (images.size() > 5) {
             log.error("업로드 이미지 개수 초과 (5개 초과)");
-            throw new BadRequestException("이미지는 최대 5개까지만 업로드 가능합니다.");
+            throw new CustomException(ErrorCode.IMAGE_LIMIT_EXCEEDED);
         }
 
         PerformanceHall hall = performanceHallRepository.findById(id)
