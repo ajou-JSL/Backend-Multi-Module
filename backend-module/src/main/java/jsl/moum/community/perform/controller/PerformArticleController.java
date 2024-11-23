@@ -101,6 +101,19 @@ public class PerformArticleController {
         return new ResponseEntity<>(result, HttpStatusCode.valueOf(result.getStatus()));
     }
 
+    /*
+        이달의 공연 게시글 리스트 조회
+        /api/performs?moumId={moumId}
+    */
+    @GetMapping("/api/performs")
+    public ResponseEntity<ResultResponse> getPerformByMoumId(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                                                         @RequestParam(value = "moumId", required = true) int moumId){
+        loginCheck(customUserDetails.getUsername());
+        PerformArticleDto.Response responseDto = performArticleService.getPerformArticleByMoumId(moumId);
+        ResultResponse result = ResultResponse.of(ResponseCode.GET_PERFORM_ARTICLE_SUCCESS,responseDto);
+        return new ResponseEntity<>(result, HttpStatusCode.valueOf(result.getStatus()));
+    }
+
 
 
 
