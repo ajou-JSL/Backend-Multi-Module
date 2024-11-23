@@ -12,7 +12,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
 
-    <title>Register Practice Room</title>
+    <title>Register Performance Hall</title>
 
     <style>
         body {
@@ -49,12 +49,12 @@
 <body>
 
 
-<!-- Thymeleaf Fragments sidebar -->
+<!-- Sidebar -->
 <div th:replace="~{adminSidebar.html :: sidebar}"></div>
 
 <div class="content">
     <div class="container">
-        <h1 class="mt-3 mb-5">Register Practice Room</h1>
+        <h1 class="mt-3 mb-5">Register Performance Hall</h1>
 
         <!-- Search Section -->
         <div class="mt-4">
@@ -73,26 +73,26 @@
     </div>
 </div>
 
-<!-- Modal for Practice Room Details -->
-<div class="modal fade" id="practiceRoomModal" tabindex="-1" aria-labelledby="practiceRoomModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" style="max-width: 900px;"> <!-- Set the modal width here -->
+<!-- Modal for Performance Hall Details -->
+<div class="modal fade" id="performanceHallModal" tabindex="-1" aria-labelledby="performanceHallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" style="max-width: 900px;">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="practiceRoomModalLabel">Practice Room Details</h5>
+                <h5 class="modal-title" id="performanceHallModalLabel">Performance Hall Details</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="practiceRoomForm">
+                <form id="performanceHallForm">
                     <div class="row mb-3 align-items-center">
-                        <label for="roomName" class="col-sm-2 col-form-label" style="max-width: 120px">*연습실 이름</label>
+                        <label for="hallName" class="col-sm-2 col-form-label" style="max-width: 120px">*공연장 이름</label>
                         <div class="col-sm-10">
-                            <input type="text" id="roomName" class="form-control" placeholder="Enter practice room name" required>
+                            <input type="text" id="hallName" class="form-control" placeholder="Enter hall name" required>
                         </div>
                     </div>
                     <div class="row mb-3 align-items-center">
-                        <label for="roomAddress" class="col-sm-2 col-form-label" style="max-width: 120px">*주소</label>
+                        <label for="hallAddress" class="col-sm-2 col-form-label" style="max-width: 120px">*주소</label>
                         <div class="col-sm-10">
-                            <input type="text" id="roomAddress" class="form-control" required>
+                            <input type="text" id="hallAddress" class="form-control" placeholder="Enter address" required>
                         </div>
                     </div>
                     <div class="row mb-3 align-items-center">
@@ -132,33 +132,33 @@
                         </div>
                     </div>
                     <div class="row mb-3 align-items-center">
-                        <label for="price" class="col-sm-2 col-form-label" style="max-width: 120px">시간당 가격</label>
+                        <label for="price" class="col-sm-2 col-form-label" style="max-width: 120px">1회당 가격</label>
                         <div class="col-sm-10">
                             <input type="number" id="price" class="form-control" placeholder="Enter price per hour" required>
                         </div>
                     </div>
                     <div class="row mb-3 align-items-center">
-                        <label for="capacity" class="col-sm-2 col-form-label" style="max-width: 120px">최대 인원수</label>
+                        <label for="size" class="col-sm-2 col-form-label" style="max-width: 120px">공연장 크기</label>
+                        <div class="col-sm-10">
+                            <input type="number" id="size" class="form-control" placeholder="Enter price per hour" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3 align-items-center">
+                        <label for="capacity" class="col-sm-2 col-form-label" style="max-width: 120px">최대 관객수</label>
                         <div class="col-sm-10">
                             <input type="number" id="capacity" class="form-control" placeholder="Enter max capacity" required>
                         </div>
                     </div>
                     <div class="row mb-3 align-items-center">
-                        <label for="type" class="col-sm-2 col-form-label" style="max-width: 120px">연습실 종류</label>
-                        <div class="col-sm-10">
-                            <input type="text" id="type" class="form-control" placeholder="Enter type" required>
-                        </div>
-                    </div>
-                    <div class="row mb-3 align-items-center">
                         <label for="stand" class="col-sm-2 col-form-label" style="max-width: 120px">보면대 개수</label>
                         <div class="col-sm-10">
-                            <input type="text" id="stand" class="form-control" placeholder="Enter stand count" required>
+                            <input type="number" id="stand" class="form-control" placeholder="Enter number of stands" required>
                         </div>
                     </div>
                     <div class="row mb-3 align-items-center">
                         <label for="details" class="col-sm-2 col-form-label" style="max-width: 120px">세부사항</label>
                         <div class="col-sm-10">
-                            <textarea id="details" class="form-control" rows="4" placeholder="Enter practice room details" required></textarea>
+                            <textarea id="details" class="form-control" rows="4" placeholder="Enter details" required></textarea>
                         </div>
                     </div>
                     <!-- Boolean value Yes No buttons -->
@@ -224,7 +224,7 @@
                     </div>
                     <div class="row mb-3 align-items-center">
                         <div class="text-center w-100">
-                            <button type="button" class="btn btn-success mx-3 mt-3 w-75" style="min-width: 150px" onclick="registerPracticeRoom()">연습실 등록</button>
+                            <button type="button" class="btn btn-success mx-3 mt-3 w-75" style="min-width: 150px" onclick="registerPerformanceHall()">공연장 등록</button>
                         </div>
                     </div>
                     <div class="mt-4"></div>  <!-- Adds empty space below the button -->
@@ -234,31 +234,29 @@
     </div>
 </div>
 
-<!-- Modal for Registered Practice Room Information -->
-<div class="modal fade" id="registeredPracticeRoomModal" tabindex="-1" aria-labelledby="registeredPracticeRoomModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" style="max-width: 900px;">
+
+<!-- Modal for Registered Performance Hall Information -->
+<div class="modal fade" id="registeredPerformanceHallModal" tabindex="-1" aria-labelledby="registeredPerformanceHallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="registeredPracticeRoomModalLabel">Registered Practice Room</h5>
+                <h5 class="modal-title" id="registeredPerformanceHallModalLabel">Registered Performance Hall</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <h4>Practice Room Details</h4>
-                <div id="registeredPracticeRoomDetails" class="mb-4">
-                    <!-- Registered practice room details will be dynamically inserted here -->
-                </div>
-                <h5>Upload Practice Room Images</h5>
+                <h4>Performance Hall Details</h4>
+                <div id="registeredPerformanceHallDetails" class="mb-4"></div>
+                <h5>Upload Performance Hall Images</h5>
                 <form id="uploadImageForm" enctype="multipart/form-data">
-                    <input type="hidden" id="practiceRoomId" name="practiceRoomId">
-                    <input type="file" id="practiceRoomImages" name="images" class="form-control mb-3" accept="image/*" multiple>
+                    <input type="hidden" id="performanceHallId" name="performanceHallId">
+                    <input type="file" id="performanceHallImages" name="images" class="form-control mb-3" accept="image/*" multiple>
                     <small class="text-muted">You can upload up to 5 images.</small>
-                    <button type="button" class="btn btn-primary mt-3" onclick="uploadPracticeRoomImages()">Upload Images</button>
+                    <button type="button" class="btn btn-primary mt-3" onclick="uploadPerformanceHallImages()">Upload Images</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
-
 
 <script>
     function searchLocations() {
@@ -315,43 +313,42 @@
     }
 
     function showDetailsModal(address, latitude, longitude) {
-        document.getElementById("roomAddress").value = address;
+        document.getElementById("hallAddress").value = address;
         document.getElementById("latitude").value = latitude;
         document.getElementById("longitude").value = longitude;
-
-        const modal = new bootstrap.Modal(document.getElementById("practiceRoomModal"));
-        modal.show();
+        new bootstrap.Modal(document.getElementById("performanceHallModal")).show();
     }
 
-    function registerPracticeRoom() {
-        const form = document.getElementById("practiceRoomForm");
+    function registerPerformanceHall() {
+        const form = document.getElementById("performanceHallForm");
         const data = {
-            name: document.getElementById("roomName").value.trim(),
-            address: document.getElementById("roomAddress").value.trim(),
-            latitude: document.getElementById("latitude").value.trim(),
-            longitude: document.getElementById("longitude").value.trim(),
+            name: document.getElementById("hallName").value.trim(),
+            address: document.getElementById("hallAddress").value.trim(),
             owner: document.getElementById("owner").value.trim(),
             phone: document.getElementById("phone").value.trim(),
             email: document.getElementById("email").value.trim(),
             mapUrl: document.getElementById("mapUrl").value.trim(),
-            price: document.getElementById("price").value.trim(),
-            capacity: document.getElementById("capacity").value.trim(),
-            type: document.getElementById("type").value.trim(),
-            stand: document.getElementById("stand").value.trim(),
-            details: document.getElementById("details").value.trim(),
+            price: parseInt(document.getElementById("price").value.trim(), 10),
+            size: parseInt(document.getElementById("size").value.trim(), 10),
+            capacity: parseInt(document.getElementById("capacity").value.trim(), 10),
+            stand: parseInt(document.getElementById("stand").value.trim(), 10),
             hasPiano: document.getElementById("pianoYes").checked,
             hasAmp: document.getElementById("ampYes").checked,
             hasSpeaker: document.getElementById("speakerYes").checked,
             hasMic: document.getElementById("micYes").checked,
-            hasDrums: document.getElementById("drumsYes").checked
+            hasDrums: document.getElementById("drumsYes").checked,
+            details: document.getElementById("details").value.trim(),
+            latitude: parseFloat(document.getElementById("latitude").value.trim()),
+            longitude: parseFloat(document.getElementById("longitude").value.trim())
         };
 
+        // Validate required fields
         if (!data.name || !data.address || !data.latitude || !data.longitude || !data.owner || !data.phone || !data.email || !data.mapUrl) {
             alert("All required fields must be set.");
             return;
         }
 
-        fetch('/admin/practice-room/register', {
+        fetch('/admin/performance-hall/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -366,44 +363,48 @@
             })
             .then(result => {
                 if (result.status === 201) {
-                    const practiceRoomModal = bootstrap.Modal.getInstance(document.getElementById("practiceRoomModal"));
-                    if (practiceRoomModal) {
-                        practiceRoomModal.hide();
+                    const performanceHallModal = bootstrap.Modal.getInstance(document.getElementById("performanceHallModal"));
+                    if (performanceHallModal) {
+                        performanceHallModal.hide();
                     }
 
                     const details = result.data;
-                    document.getElementById("practiceRoomId").value = details.id; // Save ID for the image upload
-                    const detailsContainer = document.getElementById("registeredPracticeRoomDetails");
+                    document.getElementById("performanceHallId").value = details.id; // Save ID for the image upload
+                    const detailsContainer = document.getElementById("registeredPerformanceHallDetails");
                     detailsContainer.innerHTML = `
                     <p><strong>Name:</strong> ${details.name}</p>
+                    <p><strong>Price:</strong> ${details.price}</p>
+                    <p><strong>Size:</strong> ${details.size}</p>
+                    <p><strong>Capacity:</strong> ${details.capacity}</p>
                     <p><strong>Address:</strong> ${details.address}</p>
-                    <p><strong>Latitude:</strong> ${details.latitude}</p>
-                    <p><strong>Longitude:</strong> ${details.longitude}</p>
                     <p><strong>Owner:</strong> ${details.owner}</p>
                     <p><strong>Phone:</strong> ${details.phone}</p>
                     <p><strong>Email:</strong> ${details.email}</p>
+                    <p><strong>Latitude:</strong> ${details.latitude}</p>
+                    <p><strong>Longitude:</strong> ${details.longitude}</p>
+                    <p><strong>Details:</strong> ${details.details}</p>
                 `;
-                    const registeredModal = new bootstrap.Modal(document.getElementById("registeredPracticeRoomModal"));
+
+                    const registeredModal = new bootstrap.Modal(document.getElementById("registeredPerformanceHallModal"));
                     registeredModal.show();
                 } else {
-                    alert(`Failed to register practice room: ${result.message}`);
+                    alert(`Failed to register performance hall: ${result.message}`);
                 }
             })
             .catch(error => {
-                console.error("Error registering practice room:", error);
-                alert("Failed to register practice room. Please try again.");
+                console.error("Error registering performance hall:", error);
+                alert("Failed to register performance hall. Please try again.");
             });
     }
 
-
-    function uploadPracticeRoomImages() {
-        const imageInput = document.getElementById("practiceRoomImages");
+    function uploadPerformanceHallImages() {
+        const imageInput = document.getElementById("performanceHallImages");
         const files = imageInput.files;
-        const practiceRoomId = document.getElementById("practiceRoomId").value;
-        console.log("Practice Room ID:", practiceRoomId);
+        const performanceHallId = document.getElementById("performanceHallId").value;
+        console.log("Performance Hall ID:", performanceHallId);
 
-        if (!practiceRoomId) {
-            alert("Practice Room ID is missing. Please register the practice room first.");
+        if (!performanceHallId) {
+            alert("Performance Hall ID is missing. Please register the performance hall first.");
             return;
         }
 
@@ -420,7 +421,7 @@
         const formData = new FormData();
         Array.from(files).forEach(file => formData.append("images", file));
 
-        const url = `/admin/practice-room/images?practiceRoomId=${encodeURIComponent(practiceRoomId)}`;
+        const url = `/admin/performance-hall/images?performanceHallId=${encodeURIComponent(performanceHallId)}`;
 
         fetch(url, {
             method: 'POST',
@@ -435,7 +436,7 @@
             .then(result => {
                 if (result.status === 201) {
                     alert("Images uploaded successfully!");
-                    document.getElementById("practiceRoomImages").value = ""; // Reset file input
+                    document.getElementById("performanceHallImages").value = ""; // Reset file input
                 } else {
                     alert(`Failed to upload images: ${result.message}`);
                 }
@@ -445,8 +446,6 @@
                 alert("Failed to upload images. Please try again.");
             });
     }
-
-
 </script>
 
 <!-- Bootstrap Bundle with Popper -->

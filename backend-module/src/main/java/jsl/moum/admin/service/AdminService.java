@@ -117,6 +117,14 @@ public class AdminService {
         return memberReportRepository.findAll(pageRequest).map(MemberReportDto.Response::new);
     }
 
+    public Page<PracticeRoomDto.Response> getPracticeRoomsPaged(PageRequest pageRequest){
+        return practiceRoomRepository.findAll(pageRequest).map(PracticeRoomDto.Response::new);
+    }
+
+    public Page<PerformanceHallDto.Response> getPerformanceHallsPaged(PageRequest pageRequest){
+        return performanceHallRepository.findAll(pageRequest).map(PerformanceHallDto.Response::new);
+    }
+
     public MemberDto.Response getMemberById(int id){
         MemberEntity member = memberRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 회원 정보가 존재하지 않습니다."));
@@ -235,7 +243,7 @@ public class AdminService {
     }
 
     public PracticeRoomDto registerPracticeRoom(PracticeRoomDto.Register registerDto){
-        if(!requiredFieldsCheck(registerDto)){
+        if(!requiredFieldsCheckPracticeRoom(registerDto)){
             throw new CustomException(ErrorCode.REQUIRED_FIELDS_MISSING);
         }
         try {
@@ -270,7 +278,7 @@ public class AdminService {
         }
     }
 
-    private boolean requiredFieldsCheck(PracticeRoomDto.Register registerDto){
+    private boolean requiredFieldsCheckPracticeRoom(PracticeRoomDto.Register registerDto){
         return registerDto.getName() != null
                 && registerDto.getAddress() != null
                 && registerDto.getOwner() != null
@@ -293,7 +301,6 @@ public class AdminService {
                 imageUrls.add(imageUrl);
             }
         }
-
         return imageUrls;
     }
 
@@ -313,11 +320,65 @@ public class AdminService {
         return new PerformanceHallDto(hall);
     }
 
+    public PerformanceHallDto registerPerformanceHall(PerformanceHallDto.Register registerDto){
+        if(!requiredFieldsCheckPerformanceHall(registerDto)){
+            throw new CustomException(ErrorCode.REQUIRED_FIELDS_MISSING);
+        }
+        try {
+            PerformanceHall hall = registerDto.toEntity();
+            hall = performanceHallRepository.save(hall);
+            return new PerformanceHallDto(hall);
+        } catch (Exception e){
+            log.error("공연장 등록 중 오류 발생", e);
+            throw new CustomException(ErrorCode.REGISTER_PERFORMANCE_HALL_FAIL);
+        }
+    }
 
-    private String uploadPerformanceHallImage(int targetId, MultipartFile file) throws IOException {
+    public PerformanceHallDto savePerformanceHallImages(Integer id, List<MultipartFile> images) throws BadRequestException {
+        log.info("adminService savePerformanceHallImages for hall : {}", id);
+        if (images.size() > 5) {
+            log.error("업로드 이미지 개수 초과 (5개 초과)");
+            throw new BadRequestException("이미지는 최대 5개까지만 업로드 가능합니다.");
+        }
+
+        PerformanceHall hall = performanceHallRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.PERFORMANCE_HALL_NOT_FOUND));
+        log.info("performanceHall found : {}", hall);
+
+        try {
+            List<String> imageUrls = uploadPerformanceHallImages(id, images);
+            hall.setImageUrls(imageUrls);
+            hall = performanceHallRepository.save(hall);
+            return new PerformanceHallDto(hall);
+        } catch (Exception e){
+            log.error("공연장 이미지 등록 중 오류 발생", e);
+            throw new CustomException(ErrorCode.FILE_UPLOAD_FAIL);
+        }
+    }
+
+    private boolean requiredFieldsCheckPerformanceHall(PerformanceHallDto.Register registerDto){
+        return registerDto.getName() != null
+                && registerDto.getAddress() != null
+                && registerDto.getOwner() != null
+                && registerDto.getPhone() != null
+                && registerDto.getEmail() != null
+                && registerDto.getMapUrl() != null
+                && registerDto.getLatitude() != null
+                && registerDto.getLongitude() != null;
+    }
+
+    private List<String> uploadPerformanceHallImages(int targetId, List<MultipartFile> images) throws IOException {
         // "performanceHall/{performanceHallId}/{originalFileName}"
-        String originalFilename = file.getOriginalFilename();
-        String key = "performanceHall/" + targetId + "/" + originalFilename;
-        return storageService.uploadFile(key, file);
+        List<String> imageUrls = new ArrayList<>();
+
+        if(images != null && !images.isEmpty() && images.size() != 0){
+            for(MultipartFile file : images){
+                String originalFilename = file.getOriginalFilename();
+                String key = "practiceRoom/" + targetId + "/" + originalFilename;
+                String imageUrl = storageService.uploadFile(key, file);
+                imageUrls.add(imageUrl);
+            }
+        }
+        return imageUrls;
     }
 }

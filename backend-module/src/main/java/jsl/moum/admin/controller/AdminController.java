@@ -349,9 +349,24 @@ public class AdminController {
         return adminService.getPracticeRoomById(id);
     }
 
+    @GetMapping("/practice-rooms")
+    public ResponseEntity<Map<String, Object>> getPracticeRooms(
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
+        PageRequest pageRequest = PageRequest.of(page - 1, size);
+        Page<PracticeRoomDto.Response> practiceRoomsPage = adminService.getPracticeRoomsPaged(pageRequest);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("practiceRooms", practiceRoomsPage.getContent());
+        response.put("currentPage", practiceRoomsPage.getNumber() + 1);
+        response.put("totalPages", practiceRoomsPage.getTotalPages());
+        response.put("totalPracticeRooms", practiceRoomsPage.getTotalElements());
+
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/practice-room/register/model-view")
     public String registerPracticeRoom(Model model) {
-//        model.addAttribute("practiceRoom", new PracticeRoomDto.Request());
         return "adminPracticeRoomRegister";
     }
 
@@ -393,6 +408,46 @@ public class AdminController {
     public PerformanceHallDto getPerformanceHallDetails(@PathVariable(name = "id") int id) {
         return adminService.getPerformanceHallById(id);
     }
+
+    @GetMapping("/performance-halls")
+    public ResponseEntity<Map<String, Object>> getPerformanceHalls(
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
+        PageRequest pageRequest = PageRequest.of(page - 1, size);
+        Page<PerformanceHallDto.Response> performanceHallsPage = adminService.getPerformanceHallsPaged(pageRequest);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("performanceHalls", performanceHallsPage.getContent());
+        response.put("currentPage", performanceHallsPage.getNumber() + 1);
+        response.put("totalPages", performanceHallsPage.getTotalPages());
+        response.put("totalPerformanceHalls", performanceHallsPage.getTotalElements());
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/performance-hall/register/model-view")
+    public String registerPerformanceHall(Model model) {
+        return "adminPerformanceHallRegister";
+    }
+
+    @PostMapping("/performance-hall/register")
+    public ResponseEntity<ResultResponse> registerPerformanceHall(@RequestBody PerformanceHallDto.Register registerDto) {
+        PerformanceHallDto performanceHall = adminService.registerPerformanceHall(registerDto);
+
+        ResultResponse resultResponse = ResultResponse.of(ResponseCode.REGISTER_PERFORMANCE_HALL_SUCCESS, performanceHall);
+        return ResponseEntity.ok(resultResponse);
+    }
+
+    @PostMapping(value = "/performance-hall/images", consumes = {"multipart/form-data"})
+    public ResponseEntity<ResultResponse> uploadPerformanceHallImages(@RequestParam(name = "performanceHallId") Integer performanceHallId,
+                                                                      @RequestPart(name = "images", required = true) List<MultipartFile> images) throws BadRequestException {
+        PerformanceHallDto performanceHall = adminService.savePerformanceHallImages(performanceHallId, images);
+
+        ResultResponse resultResponse = ResultResponse.of(ResponseCode.UPLOAD_PERFORMANCE_HALL_IMAGE_SUCCESS, performanceHall);
+        return ResponseEntity.ok(resultResponse);
+    }
+
+
 
 
     @GetMapping("/logout")
