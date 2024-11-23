@@ -271,10 +271,8 @@ public class ArticleService {
      */
     @Transactional(readOnly = true)
     public List<ArticleDto.Response> getArticlesByFiltering(String encodedString, int page, int size) {
-//        ObjectMapper objectMapper = new ObjectMapper();
+
         ArticleDto.SearchDto searchDto = null;
-//        objectMapper.registerModule(new JavaTimeModule());
-//        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         log.info("encodedString : {}", encodedString);
         if (encodedString != null) {
             try {

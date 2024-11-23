@@ -118,7 +118,7 @@ public class ArticleRepositoryCustom {
 
         // 조건이 하나라도 있으면 리스트 반환, 없으면 기본 정렬 (최신순)
         if (orderSpecifiers.isEmpty()) {
-            orderSpecifiers.add(articleEntity.createdAt.desc());  // 기본적으로 생성일 기준으로 최신순 정렬
+            orderSpecifiers.add(articleEntity.createdAt.desc());
         }
 
         return orderSpecifiers;
