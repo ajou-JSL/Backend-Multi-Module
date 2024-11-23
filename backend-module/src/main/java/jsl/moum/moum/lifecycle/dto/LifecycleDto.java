@@ -13,6 +13,7 @@ import jsl.moum.record.domain.dto.RecordDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public class LifecycleDto {
     @Builder
     @Getter
     @AllArgsConstructor
+    @NoArgsConstructor
     public static class Request{
         private String moumName;
         private String moumDescription;
