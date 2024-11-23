@@ -2,8 +2,6 @@ package jsl.moum.community.perform.service;
 
 import jsl.moum.auth.domain.entity.MemberEntity;
 import jsl.moum.auth.domain.repository.MemberRepository;
-import jsl.moum.community.article.domain.article.ArticleEntity;
-import jsl.moum.community.article.dto.ArticleDto;
 import jsl.moum.community.perform.domain.entity.PerformArticleEntity;
 import jsl.moum.community.perform.domain.entity.PerformMember;
 import jsl.moum.community.perform.domain.repository.PerformArticleRepository;
@@ -158,6 +156,19 @@ public class PerformArticleService {
                 .orElseThrow(()-> new CustomException(ErrorCode.ILLEGAL_ARGUMENT));
 
         target.updateViewCount(1);
+        return new PerformArticleDto.Response(target);
+    }
+
+    /*
+        모음의 공연게시글 단건 조회
+    */
+    @Transactional
+    public PerformArticleDto.Response getPerformArticleByMoumId(int moumId){
+        PerformArticleEntity target = performArticleRepositoryCustom.findPerformArticleByMoumId(moumId);
+        if(target == null){
+            throw new CustomException(ErrorCode.ILLEGAL_ARGUMENT);
+        }
+
         return new PerformArticleDto.Response(target);
     }
 

@@ -2,6 +2,7 @@ package jsl.moum.community.perform.domain.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jsl.moum.community.perform.domain.entity.PerformArticleEntity;
+import jsl.moum.moum.lifecycle.domain.LifecycleEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -9,6 +10,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static jsl.moum.community.perform.domain.entity.QPerformArticleEntity.performArticleEntity;
+import static jsl.moum.moum.lifecycle.domain.QLifecycleEntity.lifecycleEntity;
 
 @Repository
 @RequiredArgsConstructor
@@ -52,5 +54,15 @@ public class PerformArticleRepositoryCustom {
                 .fetch().size();
 
         return count > 0;
+    }
+
+    /**
+     * 모음 ID로 모음의 공연게시글 찾기
+     */
+    public PerformArticleEntity findPerformArticleByMoumId(int moumId){
+        return jpaQueryFactory
+                .selectFrom(performArticleEntity)
+                .where(performArticleEntity.moum.id.eq(moumId))
+                .fetchOne();
     }
 }
