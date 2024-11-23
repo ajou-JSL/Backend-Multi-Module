@@ -7,6 +7,7 @@ import jsl.moum.community.perform.service.PerformArticleService;
 import jsl.moum.global.error.exception.NeedLoginException;
 import jsl.moum.global.response.ResponseCode;
 import jsl.moum.global.response.ResultResponse;
+import jsl.moum.moum.team.dto.TeamDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -102,16 +103,30 @@ public class PerformArticleController {
     }
 
     /*
-        이달의 공연 게시글 리스트 조회
-        /api/performs?moumId={moumId}
+        모음의 공연 게시글 조회
     */
     @GetMapping("/api/performs")
-    public ResponseEntity<ResultResponse> getPerformByMoumId(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+    public ResponseEntity<ResultResponse> getPerformArticleByMoumId(@AuthenticationPrincipal CustomUserDetails customUserDetails,
                                                                          @RequestParam(value = "moumId", required = true) int moumId){
         loginCheck(customUserDetails.getUsername());
         PerformArticleDto.Response responseDto = performArticleService.getPerformArticleByMoumId(moumId);
         ResultResponse result = ResultResponse.of(ResponseCode.GET_PERFORM_ARTICLE_SUCCESS,responseDto);
         return new ResponseEntity<>(result, HttpStatusCode.valueOf(result.getStatus()));
+    }
+
+    /**
+     * 필터링으로 팀 리스트 조회
+     */
+    @GetMapping("/api/performs/search")
+    public ResponseEntity<ResultResponse> getPerformArticlesWithFiltering(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                                                @RequestParam(required = false) String conditions,
+                                                                @RequestParam(defaultValue = "0") int page,
+                                                                @RequestParam(defaultValue = "10") int size)
+    {
+        loginCheck(customUserDetails.getUsername());
+        List<PerformArticleDto.Response> responseDto = performArticleService.getPerformArticleWithFiltering(conditions, page, size);
+        ResultResponse response = ResultResponse.of(ResponseCode.GET_PERFORM_ARTICLE_SUCCESS,responseDto);
+        return new ResponseEntity<>(response, HttpStatusCode.valueOf(response.getStatus()));
     }
 
 

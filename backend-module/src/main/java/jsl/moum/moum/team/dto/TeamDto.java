@@ -160,7 +160,8 @@ public class TeamDto {
     public static class SearchDto {
         private final Boolean filterByExp = false;
         private final Boolean filterByMembersCount = false;
-        private String teamName;
+        private String keyword;
         private MusicGenre genre;
+        private String location;
     }
 }
