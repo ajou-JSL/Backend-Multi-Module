@@ -5,6 +5,7 @@ import jsl.moum.admin.service.AdminService;
 import jsl.moum.auth.dto.MemberDto;
 import jsl.moum.business.dto.PerformanceHallDto;
 import jsl.moum.business.dto.PracticeRoomDto;
+import jsl.moum.business.service.BusinessService;
 import jsl.moum.chatroom.dto.ChatroomDto;
 import jsl.moum.community.article.dto.ArticleDto;
 import jsl.moum.global.error.exception.CustomException;
@@ -39,6 +40,7 @@ public class AdminController {
 
     private final AdminService adminService;
     private final ReportService reportService;
+    private final BusinessService businessService;
 
     @GetMapping("/login")
     public String adminLoginPage(Model model) {
@@ -346,7 +348,7 @@ public class AdminController {
     @GetMapping("/practice-room/view/{id}")
     @ResponseBody
     public PracticeRoomDto getPracticeRoomDetails(@PathVariable(name = "id") int id) {
-        return adminService.getPracticeRoomById(id);
+        return businessService.getPracticeRoomById(id);
     }
 
     @GetMapping("/practice-rooms")
@@ -406,7 +408,7 @@ public class AdminController {
     @GetMapping("/performance-hall/view/{id}")
     @ResponseBody
     public PerformanceHallDto getPerformanceHallDetails(@PathVariable(name = "id") int id) {
-        return adminService.getPerformanceHallById(id);
+        return businessService.getPerformanceHallById(id);
     }
 
     @GetMapping("/performance-halls")

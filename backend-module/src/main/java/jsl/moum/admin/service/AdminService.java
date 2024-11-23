@@ -236,12 +236,6 @@ public class AdminService {
         return practiceRoomRepository.findAll().stream().map(PracticeRoomDto::new).toList();
     }
 
-    public PracticeRoomDto getPracticeRoomById(int id){
-        PracticeRoom room = practiceRoomRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 연습실 정보가 존재하지 않습니다."));
-        return new PracticeRoomDto(room);
-    }
-
     public PracticeRoomDto registerPracticeRoom(PracticeRoomDto.Register registerDto){
         if(!requiredFieldsCheckPracticeRoom(registerDto)){
             throw new CustomException(ErrorCode.REQUIRED_FIELDS_MISSING);
@@ -312,12 +306,6 @@ public class AdminService {
 
     public List<PerformanceHallDto> getPerformanceHalls(){
         return performanceHallRepository.findAll().stream().map(PerformanceHallDto::new).toList();
-    }
-
-    public PerformanceHallDto getPerformanceHallById(int id){
-        PerformanceHall hall = performanceHallRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 공연장 정보가 존재하지 않습니다."));
-        return new PerformanceHallDto(hall);
     }
 
     public PerformanceHallDto registerPerformanceHall(PerformanceHallDto.Register registerDto){
