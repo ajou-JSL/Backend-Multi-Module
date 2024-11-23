@@ -30,7 +30,7 @@ public class TeamDto {
         private int leaderId;
         private List<TeamMemberEntity> members;
         private String fileUrl;
-        private String genre;
+        private MusicGenre genre;
         private String location;
         @Nullable
         private List<RecordDto.Request> records;
@@ -61,7 +61,7 @@ public class TeamDto {
         private final int leaderId;
         private final String teamName;
         private final String description;
-        private final String genre;
+        private final MusicGenre genre;
         private final String location;
         private final LocalDateTime createdAt;
         private final String fileUrl;
@@ -108,7 +108,7 @@ public class TeamDto {
         private String videoUrl;
         @Nullable
         private List<RecordDto.Request> records;
-        private String genre;
+        private MusicGenre genre;
 
 
         public TeamEntity toEntity(){
@@ -131,7 +131,7 @@ public class TeamDto {
         private final int leaderId;
         private final String teamName;
         private final String description;
-        private final String genre;
+        private final MusicGenre genre;
         private final String location;
         private final LocalDateTime createdAt;
         private final String fileUrl;
@@ -152,5 +152,15 @@ public class TeamDto {
                     .map(RecordDto.Response::new)
                     .collect(Collectors.toList());;
         }
+    }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    public static class SearchDto {
+        private final Boolean filterByExp = false;
+        private final Boolean filterByMembersCount = false;
+        private String teamName;
+        private MusicGenre genre;
     }
 }

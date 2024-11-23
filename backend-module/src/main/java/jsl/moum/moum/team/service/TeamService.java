@@ -1,8 +1,12 @@
 package jsl.moum.moum.team.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jsl.moum.auth.domain.entity.MemberEntity;
 import jsl.moum.auth.domain.repository.MemberRepository;
 import jsl.moum.auth.dto.MemberDto;
+import jsl.moum.community.article.domain.article.ArticleEntity;
+import jsl.moum.community.article.dto.ArticleDto;
 import jsl.moum.global.error.ErrorCode;
 import jsl.moum.global.error.exception.CustomException;
 import jsl.moum.moum.lifecycle.domain.LifecycleEntity;
@@ -26,6 +30,7 @@ import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,6 +48,7 @@ public class TeamService {
     private final LifecycleRepository lifecycleRepository;
     private final LifecycleRepositoryCustom lifecycleRepositoryCustom;
     private final TeamRepositoryCustom teamRepositoryCustom;
+    private final ObjectMapper objectMapper;
 
     @Value("${ncp.object-storage.bucket}")
     private String bucket;
@@ -326,6 +332,35 @@ public class TeamService {
         }
 
         return teamMemberRepositoryCustom.findAllTeamsByMemberId(memberId);
+    }
+
+    /**
+     * 필터링으로 팀 목록 조회
+     */
+    @Transactional
+    public List<TeamDto.Response> getTeamsWithFiltering(String encodedString, int page, int size) {
+
+        TeamDto.SearchDto searchDto = null;
+        log.info("encodedString : {}", encodedString);
+        if (encodedString != null) {
+            try {
+                log.info("try 진입");
+                String decodedString = new String(Base64.getDecoder().decode(encodedString));
+                log.info("decodedString : {}", decodedString);
+                searchDto = objectMapper.readValue(decodedString, TeamDto.SearchDto.class);
+                log.info("searchDto : {}", searchDto);
+            } catch (IllegalArgumentException | JsonProcessingException e) {
+                log.error(e.getMessage());
+                throw new CustomException(ErrorCode.BASE64_PROCESS_FAIL);
+            }
+        }
+        List<TeamEntity> teams = teamRepositoryCustom.searchTeamsWithFiltering(searchDto, page, size);
+
+        List<TeamDto.Response> teamsResponseList = teams.stream()
+                .map(TeamDto.Response::new)
+                .collect(Collectors.toList());
+
+        return teamsResponseList;
     }
 
 

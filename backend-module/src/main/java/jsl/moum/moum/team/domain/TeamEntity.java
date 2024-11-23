@@ -43,7 +43,7 @@ public class TeamEntity {
     private String description;
 
     @Column(name = "genre")
-    private String genre;
+    private MusicGenre genre;
 
     @Column(name = "location")
     private String location;

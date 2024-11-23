@@ -69,7 +69,7 @@ class CommentServiceTest {
                 .title("test title")
                 .author(mockAuthor)
                 .category(ArticleEntity.ArticleCategories.RECRUIT_BOARD)
-                .commentCount(0)
+                .commentsCount(0)
                 .build();
 
         mockArticleDetails = ArticleDetailsEntity.builder()
@@ -109,7 +109,7 @@ class CommentServiceTest {
         // then
         verify(commentRepository).save(any(CommentEntity.class));
         assertEquals("test content", response.getContent());
-        assertEquals(1, mockArticle.getCommentCount());
+        assertEquals(1, mockArticle.getCommentsCount());
 
     }
     @Test
@@ -174,7 +174,7 @@ class CommentServiceTest {
         // then
         verify(commentRepository).deleteById(mockComment.getId());
         assertEquals(1, response.getCommentId());
-        assertEquals(0, mockArticle.getCommentCount());
+        assertEquals(0, mockArticle.getCommentsCount());
     }
 
     @Test
