@@ -31,7 +31,7 @@ public class ArticleEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private int id;
 
     @JoinColumn(name = "fk_article_author_id")
     @ManyToOne(fetch = FetchType.LAZY)
