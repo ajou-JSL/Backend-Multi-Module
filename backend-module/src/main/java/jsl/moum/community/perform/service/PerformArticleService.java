@@ -93,8 +93,8 @@ public class PerformArticleService {
                 .genre(requestDto.getGenre())
                 .team(team)
                 .moum(moum)
-                .viewCount(0)
-                .likesCount(0)
+                //.viewCount(0)
+                //.likesCount(0)
                 .build();
 
         for (PerformMember performMember : performMembers) {
@@ -157,7 +157,7 @@ public class PerformArticleService {
         PerformArticleEntity target = performArticleRepository.findById(performArticleId)
                 .orElseThrow(()-> new CustomException(ErrorCode.ILLEGAL_ARGUMENT));
 
-        target.updateViewCount(1);
+        //target.updateViewCount(1);
         return new PerformArticleDto.Response(target);
     }
 

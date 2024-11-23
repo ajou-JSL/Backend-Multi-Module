@@ -116,7 +116,7 @@ public class LikesService {
         likesRepository.save(newLikes);
 
         // 좋아요 +1 후 저장
-        performArticle.updateLikesCount(1);
+        //performArticle.updateLikesCount(1);
         performArticleRepository.save(performArticle);
 
         performArticle.getTeam().updateTeamExpAndRank(1);
@@ -146,7 +146,7 @@ public class LikesService {
 
         // 게시글 좋아요 수 감소 및 저장
         PerformArticleEntity performArticle = findPerformArticle(performArticleId);
-        performArticle.updateLikesCount(-1);
+        //performArticle.updateLikesCount(-1);
         performArticleRepository.save(performArticle);
 
         performArticle.getTeam().updateTeamExpAndRank(-1);

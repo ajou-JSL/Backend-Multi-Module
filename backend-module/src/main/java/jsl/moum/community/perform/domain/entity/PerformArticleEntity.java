@@ -59,11 +59,11 @@ public class PerformArticleEntity {
     @Column(name = "genre", nullable = false)
     private MusicGenre genre;
 
-    @Column(name = "likes_count")
-    private int likesCount;
-
-    @Column(name = "view_count")
-    private int viewCount;
+//    @Column(name = "likes_count")
+//    private int likesCount;
+//
+//    @Column(name = "view_count")
+//    private int viewCount;
 
     // 멤버가 참여해있는 공연들
     @OneToMany(mappedBy = "performanceArticle", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -108,17 +108,17 @@ public class PerformArticleEntity {
             this.genre = updateDto.getGenre();
         }
     }
+//
+//    public void updateLikesCount(int count){
+//        log.info("#1 : updateLikesCount() method called, likesCount: {}", this.likesCount);
+//        this.likesCount += count;
+//        log.info("#2 : updateLikesCount() method called, likesCount: {}", this.likesCount);
+//    }
 
-    public void updateLikesCount(int count){
-        log.info("#1 : updateLikesCount() method called, likesCount: {}", this.likesCount);
-        this.likesCount += count;
-        log.info("#2 : updateLikesCount() method called, likesCount: {}", this.likesCount);
-    }
-
-    public void updateViewCount(int count){
-        log.info("#1 : updateViewCount() method called, viewCount: {}", this.viewCount);
-        this.viewCount += count;
-        log.info("#2 : updateViewCount() method called, viewCount: {}", this.viewCount);
-
-    }
+//    public void updateViewCount(int count){
+//        log.info("#1 : updateViewCount() method called, viewCount: {}", this.viewCount);
+//        this.viewCount += count;
+//        log.info("#2 : updateViewCount() method called, viewCount: {}", this.viewCount);
+//
+//    }
 }
