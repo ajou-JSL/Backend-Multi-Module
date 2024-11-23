@@ -1,5 +1,9 @@
 package jsl.moum.community.article.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jsl.moum.auth.domain.entity.MemberEntity;
 import jsl.moum.auth.domain.repository.MemberRepository;
 import jsl.moum.community.article.domain.article.ArticleRepositoryCustom;
@@ -8,10 +12,14 @@ import jsl.moum.community.article.domain.article_details.ArticleDetailsRepositor
 import jsl.moum.community.article.dto.ArticleDetailsDto;
 import jsl.moum.community.article.dto.ArticleDto;
 import jsl.moum.community.article.dto.UpdateArticleDto;
+import jsl.moum.global.response.ResponseCode;
+import jsl.moum.global.response.ResultResponse;
 import jsl.moum.objectstorage.StorageService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,11 +34,13 @@ import jsl.moum.global.error.exception.NoAuthorityException;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ArticleService {
 
     private final ArticleRepository articleRepository;
@@ -39,6 +49,8 @@ public class ArticleService {
     private final ArticleDetailsRepositoryCustom articleDetailsRepositoryCustom;
     private final StorageService storageService;
     private final ArticleRepositoryCustom articleRepositoryCustom;
+
+    private final ObjectMapper objectMapper;
 
     @Value("${ncp.object-storage.bucket}")
     private String bucket;
@@ -203,39 +215,39 @@ public class ArticleService {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * 카테고리에 따른 게시글 목록 조회
-     */
-    @Transactional(readOnly = true)
-    public List<ArticleDto.Response> getArticlesByCategory(ArticleEntity.ArticleCategories category, int page, int size) {
-        List<ArticleEntity> articles;
-
-        if (category == ArticleEntity.ArticleCategories.FREE_TALKING_BOARD) {
-            articles = articleDetailsRepositoryCustom.findFreeTalkingArticles(page, size);
-        } else if (category == ArticleEntity.ArticleCategories.RECRUIT_BOARD) {
-            articles = articleDetailsRepositoryCustom.findRecruitingdArticles(page, size);
-        } else {
-            throw new CustomException(ErrorCode.ARTICLE_NOT_FOUND);
-        }
-
-        return articles.stream()
-                .map(ArticleDto.Response::new)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * 주어진 키워드를 사용하여 게시글을 검색
-     */
-    @Transactional(readOnly = true)
-    public List<ArticleDto.Response> getArticleWithTitleSearch(String keyword, String category,int page, int size) {
-        List<ArticleEntity> articles = articleDetailsRepositoryCustom.searchArticlesByTitleKeyword(keyword, category, page, size);
-
-        List<ArticleDto.Response> articleResponseList = articles.stream()
-                .map(ArticleDto.Response::new)
-                .collect(Collectors.toList());
-
-        return articleResponseList;
-    }
+//    /**
+//     * 카테고리에 따른 게시글 목록 조회
+//     */
+//    @Transactional(readOnly = true)
+//    public List<ArticleDto.Response> getArticlesByCategory(ArticleEntity.ArticleCategories category, int page, int size) {
+//        List<ArticleEntity> articles;
+//
+//        if (category == ArticleEntity.ArticleCategories.FREE_TALKING_BOARD) {
+//            articles = articleDetailsRepositoryCustom.findFreeTalkingArticles(page, size);
+//        } else if (category == ArticleEntity.ArticleCategories.RECRUIT_BOARD) {
+//            articles = articleDetailsRepositoryCustom.findRecruitingdArticles(page, size);
+//        } else {
+//            throw new CustomException(ErrorCode.ARTICLE_NOT_FOUND);
+//        }
+//
+//        return articles.stream()
+//                .map(ArticleDto.Response::new)
+//                .collect(Collectors.toList());
+//    }
+//
+//    /**
+//     * 주어진 키워드를 사용하여 게시글을 검색
+//     */
+//    @Transactional(readOnly = true)
+//    public List<ArticleDto.Response> getArticleWithTitleSearch(String keyword, String category,int page, int size) {
+//        List<ArticleEntity> articles = articleDetailsRepositoryCustom.searchArticlesByTitleKeyword(keyword, category, page, size);
+//
+//        List<ArticleDto.Response> articleResponseList = articles.stream()
+//                .map(ArticleDto.Response::new)
+//                .collect(Collectors.toList());
+//
+//        return articleResponseList;
+//    }
 
     /**
      * 나의 즐겨찾기 리스트 조회
@@ -246,6 +258,37 @@ public class ArticleService {
         int memberId = memberRepository.findByUsername(memberName).getId();
 
         List<ArticleEntity> articles = articleRepository.findLikedArticles(memberId);
+
+        List<ArticleDto.Response> articleResponseList = articles.stream()
+                .map(ArticleDto.Response::new)
+                .collect(Collectors.toList());
+
+        return articleResponseList;
+    }
+
+    /**
+     * 필터링으로 게시글 목록 조회
+     */
+    @Transactional(readOnly = true)
+    public List<ArticleDto.Response> getArticlesByFiltering(String encodedString, int page, int size) {
+//        ObjectMapper objectMapper = new ObjectMapper();
+        ArticleDto.SearchDto searchDto = null;
+//        objectMapper.registerModule(new JavaTimeModule());
+//        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        log.info("encodedString : {}", encodedString);
+        if (encodedString != null) {
+            try {
+                log.info("try 진입");
+                String decodedString = new String(Base64.getDecoder().decode(encodedString));
+                log.info("decodedString : {}", decodedString);
+                searchDto = objectMapper.readValue(decodedString, ArticleDto.SearchDto.class);
+                log.info("searchDto : {}", searchDto);
+            } catch (IllegalArgumentException |JsonProcessingException e) {
+                log.error(e.getMessage());
+                 throw new CustomException(ErrorCode.BASE64_PROCESS_FAIL);
+            }
+        }
+        List<ArticleEntity> articles = articleRepositoryCustom.searchArticlesWithFiltering(searchDto, page, size);
 
         List<ArticleDto.Response> articleResponseList = articles.stream()
                 .map(ArticleDto.Response::new)

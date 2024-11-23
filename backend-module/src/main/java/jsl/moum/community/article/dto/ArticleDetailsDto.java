@@ -44,7 +44,7 @@ public class ArticleDetailsDto {
         private final String category;
         private final String content;
         private final int viewCounts;
-        private final int commentCounts;
+        private final int commentsCounts;
         private final int likeCounts;
         private final String author;
         private final String fileUrl;
@@ -56,7 +56,7 @@ public class ArticleDetailsDto {
             this.category = article.getCategory().toString();
             this.author = article.getAuthor().getUsername();
             this.viewCounts = article.getViewCount();
-            this.commentCounts = article.getCommentCount();
+            this.commentsCounts = article.getCommentsCount();
             this.likeCounts = article.getLikesCount();
             this.content = articleDetails.getContent();
             this.fileUrl = articleDetails.getFileUrl();

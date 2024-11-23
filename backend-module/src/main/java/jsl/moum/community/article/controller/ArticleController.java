@@ -98,38 +98,36 @@ public class ArticleController {
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
 
-
-
-    /**
-     * 게시글 검색 API
-     */
-    @GetMapping("/api/articles/search")
-    public ResponseEntity<ResultResponse> searchArticles(@RequestParam(required = false) String keyword,
-                                                         @RequestParam(required = false) String category,
-                                                         @RequestParam(defaultValue = "0") int page,
-                                                         @RequestParam(defaultValue = "10") int size
-    ) {
-
-        List<ArticleDto.Response> articleList = articleService.getArticleWithTitleSearch(keyword,category,page,size);
-
-        ResultResponse response = ResultResponse.of(ResponseCode.ARTICLE_LIST_GET_SUCCESS, articleList);
-        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
-    }
-
-    /**
-     * 게시글 목록 카테고리 필터링 조회 API
-     */
-    @GetMapping("/api/articles/category")
-    public ResponseEntity<ResultResponse> getArticles(
-            @RequestParam(required = true) ArticleEntity.ArticleCategories category,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-
-        List<ArticleDto.Response> articleList = articleService.getArticlesByCategory(category,page,size);
-
-        ResultResponse response = ResultResponse.of(ResponseCode.ARTICLE_LIST_GET_SUCCESS, articleList);
-        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
-    }
+//    /**
+//     * 게시글 검색 API
+//     */
+//    @GetMapping("/api/articles/search")
+//    public ResponseEntity<ResultResponse> searchArticles(@RequestParam(required = false) String keyword,
+//                                                         @RequestParam(required = false) String category,
+//                                                         @RequestParam(defaultValue = "0") int page,
+//                                                         @RequestParam(defaultValue = "10") int size
+//    ) {
+//
+//        List<ArticleDto.Response> articleList = articleService.getArticleWithTitleSearch(keyword,category,page,size);
+//
+//        ResultResponse response = ResultResponse.of(ResponseCode.ARTICLE_LIST_GET_SUCCESS, articleList);
+//        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+//    }
+//
+//    /**
+//     * 카테고리별 게시글 목록 조회
+//     */
+//    @GetMapping("/api/articles/category")
+//    public ResponseEntity<ResultResponse> getArticlesWithCategory(
+//            @RequestParam(required = true) ArticleEntity.ArticleCategories category,
+//            @RequestParam(defaultValue = "0") int page,
+//            @RequestParam(defaultValue = "10") int size) {
+//
+//        List<ArticleDto.Response> articleList = articleService.getArticlesByCategory(category,page,size);
+//
+//        ResultResponse response = ResultResponse.of(ResponseCode.ARTICLE_LIST_GET_SUCCESS, articleList);
+//        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+//    }
 
 
     /**
@@ -166,6 +164,21 @@ public class ArticleController {
         ResultResponse response = ResultResponse.of(ResponseCode.ARTICLE_LIST_GET_SUCCESS, articleList);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
 
+    }
+
+    /**
+     * 필터링으로 게시글 목록 조회
+     */
+    @GetMapping("/api/articles/search")
+    public ResponseEntity<ResultResponse> getArticlesByFiltering(
+            @RequestParam(required = false) String conditions,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        List<ArticleDto.Response> articleList = articleService.getArticlesByFiltering(conditions,page,size);
+
+        ResultResponse response = ResultResponse.of(ResponseCode.ARTICLE_LIST_GET_SUCCESS, articleList);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
 
 }
