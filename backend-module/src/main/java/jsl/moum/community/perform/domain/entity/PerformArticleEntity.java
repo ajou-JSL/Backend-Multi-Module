@@ -58,10 +58,10 @@ public class PerformArticleEntity {
     private MusicGenre genre;
 
     @Column(name = "likes_count")
-    private int likesCount;
+    private int likesCount = 0;
 
     @Column(name = "view_count")
-    private int viewCount;
+    private int viewCount = 0;
 
     // 멤버가 참여해있는 공연들
     @OneToMany(mappedBy = "performanceArticle", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
