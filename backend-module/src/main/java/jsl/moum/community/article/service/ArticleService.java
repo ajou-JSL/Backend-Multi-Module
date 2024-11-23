@@ -215,39 +215,39 @@ public class ArticleService {
                 .collect(Collectors.toList());
     }
 
-//    /**
-//     * 카테고리에 따른 게시글 목록 조회
-//     */
-//    @Transactional(readOnly = true)
-//    public List<ArticleDto.Response> getArticlesByCategory(ArticleEntity.ArticleCategories category, int page, int size) {
-//        List<ArticleEntity> articles;
-//
-//        if (category == ArticleEntity.ArticleCategories.FREE_TALKING_BOARD) {
-//            articles = articleDetailsRepositoryCustom.findFreeTalkingArticles(page, size);
-//        } else if (category == ArticleEntity.ArticleCategories.RECRUIT_BOARD) {
-//            articles = articleDetailsRepositoryCustom.findRecruitingdArticles(page, size);
-//        } else {
-//            throw new CustomException(ErrorCode.ARTICLE_NOT_FOUND);
-//        }
-//
-//        return articles.stream()
-//                .map(ArticleDto.Response::new)
-//                .collect(Collectors.toList());
-//    }
-//
-//    /**
-//     * 주어진 키워드를 사용하여 게시글을 검색
-//     */
-//    @Transactional(readOnly = true)
-//    public List<ArticleDto.Response> getArticleWithTitleSearch(String keyword, String category,int page, int size) {
-//        List<ArticleEntity> articles = articleDetailsRepositoryCustom.searchArticlesByTitleKeyword(keyword, category, page, size);
-//
-//        List<ArticleDto.Response> articleResponseList = articles.stream()
-//                .map(ArticleDto.Response::new)
-//                .collect(Collectors.toList());
-//
-//        return articleResponseList;
-//    }
+    /**
+     * 카테고리에 따른 게시글 목록 조회
+     */
+    @Transactional(readOnly = true)
+    public List<ArticleDto.Response> getArticlesByCategory(ArticleEntity.ArticleCategories category, int page, int size) {
+        List<ArticleEntity> articles;
+
+        if (category == ArticleEntity.ArticleCategories.FREE_TALKING_BOARD) {
+            articles = articleDetailsRepositoryCustom.findFreeTalkingArticles(page, size);
+        } else if (category == ArticleEntity.ArticleCategories.RECRUIT_BOARD) {
+            articles = articleDetailsRepositoryCustom.findRecruitingdArticles(page, size);
+        } else {
+            throw new CustomException(ErrorCode.ARTICLE_NOT_FOUND);
+        }
+
+        return articles.stream()
+                .map(ArticleDto.Response::new)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 주어진 키워드를 사용하여 게시글을 검색
+     */
+    @Transactional(readOnly = true)
+    public List<ArticleDto.Response> getArticleWithTitleSearch(String keyword, String category,int page, int size) {
+        List<ArticleEntity> articles = articleDetailsRepositoryCustom.searchArticlesByTitleKeyword(keyword, category, page, size);
+
+        List<ArticleDto.Response> articleResponseList = articles.stream()
+                .map(ArticleDto.Response::new)
+                .collect(Collectors.toList());
+
+        return articleResponseList;
+    }
 
     /**
      * 나의 즐겨찾기 리스트 조회

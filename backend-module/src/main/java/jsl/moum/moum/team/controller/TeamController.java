@@ -83,8 +83,6 @@ public class TeamController {
 
     }
 
-
-    // todo : 멤버 초대하기 -> 알람발송, 팀 가입요청 수락 -> 가입성공 으로 로직 변경
     /**
      * 팀에 멤버 초대 API
      */
@@ -175,6 +173,21 @@ public class TeamController {
     {
         loginCheck(customUserDetails.getUsername());
         List<TeamDto.Response> responseDto = teamService.getTeamsByMemberId(memberId);
+        ResultResponse response = ResultResponse.of(ResponseCode.GET_TEAM_LIST_SUCCESS,responseDto);
+        return new ResponseEntity<>(response, HttpStatusCode.valueOf(response.getStatus()));
+    }
+
+    /**
+     * 필터링으로 팀 리스트 조회
+     */
+    @GetMapping("/api/teams/search")
+    public ResponseEntity<ResultResponse> getTeamsWithFiltering(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                                            @RequestParam(required = false) String conditions,
+                                                            @RequestParam(defaultValue = "0") int page,
+                                                            @RequestParam(defaultValue = "10") int size)
+    {
+        loginCheck(customUserDetails.getUsername());
+        List<TeamDto.Response> responseDto = teamService.getTeamsWithFiltering(conditions, page, size);
         ResultResponse response = ResultResponse.of(ResponseCode.GET_TEAM_LIST_SUCCESS,responseDto);
         return new ResponseEntity<>(response, HttpStatusCode.valueOf(response.getStatus()));
     }
