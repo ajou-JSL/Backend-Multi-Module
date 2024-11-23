@@ -91,6 +91,8 @@ public enum ResponseCode {
     // Business
     REGISTER_PRACTICE_ROOM_SUCCESS(201,"S-B001","연습실 등록 성공"),
     REGISTER_PERFORMANCE_HALL_SUCCESS(201,"S-B002","공연장 등록 성공"),
+    UPLOAD_PRACTICE_ROOM_IMAGE_SUCCESS(201,"S-B003","연습실 이미지 업로드 성공"),
+    UPLOAD_PERFORMANCE_HALL_IMAGE_SUCCESS(201,"S-B004","공연장 이미지 업로드 성공"),
 
     // Naver Maps
     GET_LOCATION_INFO_SUCCESS(200,"S-NM001","위치 정보 조회 성공"),

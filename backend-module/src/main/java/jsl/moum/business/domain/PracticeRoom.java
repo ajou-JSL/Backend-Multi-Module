@@ -2,10 +2,7 @@ package jsl.moum.business.domain;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Getter
+@Setter
 @Table(name = "practice_room")
 public class PracticeRoom {
 

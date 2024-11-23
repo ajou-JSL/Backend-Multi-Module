@@ -246,15 +246,18 @@
                 <div id="registeredPracticeRoomDetails" class="mb-4">
                     <!-- Registered practice room details will be dynamically inserted here -->
                 </div>
-                <h5>Upload Practice Room Image</h5>
+                <h5>Upload Practice Room Images</h5>
                 <form id="uploadImageForm" enctype="multipart/form-data">
-                    <input type="file" id="practiceRoomImage" name="practiceRoomImage" class="form-control mb-3" accept="image/*">
-                    <button type="button" class="btn btn-primary" onclick="uploadPracticeRoomImage()">Upload Image</button>
+                    <input type="hidden" id="practiceRoomId" name="practiceRoomId">
+                    <input type="file" id="practiceRoomImages" name="images" class="form-control mb-3" accept="image/*" multiple>
+                    <small class="text-muted">You can upload up to 5 images.</small>
+                    <button type="button" class="btn btn-primary mt-3" onclick="uploadPracticeRoomImages()">Upload Images</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
 
 <script>
     function searchLocations() {
@@ -362,14 +365,13 @@
             })
             .then(result => {
                 if (result.status === 201) {
-                    // Close the previous modal
                     const practiceRoomModal = bootstrap.Modal.getInstance(document.getElementById("practiceRoomModal"));
                     if (practiceRoomModal) {
                         practiceRoomModal.hide();
                     }
 
-                    // Display the registered practice room details in the new modal
                     const details = result.data;
+                    document.getElementById("practiceRoomId").value = details.id; // Save ID for the image upload
                     const detailsContainer = document.getElementById("registeredPracticeRoomDetails");
                     detailsContainer.innerHTML = `
                     <p><strong>Name:</strong> ${details.name}</p>
@@ -392,19 +394,34 @@
             });
     }
 
-    function uploadPracticeRoomImage() {
-        const imageInput = document.getElementById("practiceRoomImage");
-        const file = imageInput.files[0];
 
-        if (!file) {
-            alert("Please select an image to upload.");
+    function uploadPracticeRoomImages() {
+        const imageInput = document.getElementById("practiceRoomImages");
+        const files = imageInput.files;
+        const practiceRoomId = document.getElementById("practiceRoomId").value;
+        console.log("Practice Room ID:", practiceRoomId);
+
+        if (!practiceRoomId) {
+            alert("Practice Room ID is missing. Please register the practice room first.");
+            return;
+        }
+
+        if (files.length === 0) {
+            alert("Please select at least one image to upload.");
+            return;
+        }
+
+        if (files.length > 5) {
+            alert("You can upload a maximum of 5 images.");
             return;
         }
 
         const formData = new FormData();
-        formData.append("practiceRoomImage", file);
+        Array.from(files).forEach(file => formData.append("images", file));
 
-        fetch('/admin/practice-room/upload-image', {
+        const url = `/admin/practice-room/images?practiceRoomId=${encodeURIComponent(practiceRoomId)}`;
+
+        fetch(url, {
             method: 'POST',
             body: formData
         })
@@ -415,17 +432,20 @@
                 return response.json();
             })
             .then(result => {
-                if (result.status === 200) {
-                    alert("Image uploaded successfully!");
+                if (result.status === 201) {
+                    alert("Images uploaded successfully!");
+                    document.getElementById("practiceRoomImages").value = ""; // Reset file input
                 } else {
-                    alert(`Failed to upload image: ${result.message}`);
+                    alert(`Failed to upload images: ${result.message}`);
                 }
             })
             .catch(error => {
-                console.error("Error uploading image:", error);
-                alert("Failed to upload image. Please try again.");
+                console.error("Error uploading images:", error);
+                alert("Failed to upload images. Please try again.");
             });
     }
+
+
 </script>
 
 <!-- Bootstrap Bundle with Popper -->

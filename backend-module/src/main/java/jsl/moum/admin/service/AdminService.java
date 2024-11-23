@@ -20,16 +20,21 @@ import jsl.moum.global.error.exception.CustomException;
 import jsl.moum.moum.team.domain.TeamEntity;
 import jsl.moum.moum.team.domain.TeamRepository;
 import jsl.moum.moum.team.dto.TeamDto;
+import jsl.moum.objectstorage.StorageService;
 import jsl.moum.report.domain.*;
 import jsl.moum.report.dto.ArticleReportDto;
 import jsl.moum.report.dto.MemberReportDto;
 import jsl.moum.report.dto.TeamReportDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -46,6 +51,7 @@ public class AdminService {
     private final TeamReportRepository teamReportRepository;
     private final ArticleReportRepository articleReportRepository;
     private final ArticleRepository articleRepository;
+    private final StorageService storageService;
 
     /**
      *
@@ -242,6 +248,28 @@ public class AdminService {
         }
     }
 
+    public PracticeRoomDto savePracticeRoomImages(Integer id, List<MultipartFile> images) throws BadRequestException {
+        log.info("adminService savePracticeRoomImages for room : {}", id);
+        if (images.size() > 5) {
+            log.error("업로드 이미지 개수 초과 (5개 초과)");
+            throw new BadRequestException("이미지는 최대 5개까지만 업로드 가능합니다.");
+        }
+
+        PracticeRoom room = practiceRoomRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.PRACTICE_ROOM_NOT_FOUND));
+        log.info("practiceRoom found : {}", room);
+
+        try {
+            List<String> imageUrls = uploadPracticeRoomImages(id, images);
+            room.setImageUrls(imageUrls);
+            room = practiceRoomRepository.save(room);
+            return new PracticeRoomDto(room);
+        } catch (Exception e){
+            log.error("연습실 이미지 등록 중 오류 발생", e);
+            throw new CustomException(ErrorCode.FILE_UPLOAD_FAIL);
+        }
+    }
+
     private boolean requiredFieldsCheck(PracticeRoomDto.Register registerDto){
         return registerDto.getName() != null
                 && registerDto.getAddress() != null
@@ -251,6 +279,22 @@ public class AdminService {
                 && registerDto.getMapUrl() != null
                 && registerDto.getLatitude() != null
                 && registerDto.getLongitude() != null;
+    }
+
+    private List<String> uploadPracticeRoomImages(int targetId, List<MultipartFile> images) throws IOException {
+        // "practiceRoom/{practiceRoomId}/{originalFileName}"
+        List<String> imageUrls = new ArrayList<>();
+
+        if(images != null && !images.isEmpty() && images.size() != 0){
+            for(MultipartFile file : images){
+                String originalFilename = file.getOriginalFilename();
+                String key = "practiceRoom/" + targetId + "/" + originalFilename;
+                String imageUrl = storageService.uploadFile(key, file);
+                imageUrls.add(imageUrl);
+            }
+        }
+
+        return imageUrls;
     }
 
     /**
@@ -267,5 +311,13 @@ public class AdminService {
         PerformanceHall hall = performanceHallRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 공연장 정보가 존재하지 않습니다."));
         return new PerformanceHallDto(hall);
+    }
+
+
+    private String uploadPerformanceHallImage(int targetId, MultipartFile file) throws IOException {
+        // "performanceHall/{performanceHallId}/{originalFileName}"
+        String originalFilename = file.getOriginalFilename();
+        String key = "performanceHall/" + targetId + "/" + originalFilename;
+        return storageService.uploadFile(key, file);
     }
 }
