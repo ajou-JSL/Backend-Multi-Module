@@ -58,6 +58,7 @@ public class LifecycleEntity {
     private List<String> imageUrls = new ArrayList<>();
 
     @Column(name = "genre", nullable = false)
+    @Enumerated(EnumType.STRING)
     private MusicGenre genre;
 
     @ManyToOne

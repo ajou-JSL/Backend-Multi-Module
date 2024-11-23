@@ -43,6 +43,7 @@ public class TeamEntity {
     private String description;
 
     @Column(name = "genre")
+    @Enumerated(EnumType.STRING)
     private MusicGenre genre;
 
     @Column(name = "location")

@@ -57,6 +57,7 @@ public class PerformArticleEntity {
     private LocalDateTime createdAt;
 
     @Column(name = "genre", nullable = false)
+    @Enumerated(EnumType.STRING)
     private MusicGenre genre;
 
     @Column(name = "likes_count")
