@@ -6,6 +6,7 @@ import jsl.moum.community.article.domain.article.ArticleEntity;
 import jsl.moum.community.article.domain.article.ArticleRepository;
 import jsl.moum.community.likes.domain.LikesEntity;
 import jsl.moum.community.likes.domain.LikesRepository;
+import jsl.moum.community.likes.domain.LikesRepositoryCustom;
 import jsl.moum.community.likes.dto.LikesDto;
 import jsl.moum.community.perform.domain.entity.PerformArticleEntity;
 import jsl.moum.community.perform.domain.repository.PerformArticleRepository;
@@ -23,6 +24,7 @@ public class LikesService {
     private final MemberRepository memberRepository;
     private final ArticleRepository articleRepository;
     private final PerformArticleRepository performArticleRepository;
+    private final LikesRepositoryCustom likesRepositoryCustom;
 
     /**
      일반 게시글 좋아요 등록(생성)
@@ -41,6 +43,11 @@ public class LikesService {
         // 유저이름이 게시글작성자랑 똑같으면 에러
         if(memberName.equals(article.getAuthor().getUsername())){
             throw new CustomException(ErrorCode.CANNOT_CREATE_SELF_LIKES);
+        }
+
+        // 이미 눌렀으면 에러
+        if(likesRepositoryCustom.isAlreadyLikesOnArticle(member.getId(), article.getId())){
+            throw new CustomException(ErrorCode.DUPLICATE_LIKES);
         }
 
         LikesEntity newLikes = likesRequest.toEntity();
@@ -99,6 +106,11 @@ public class LikesService {
                 .member(member)
                 .performArticle(performArticle)
                 .build();
+
+        // 이미 눌렀으면 에러
+        if(likesRepositoryCustom.isAlreadyLikesOnPerformArticle(member.getId(), performArticle.getId())){
+            throw new CustomException(ErrorCode.DUPLICATE_LIKES);
+        }
 
         LikesEntity newLikes = likesRequest.toEntity();
         likesRepository.save(newLikes);

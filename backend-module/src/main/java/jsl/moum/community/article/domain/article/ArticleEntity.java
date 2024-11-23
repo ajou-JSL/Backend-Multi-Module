@@ -31,7 +31,7 @@ public class ArticleEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private int id;
 
     @JoinColumn(name = "fk_article_author_id")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -52,7 +52,7 @@ public class ArticleEntity {
     private int likesCount;
 
     @Column(name = "comments_count")
-    private int commentCount;
+    private int commentsCount;
 
     @Column(name = "genre", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -77,7 +77,7 @@ public class ArticleEntity {
         this.viewCount += 1;
     }
     public void updateLikesCount(int num) { this.likesCount += num; }
-    public void commentsCountUp(){this.commentCount += 1;}
+    public void commentsCountUp(){this.commentsCount += 1;}
 
     public void updateArticle(UpdateArticleDto.Request updateArticleDto) {
         if (updateArticleDto.getTitle() != null) {

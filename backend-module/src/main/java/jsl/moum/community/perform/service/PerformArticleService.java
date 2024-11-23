@@ -58,6 +58,11 @@ public class PerformArticleService {
         TeamEntity team = findTeam(requestDto.getTeamId());
         LifecycleEntity moum = findMoum(requestDto.getMoumId());
 
+        // 이미 만든 공연게시글 있으면 안됨
+        if(performArticleRepositoryCustom.isAlreadyExistPerformArticleByMoumId(moum.getId())){
+            throw new CustomException(ErrorCode.PERFORM_ARTICLE_ALREADY_EXIST);
+        }
+
         if (!isLeader(team, member)) {
             throw new CustomException(ErrorCode.NO_AUTHORITY);
         }
@@ -90,7 +95,6 @@ public class PerformArticleService {
                 .moum(moum)
                 .build();
 
-        // performMembers.forEach(pm -> pm.assignPerformanceArticle(newPerformArticleEntity));
         for (PerformMember performMember : performMembers) {
             performMember.assignPerformanceArticle(newPerformArticleEntity);
         }

@@ -82,7 +82,7 @@ public class LikesController {
     private String loginCheck(String username){
         String loginUserName = memberRepository.findByUsername(username).getUsername();
         if(loginUserName.isEmpty() || loginUserName == null){
-            throw new CustomException(ErrorCode.MEMBER_NOT_EXIST);
+            throw new CustomException(ErrorCode.NEED_LOGIN);
         }
         return loginUserName;
     }

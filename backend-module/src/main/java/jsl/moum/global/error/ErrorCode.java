@@ -16,6 +16,7 @@ public enum ErrorCode {
     ILLEGAL_ARGUMENT(400, "F-C006", "유효하지 않은 데이터입니다."),
     FILE_UPLOAD_FAIL(400, "F-C007", "File upload failed"),
     FILE_UPDATE_FAIL(400, "F-C008", "File update failed"),
+    BASE64_PROCESS_FAIL(400, "F-C009", "base64 -> json 실패"),
 
     // Jwt
     JWT_TOKEN_INVALID(400,"F-J001","유효하지 않은 JWT토큰"),
@@ -42,7 +43,8 @@ public enum ErrorCode {
 
     // PerForm Article
     PERFORM_ARTICLE_NOT_FOUND(404,"F-PA001","공연 게시글을 찾을 수 없습니다."),
-    PERFORM_ARTICLE_ALREADY_DELETED(404,"F-PAT002","이미 삭제된 공연 게시글입니다."),
+    PERFORM_ARTICLE_ALREADY_DELETED(404,"F-PA002","이미 삭제된 공연 게시글입니다."),
+    PERFORM_ARTICLE_ALREADY_EXIST(403,"F-PA003","이미 게시된 공연 게시글이 존재합니다."),
 
     // Wishlist
     ALREADY_IN_WISHLIST(400,"F-W001","이미 위시리스트에 추가된 게시글입니다."),
@@ -54,9 +56,9 @@ public enum ErrorCode {
 
     // Likes
     DUPLICATE_LIKES(409, "F-L001","이미 좋아요 누른 게시글입니다."),
-    LIKES_NOT_FOUND(404, "F-L002","찾을 수 없는 좋아요입니다."),
+    LIKES_NOT_FOUND(404, "F-L002","존재하지 않는 좋아요입니다."),
     CANNOT_CREATE_SELF_LIKES(409, "F-L003","자신의 게시글에는 좋아요를 누를 수 없습니다."),
-    CANNOT_DELETE_OTHERS_LIKES(409, "F-L004","본인이 등록한 좋아요만 취소할 수 있습니다."),
+    CANNOT_DELETE_OTHERS_LIKES(403, "F-L004","본인이 등록한 좋아요만 취소할 수 있습니다."),
 
     // Chatroom
     CHATROOM_LIST_GET_FAIL(400, "F-CH001", "채팅방 목록 호출 실패"),

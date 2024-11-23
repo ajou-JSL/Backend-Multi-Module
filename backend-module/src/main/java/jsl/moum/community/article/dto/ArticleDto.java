@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import jsl.moum.community.article.domain.article.ArticleEntity;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -44,7 +45,7 @@ public class ArticleDto {
         private final String title;
         private final ArticleEntity.ArticleCategories category;
         private final int viewCounts;
-        private final int commentCounts;
+        private final int commentsCounts;
         private final MusicGenre genre;
         private final int likeCounts;
         private final String author;
@@ -58,7 +59,7 @@ public class ArticleDto {
             this.category = article.getCategory();
             this.author = article.getAuthor().getUsername();
             this.viewCounts = article.getViewCount();
-            this.commentCounts = article.getCommentCount();
+            this.commentsCounts = article.getCommentsCount();
             this.genre = article.getGenre();
             this.likeCounts = article.getLikesCount();
             this.createdAt = article.getCreatedAt();
@@ -66,4 +67,17 @@ public class ArticleDto {
         }
     }
 
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class SearchDto {
+        private String keyword;
+        private final Boolean filterByLikesCount = false;
+        private final Boolean filterByViewCount = false;
+        private final Boolean filterByCommentsCount = false;
+        private final Boolean filterByCreatedAt = false;
+        private LocalDateTime createdAt;
+        private ArticleEntity.ArticleCategories category;
+        private MusicGenre genre;
+    }
 }

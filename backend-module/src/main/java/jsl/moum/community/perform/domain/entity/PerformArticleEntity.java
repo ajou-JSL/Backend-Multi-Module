@@ -9,12 +9,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+@Slf4j
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -28,7 +30,7 @@ public class PerformArticleEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private int id;
 
     @Column(name = "performance_name")
     private String performanceName;
@@ -58,10 +60,10 @@ public class PerformArticleEntity {
     private MusicGenre genre;
 
     @Column(name = "likes_count")
-    private int likesCount;
+    private int likesCount = 0;
 
     @Column(name = "view_count")
-    private int viewCount;
+    private int viewCount = 0;
 
     // 멤버가 참여해있는 공연들
     @OneToMany(mappedBy = "performanceArticle", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -108,12 +110,15 @@ public class PerformArticleEntity {
     }
 
     public void updateLikesCount(int count){
+        log.info("#1 : updateLikesCount() method called, likesCount: {}", this.likesCount);
         this.likesCount += count;
+        log.info("#2 : updateLikesCount() method called, likesCount: {}", this.likesCount);
     }
 
     public void updateViewCount(int count){
+        log.info("#1 : updateViewCount() method called, viewCount: {}", this.viewCount);
         this.viewCount += count;
+        log.info("#2 : updateViewCount() method called, viewCount: {}", this.viewCount);
+
     }
-
-
 }
