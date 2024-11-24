@@ -92,7 +92,10 @@ public enum ErrorCode {
     REGISTER_PERFORMANCE_HALL_FAIL(400, "F-B003", "공연장 등록 오류"),
     PRACTICE_ROOM_NOT_FOUND(404, "F-B004", "해당 연습실을 찾을 수 없습니다."),
     PERFORMANCE_HALL_NOT_FOUND(404, "F-B005", "해당 공연장을 찾을 수 없습니다."),
+    GET_PRACTICE_HALL_LIST_FAIL(400, "F-B006", "연습실 목록 조회 오류"),
+    GET_PERFORMANCE_HALL_LIST_FAIL(400, "F-B007", "공연장 목록 조회 오류"),
     IMAGE_LIMIT_EXCEEDED(400, "F-B011", "이미지 업로드 개수 제한을 초과하였습니다."),
+    INVALID_PAGE_VALUES(400, "F-B021", "페이지 값이 유효하지 않습니다."),
 
     // Naver Maps
     GET_LOCATION_INFO_FAIL(404,"F-NM001","위치 정보 조회 실패"),

@@ -117,14 +117,6 @@ public class AdminService {
         return memberReportRepository.findAll(pageRequest).map(MemberReportDto.Response::new);
     }
 
-    public Page<PracticeRoomDto.Response> getPracticeRoomsPaged(PageRequest pageRequest){
-        return practiceRoomRepository.findAll(pageRequest).map(PracticeRoomDto.Response::new);
-    }
-
-    public Page<PerformanceHallDto.Response> getPerformanceHallsPaged(PageRequest pageRequest){
-        return performanceHallRepository.findAll(pageRequest).map(PerformanceHallDto.Response::new);
-    }
-
     public MemberDto.Response getMemberById(int id){
         MemberEntity member = memberRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 회원 정보가 존재하지 않습니다."));
