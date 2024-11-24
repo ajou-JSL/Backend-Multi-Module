@@ -101,6 +101,10 @@ public enum ResponseCode {
     // Naver Maps
     GET_LOCATION_INFO_SUCCESS(200,"S-NM001","위치 정보 조회 성공"),
 
+    // QR Code
+    QR_GENERATE_SUCCESS(201,"S-QR001","QR 코드 생성 성공"),
+    QR_DELETE_SUCCESS(200,"S-QR002","QR 코드 삭제 성공"),
+
     // Perform
     CREATE_PERFORM_ARTICLE_SUCCESS(201,"S-PF001","공연게시글 생성 성공"),
     UPDATE_PERFORM_ARTICLE_SUCCESS(201,"S-PF002","공연게시글 수정 성공"),

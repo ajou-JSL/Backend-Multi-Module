@@ -10,7 +10,9 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -36,6 +38,23 @@ public class StorageService {
                         .acl("public-read")
                         .build(),
                 RequestBody.fromInputStream(multipartFile.getInputStream(), multipartFile.getSize())
+        );
+        // NCP에서 파일 URL 반환
+        return "https://kr.object.ncloudstorage.com/" + bucket + "/" + key;
+    }
+
+    /**
+     * S3에 업로드
+     */
+    public String uploadFile(String key, File file, String contentType) throws IOException {
+        s3Client.putObject(
+                PutObjectRequest.builder()
+                        .bucket(bucket)
+                        .key(key)
+                        .contentType(contentType) // Automatically determine content type
+                        .acl("public-read")
+                        .build(),
+                RequestBody.fromFile(file)
         );
         // NCP에서 파일 URL 반환
         return "https://kr.object.ncloudstorage.com/" + bucket + "/" + key;

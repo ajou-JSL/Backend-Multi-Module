@@ -17,43 +17,66 @@
             background-color: #f8f9fa;
             padding: 20px;
             margin: 30px auto;
-            max-width: 800px;
+            max-width: 1000px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
-        .performance-image {
-            max-height: 300px;
-            object-fit: cover;
+
+        .small-image {
+            width: auto;
+            height: auto;
+            max-width: 250px;
+            max-height: 250px;
+            object-fit: contain;
             border-radius: 10px;
+            margin-left: 15px;
+        }
+
+        .full-size-image {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .performance-details dt {
+            font-weight: bold;
+        }
+
+        .info {
             margin-bottom: 20px;
         }
+
+        .info .title {
+            font-size: 2.0rem;
+            font-weight: bold;
+            color: #343a40;
+            margin-bottom: 4px;
+        }
+
+        .info .team-name {
+            font-size: 1.4rem;
+            color: #6c757d;
+            margin-bottom: 8px;
+        }
+
+        .info ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .info ul li {
+            margin-bottom: 10px;
+        }
+
         .genre-badge {
+            display: inline-block;
             background-color: #6c757d;
             color: #fff;
             border-radius: 5px;
             padding: 5px 10px;
-            font-size: 0.9rem;
-        }
-        .performance-details {
-            font-size: 1rem;
-            color: #495057;
-        }
-        .price-tag {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #28a745;
-        }
-        .btn-book-now {
-            background-color: #007bff;
-            color: #fff;
-            padding: 10px 20px;
-            font-size: 1.2rem;
-            border-radius: 5px;
-            text-decoration: none;
-        }
-        .btn-book-now:hover {
-            background-color: #0056b3;
-            text-decoration: none;
+            margin-bottom: 12px;
         }
     </style>
 </head>
@@ -61,43 +84,54 @@
 
 <div class="container">
     <div class="pamphlet-container">
-        <!-- Performance Image -->
-        <img th:src="@{${pamphlet.performanceImageUrl}}" class="img-fluid performance-image" alt="Performance Image">
+        <!-- Text Content with Small Image on the Right -->
+        <div class="d-flex flex-column">
+            <div class="d-flex align-items-start">
+                <div class="flex-grow-1">
+                    <dl class="area show-view-top clearfix">
+                        <dt>
+                            <div class="info">
+                                <!-- Name and Team -->
+                                <div>
+                                    <p class="title" th:text="${pamphlet.performanceName}"></p>
+                                    <p class="team-name" th:text="'주최 : ' + ${pamphlet.teamName}"></p>
+                                </div>
 
-        <!-- Performance Title and Team -->
-        <h1 th:text="${pamphlet.performanceName}" class="text-center mb-3"></h1>
-        <h5 th:text="'By: ' + ${pamphlet.teamName}" class="text-center text-secondary"></h5>
-
-        <!-- Genre -->
-        <div class="text-center mb-4">
-            <span th:text="${pamphlet.genre}" class="genre-badge"></span>
-        </div>
-
-        <!-- Performance Description -->
-        <p th:text="${pamphlet.performanceDescription}" class="text-justify mb-4"></p>
-
-        <!-- Performance Details -->
-        <div class="row performance-details">
-            <div class="col-md-6">
-                <p><strong>Location:</strong> <span th:text="${pamphlet.performanceLocation}"></span></p>
-                <p><strong>Moum:</strong> <span th:text="${pamphlet.moumName}"></span></p>
+                                <!-- Genre -->
+                                <div>
+                                    <span class="genre-badge" th:text="${pamphlet.genre}"></span>
+                                </div>
+                            </div>
+                            <ul>
+                                <li>
+                                    <span class="tit">기간 :</span>
+                                    <span>
+                                        <span th:text="${#dates.format(pamphlet.performanceStartDate, 'yyyy-MM-dd HH:mm')}"></span> ~
+                                        <span th:text="${#dates.format(pamphlet.performanceEndDate, 'yyyy-MM-dd HH:mm')}"></span>
+                                    </span>
+                                </li>
+                                <li>
+                                    <span class="tit">장소 :</span>
+                                    <span th:text="${pamphlet.performanceLocation}"></span>
+                                </li>
+                                <li>
+                                    <span class="tit">가격 :</span>
+                                    <span th:text="'₩' + ${pamphlet.performancePrice}"></span>
+                                </li>
+                                <li>
+                                    <span class="tit">설명 :</span>
+                                    <span th:text="${pamphlet.performanceDescription}"></span>
+                                </li>
+                            </ul>
+                        </dt>
+                    </dl>
+                </div>
+                <!-- Small Image -->
+                <img th:src="@{${pamphlet.performanceImageUrl}}" class="small-image d-none d-md-block" alt="Performance Image">
             </div>
-            <div class="col-md-6">
-                <p><strong>Start Date:</strong> <span th:text="${#dates.format(pamphlet.performanceStartDate, 'yyyy-MM-dd')}"></span></p>
-                <p><strong>End Date:</strong> <span th:text="${#dates.format(pamphlet.performanceEndDate, 'yyyy-MM-dd')}"></span></p>
-            </div>
-        </div>
 
-        <!-- Performance Price -->
-        <div class="text-center my-4">
-            <p class="price-tag">
-                <span th:text="'₩' + ${pamphlet.performancePrice}"></span>
-            </p>
-        </div>
-
-        <!-- Book Now Button -->
-        <div class="text-center">
-            <a href="#" class="btn-book-now">Book Now</a>
+            <!-- Full-Size Image Below -->
+            <img th:src="@{${pamphlet.performanceImageUrl}}" class="full-size-image mt-4" alt="Full-Size Performance Image">
         </div>
     </div>
 </div>

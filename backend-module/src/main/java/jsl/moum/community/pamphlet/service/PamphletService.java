@@ -10,11 +10,18 @@ import jsl.moum.community.perform.domain.entity.PerformArticleEntity;
 import jsl.moum.community.perform.domain.repository.PerformArticleRepository;
 import jsl.moum.global.error.ErrorCode;
 import jsl.moum.global.error.exception.CustomException;
+import jsl.moum.objectstorage.StorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 
 @Service
@@ -22,17 +29,30 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class PamphletService {
 
-    private final String PAMPHLET_BASE_URL = "http://223.130.162.175:8080/pamphlet";
-    private final String PAMPHLET_LOCAL_TEST_BASE_URL = "http://localhost:8080/pamphlet";
+    private final String PAMPHLET_BASE_URL = "http://223.130.162.175:8080/public/pamphlet";
+    private final String PAMPHLET_LOCAL_TEST_BASE_URL = "http://localhost:8080/public/pamphlet";
+    private final Integer QR_WIDTH = 250;
+    private final Integer QR_HEIGHT = 250;
 
+    @Value("${ncp.object-storage.bucket}")
+    private String bucket;
 
     private final PerformArticleRepository performArticleRepository;
+    private final StorageService storageService;
 
     public PamphletDto getPerformArticleById(int performArticleId){
         PerformArticleEntity target = performArticleRepository.findById(performArticleId)
-                .orElseThrow(()-> new CustomException(ErrorCode.ILLEGAL_ARGUMENT));
+                .orElseThrow(()-> new CustomException(ErrorCode.PERFORM_ARTICLE_NOT_FOUND));
 
         return new PamphletDto(target);
+    }
+
+    public String getQrBaseUrl (Integer performArticleId) {
+        return PAMPHLET_BASE_URL + "/" + performArticleId;
+    }
+
+    public String getQrBaseUrlLocalhost (Integer performArticleId) {
+        return PAMPHLET_LOCAL_TEST_BASE_URL + "/" + performArticleId;
     }
 
 
@@ -42,45 +62,72 @@ public class PamphletService {
      *
      */
 
+    public String getQRCodeUrl(int performArticleId) {
+        log.info("getQRCodeUrl : {}", performArticleId);
+
+        String qrName = performArticleId + ".png";
+        String existingFileUrl = "https://kr.object.ncloudstorage.com/" + bucket + "/qr/" + qrName;
+        return existingFileUrl;
+    }
+
     public byte[] generateQRCode(int performArticleId) {
-        log.info("generateQRCodeImage : {}", performArticleId);
+        log.info("generateQRCode : {}", performArticleId);
         if(!performArticleRepository.existsById(performArticleId)){
             throw new CustomException(ErrorCode.PERFORM_ARTICLE_NOT_FOUND);
         }
-        String url = PAMPHLET_BASE_URL + "/" + performArticleId;
+        String url = getQrBaseUrl(performArticleId);
 
-        byte[] qrCodeImage = generateQRCodeImage(url);
-        return qrCodeImage;
+        byte[] qrCodeByteArray = generateQRCodeByteArray(url);
+        return qrCodeByteArray;
     }
+
 
     public byte[] generateQRCodeLocalhost(int performArticleId) {
-        log.info("generateQRCodeImageLocalhost : {}", performArticleId);
+        log.info("generateQRCodeLocalhost : {}", performArticleId);
         if(!performArticleRepository.existsById(performArticleId)){
             throw new CustomException(ErrorCode.PERFORM_ARTICLE_NOT_FOUND);
         }
-        String url = PAMPHLET_LOCAL_TEST_BASE_URL + "/" + performArticleId;
+        String url = getQrBaseUrlLocalhost(performArticleId);
 
-        byte[] qrCodeImage = generateQRCodeImage(url);
-        return qrCodeImage;
+        byte[] qrCodeByteArray = generateQRCodeByteArray(url);
+        return qrCodeByteArray;
     }
 
-    public void saveQRCodeImage(int performArticleId, byte[] qrCodeImage) {
+    public String saveQRCodeImage(int performArticleId, byte[] qrCodeByteArray) {
         log.info("saveQRCodeImage : {}", performArticleId);
-        // Save qrCodeImage to S3
 
+        // Save qrCodeImage to S3, and return fileUrl
+        try {
+            String fileUrl = "qr/" + performArticleId + ".png";
+
+            ByteArrayInputStream qrCodeStream = new ByteArrayInputStream(qrCodeByteArray);
+            BufferedImage qrCodeBufferedImage = ImageIO.read(qrCodeStream);
+            File qrCodeImageFile = File.createTempFile("image", ".png");
+
+            if(!ImageIO.write(qrCodeBufferedImage, "png", qrCodeImageFile)){
+                throw new CustomException(ErrorCode.QR_GENERATE_FAIL);
+            }
+
+            // Upload the file to S3
+            String newFileUrl = storageService.uploadFile(fileUrl, qrCodeImageFile, "image/png");
+            qrCodeImageFile.delete();
+            return newFileUrl;
+        } catch (IOException e) {
+            throw new CustomException(ErrorCode.QR_GENERATE_FAIL);
+        }
     }
 
-    public byte[] getQRCodeImage(int performArticleId) {
-        log.info("getQRCodeImage : {}", performArticleId);
-        // Get qrCodeImage from S3
-        return null;
+    public void deleteQRCodeImage(int performArticleId) {
+        log.info("deleteQRCodeImage : {}", performArticleId);
+        String fileUrl = "qr/" + performArticleId + ".png";
+        storageService.deleteFile(fileUrl);
     }
 
-    private byte[] generateQRCodeImage(String url) {
-        log.info("generateQRCodeImage : {}", url);
+    private byte[] generateQRCodeByteArray(String url) {
+        log.info("generateQRCodeByteArray : {}", url);
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
         try {
-            BitMatrix bitMatrix = qrCodeWriter.encode(url, BarcodeFormat.QR_CODE, 250, 250);
+            BitMatrix bitMatrix = qrCodeWriter.encode(url, BarcodeFormat.QR_CODE, QR_WIDTH, QR_HEIGHT);
 
             ByteArrayOutputStream pngOutputStream = new ByteArrayOutputStream();
             MatrixToImageWriter.writeToStream(bitMatrix, "PNG", pngOutputStream);
@@ -91,5 +138,6 @@ public class PamphletService {
             throw new CustomException(ErrorCode.QR_GENERATE_FAIL);
         }
     }
+
 
 }
