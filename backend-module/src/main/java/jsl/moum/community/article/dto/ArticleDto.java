@@ -18,6 +18,7 @@ public class ArticleDto {
 
     @Builder
     @AllArgsConstructor
+    @NoArgsConstructor
     @Getter
     public static class Request{
         private int id;
@@ -43,6 +44,7 @@ public class ArticleDto {
     public static class Response{
         private final int id;
         private final String title;
+        private final String fileUrl;
         private final ArticleEntity.ArticleCategories category;
         private final int viewCounts;
         private final int commentsCounts;
@@ -56,6 +58,7 @@ public class ArticleDto {
         public Response(ArticleEntity article){
             this.id = article.getId();
             this.title = article.getTitle();
+            this.fileUrl = article.getFileUrl();
             this.category = article.getCategory();
             this.author = article.getAuthor().getUsername();
             this.viewCounts = article.getViewCount();
