@@ -64,7 +64,7 @@ public class LifecycleDto {
                     .music(music)
                     .genre(genre)
                     .build();
-            if(!records.isEmpty() || records != null){
+            if(records != null || !records.isEmpty()){
                 lifecycleEntity.setRecords(records.stream()
                         .map(RecordDto.Request::toEntity)
                         .collect(Collectors.toList()));
