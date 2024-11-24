@@ -30,7 +30,7 @@ public class PamphletController {
     // Test API for localhost address
     @PostMapping("/api/pamphlet/qr-code/localhost")
     public ResponseEntity<byte[]> createQrCodeLocalhost(@RequestParam(name = "id") int id) {
-        byte[] qrCodeImage = pamphletService.generateQRCodeImageLocalhost(id);
+        byte[] qrCodeImage = pamphletService.generateQRCodeLocalhost(id);
 
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.CONTENT_TYPE, "image/png");

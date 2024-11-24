@@ -8,7 +8,6 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import jsl.moum.community.pamphlet.dto.PamphletDto;
 import jsl.moum.community.perform.domain.entity.PerformArticleEntity;
 import jsl.moum.community.perform.domain.repository.PerformArticleRepository;
-import jsl.moum.community.perform.dto.PerformArticleDto;
 import jsl.moum.global.error.ErrorCode;
 import jsl.moum.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
@@ -45,14 +44,20 @@ public class PamphletService {
 
     public byte[] generateQRCode(int performArticleId) {
         log.info("generateQRCodeImage : {}", performArticleId);
+        if(!performArticleRepository.existsById(performArticleId)){
+            throw new CustomException(ErrorCode.PERFORM_ARTICLE_NOT_FOUND);
+        }
         String url = PAMPHLET_BASE_URL + "/" + performArticleId;
 
         byte[] qrCodeImage = generateQRCodeImage(url);
         return qrCodeImage;
     }
 
-    public byte[] generateQRCodeImageLocalhost(int performArticleId) {
+    public byte[] generateQRCodeLocalhost(int performArticleId) {
         log.info("generateQRCodeImageLocalhost : {}", performArticleId);
+        if(!performArticleRepository.existsById(performArticleId)){
+            throw new CustomException(ErrorCode.PERFORM_ARTICLE_NOT_FOUND);
+        }
         String url = PAMPHLET_LOCAL_TEST_BASE_URL + "/" + performArticleId;
 
         byte[] qrCodeImage = generateQRCodeImage(url);
