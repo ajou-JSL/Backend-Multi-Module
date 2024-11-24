@@ -101,7 +101,6 @@ public class ArticleService {
         ArticleDetailsEntity articleDetails = getArticleDetails(articleDetailsId);
         ArticleEntity article = getArticle(articleDetailsId);
 
-        String fileUrl = articleDetails.getFileUrl();
         article.viewCountUp(); // 조회수 증가
 
         return new ArticleDetailsDto.Response(articleDetails, article);

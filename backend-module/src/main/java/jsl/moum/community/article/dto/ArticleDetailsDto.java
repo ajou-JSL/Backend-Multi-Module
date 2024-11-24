@@ -8,6 +8,7 @@ import lombok.Getter;
 import jsl.moum.community.article.domain.article.ArticleEntity;
 import jsl.moum.community.article.domain.article_details.ArticleDetailsEntity;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -49,6 +50,8 @@ public class ArticleDetailsDto {
         private final String author;
         private final String fileUrl;
         private final List<CommentDto.Response> comments;
+        private final LocalDateTime createdAt;
+        private final LocalDateTime updatedAt;
 
         public Response(ArticleDetailsEntity articleDetails, ArticleEntity article){
             this.id = article.getId();
@@ -63,6 +66,9 @@ public class ArticleDetailsDto {
             this.comments = articleDetails.getComments().stream()
                     .map(CommentDto.Response::new)
                     .collect(Collectors.toList());
+            this.createdAt = article.getCreatedAt();
+            this.updatedAt = article.getUpdatedAt();
+
         }
     }
 
