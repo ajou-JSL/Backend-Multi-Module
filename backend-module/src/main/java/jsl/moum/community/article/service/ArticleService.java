@@ -70,7 +70,6 @@ public class ArticleService {
                 .genre(articleRequestDto.getGenre())
                 .build();
 
-        // article 테이블 저장
         ArticleEntity newArticle = articleRequest.toEntity();
         articleRepository.save(newArticle);
 
@@ -79,16 +78,15 @@ public class ArticleService {
             fileUrl = uploadFile(newArticle.getId(), file);
         }
 
-        // article_details 테이블 -> content 작성
         ArticleDetailsDto.Request articleDetailsRequestDto = ArticleDetailsDto.Request.builder()
                 .content(articleRequestDto.getContent())
-                .fileUrl(fileUrl) // 파일 URL 설정
+                .fileUrl(fileUrl)
                 .build();
 
-        // article_details 테이블 저장
         ArticleDetailsEntity newArticleDetails = articleDetailsRequestDto.toEntity();
         articleDetailsRepository.save(newArticleDetails);
 
+        newArticle.setFileUrl(fileUrl);
         author.updateMemberExpAndRank(1);
 
         return new ArticleDto.Response(newArticle);
@@ -103,6 +101,7 @@ public class ArticleService {
         ArticleDetailsEntity articleDetails = getArticleDetails(articleDetailsId);
         ArticleEntity article = getArticle(articleDetailsId);
 
+        String fileUrl = articleDetails.getFileUrl();
         article.viewCountUp(); // 조회수 증가
 
         return new ArticleDetailsDto.Response(articleDetails, article);

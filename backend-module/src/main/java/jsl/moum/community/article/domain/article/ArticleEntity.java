@@ -64,6 +64,9 @@ public class ArticleEntity {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(name = "fileUrl")
+    private String fileUrl;
+
     @OneToMany(mappedBy = "article", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ArticleReport> articleReports = new ArrayList<>();
 
