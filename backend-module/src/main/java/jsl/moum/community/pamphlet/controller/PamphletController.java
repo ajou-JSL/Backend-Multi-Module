@@ -19,7 +19,7 @@ public class PamphletController {
     private final PamphletService pamphletService;
 
     @PostMapping("/api/pamphlet/qr-code")
-    public ResponseEntity<byte[]> createQrCode(@RequestParam(name = "id") Integer id) {
+    public ResponseEntity<byte[]> createQrCode(@RequestParam(name = "id") int id) {
         byte[] qrCodeImage = pamphletService.generateQRCode(id);
 
         HttpHeaders headers = new HttpHeaders();
@@ -29,7 +29,7 @@ public class PamphletController {
 
     // Test API for localhost address
     @PostMapping("/api/pamphlet/qr-code/localhost")
-    public ResponseEntity<byte[]> createQrCodeLocalhost(@RequestParam(name = "id") Integer id) {
+    public ResponseEntity<byte[]> createQrCodeLocalhost(@RequestParam(name = "id") int id) {
         byte[] qrCodeImage = pamphletService.generateQRCodeImageLocalhost(id);
 
         HttpHeaders headers = new HttpHeaders();
@@ -38,19 +38,19 @@ public class PamphletController {
     }
 
     @GetMapping("/api/pamphlet/qr-code/{id}")
-    public ResponseEntity<byte[]> getQrCode(@PathVariable(name = "id") Integer id) {
+    public ResponseEntity<byte[]> getQrCode(@PathVariable(name = "id") int id) {
 
         return null;
     }
 
     @DeleteMapping("/api/pamphlet/{id}")
-    public ResponseEntity<ResultResponse> deleteQrCode(@PathVariable(name = "id") Integer id) {
+    public ResponseEntity<ResultResponse> deleteQrCode(@PathVariable(name = "id") int id) {
 
         return null;
     }
 
-    @GetMapping("/pamphlet/{id}")
-    public String getPamphlet(@PathVariable(name = "id") Integer id, Model model) {
+    @GetMapping("/public/pamphlet/{id}")
+    public String getPamphlet(@PathVariable(name = "id") int id, Model model) {
         PamphletDto pamphletDto = pamphletService.getPerformArticleById(id);
 
         // Add performArticle to model
