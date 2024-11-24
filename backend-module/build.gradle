@@ -56,6 +56,10 @@ dependencies {
     // Jsoup parse HTML
     implementation 'org.jsoup:jsoup:1.18.1'
 
+    // ZXing QR Code generator
+    implementation 'com.google.zxing:core:3.5.2'
+    implementation 'com.google.zxing:javase:3.5.2'
+
 }
 
 tasks.named('test') {

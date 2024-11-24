@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+    <!-- favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16x16.png">
+
+    <title>공연 팜플렛</title>
+    <style>
+        .pamphlet-container {
+            background-color: #f8f9fa;
+            padding: 20px;
+            margin: 30px auto;
+            max-width: 800px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .performance-image {
+            max-height: 300px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .genre-badge {
+            background-color: #6c757d;
+            color: #fff;
+            border-radius: 5px;
+            padding: 5px 10px;
+            font-size: 0.9rem;
+        }
+        .performance-details {
+            font-size: 1rem;
+            color: #495057;
+        }
+        .price-tag {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #28a745;
+        }
+        .btn-book-now {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            font-size: 1.2rem;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        .btn-book-now:hover {
+            background-color: #0056b3;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="pamphlet-container">
+        <!-- Performance Image -->
+        <img th:src="@{${pamphlet.performanceImageUrl}}" class="img-fluid performance-image" alt="Performance Image">
+
+        <!-- Performance Title and Team -->
+        <h1 th:text="${pamphlet.performanceName}" class="text-center mb-3"></h1>
+        <h5 th:text="'By: ' + ${pamphlet.teamName}" class="text-center text-secondary"></h5>
+
+        <!-- Genre -->
+        <div class="text-center mb-4">
+            <span th:text="${pamphlet.genre}" class="genre-badge"></span>
+        </div>
+
+        <!-- Performance Description -->
+        <p th:text="${pamphlet.performanceDescription}" class="text-justify mb-4"></p>
+
+        <!-- Performance Details -->
+        <div class="row performance-details">
+            <div class="col-md-6">
+                <p><strong>Location:</strong> <span th:text="${pamphlet.performanceLocation}"></span></p>
+                <p><strong>Moum:</strong> <span th:text="${pamphlet.moumName}"></span></p>
+            </div>
+            <div class="col-md-6">
+                <p><strong>Start Date:</strong> <span th:text="${#dates.format(pamphlet.performanceStartDate, 'yyyy-MM-dd')}"></span></p>
+                <p><strong>End Date:</strong> <span th:text="${#dates.format(pamphlet.performanceEndDate, 'yyyy-MM-dd')}"></span></p>
+            </div>
+        </div>
+
+        <!-- Performance Price -->
+        <div class="text-center my-4">
+            <p class="price-tag">
+                <span th:text="'₩' + ${pamphlet.performancePrice}"></span>
+            </p>
+        </div>
+
+        <!-- Book Now Button -->
+        <div class="text-center">
+            <a href="#" class="btn-book-now">Book Now</a>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

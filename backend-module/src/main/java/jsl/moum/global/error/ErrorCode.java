@@ -99,7 +99,12 @@ public enum ErrorCode {
 
     // Naver Maps
     GET_LOCATION_INFO_FAIL(404,"F-NM001","위치 정보 조회 실패"),
-    
+
+    // Pamphlet
+    PAMPHLET_NOT_FOUND(404,"F-PM001","팸플릿을 찾을 수 없습니다."),
+
+    // QR Code
+    QR_GENERATE_FAIL(400, "F-QR001", "QR 코드 생성 실패"),
 
     // Moum
     MAX_MOUM_LIMIT_EXCEEDED(400, "F-MM001","모음 생성 최대 개수 초과하였습니다."),
