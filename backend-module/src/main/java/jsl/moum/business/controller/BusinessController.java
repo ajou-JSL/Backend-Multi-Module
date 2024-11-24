@@ -1,6 +1,5 @@
 package jsl.moum.business.controller;
 
-import jsl.moum.admin.service.AdminService;
 import jsl.moum.business.dto.PerformanceHallDto;
 import jsl.moum.business.dto.PracticeRoomDto;
 import jsl.moum.business.service.BusinessService;
@@ -16,15 +15,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/api/business")
 @Slf4j
 public class BusinessController {
 
-    private final AdminService adminService;
     private final BusinessService businessService;
 
     @GetMapping("/practice-room/view/{id}")
