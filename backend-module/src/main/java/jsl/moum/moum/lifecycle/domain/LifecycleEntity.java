@@ -7,10 +7,7 @@ import jsl.moum.moum.team.domain.TeamEntity;
 
 import jsl.moum.record.domain.entity.MoumMemberRecordEntity;
 import jsl.moum.record.domain.entity.RecordEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 
 import java.time.LocalDate;
@@ -21,6 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Setter
 @Entity(name = "lifecycle")
 public class LifecycleEntity {
 

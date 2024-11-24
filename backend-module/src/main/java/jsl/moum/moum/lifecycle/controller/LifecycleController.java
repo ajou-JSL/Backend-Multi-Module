@@ -69,7 +69,7 @@ public class LifecycleController {
      */
     @PostMapping("/api/moum")
     public ResponseEntity<ResultResponse> addMoum(@AuthenticationPrincipal CustomUserDetails customUserDetails,
-                                                       @Valid @RequestPart LifecycleDto.Request lifecycleRequestDto,
+                                                       @Valid @RequestPart(name = "lifecycleRequestDto") LifecycleDto.Request lifecycleRequestDto,
                                                        @RequestPart(value = "file", required = false)List<MultipartFile> files) throws IOException {
         String username = loginCheck(customUserDetails.getUsername());
         LifecycleDto.Response responseDto = lifecycleService.addMoum(username, lifecycleRequestDto, files);
@@ -82,7 +82,7 @@ public class LifecycleController {
      */
     @PatchMapping("/api/moum/{moumId}")
     public ResponseEntity<ResultResponse> updateMoum(@AuthenticationPrincipal CustomUserDetails customUserDetails,
-                                                  @Valid @RequestPart LifecycleDto.Request lifecycleRequestDto,
+                                                  @Valid @RequestPart(name = "lifecycleRequestDto") LifecycleDto.Request lifecycleRequestDto,
                                                   @RequestPart(value = "file", required = false)List<MultipartFile> files,
                                                   @PathVariable int moumId) throws IOException {
         String username = loginCheck(customUserDetails.getUsername());
