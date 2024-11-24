@@ -356,7 +356,7 @@ public class AdminController {
             @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "size", defaultValue = "10") int size) {
         PageRequest pageRequest = PageRequest.of(page - 1, size);
-        Page<PracticeRoomDto.Response> practiceRoomsPage = adminService.getPracticeRoomsPaged(pageRequest);
+        Page<PracticeRoomDto.Response> practiceRoomsPage = businessService.getPracticeRoomsPaged(pageRequest);
 
         Map<String, Object> response = new HashMap<>();
         response.put("practiceRooms", practiceRoomsPage.getContent());
@@ -416,7 +416,7 @@ public class AdminController {
             @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "size", defaultValue = "10") int size) {
         PageRequest pageRequest = PageRequest.of(page - 1, size);
-        Page<PerformanceHallDto.Response> performanceHallsPage = adminService.getPerformanceHallsPaged(pageRequest);
+        Page<PerformanceHallDto.Response> performanceHallsPage = businessService.getPerformanceHallsPaged(pageRequest);
 
         Map<String, Object> response = new HashMap<>();
         response.put("performanceHalls", performanceHallsPage.getContent());

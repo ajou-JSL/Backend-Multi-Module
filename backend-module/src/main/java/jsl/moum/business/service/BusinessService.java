@@ -10,6 +10,8 @@ import jsl.moum.global.error.ErrorCode;
 import jsl.moum.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -21,15 +23,37 @@ public class BusinessService {
     private final PracticeRoomRepository practiceRoomRepository;
     private final PerformanceHallRepository performanceHallRepository;
 
+    /**
+     *
+     * Practice Rooms Methods
+     *
+     */
+
     public PracticeRoomDto getPracticeRoomById(int id){
         PracticeRoom room = practiceRoomRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.PRACTICE_ROOM_NOT_FOUND));
         return new PracticeRoomDto(room);
     }
 
+    public Page<PracticeRoomDto.Response> getPracticeRoomsPaged(PageRequest pageRequest){
+        return practiceRoomRepository.findAll(pageRequest).map(PracticeRoomDto.Response::new);
+    }
+
+    /**
+     *
+     * Performance Halls Methods
+     *
+     */
+
     public PerformanceHallDto getPerformanceHallById(int id){
         PerformanceHall hall = performanceHallRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.PERFORMANCE_HALL_NOT_FOUND));
         return new PerformanceHallDto(hall);
     }
+
+    public Page<PerformanceHallDto.Response> getPerformanceHallsPaged(PageRequest pageRequest){
+        return performanceHallRepository.findAll(pageRequest).map(PerformanceHallDto.Response::new);
+    }
+
+
 }

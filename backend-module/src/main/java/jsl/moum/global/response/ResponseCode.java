@@ -93,6 +93,10 @@ public enum ResponseCode {
     REGISTER_PERFORMANCE_HALL_SUCCESS(201,"S-B002","공연장 등록 성공"),
     UPLOAD_PRACTICE_ROOM_IMAGE_SUCCESS(201,"S-B003","연습실 이미지 업로드 성공"),
     UPLOAD_PERFORMANCE_HALL_IMAGE_SUCCESS(201,"S-B004","공연장 이미지 업로드 성공"),
+    GET_PRACTICE_ROOM_SUCCESS(200,"S-B005","연습실 조회 성공"),
+    GET_PERFORMANCE_HALL_SUCCESS(200,"S-B006","공연장 조회 성공"),
+    GET_PRACTICE_ROOM_LIST_SUCCESS(200,"S-B007","연습실 목록 조회 성공"),
+    GET_PERFORMANCE_HALL_LIST_SUCCESS(200,"S-B008","공연장 목록 조회 성공"),
 
     // Naver Maps
     GET_LOCATION_INFO_SUCCESS(200,"S-NM001","위치 정보 조회 성공"),
