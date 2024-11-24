@@ -18,6 +18,7 @@ public class ArticleDto {
 
     @Builder
     @AllArgsConstructor
+    @NoArgsConstructor
     @Getter
     public static class Request{
         private int id;
