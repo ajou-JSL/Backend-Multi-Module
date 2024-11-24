@@ -51,7 +51,7 @@ public class LifecycleDto {
 
 
         public LifecycleEntity toEntity(){
-            return LifecycleEntity.builder()
+            LifecycleEntity lifecycleEntity = LifecycleEntity.builder()
                     .lifecycleName(moumName)
                     .lifecycleDescription(moumDescription)
                     .performLocation(performLocation)
@@ -60,11 +60,16 @@ public class LifecycleDto {
                     .price(price)
                     .imageUrls(imageUrls)
                     .leaderId(leaderId)
-                    .records(records.stream().map(RecordDto.Request::toEntity).collect(Collectors.toList()))
                     .process(process)
                     .music(music)
                     .genre(genre)
                     .build();
+            if(!records.isEmpty() || records != null){
+                lifecycleEntity.setRecords(records.stream()
+                        .map(RecordDto.Request::toEntity)
+                        .collect(Collectors.toList()));
+            }
+            return lifecycleEntity;
         }
     }
 
