@@ -27,7 +27,7 @@ services:
 
   mysql:
     image: mysql:8.0
-    container_name: mysql-container
+    container_name: mysql-container-chatmodule
     environment:
       MYSQL_ROOT_PASSWORD: zpzzgjdg@$$^1
       MYSQL_DATABASE: moum
