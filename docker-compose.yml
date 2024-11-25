@@ -3,10 +3,10 @@ services:
     image: mysql:8.0
     container_name: mysql-container
     environment:
-      MYSQL_ROOT_PASSWORD: "zpzzgjdg@$^1"
+      MYSQL_ROOT_PASSWORD: zpzzgjdg@$$^1
       MYSQL_DATABASE: moum
       MYSQL_USER: root
-      MYSQL_PASSWORD: "zpzzgjdg@$^1"
+      MYSQL_PASSWORD: zpzzgjdg@$$^1
     ports:
       - "3306:3306"
     networks:
@@ -20,7 +20,7 @@ services:
     environment:
       SPRING_DATASOURCE_URL: "jdbc:mysql://mysql:3306/moum?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8&allowPublicKeyRetrieval=true"
       SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: "zpzzgjdg@$^1"
+      SPRING_DATASOURCE_PASSWORD: zpzzgjdg@$$^1
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       SPRING_JPA_SHOW_SQL: true
       SPRING_JPA_HIBERNATE_FORMAT_SQL: true
@@ -30,7 +30,7 @@ services:
       SPRING_MAIL_HOST: smtp.naver.com
       SPRING_MAIL_PORT: 465
       SPRING_MAIL_USERNAME: swo98@naver.com
-      SPRING_MAIL_PASSWORD: "zpzzgjdg2461"
+      SPRING_MAIL_PASSWORD: zpzzgjdg2461
       SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: true
       SPRING_MAIL_PROPERTIES_MAIL_SMTP_SSL_ENABLE: true
       SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: true
@@ -63,7 +63,7 @@ services:
     environment:
       SPRING_R2DBC_URL: "r2dbc:mysql://mysql:3306/moum?useSSL=false&characterEncoding=UTF-8&allowPublicKeyRetrieval=true"
       SPRING_R2DBC_USERNAME: root
-      SPRING_R2DBC_PASSWORD: "zpzzgjdg@$^1"
+      SPRING_R2DBC_PASSWORD: zpzzgjdg@$$^1
       SPRING_JWT_SECRET: "vmfhaltmskdlstkfkdgodyroqkfwkdbalroqkfwkdbalaaaaaaaaaaaaaaaabbbbb"
       SPRING_DATA_MONGODB_URI: "mongodb://cjaehyuk4zed:ChatDB2024@chatdb.f9mra.mongodb.net/chatdb?retryWrites=true&w=majority&appName=ChatDB"
       SPRING_DATA_REDIS_HOST: redis
