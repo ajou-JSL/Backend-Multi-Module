@@ -3,10 +3,10 @@ services:
     image: mysql:8.0
     container_name: mysql-container
     environment:
-      MYSQL_ROOT_PASSWORD: zpzzgjdg@$^1
+      MYSQL_ROOT_PASSWORD: "zpzzgjdg@$^1"
       MYSQL_DATABASE: moum
       MYSQL_USER: root
-      MYSQL_PASSWORD: zpzzgjdg@$^1
+      MYSQL_PASSWORD: "zpzzgjdg@$^1"
     ports:
       - "3306:3306"
     networks:
@@ -18,19 +18,19 @@ services:
       dockerfile: Dockerfile
     container_name: backend-app
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/moum?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_URL: "jdbc:mysql://mysql:3306/moum?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8&allowPublicKeyRetrieval=true"
       SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: zpzzgjdg@$^1
+      SPRING_DATASOURCE_PASSWORD: "zpzzgjdg@$^1"
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       SPRING_JPA_SHOW_SQL: true
       SPRING_JPA_HIBERNATE_FORMAT_SQL: true
-      SPRING_JWT_SECRET: vmfhaltmskdlstkfkdgodyroqkfwkdbalroqkfwkdbalaaaaaaaaaaaaaaaabbbbb
+      SPRING_JWT_SECRET: "vmfhaltmskdlstkfkdgodyroqkfwkdbalroqkfwkdbalaaaaaaaaaaaaaaaabbbbb"
       SPRING_JWT_EXPIRATION: 3600000
       SPRING_JWT_REFRESH_TOKEN_EXPIRATION: 8640000
       SPRING_MAIL_HOST: smtp.naver.com
       SPRING_MAIL_PORT: 465
       SPRING_MAIL_USERNAME: swo98@naver.com
-      SPRING_MAIL_PASSWORD: zpzzgjdg2461
+      SPRING_MAIL_PASSWORD: "zpzzgjdg2461"
       SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: true
       SPRING_MAIL_PROPERTIES_MAIL_SMTP_SSL_ENABLE: true
       SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: true
@@ -39,14 +39,14 @@ services:
       SPRING_MAIL_PROPERTIES_MAIL_SMTP_WRITE_TIMEOUT: 5000
       SPRING_REDIS_HOST: redis
       SPRING_REDIS_PORT: 6379
-      SPRING_NCP_OBJECT_STORAGE_ENDPOINT: https://kr.object.ncloudstorage.com
+      SPRING_NCP_OBJECT_STORAGE_ENDPOINT: "https://kr.object.ncloudstorage.com"
       SPRING_NCP_OBJECT_STORAGE_REGION: kr-standard
-      SPRING_NCP_OBJECT_STORAGE_ACCESS_KEY: ncp_iam_BPAMKR2MhBwOgB3j1oI5
-      SPRING_NCP_OBJECT_STORAGE_SECRET_KEY: ncp_iam_BPKMKRCDtYOBhPsxfs0g1Rtl1OV6bBsPtG
+      SPRING_NCP_OBJECT_STORAGE_ACCESS_KEY: "ncp_iam_BPAMKR2MhBwOgB3j1oI5"
+      SPRING_NCP_OBJECT_STORAGE_SECRET_KEY: "ncp_iam_BPKMKRCDtYOBhPsxfs0g1Rtl1OV6bBsPtG"
       SPRING_NCP_OBJECT_STORAGE_BUCKET: moumstorage
       SPRING_NAVER_X_NCP_APIGW_API_KEY_ID: 3kitedtcgg
-      SPRING_NAVER_X_NCP_APIGW_API_KEY: FPL9KPlKtuGgTcr4mFV2HLVIpVDT1mTjyQgAWMrt
-      SPRING_NAVER_MAPS_API_URL: https://naveropenapi.apigw.ntruss.com
+      SPRING_NAVER_X_NCP_APIGW_API_KEY: "FPL9KPlKtuGgTcr4mFV2HLVIpVDT1mTjyQgAWMrt"
+      SPRING_NAVER_MAPS_API_URL: "https://naveropenapi.apigw.ntruss.com"
     ports:
       - "8080:8080"
     depends_on:
@@ -61,11 +61,11 @@ services:
       dockerfile: Dockerfile
     container_name: chat-app-container
     environment:
-      SPRING_R2DBC_URL: r2dbc:mysql://mysql:3306/moum?useSSL=false&characterEncoding=UTF-8&allowPublicKeyRetrieval=true
+      SPRING_R2DBC_URL: "r2dbc:mysql://mysql:3306/moum?useSSL=false&characterEncoding=UTF-8&allowPublicKeyRetrieval=true"
       SPRING_R2DBC_USERNAME: root
-      SPRING_R2DBC_PASSWORD: zpzzgjdg@$^1
-      SPRING_JWT_SECRET: vmfhaltmskdlstkfkdgodyroqkfwkdbalroqkfwkdbalaaaaaaaaaaaaaaaabbbbb
-      SPRING_DATA_MONGODB_URI: mongodb://cjaehyuk4zed:ChatDB2024@chatdb.f9mra.mongodb.net/chatdb?retryWrites=true&w=majority&appName=ChatDB
+      SPRING_R2DBC_PASSWORD: "zpzzgjdg@$^1"
+      SPRING_JWT_SECRET: "vmfhaltmskdlstkfkdgodyroqkfwkdbalroqkfwkdbalaaaaaaaaaaaaaaaabbbbb"
+      SPRING_DATA_MONGODB_URI: "mongodb://cjaehyuk4zed:ChatDB2024@chatdb.f9mra.mongodb.net/chatdb?retryWrites=true&w=majority&appName=ChatDB"
       SPRING_DATA_REDIS_HOST: redis
       SPRING_DATA_REDIS_PORT: 6379
       SPRING_REDIS_TIMEOUT: 60000
@@ -91,7 +91,7 @@ services:
     container_name: mongo-container
     environment:
       MONGO_INITDB_ROOT_USERNAME: cjaehyuk4zed
-      MONGO_INITDB_ROOT_PASSWORD: ChatDB2024
+      MONGO_INITDB_ROOT_PASSWORD: "ChatDB2024"
       MONGO_INITDB_DATABASE: chatdb
     ports:
       - "27017:27017"
