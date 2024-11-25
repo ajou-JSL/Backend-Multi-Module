@@ -369,6 +369,22 @@ public class LifecycleService {
                 .collect(Collectors.toList());
     }
 
+    public void deletePracticeRooms(Integer id){
+        lifecyclePracticeRoomRepository.deleteAllByMoumId(id);
+    }
+
+    public void deletePracticeRoom(Integer moumId, Integer practiceRoomId){
+        lifecyclePracticeRoomRepository.deleteByMoumIdAndPracticeRoomId(moumId, practiceRoomId);
+    }
+
+
+    public void deletePerformanceHalls(Integer id){
+        lifecyclePerformanceHallRepository.deleteAllByMoumId(id);
+    }
+
+    public void deletePerformanceHall(Integer moumId, Integer performanceHallId){
+        lifecyclePerformanceHallRepository.deleteByMoumIdAndPerformanceHallId(moumId, performanceHallId);
+    }
 
 
     private List<String> uploadFiles(List<MultipartFile> files, String moumName) throws IOException {

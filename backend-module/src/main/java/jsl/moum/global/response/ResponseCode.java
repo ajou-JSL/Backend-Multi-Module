@@ -79,6 +79,8 @@ public enum ResponseCode {
     MOUM_ADD_PERFORMANCE_HALL_SUCCESS(201,"S-MM011","모음 공연장 추가 성공"),
     MOUM_GET_PRACTICE_ROOM_SUCCESS(200,"S-MM012","모음 연습실 조회 성공"),
     MOUM_GET_PERFORMANCE_HALL_SUCCESS(200,"S-MM013","모음 공연장 조회 성공"),
+    MOUM_DELETE_PRACTICE_ROOM_SUCCESS(200,"S-MM014","모음 연습실 삭제 성공"),
+    MOUM_DELETE_PERFORMANCE_HALL_SUCCESS(200,"S-MM015","모음 공연장 삭제 성공"),
 
     // Report
     REPORT_CREATE_SUCCESS(201,"S-RP001","신고 생성 성공"),

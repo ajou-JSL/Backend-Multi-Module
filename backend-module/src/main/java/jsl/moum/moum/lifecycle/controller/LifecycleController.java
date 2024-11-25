@@ -154,15 +154,8 @@ public class LifecycleController {
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
 
-    @PostMapping("/api/moum/performance-hall")
-    public ResponseEntity<ResultResponse> addPracticeRoom(@RequestBody LifecyclePerformanceHallDto.Request request){
-        LifecyclePerformanceHallDto.Response responseDto = lifecycleService.addPerformanceHall(request);
-        ResultResponse response = ResultResponse.of(ResponseCode.MOUM_ADD_PERFORMANCE_HALL_SUCCESS,responseDto);
-        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
-    }
-
     @GetMapping("/api/moum/{id}/practice-room")
-    public ResponseEntity<ResultResponse> getPracticeRooms(@PathVariable int id){
+    public ResponseEntity<ResultResponse> getPracticeRooms(@PathVariable(name = "id") int id){
         List<LifecyclePracticeRoomDto.Response> responseDto = lifecycleService.getPracticeRooms(id);
 
         if (responseDto == null || responseDto.isEmpty()) {
@@ -173,8 +166,32 @@ public class LifecycleController {
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
 
+    @DeleteMapping("/api/moum/{id}/practice-room")
+    public ResponseEntity<ResultResponse> deletePracticeRooms(@PathVariable(name = "id") int id){
+        lifecycleService.deletePracticeRooms(id);
+        ResultResponse response = ResultResponse.of(ResponseCode.MOUM_DELETE_PRACTICE_ROOM_SUCCESS,null);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+    }
+
+    @DeleteMapping("/api/moum/{id}/practice-room/{roomId}")
+    public ResponseEntity<ResultResponse> deletePracticeRoom(@PathVariable(name = "id") int id,
+                                                             @PathVariable(name = "roomId") int roomId){
+        lifecycleService.deletePracticeRoom(id, roomId);
+        ResultResponse response = ResultResponse.of(ResponseCode.MOUM_DELETE_PRACTICE_ROOM_SUCCESS,null);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+    }
+
+
+
+    @PostMapping("/api/moum/performance-hall")
+    public ResponseEntity<ResultResponse> addPracticeRoom(@RequestBody LifecyclePerformanceHallDto.Request request){
+        LifecyclePerformanceHallDto.Response responseDto = lifecycleService.addPerformanceHall(request);
+        ResultResponse response = ResultResponse.of(ResponseCode.MOUM_ADD_PERFORMANCE_HALL_SUCCESS,responseDto);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+    }
+
     @GetMapping("/api/moum/{id}/performance-hall")
-    public ResponseEntity<ResultResponse> getPerformanceHalls(@PathVariable int id){
+    public ResponseEntity<ResultResponse> getPerformanceHalls(@PathVariable(name = "id") int id){
         List<LifecyclePerformanceHallDto.Response> responseDto = lifecycleService.getPerformanceHalls(id);
 
         if (responseDto == null || responseDto.isEmpty()) {
@@ -182,6 +199,21 @@ public class LifecycleController {
         }
 
         ResultResponse response = ResultResponse.of(ResponseCode.MOUM_GET_PERFORMANCE_HALL_SUCCESS,responseDto);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+    }
+
+    @DeleteMapping("/api/moum/{id}/performance-hall")
+    public ResponseEntity<ResultResponse> deletePerformanceHalls(@PathVariable(name = "id") int id){
+        lifecycleService.deletePerformanceHalls(id);
+        ResultResponse response = ResultResponse.of(ResponseCode.MOUM_DELETE_PERFORMANCE_HALL_SUCCESS,null);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+    }
+
+    @DeleteMapping("/api/moum/{id}/performance-hall/{hallId}")
+    public ResponseEntity<ResultResponse> deletePerformanceHall(@PathVariable(name = "id") int id,
+                                                                @PathVariable(name = "hallId") int hallId){
+        lifecycleService.deletePerformanceHall(id, hallId);
+        ResultResponse response = ResultResponse.of(ResponseCode.MOUM_DELETE_PERFORMANCE_HALL_SUCCESS,null);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
 
