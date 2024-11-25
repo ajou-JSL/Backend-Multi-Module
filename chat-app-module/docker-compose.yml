@@ -7,7 +7,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8070:8070"
+      - "8072:8070"
     environment:
       SPRING_PROFILES_ACTIVE: "docker"
       SPRING_R2DBC_URL: "r2dbc:mysql://mysql:3306/moum?useSSL=false&characterEncoding=UTF-8&allowPublicKeyRetrieval=true"
@@ -32,7 +32,7 @@ services:
       MYSQL_ROOT_PASSWORD: zpzzgjdg@$$^1
       MYSQL_DATABASE: moum
     ports:
-      - "3306:3306"
+      - "3302:3306"
     networks:
       - app-network
 
@@ -40,7 +40,7 @@ services:
     image: redis:latest
     container_name: redis-container
     ports:
-      - "6379:6379"
+      - "6372:6379"
     networks:
       - app-network
 
@@ -52,7 +52,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ChatDB2024
       MONGO_INITDB_DATABASE: chatdb
     ports:
-      - "27017:27017"
+      - "27012:27017"
     networks:
       - app-network
 

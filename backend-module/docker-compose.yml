@@ -9,7 +9,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - "8081:8080"
     environment:
       SPRING_DATASOURCE_URL: "jdbc:mysql://mysql:3306/moum?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8&allowPublicKeyRetrieval=true"
       SPRING_DATASOURCE_USERNAME: "root"
@@ -41,7 +41,7 @@ services:
       MYSQL_ROOT_PASSWORD: zpzzgjdg@$$^1
       MYSQL_DATABASE: moum
     ports:
-      - "3306:3306"
+      - "3301:3306"
     networks:
       - app-network
 
@@ -49,7 +49,7 @@ services:
     image: redis:latest
     container_name: redis-container
     ports:
-      - "6379:6379"
+      - "6371:6379"
     networks:
       - app-network
 
