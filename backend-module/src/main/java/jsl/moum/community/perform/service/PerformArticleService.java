@@ -22,7 +22,9 @@ import jsl.moum.objectstorage.StorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -196,7 +198,8 @@ public class PerformArticleService {
     */
     @Transactional(readOnly = true)
     public List<PerformArticleDto.Response> getAllThisMonthPerformArticles(int page, int size){
-        List<PerformArticleEntity> performArticles = performArticleRepositoryCustom.getThisMonthPerformArticles(page, size);
+        Pageable pageable = PageRequest.of(page,size);
+        Page<PerformArticleEntity> performArticles = performArticleRepositoryCustom.getThisMonthPerformArticles(pageable);
 
         List<PerformArticleDto.Response> responseList = performArticles.stream()
                 .map(PerformArticleDto.Response::new)

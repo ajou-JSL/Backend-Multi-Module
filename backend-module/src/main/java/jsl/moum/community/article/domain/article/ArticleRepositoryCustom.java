@@ -3,9 +3,14 @@ package jsl.moum.community.article.domain.article;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jsl.moum.community.article.dto.ArticleDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -31,8 +36,8 @@ public class ArticleRepositoryCustom {
      GROUP BY a.id
      ORDER BY (a.view_count + a.comment_count + DATEDIFF(NOW(), a.created_date) * 1.5) DESC;
      */
-    public List<ArticleEntity> getAllHotArticles(int page, int size){
-        return jpaQueryFactory
+    public Page<ArticleEntity> getAllHotArticles(Pageable pageable){
+        List<ArticleEntity> content = jpaQueryFactory
                 .selectFrom(articleEntity)
                 .leftJoin(commentEntity).on(articleEntity.id.eq(commentEntity.articleDetails.articleId))
                 .groupBy(articleEntity.id)
@@ -40,9 +45,15 @@ public class ArticleRepositoryCustom {
                         .add(Expressions.numberTemplate(Long.class, "datediff(now(), {0})", articleEntity.createdAt).multiply(1.5))
                         .desc()
                 )
-                .offset((long) page * size)
-                .limit(size)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
+
+        JPAQuery<Long> countQuery = jpaQueryFactory
+                .select(articleEntity.count())
+                .from(articleEntity);
+
+        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }
 
 

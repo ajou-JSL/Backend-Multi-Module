@@ -116,7 +116,7 @@ public enum ResponseCode {
     // Settlement
     CREATE_SETTLEMENT_SUCCESS(201,"S-S001","정산 등록 성공"),
     DELETE_SETTLEMENT_SUCCESS(200,"S-S002","정산 삭제 성공"),
-    GET_SETTLEMENT_LIST_SUCCESS(200,"S-003","정산 목록 조회 성공");
+    GET_SETTLEMENT_LIST_SUCCESS(200,"S-S003","정산 목록 조회 성공");
 
 
     private final int status;
