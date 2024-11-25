@@ -17,6 +17,7 @@ public enum ErrorCode {
     FILE_UPLOAD_FAIL(400, "F-C007", "Multipart Exception : File upload failed"),
     FILE_UPDATE_FAIL(400, "F-C008", "Multipart Exception : File update failed"),
     BASE64_PROCESS_FAIL(400, "F-C009", "base64 -> json 실패"),
+    INVALID_SORT_BY_FIELD(400, "F-C010", "유효하지 않은 정렬(sortBy) 값입니다."),
 
     // Jwt
     JWT_TOKEN_INVALID(400,"F-J001","유효하지 않은 JWT토큰"),
