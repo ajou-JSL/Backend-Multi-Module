@@ -31,12 +31,14 @@ public class SettlementDto {
     @Getter
     @AllArgsConstructor
     public static class Response{
+        private final int settlementId;
         private final String settlementName;
         private final int fee;
         private final Integer moumId;
 
 
         public Response(SettlementEntity settlement){
+            this.settlementId = settlement.getId();
             this.settlementName = settlement.getSettlementName();
             this.fee = settlement.getFee();
             this.moumId = settlement.getMoumId();

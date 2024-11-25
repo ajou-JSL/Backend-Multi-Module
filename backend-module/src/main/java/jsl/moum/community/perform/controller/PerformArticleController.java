@@ -117,7 +117,7 @@ public class PerformArticleController {
     /**
      * 필터링으로 팀 리스트 조회
      */
-    @GetMapping("/api/performs/search")
+    @GetMapping("/api/performs-all/search")
     public ResponseEntity<ResultResponse> getPerformArticlesWithFiltering(@AuthenticationPrincipal CustomUserDetails customUserDetails,
                                                                 @RequestBody(required = false) PerformArticleDto.SearchDto searchDto,
                                                                 @RequestParam(defaultValue = "0") int page,
