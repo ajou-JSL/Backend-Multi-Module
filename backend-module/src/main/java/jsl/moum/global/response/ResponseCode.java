@@ -111,7 +111,12 @@ public enum ResponseCode {
     DELETE_PERFORM_ARTICLE_SUCCESS(200,"S-PF003","공연게시글 삭제 성공"),
     GET_PERFORM_ARTICLE_SUCCESS(200,"S-PF004","공연게시글 단건 조회 성공"),
     GET_ALL_PERFORM_ARTICLE_SUCCESS(200,"S-PF005","공연게시글 리스트 조회 성공"),
-    GET_THIS_MONTH_PERFORM_ARTICLE_SUCCESS(200,"S-PF006","이달의 공연게시글 리스트 조회 성공");
+    GET_THIS_MONTH_PERFORM_ARTICLE_SUCCESS(200,"S-PF006","이달의 공연게시글 리스트 조회 성공"),
+
+    // Settlement
+    CREATE_SETTLEMENT_SUCCESS(201,"S-S001","정산 등록 성공"),
+    DELETE_SETTLEMENT_SUCCESS(200,"S-S002","정산 삭제 성공"),
+    GET_SETTLEMENT_LIST_SUCCESS(200,"S-003","정산 목록 조회 성공");
 
 
     private final int status;

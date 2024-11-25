@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Entity
 @Table(name = "settlement")
 public class SettlementEntity {
 
@@ -22,9 +23,14 @@ public class SettlementEntity {
     private String settlementName;
 
     @Column(name = "fee")
-    private String fee;
+    private int fee;
 
-    @ManyToOne
-    @JoinColumn(name = "fk_moum_id")
-    private LifecycleEntity moumId;
+    @Column(name = "fk_moum_id")
+    private Integer moumId;
+
+    public void assignMoum(Integer targetMoumId){
+        if(targetMoumId != null){
+            this.moumId = targetMoumId;
+        }
+    }
 }

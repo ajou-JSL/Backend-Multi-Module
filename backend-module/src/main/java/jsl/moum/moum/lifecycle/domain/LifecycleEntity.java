@@ -66,6 +66,9 @@ public class LifecycleEntity {
     @Embedded
     private Process process;
 
+    @Column(name = "fk_settlement_id")
+    private Integer settlementId;
+
     // todo : 이거 수정하기
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "lifecycle_music_list", joinColumns = @JoinColumn(name = "lifecycle_id"))
