@@ -39,6 +39,10 @@ public class BusinessService {
         return practiceRoomRepository.findAll(pageRequest).map(PracticeRoomDto.Response::new);
     }
 
+    public Page<PracticeRoomDto.Response> searchPracticeRooms(PageRequest pageRequest, PracticeRoomDto.Search searchParams){
+        return practiceRoomRepository.findAllBySearchParams(pageRequest, searchParams).map(PracticeRoomDto.Response::new);
+    }
+
     /**
      *
      * Performance Halls Methods
@@ -55,5 +59,13 @@ public class BusinessService {
         return performanceHallRepository.findAll(pageRequest).map(PerformanceHallDto.Response::new);
     }
 
+    public Page<PerformanceHallDto.Response> searchPerformanceHalls(PageRequest pageRequest, PerformanceHallDto.Search searchParams){
+
+        /**
+         * TODO
+         */
+
+        return performanceHallRepository.findAllBySearchParams(pageRequest, searchParams).map(PerformanceHallDto.Response::new);
+    }
 
 }

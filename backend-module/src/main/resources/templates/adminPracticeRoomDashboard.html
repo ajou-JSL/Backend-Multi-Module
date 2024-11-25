@@ -134,6 +134,17 @@
     </div>
 </div>
 
+<!-- Full-Size Image Modal -->
+<div class="modal fade" id="fullSizeImageModal" tabindex="-1" aria-labelledby="fullSizeImageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <img id="fullSizeImage" src="" alt="Full-Size Image" style="width: 100%; height: auto; border-radius: 10px;">
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <!-- JavaScript -->
 <script>
@@ -269,7 +280,7 @@
                 <h5>Images</h5>
                 <div>
                     ${data.imageUrls?.map(url => `
-                        <img src="${url}" alt="Image" style="max-width: 100px; margin: 5px;">
+                        <img src="${url}" alt="Image" style="max-width: 100px; margin: 5px; cursor: pointer;" onclick="showFullSizeImage('${url}')">
                     `).join('') || '<p>No images available.</p>'}
                 </div>
             `;
@@ -278,6 +289,14 @@
                 practiceRoomDetailsDiv.innerHTML = `<p class="text-danger">Failed to load practice room details. Please try again.</p>`;
                 console.error(error);
             });
+    }
+
+    // Function to display full-size image in a modal
+    function showFullSizeImage(imageUrl) {
+        const fullSizeImageModal = new bootstrap.Modal(document.getElementById("fullSizeImageModal"));
+        const fullSizeImageElement = document.getElementById("fullSizeImage");
+        fullSizeImageElement.src = imageUrl;
+        fullSizeImageModal.show();
     }
 </script>
 

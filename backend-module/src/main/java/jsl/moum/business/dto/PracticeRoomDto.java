@@ -164,4 +164,27 @@ public class PracticeRoomDto {
         }
     }
 
+    @Builder
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Search{
+        private String name;
+        private Double latitude;
+        private Double longitude;
+        private Integer minPrice;
+        private Integer maxPrice;
+        private Integer minCapacity;
+        private Integer maxCapacity;
+        private Integer type;
+        private Integer minStand;
+        private Integer maxStand;
+        private Boolean hasPiano;
+        private Boolean hasAmp;
+        private Boolean hasSpeaker;
+        private Boolean hasMic;
+        private Boolean hasDrums;
+
+    }
 }
