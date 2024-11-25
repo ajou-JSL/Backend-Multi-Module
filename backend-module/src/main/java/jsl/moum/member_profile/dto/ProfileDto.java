@@ -17,6 +17,7 @@ import lombok.Builder;
 import lombok.Getter;
 import jsl.moum.moum.team.domain.TeamMemberEntity;
 import jsl.moum.moum.team.dto.TeamDto;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,7 @@ public class ProfileDto {
 
     @Builder
     @AllArgsConstructor
+    @NoArgsConstructor
     @Getter
     public static class UpdateRequest{
         private String name;
