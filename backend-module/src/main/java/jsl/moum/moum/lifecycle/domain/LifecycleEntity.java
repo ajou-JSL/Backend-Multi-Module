@@ -77,6 +77,12 @@ public class LifecycleEntity {
     @OneToMany(mappedBy = "lifecycle", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MoumMemberRecordEntity> moumMemberRecords;
 
+    @OneToMany(mappedBy = "moum", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LifecyclePracticeRoom> lifecyclePracticeRooms;
+
+    @OneToMany(mappedBy = "moum", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LifecyclePerformanceHall> lifecyclePerformanceHalls;
+
     public void assignTeam(TeamEntity team) {
         if (team != null) {
             this.team = team;

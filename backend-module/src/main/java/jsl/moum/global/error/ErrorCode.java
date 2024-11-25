@@ -111,7 +111,9 @@ public enum ErrorCode {
     MAX_MOUM_LIMIT_EXCEEDED(400, "F-MM001","모음 생성 최대 개수 초과하였습니다."),
     ALREADY_FINISHED_MOUM(401,"F-MM002","이미 끝난 모음입니다."),
     NOT_FINISHED_MOUM(401,"F-MM003","이미 진행중인 모음입니다."),
-    MOUM_NOT_FOUND(404,"F-MM003","존재하지 않는 모음입니다.");
+    MOUM_NOT_FOUND(404,"F-MM003","존재하지 않는 모음입니다."),
+    MOUM_PRACTICE_ROOM_NOT_FOUND(404,"F-MM004","모음에 등록된 연습실이 없습니다."),
+    MOUM_PERFORMANCE_HALL_NOT_FOUND(404,"F-MM005","모음에 등록된 공연장이 없습니다."),;
 
 
     private final int status;

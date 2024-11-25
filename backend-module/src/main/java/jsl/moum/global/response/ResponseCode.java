@@ -75,6 +75,10 @@ public enum ResponseCode {
     FINISH_MOUM_SUCCESS(201,"S-MM005", "모음 마감하기 성공"),
     REOPEN_MOUM_SUCCESS(201,"S-MM006", "모음 되살리기 성공"),
     UPDATE_MOUM_PROCESS_SUCCESS(201,"S-MM007", "모음 진행률 상태 수정 성공"),
+    MOUM_ADD_PRACTICE_ROOM_SUCCESS(201,"S-MM010","모음 연습실 추가 성공"),
+    MOUM_ADD_PERFORMANCE_HALL_SUCCESS(201,"S-MM011","모음 공연장 추가 성공"),
+    MOUM_GET_PRACTICE_ROOM_SUCCESS(200,"S-MM012","모음 연습실 조회 성공"),
+    MOUM_GET_PERFORMANCE_HALL_SUCCESS(200,"S-MM013","모음 공연장 조회 성공"),
 
     // Report
     REPORT_CREATE_SUCCESS(201,"S-RP001","신고 생성 성공"),
