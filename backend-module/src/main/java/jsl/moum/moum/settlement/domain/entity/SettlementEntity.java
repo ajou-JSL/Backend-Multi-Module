@@ -27,10 +27,4 @@ public class SettlementEntity {
 
     @Column(name = "fk_moum_id")
     private Integer moumId;
-
-    public void assignMoum(Integer targetMoumId){
-        if(targetMoumId != null){
-            this.moumId = targetMoumId;
-        }
-    }
 }

@@ -101,7 +101,7 @@ public class ArticleController {
     /**
      * 게시글 검색 API
      */
-    @GetMapping("/api/articles/search-legacy")
+    @GetMapping("/api/articles-all/search")
     public ResponseEntity<ResultResponse> searchArticles(@RequestParam(required = false) String keyword,
                                                          @RequestParam(required = false) String category,
                                                          @RequestParam(defaultValue = "0") int page,
@@ -117,7 +117,7 @@ public class ArticleController {
     /**
      * 카테고리별 게시글 목록 조회
      */
-    @GetMapping("/api/articles/category-legacy")
+    @GetMapping("/api/articles-all/category")
     public ResponseEntity<ResultResponse> getArticlesWithCategory(
             @RequestParam(required = true) ArticleEntity.ArticleCategories category,
             @RequestParam(defaultValue = "0") int page,
