@@ -110,7 +110,6 @@ public class ProfileDto {
                     .collect(Collectors.toList())
                     : null;
 
-
             this.moumRecords = (member.getMoumMemberRecords() != null)
                     ? member.getMoumMemberRecords().stream()
                     .map(MoumMemberRecordEntity::getRecord)
