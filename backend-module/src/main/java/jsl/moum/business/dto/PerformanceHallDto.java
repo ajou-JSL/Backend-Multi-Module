@@ -170,4 +170,77 @@ public class PerformanceHallDto {
         }
     }
 
+    @Builder
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Update {
+        private String name;
+        private String address;
+        private String owner;
+        private String phone;
+        private String email;
+        private String mapUrl;
+        private int price;
+        private int size;
+        private int capacity;
+        private int type;
+        private int stand;
+        private boolean hasPiano;
+        private boolean hasAmp;
+        private boolean hasSpeaker;
+        private boolean hasMic;
+        private boolean hasDrums;
+        private String details;
+        private Double latitude;
+        private Double longitude;
+
+        public PerformanceHall toEntity(PerformanceHall hall){
+            hall.setName(name);
+            hall.setPrice(price);
+            hall.setSize(size);
+            hall.setCapacity(capacity);
+            hall.setAddress(address);
+            hall.setOwner(owner);
+            hall.setPhone(phone);
+            hall.setEmail(email);
+            hall.setMapUrl(mapUrl);
+            hall.setType(type);
+            hall.setStand(stand);
+            hall.setHasPiano(hasPiano);
+            hall.setHasAmp(hasAmp);
+            hall.setHasSpeaker(hasSpeaker);
+            hall.setHasMic(hasMic);
+            hall.setHasDrums(hasDrums);
+            hall.setDetails(details);
+            hall.setLatitude(latitude);
+            hall.setLongitude(longitude);
+            return hall;
+        }
+    }
+
+    @Builder
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Search {
+        private String name;
+        private Double latitude;
+        private Double longitude;
+        private Integer minPrice;
+        private Integer maxPrice;
+        private Integer minSize;
+        private Integer maxSize;
+        private Integer minCapacity;
+        private Integer maxCapacity;
+        private Integer minStand;
+        private Integer maxStand;
+        private Boolean hasPiano;
+        private Boolean hasAmp;
+        private Boolean hasSpeaker;
+        private Boolean hasMic;
+        private Boolean hasDrums;
+    }
 }
