@@ -40,13 +40,7 @@ public class BusinessService {
     }
 
     public Page<PracticeRoomDto.Response> searchPracticeRooms(PageRequest pageRequest, PracticeRoomDto.Search searchParams){
-
-        /**
-         * TODO
-         */
-
         return practiceRoomRepository.findAllBySearchParams(pageRequest, searchParams).map(PracticeRoomDto.Response::new);
-
     }
 
     /**

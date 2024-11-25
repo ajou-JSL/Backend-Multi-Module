@@ -2,13 +2,16 @@ package jsl.moum.business.domain;
 
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.PathBuilder;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jsl.moum.business.dto.PracticeRoomDto;
+import jsl.moum.global.error.ErrorCode;
+import jsl.moum.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
@@ -17,6 +20,8 @@ import static jsl.moum.business.domain.QPracticeRoom.*;
 
 @RequiredArgsConstructor
 public class PracticeRoomRepositoryImpl implements PracticeRoomRepositoryCustom {
+
+
 
     private final JPAQueryFactory queryFactory;
 
@@ -39,27 +44,21 @@ public class PracticeRoomRepositoryImpl implements PracticeRoomRepositoryCustom 
         Boolean hasMic = searchParams.getHasMic();
         Boolean hasDrums = searchParams.getHasDrums();
 
-//        OrderSpecifier<?> orderSpecifier = ;
-
-        /**
-         *
-         * TODO
-         *
-         */
+        OrderSpecifier<?> sortOrderSpecifier = sortByIncludingDist(pageable.getSort(), latitude, longitude);
 
         List<PracticeRoom> practiceRooms = queryFactory.selectFrom(practiceRoom)
                 .where(nameContains(name),
-                        nearestLocation(latitude, longitude), // TODO // Maybe OrderSpecifier???
-                        priceBetween(minPrice, maxPrice),
-                        capacityBetween(minCapacity, maxCapacity),
+                        locationBetween(latitude, longitude),
+                        priceBetweenOrMinMax(minPrice, maxPrice),
+                        capacityBetweenOrMinMax(minCapacity, maxCapacity),
                         typeEq(type),
-                        standBetween(minStand, maxStand),
+                        standBetweenOrMinMax(minStand, maxStand),
                         hasPiano(hasPiano),
                         hasAmp(hasAmp),
                         hasSpeaker(hasSpeaker),
                         hasMic(hasMic),
                         hasDrums(hasDrums))
-                .orderBy() // Implement sortBy(sortBy, ascending)
+                .orderBy(sortOrderSpecifier)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -69,11 +68,11 @@ public class PracticeRoomRepositoryImpl implements PracticeRoomRepositoryCustom 
                 .select(practiceRoom.count())
                 .from(practiceRoom)
                 .where(nameContains(name),
-                        nearestLocation(latitude, longitude),
-                        priceBetween(minPrice, maxPrice),
-                        capacityBetween(minCapacity, maxCapacity),
+                        locationBetween(latitude, longitude),
+                        priceBetweenOrMinMax(minPrice, maxPrice),
+                        capacityBetweenOrMinMax(minCapacity, maxCapacity),
                         typeEq(type),
-                        standBetween(minStand, maxStand),
+                        standBetweenOrMinMax(minStand, maxStand),
                         hasPiano(hasPiano),
                         hasAmp(hasAmp),
                         hasSpeaker(hasSpeaker),
@@ -90,28 +89,18 @@ public class PracticeRoomRepositoryImpl implements PracticeRoomRepositoryCustom 
         }
     }
 
-    private BooleanExpression nearestLocation(Double latitude, Double longitude){
+    private BooleanExpression locationBetween(Double latitude, Double longitude){
         if(latitude == null || longitude == null){
             return null;
         } else{
-
-            /**
-             *
-             * TODO
-             * Sort by lowest value of Math.abs(roomLatitude - latitude) + Math.abs(roomLongitude - longitude)
-             */
-
-            /* [Haversine Formula]
-            double range = 0.1; // Adjust the range based on desired proximity
+            // [Haversine Formula]
+            double range = 0.1; // 10km range
             return practiceRoom.latitude.between(latitude - range, latitude + range)
                 .and(practiceRoom.longitude.between(longitude - range, longitude + range));
-             */
-
-            return practiceRoom.latitude.eq(latitude).and(practiceRoom.longitude.eq(longitude));
         }
     }
 
-    private BooleanExpression priceBetween(Integer minPrice, Integer maxPrice) {
+    private BooleanExpression priceBetweenOrMinMax(Integer minPrice, Integer maxPrice) {
         if (minPrice != null && maxPrice != null) {
             return practiceRoom.price.between(minPrice, maxPrice);
         } else if (minPrice != null) {
@@ -124,11 +113,15 @@ public class PracticeRoomRepositoryImpl implements PracticeRoomRepositoryCustom 
     }
 
 
-    private BooleanExpression capacityBetween(Integer minCapacity, Integer maxCapacity){
-        if(minCapacity == null || maxCapacity == null){
-            return null;
-        } else{
+    private BooleanExpression capacityBetweenOrMinMax(Integer minCapacity, Integer maxCapacity){
+        if(minCapacity != null && maxCapacity != null){
             return practiceRoom.capacity.between(minCapacity, maxCapacity);
+        } else if(minCapacity != null){
+            return practiceRoom.capacity.goe(minCapacity);
+        } else if(maxCapacity != null){
+            return practiceRoom.capacity.loe(maxCapacity);
+        } else{
+            return null;
         }
     }
 
@@ -140,11 +133,15 @@ public class PracticeRoomRepositoryImpl implements PracticeRoomRepositoryCustom 
         }
     }
 
-    private BooleanExpression standBetween(Integer minStand, Integer maxStand){
-        if(minStand == null || maxStand == null){
-            return null;
-        } else{
+    private BooleanExpression standBetweenOrMinMax(Integer minStand, Integer maxStand){
+        if(minStand != null && maxStand != null){
             return practiceRoom.stand.between(minStand, maxStand);
+        } else if(minStand != null){
+            return practiceRoom.stand.goe(minStand);
+        } else if(maxStand != null){
+            return practiceRoom.stand.loe(maxStand);
+        } else{
+            return null;
         }
     }
 
@@ -188,9 +185,29 @@ public class PracticeRoomRepositoryImpl implements PracticeRoomRepositoryCustom 
         }
     }
 
-//    private OrderSpecifier<?> sortBy(String sortBy, boolean ascending) {
-//        PathBuilder<PracticeRoom> path = new PathBuilder<>(PracticeRoom.class, "practiceRoom");
-//        return ascending ? path.get(sortBy).asc() : path.get(sortBy).desc();
-//    }
+    private OrderSpecifier<?> sortByIncludingDist(Sort sort, Double latitude, Double longitude) {
+        Sort.Order order = sort.iterator().next();
+        String property = order.getProperty();
+        boolean isAscending = order.isAscending();
+
+        switch(property){
+            case "distance":
+                if(latitude == null || longitude == null){
+                    return null;
+                }
+                NumberExpression<Double> latitudeDiff = practiceRoom.latitude.subtract(latitude).abs();
+                NumberExpression<Double> longitudeDiff = practiceRoom.longitude.subtract(longitude).abs();
+                NumberExpression<Double> distance = latitudeDiff.add(longitudeDiff);
+                return isAscending ? distance.asc() : distance.desc();
+            case "price":
+                return isAscending ? practiceRoom.price.asc() : practiceRoom.price.desc();
+            case "capacity":
+                return isAscending ? practiceRoom.capacity.asc() : practiceRoom.capacity.desc();
+            case "stand":
+                return isAscending ? practiceRoom.stand.asc() : practiceRoom.stand.desc();
+            default:
+                throw new CustomException(ErrorCode.INVALID_SORT_BY_FIELD);
+        }
+    }
 
 }
