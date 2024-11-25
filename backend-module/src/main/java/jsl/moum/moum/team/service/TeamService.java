@@ -341,22 +341,22 @@ public class TeamService {
      * 필터링으로 팀 목록 조회
      */
     @Transactional
-    public List<TeamDto.Response> getTeamsWithFiltering(String encodedString, int page, int size) {
+    public List<TeamDto.Response> getTeamsWithFiltering(TeamDto.SearchDto searchDto, int page, int size) {
 
-        TeamDto.SearchDto searchDto = null;
-        log.info("encodedString : {}", encodedString);
-        if (encodedString != null) {
-            try {
-                log.info("try 진입");
-                String decodedString = new String(Base64.getDecoder().decode(encodedString));
-                log.info("decodedString : {}", decodedString);
-                searchDto = objectMapper.readValue(decodedString, TeamDto.SearchDto.class);
-                log.info("searchDto : {}", searchDto);
-            } catch (IllegalArgumentException | JsonProcessingException e) {
-                log.error(e.getMessage());
-                throw new CustomException(ErrorCode.BASE64_PROCESS_FAIL);
-            }
-        }
+//        TeamDto.SearchDto searchDto = null;
+//        log.info("encodedString : {}", encodedString);
+//        if (encodedString != null) {
+//            try {
+//                log.info("try 진입");
+//                String decodedString = new String(Base64.getDecoder().decode(encodedString));
+//                log.info("decodedString : {}", decodedString);
+//                searchDto = objectMapper.readValue(decodedString, TeamDto.SearchDto.class);
+//                log.info("searchDto : {}", searchDto);
+//            } catch (IllegalArgumentException | JsonProcessingException e) {
+//                log.error(e.getMessage());
+//                throw new CustomException(ErrorCode.BASE64_PROCESS_FAIL);
+//            }
+//        }
         List<TeamEntity> teams = teamRepositoryCustom.searchTeamsWithFiltering(searchDto, page, size);
 
         List<TeamDto.Response> teamsResponseList = teams.stream()

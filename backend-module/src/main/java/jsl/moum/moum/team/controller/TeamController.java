@@ -182,12 +182,12 @@ public class TeamController {
      */
     @GetMapping("/api/teams/search")
     public ResponseEntity<ResultResponse> getTeamsWithFiltering(@AuthenticationPrincipal CustomUserDetails customUserDetails,
-                                                            @RequestParam(required = false) String conditions,
+                                                            @RequestBody(required = false) TeamDto.SearchDto searchDto,
                                                             @RequestParam(defaultValue = "0") int page,
                                                             @RequestParam(defaultValue = "10") int size)
     {
         loginCheck(customUserDetails.getUsername());
-        List<TeamDto.Response> responseDto = teamService.getTeamsWithFiltering(conditions, page, size);
+        List<TeamDto.Response> responseDto = teamService.getTeamsWithFiltering(searchDto, page, size);
         ResultResponse response = ResultResponse.of(ResponseCode.GET_TEAM_LIST_SUCCESS,responseDto);
         return new ResponseEntity<>(response, HttpStatusCode.valueOf(response.getStatus()));
     }

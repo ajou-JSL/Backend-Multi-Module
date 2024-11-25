@@ -171,11 +171,11 @@ public class ArticleController {
      */
     @GetMapping("/api/articles/search")
     public ResponseEntity<ResultResponse> getArticlesByFiltering(
-            @RequestParam(required = false) String conditions,
+            @RequestBody(required = false) ArticleDto.SearchDto searchDto,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
-        List<ArticleDto.Response> articleList = articleService.getArticlesByFiltering(conditions,page,size);
+        List<ArticleDto.Response> articleList = articleService.getArticlesByFiltering(searchDto,page,size);
 
         ResultResponse response = ResultResponse.of(ResponseCode.ARTICLE_LIST_GET_SUCCESS, articleList);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));

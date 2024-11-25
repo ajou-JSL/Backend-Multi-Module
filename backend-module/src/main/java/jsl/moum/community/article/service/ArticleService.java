@@ -268,22 +268,22 @@ public class ArticleService {
      * 필터링으로 게시글 목록 조회
      */
     @Transactional(readOnly = true)
-    public List<ArticleDto.Response> getArticlesByFiltering(String encodedString, int page, int size) {
+    public List<ArticleDto.Response> getArticlesByFiltering(ArticleDto.SearchDto searchDto, int page, int size) {
 
-        ArticleDto.SearchDto searchDto = null;
-        log.info("encodedString : {}", encodedString);
-        if (encodedString != null) {
-            try {
-                log.info("try 진입");
-                String decodedString = new String(Base64.getDecoder().decode(encodedString));
-                log.info("decodedString : {}", decodedString);
-                searchDto = objectMapper.readValue(decodedString, ArticleDto.SearchDto.class);
-                log.info("searchDto : {}", searchDto);
-            } catch (IllegalArgumentException |JsonProcessingException e) {
-                log.error(e.getMessage());
-                 throw new CustomException(ErrorCode.BASE64_PROCESS_FAIL);
-            }
-        }
+//        ArticleDto.SearchDto searchDto = null;
+//        log.info("encodedString : {}", encodedString);
+//        if (encodedString != null) {
+//            try {
+//                log.info("try 진입");
+//                String decodedString = new String(Base64.getDecoder().decode(encodedString));
+//                log.info("decodedString : {}", decodedString);
+//                searchDto = objectMapper.readValue(decodedString, ArticleDto.SearchDto.class);
+//                log.info("searchDto : {}", searchDto);
+//            } catch (IllegalArgumentException |JsonProcessingException e) {
+//                log.error(e.getMessage());
+//                 throw new CustomException(ErrorCode.BASE64_PROCESS_FAIL);
+//            }
+//        }
         List<ArticleEntity> articles = articleRepositoryCustom.searchArticlesWithFiltering(searchDto, page, size);
 
         List<ArticleDto.Response> articleResponseList = articles.stream()

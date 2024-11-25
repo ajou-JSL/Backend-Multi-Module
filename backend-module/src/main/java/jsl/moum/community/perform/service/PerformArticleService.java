@@ -233,22 +233,22 @@ public class PerformArticleService {
         필터링으로 공연 게시글 조회
      */
     @Transactional
-    public List<PerformArticleDto.Response> getPerformArticleWithFiltering(String encodedString, int page, int size) {
+    public List<PerformArticleDto.Response> getPerformArticleWithFiltering(PerformArticleDto.SearchDto searchDto, int page, int size) {
 
-        PerformArticleDto.SearchDto searchDto = null;
-        log.info("encodedString : {}", encodedString);
-        if (encodedString != null) {
-            try {
-                log.info("try 진입");
-                String decodedString = new String(Base64.getDecoder().decode(encodedString));
-                log.info("decodedString : {}", decodedString);
-                searchDto = objectMapper.readValue(decodedString, PerformArticleDto.SearchDto.class);
-                log.info("searchDto : {}", searchDto);
-            } catch (IllegalArgumentException | JsonProcessingException e) {
-                log.error(e.getMessage());
-                throw new CustomException(ErrorCode.BASE64_PROCESS_FAIL);
-            }
-        }
+//        PerformArticleDto.SearchDto searchDto = null;
+//        log.info("encodedString : {}", encodedString);
+//        if (encodedString != null) {
+//            try {
+//                log.info("try 진입");
+//                String decodedString = new String(Base64.getDecoder().decode(encodedString));
+//                log.info("decodedString : {}", decodedString);
+//                searchDto = objectMapper.readValue(decodedString, PerformArticleDto.SearchDto.class);
+//                log.info("searchDto : {}", searchDto);
+//            } catch (IllegalArgumentException | JsonProcessingException e) {
+//                log.error(e.getMessage());
+//                throw new CustomException(ErrorCode.BASE64_PROCESS_FAIL);
+//            }
+//        }
         List<PerformArticleEntity> teams = performArticleRepositoryCustom.searchPerformArticlesWithFiltering(searchDto, page, size);
 
         List<PerformArticleDto.Response> performArticleList = teams.stream()

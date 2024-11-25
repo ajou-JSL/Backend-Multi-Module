@@ -119,12 +119,12 @@ public class PerformArticleController {
      */
     @GetMapping("/api/performs/search")
     public ResponseEntity<ResultResponse> getPerformArticlesWithFiltering(@AuthenticationPrincipal CustomUserDetails customUserDetails,
-                                                                @RequestParam(required = false) String conditions,
+                                                                @RequestBody(required = false) PerformArticleDto.SearchDto searchDto,
                                                                 @RequestParam(defaultValue = "0") int page,
                                                                 @RequestParam(defaultValue = "10") int size)
     {
         loginCheck(customUserDetails.getUsername());
-        List<PerformArticleDto.Response> responseDto = performArticleService.getPerformArticleWithFiltering(conditions, page, size);
+        List<PerformArticleDto.Response> responseDto = performArticleService.getPerformArticleWithFiltering(searchDto, page, size);
         ResultResponse response = ResultResponse.of(ResponseCode.GET_PERFORM_ARTICLE_SUCCESS,responseDto);
         return new ResponseEntity<>(response, HttpStatusCode.valueOf(response.getStatus()));
     }
