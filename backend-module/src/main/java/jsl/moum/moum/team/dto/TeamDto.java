@@ -89,9 +89,10 @@ public class TeamDto {
                     .map(MemberDto.Response::new) // MemberEntity를 MemberDto.Response로 변환
                     .collect(Collectors.toList());
 
-            this.records = teamEntity.getRecords().stream()
+            this.records = (teamEntity.getRecords() != null)
+                    ? teamEntity.getRecords().stream()
                     .map(RecordDto.Response::new)
-                    .collect(Collectors.toList());;
+                    .collect(Collectors.toList()) : null;
         }
     }
 
