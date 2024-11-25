@@ -1,9 +1,7 @@
 package jsl.moum.moum.settlement.domain.entity;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import jsl.moum.moum.lifecycle.domain.LifecycleEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,5 +18,13 @@ public class SettlementEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Column(name = "settlement_name")
+    private String settlementName;
 
+    @Column(name = "fee")
+    private String fee;
+
+    @ManyToOne
+    @JoinColumn(name = "fk_moum_id")
+    private LifecycleEntity moumId;
 }

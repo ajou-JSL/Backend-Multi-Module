@@ -93,10 +93,13 @@ public class TeamService {
 
         }
 
-        // "teams/{teamName}/{originalFileName}"
-        String originalFilename = file.getOriginalFilename();
-        String key = "teams/" + teamRequestDto.getTeamName() + "/" + originalFilename;
-        String fileUrl = storageService.uploadFile(key, file);
+        String fileUrl = null;
+        if(file!=null && !file.isEmpty()){
+            // "teams/{teamName}/{originalFileName}"
+            String originalFilename = file.getOriginalFilename();
+            String key = "teams/" + teamRequestDto.getTeamName() + "/" + originalFilename;
+            fileUrl = storageService.uploadFile(key, file);
+        }
 
         TeamDto.Request request = TeamDto.Request.builder()
                 .members(new ArrayList<>())
