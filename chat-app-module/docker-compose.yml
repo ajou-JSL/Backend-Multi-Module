@@ -1,0 +1,61 @@
+services:
+  chatmodule:
+    image: openjdk:17-jdk-slim
+    container_name: chatmodule-container
+    working_dir: /chatmodule
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8070:8070"
+    environment:
+      SPRING_PROFILES_ACTIVE: "docker"
+      SPRING_R2DBC_URL: "r2dbc:mysql://mysql:3306/moum?useSSL=false&characterEncoding=UTF-8&allowPublicKeyRetrieval=true"
+      SPRING_R2DBC_USERNAME: "root"
+      SPRING_R2DBC_PASSWORD: "zpzzgjdg@$$^1"
+      SPRING_REDIS_HOST: "redis"
+      SPRING_DATA_MONGODB_HOST: "chatdb.f9mra.mongodb.net"
+      SPRING_DATA_MONGODB_USERNAME: "cjaehyuk4zed"
+      SPRING_DATA_MONGODB_PASSWORD: "ChatDB2024"
+      SPRING_DATA_MONGODB_AUTHENTICATION_DATABASE: "admin"
+      SPRING_JWT_SECRET: "vmfhaltmskdlstkfkdgodyroqkfwkdbalroqkfwkdbalaaaaaaaaaaaaaaaabbbbb"
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - app-network
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-container
+    environment:
+      MYSQL_ROOT_PASSWORD: zpzzgjdg@$$^1
+      MYSQL_DATABASE: moum
+    ports:
+      - "3306:3306"
+    networks:
+      - app-network
+
+  redis:
+    image: redis:latest
+    container_name: redis-container
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+
+  chatdb:
+    image: mongo:latest
+    container_name: mongo-container
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: cjaehyuk4zed
+      MONGO_INITDB_ROOT_PASSWORD: ChatDB2024
+      MONGO_INITDB_DATABASE: chatdb
+    ports:
+      - "27017:27017"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
