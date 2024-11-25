@@ -8,6 +8,8 @@ import jsl.moum.global.error.exception.CustomException;
 import jsl.moum.moum.lifecycle.domain.*;
 import jsl.moum.moum.lifecycle.domain.Process;
 import jsl.moum.moum.lifecycle.dto.LifecycleDto;
+import jsl.moum.moum.lifecycle.dto.LifecyclePerformanceHallDto;
+import jsl.moum.moum.lifecycle.dto.LifecyclePracticeRoomDto;
 import jsl.moum.moum.lifecycle.dto.ProcessDto;
 import jsl.moum.moum.team.domain.*;
 import jsl.moum.moum.team.dto.TeamDto;
@@ -49,6 +51,8 @@ public class LifecycleService {
     private final RecordRepository recordRepository;
     private final MoumMemberRecordRepository moumMemberRecordRepository;
     private final MoumMemberRecordRepositoryCustom moumMemberRecordRepositoryCustom;
+    private final LifecyclePracticeRoomRepository lifecyclePracticeRoomRepository;
+    private final LifecyclePerformanceHallRepository lifecyclePerformanceHallRepository;
 
     @Value("${ncp.object-storage.bucket}")
     private String bucket;
@@ -324,6 +328,48 @@ public class LifecycleService {
         return teamRepository.findById(teamId)
                 .orElseThrow(() -> new CustomException(ErrorCode.TEAM_NOT_FOUND));
     }
+
+    /**
+     * 모음 연습실, 공연장 API
+     */
+
+    public LifecyclePracticeRoomDto.Response addPracticeRoom(LifecyclePracticeRoomDto.Request requestDto){
+        LifecycleEntity lifecycleEntity = lifecycleRepository.findById(requestDto.getMoumId())
+                .orElseThrow(() -> new CustomException(ErrorCode.MOUM_NOT_FOUND));
+        LifecyclePracticeRoom practiceRoom = LifecyclePracticeRoom.builder()
+                .moum(lifecycleEntity)
+                .practiceRoom(requestDto.getPracticeRoom())
+                .build();
+        practiceRoom = lifecyclePracticeRoomRepository.save(practiceRoom);
+        return new LifecyclePracticeRoomDto.Response(practiceRoom);
+    }
+
+    public LifecyclePerformanceHallDto.Response addPerformanceHall(LifecyclePerformanceHallDto.Request requestDto){
+        LifecycleEntity lifecycleEntity = lifecycleRepository.findById(requestDto.getMoumId())
+                .orElseThrow(() -> new CustomException(ErrorCode.MOUM_NOT_FOUND));
+        LifecyclePerformanceHall performanceHall = LifecyclePerformanceHall.builder()
+                .moum(lifecycleEntity)
+                .performanceHall(requestDto.getPerformanceHall())
+                .build();
+        performanceHall = lifecyclePerformanceHallRepository.save(performanceHall);
+        return new LifecyclePerformanceHallDto.Response(performanceHall);
+    }
+
+    public List<LifecyclePracticeRoomDto.Response> getPracticeRooms(Integer id){
+        List<LifecyclePracticeRoom> practiceRooms = lifecyclePracticeRoomRepository.findAllByMoumId(id);
+        return practiceRooms.stream()
+                .map(LifecyclePracticeRoomDto.Response::new)
+                .collect(Collectors.toList());
+    }
+
+    public List<LifecyclePerformanceHallDto.Response> getPerformanceHalls(Integer id){
+        List<LifecyclePerformanceHall> performanceHalls = lifecyclePerformanceHallRepository.findAllByMoumId(id);
+        return performanceHalls.stream()
+                .map(LifecyclePerformanceHallDto.Response::new)
+                .collect(Collectors.toList());
+    }
+
+
 
     private List<String> uploadFiles(List<MultipartFile> files, String moumName) throws IOException {
         List<String> newFileUrls = new ArrayList<>();

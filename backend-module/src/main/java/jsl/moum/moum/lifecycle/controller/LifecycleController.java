@@ -2,9 +2,13 @@ package jsl.moum.moum.lifecycle.controller;
 
 import jakarta.validation.Valid;
 import jsl.moum.auth.domain.CustomUserDetails;
+import jsl.moum.global.error.ErrorCode;
+import jsl.moum.global.error.exception.CustomException;
 import jsl.moum.global.error.exception.NeedLoginException;
 import jsl.moum.global.response.ResponseCode;
 import jsl.moum.global.response.ResultResponse;
+import jsl.moum.moum.lifecycle.dto.LifecyclePerformanceHallDto;
+import jsl.moum.moum.lifecycle.dto.LifecyclePracticeRoomDto;
 import jsl.moum.moum.lifecycle.dto.LifecycleDto;
 import jsl.moum.moum.lifecycle.dto.ProcessDto;
 import jsl.moum.moum.lifecycle.service.LifecycleService;
@@ -143,7 +147,43 @@ public class LifecycleController {
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
 
+    @PostMapping("/api/moum/practice-room")
+    public ResponseEntity<ResultResponse> addPracticeRoom(@RequestBody LifecyclePracticeRoomDto.Request requestDto){
+        LifecyclePracticeRoomDto.Response responseDto = lifecycleService.addPracticeRoom(requestDto);
+        ResultResponse response = ResultResponse.of(ResponseCode.MOUM_ADD_PRACTICE_ROOM_SUCCESS,responseDto);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+    }
 
+    @PostMapping("/api/moum/performance-hall")
+    public ResponseEntity<ResultResponse> addPracticeRoom(@RequestBody LifecyclePerformanceHallDto.Request request){
+        LifecyclePerformanceHallDto.Response responseDto = lifecycleService.addPerformanceHall(request);
+        ResultResponse response = ResultResponse.of(ResponseCode.MOUM_ADD_PERFORMANCE_HALL_SUCCESS,responseDto);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+    }
+
+    @GetMapping("/api/moum/{id}/practice-room")
+    public ResponseEntity<ResultResponse> getPracticeRooms(@PathVariable int id){
+        List<LifecyclePracticeRoomDto.Response> responseDto = lifecycleService.getPracticeRooms(id);
+
+        if (responseDto == null || responseDto.isEmpty()) {
+            throw new CustomException(ErrorCode.MOUM_PRACTICE_ROOM_NOT_FOUND);
+        }
+
+        ResultResponse response = ResultResponse.of(ResponseCode.MOUM_GET_PRACTICE_ROOM_SUCCESS,responseDto);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+    }
+
+    @GetMapping("/api/moum/{id}/performance-hall")
+    public ResponseEntity<ResultResponse> getPerformanceHalls(@PathVariable int id){
+        List<LifecyclePerformanceHallDto.Response> responseDto = lifecycleService.getPerformanceHalls(id);
+
+        if (responseDto == null || responseDto.isEmpty()) {
+            throw new CustomException(ErrorCode.MOUM_PERFORMANCE_HALL_NOT_FOUND);
+        }
+
+        ResultResponse response = ResultResponse.of(ResponseCode.MOUM_GET_PERFORMANCE_HALL_SUCCESS,responseDto);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+    }
 
 
     public String loginCheck(String username){
