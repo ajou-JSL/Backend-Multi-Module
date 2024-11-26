@@ -65,7 +65,7 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/login", "/test","/", "/join","/join2","/reissue","/send-mail","verify-code").permitAll()
+                        .requestMatchers("/login", "/test","/", "/join","/join2","/reissue","/send-mail","verify-code","/apiv2/test").permitAll()
                         .requestMatchers("/storage/upload").permitAll()
                         .requestMatchers("/public/**").permitAll()
                         .requestMatchers("*/favicon.ico").permitAll()
