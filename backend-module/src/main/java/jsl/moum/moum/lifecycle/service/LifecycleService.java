@@ -399,8 +399,8 @@ public class LifecycleService {
         lifecyclePerformanceHallRepository.deleteAllByMoumId(id);
     }
 
-    public void deletePerformanceHall(Integer moumId, Integer performanceHallId){
-        lifecyclePerformanceHallRepository.deleteByMoumIdAndPerformanceHallId(moumId, performanceHallId);
+    public void deletePerformanceHall(Integer id, Integer moumId){
+        lifecyclePerformanceHallRepository.deleteByIdAndMoumId(id, moumId);
     }
 
 

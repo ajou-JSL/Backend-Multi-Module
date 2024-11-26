@@ -213,10 +213,10 @@ public class LifecycleController {
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
 
-    @DeleteMapping("/api/moum/{id}/performance-hall/{hallId}")
-    public ResponseEntity<ResultResponse> deletePerformanceHall(@PathVariable(name = "id") int id,
-                                                                @PathVariable(name = "hallId") int hallId){
-        lifecycleService.deletePerformanceHall(id, hallId);
+    @DeleteMapping("/api/moum/{moumId}/performance-hall/{id}")
+    public ResponseEntity<ResultResponse> deletePerformanceHall(@PathVariable(name = "moumId") int moumId,
+                                                                @PathVariable(name = "id") int id){
+        lifecycleService.deletePerformanceHall(id, moumId);
         ResultResponse response = ResultResponse.of(ResponseCode.MOUM_DELETE_PERFORMANCE_HALL_SUCCESS,null);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }

@@ -17,6 +17,6 @@ public interface LifecyclePerformanceHallRepository extends JpaRepository<Lifecy
     void deleteAllByMoumId(@Param("moumId") int moumId);
 
     @Modifying
-    @Query("DELETE FROM LifecyclePerformanceHall l WHERE l.moum.id = :moumId AND l.id = :performanceHallId")
-    void deleteByMoumIdAndPerformanceHallId(@Param("moumId") int moumId, @Param("performanceHallId") int performanceHallId);
+    @Query("DELETE FROM LifecyclePerformanceHall l WHERE l.moum.id = :moumId AND l.id = :id")
+    void deleteByIdAndMoumId(@Param("id") int id, @Param("moumId") int moumId);
 }
