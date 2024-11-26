@@ -11,7 +11,7 @@ services:
     ports:
       - "8081:8080"
     environment:
-      SPRING_PROFILES_ACTIVE: "set1"
+      SPRING_PROFILES_ACTIVE: "set2"
       SPRING_DATASOURCE_URL: "jdbc:mysql://mysql:3306/moum?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8&allowPublicKeyRetrieval=true"
       SPRING_DATASOURCE_USERNAME: "root"
       SPRING_DATASOURCE_PASSWORD: "zpzzgjdg@$$^1"
