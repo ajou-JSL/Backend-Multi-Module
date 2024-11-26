@@ -2,17 +2,16 @@ package jsl.moum.moum.lifecycle.service;
 
 import jsl.moum.auth.domain.entity.MemberEntity;
 import jsl.moum.auth.domain.repository.MemberRepository;
-import jsl.moum.auth.dto.MemberDto;
+import jsl.moum.business.domain.PracticeRoom;
+import jsl.moum.business.domain.PracticeRoomRepository;
 import jsl.moum.global.error.ErrorCode;
 import jsl.moum.global.error.exception.CustomException;
 import jsl.moum.moum.lifecycle.domain.*;
-import jsl.moum.moum.lifecycle.domain.Process;
 import jsl.moum.moum.lifecycle.dto.LifecycleDto;
 import jsl.moum.moum.lifecycle.dto.LifecyclePerformanceHallDto;
 import jsl.moum.moum.lifecycle.dto.LifecyclePracticeRoomDto;
 import jsl.moum.moum.lifecycle.dto.ProcessDto;
 import jsl.moum.moum.team.domain.*;
-import jsl.moum.moum.team.dto.TeamDto;
 import jsl.moum.objectstorage.StorageService;
 import jsl.moum.record.domain.dto.RecordDto;
 import jsl.moum.record.domain.entity.MoumMemberRecordEntity;
@@ -28,13 +27,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -53,6 +48,7 @@ public class LifecycleService {
     private final MoumMemberRecordRepositoryCustom moumMemberRecordRepositoryCustom;
     private final LifecyclePracticeRoomRepository lifecyclePracticeRoomRepository;
     private final LifecyclePerformanceHallRepository lifecyclePerformanceHallRepository;
+    private final PracticeRoomRepository practiceRoomRepository;
 
     @Value("${ncp.object-storage.bucket}")
     private String bucket;
@@ -336,12 +332,21 @@ public class LifecycleService {
     public LifecyclePracticeRoomDto.Response addPracticeRoom(LifecyclePracticeRoomDto.Request requestDto){
         LifecycleEntity lifecycleEntity = lifecycleRepository.findById(requestDto.getMoumId())
                 .orElseThrow(() -> new CustomException(ErrorCode.MOUM_NOT_FOUND));
-        LifecyclePracticeRoom practiceRoom = LifecyclePracticeRoom.builder()
+        PracticeRoom practiceRoom = practiceRoomRepository.findById(requestDto.getRoomId())
+                .orElse(null);
+
+        String roomName = requestDto.getRoomName();
+        if(practiceRoom == null){
+            roomName = practiceRoom.getName();
+        }
+
+        LifecyclePracticeRoom lifecyclePracticeRoom = LifecyclePracticeRoom.builder()
                 .moum(lifecycleEntity)
-                .practiceRoom(requestDto.getPracticeRoom())
+                .roomId(requestDto.getRoomId())
+                .practiceRoom(roomName)
                 .build();
-        practiceRoom = lifecyclePracticeRoomRepository.save(practiceRoom);
-        return new LifecyclePracticeRoomDto.Response(practiceRoom);
+        lifecyclePracticeRoom = lifecyclePracticeRoomRepository.save(lifecyclePracticeRoom);
+        return new LifecyclePracticeRoomDto.Response(lifecyclePracticeRoom);
     }
 
     public LifecyclePerformanceHallDto.Response addPerformanceHall(LifecyclePerformanceHallDto.Request requestDto){
@@ -373,8 +378,8 @@ public class LifecycleService {
         lifecyclePracticeRoomRepository.deleteAllByMoumId(id);
     }
 
-    public void deletePracticeRoom(Integer moumId, Integer practiceRoomId){
-        lifecyclePracticeRoomRepository.deleteByMoumIdAndPracticeRoomId(moumId, practiceRoomId);
+    public void deletePracticeRoom(Integer id, Integer moumId){
+        lifecyclePracticeRoomRepository.deleteByIdAndMoumId(id, moumId);
     }
 
 

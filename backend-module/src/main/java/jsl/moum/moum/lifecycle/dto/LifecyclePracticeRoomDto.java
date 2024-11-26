@@ -11,7 +11,8 @@ import lombok.*;
 public class LifecyclePracticeRoomDto {
     private int id;
     private int moumId;
-    private String practiceRoom;
+    private Integer roomId;
+    private String roomName;
 
     @Builder
     @Getter
@@ -20,7 +21,8 @@ public class LifecyclePracticeRoomDto {
     @AllArgsConstructor
     public static class Request {
         private int moumId;
-        private String practiceRoom;
+        private Integer roomId;
+        private String roomName;
     }
 
     @Builder
@@ -31,12 +33,14 @@ public class LifecyclePracticeRoomDto {
     public static class Response {
         private int id;
         private int moumId;
-        private String practiceRoom;
+        private Integer roomId;
+        private String roomName;
 
         public Response(LifecyclePracticeRoom lifecyclePracticeRoom) {
             this.id = lifecyclePracticeRoom.getId();
             this.moumId = lifecyclePracticeRoom.getMoum().getId();
-            this.practiceRoom = lifecyclePracticeRoom.getPracticeRoom();
+            this.roomId = lifecyclePracticeRoom.getRoomId();
+            this.roomName = lifecyclePracticeRoom.getPracticeRoom();
         }
     }
 

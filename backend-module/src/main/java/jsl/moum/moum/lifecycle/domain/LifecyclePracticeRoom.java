@@ -20,6 +20,9 @@ public class LifecyclePracticeRoom {
     @JoinColumn(name = "moum_id")
     private LifecycleEntity moum;
 
+    @Column(name = "room_id")
+    private Integer roomId;
+
     @Column(name = "practice_room")
     private String practiceRoom;
 }

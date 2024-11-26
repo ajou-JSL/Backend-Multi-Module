@@ -147,6 +147,10 @@ public class LifecycleController {
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
 
+    /**
+     * 모음 연습실 & 공연장 추가
+     */
+
     @PostMapping("/api/moum/practice-room")
     public ResponseEntity<ResultResponse> addPracticeRoom(@RequestBody LifecyclePracticeRoomDto.Request requestDto){
         LifecyclePracticeRoomDto.Response responseDto = lifecycleService.addPracticeRoom(requestDto);
@@ -173,10 +177,10 @@ public class LifecycleController {
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
 
-    @DeleteMapping("/api/moum/{id}/practice-room/{roomId}")
-    public ResponseEntity<ResultResponse> deletePracticeRoom(@PathVariable(name = "id") int id,
-                                                             @PathVariable(name = "roomId") int roomId){
-        lifecycleService.deletePracticeRoom(id, roomId);
+    @DeleteMapping("/api/moum/{moumId}/practice-room/{id}")
+    public ResponseEntity<ResultResponse> deletePracticeRoom(@PathVariable(name = "moumId") int moumId,
+                                                             @PathVariable(name = "id") int id){
+        lifecycleService.deletePracticeRoom(id, moumId);
         ResultResponse response = ResultResponse.of(ResponseCode.MOUM_DELETE_PRACTICE_ROOM_SUCCESS,null);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
@@ -184,7 +188,7 @@ public class LifecycleController {
 
 
     @PostMapping("/api/moum/performance-hall")
-    public ResponseEntity<ResultResponse> addPracticeRoom(@RequestBody LifecyclePerformanceHallDto.Request request){
+    public ResponseEntity<ResultResponse> addPerformanceHall(@RequestBody LifecyclePerformanceHallDto.Request request){
         LifecyclePerformanceHallDto.Response responseDto = lifecycleService.addPerformanceHall(request);
         ResultResponse response = ResultResponse.of(ResponseCode.MOUM_ADD_PERFORMANCE_HALL_SUCCESS,responseDto);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
