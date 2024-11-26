@@ -20,6 +20,9 @@ public class LifecyclePerformanceHall {
     @JoinColumn(name = "moum_id")
     private LifecycleEntity moum;
 
+    @Column(name = "hall_id")
+    private Integer hallId;
+
     @Column(name = "performance_hall")
     private String performanceHall;
 }

@@ -2,6 +2,8 @@ package jsl.moum.moum.lifecycle.service;
 
 import jsl.moum.auth.domain.entity.MemberEntity;
 import jsl.moum.auth.domain.repository.MemberRepository;
+import jsl.moum.business.domain.PerformanceHall;
+import jsl.moum.business.domain.PerformanceHallRepository;
 import jsl.moum.business.domain.PracticeRoom;
 import jsl.moum.business.domain.PracticeRoomRepository;
 import jsl.moum.global.error.ErrorCode;
@@ -49,6 +51,7 @@ public class LifecycleService {
     private final LifecyclePracticeRoomRepository lifecyclePracticeRoomRepository;
     private final LifecyclePerformanceHallRepository lifecyclePerformanceHallRepository;
     private final PracticeRoomRepository practiceRoomRepository;
+    private final PerformanceHallRepository performanceHallRepository;
 
     @Value("${ncp.object-storage.bucket}")
     private String bucket;
@@ -352,12 +355,21 @@ public class LifecycleService {
     public LifecyclePerformanceHallDto.Response addPerformanceHall(LifecyclePerformanceHallDto.Request requestDto){
         LifecycleEntity lifecycleEntity = lifecycleRepository.findById(requestDto.getMoumId())
                 .orElseThrow(() -> new CustomException(ErrorCode.MOUM_NOT_FOUND));
-        LifecyclePerformanceHall performanceHall = LifecyclePerformanceHall.builder()
+        PerformanceHall performanceHall = performanceHallRepository.findById(requestDto.getHallId())
+                .orElse(null);
+
+        String hallName = requestDto.getHallName();
+        if(performanceHall == null){
+            hallName = performanceHall.getName();
+        }
+
+        LifecyclePerformanceHall lifecyclePerformanceHall = LifecyclePerformanceHall.builder()
                 .moum(lifecycleEntity)
-                .performanceHall(requestDto.getPerformanceHall())
+                .hallId(requestDto.getHallId())
+                .performanceHall(hallName)
                 .build();
-        performanceHall = lifecyclePerformanceHallRepository.save(performanceHall);
-        return new LifecyclePerformanceHallDto.Response(performanceHall);
+        lifecyclePerformanceHall = lifecyclePerformanceHallRepository.save(lifecyclePerformanceHall);
+        return new LifecyclePerformanceHallDto.Response(lifecyclePerformanceHall);
     }
 
     public List<LifecyclePracticeRoomDto.Response> getPracticeRooms(Integer id){
