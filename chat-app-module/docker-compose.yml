@@ -9,7 +9,8 @@ services:
     ports:
       - "8072:8070"
     environment:
-      SPRING_PROFILES_ACTIVE: "docker"
+      # SPRING_PROFILES_ACTIVE: "docker"
+      SPRING_PROFILES_ACTIVE: "set1"
       SPRING_R2DBC_URL: "r2dbc:mysql://mysql:3306/moum?useSSL=false&characterEncoding=UTF-8&allowPublicKeyRetrieval=true"
       SPRING_R2DBC_USERNAME: "root"
       SPRING_R2DBC_PASSWORD: "zpzzgjdg@$$^1"
