@@ -17,6 +17,6 @@ public interface LifecyclePracticeRoomRepository extends JpaRepository<Lifecycle
     void deleteAllByMoumId(@Param("moumId") int moumId);
 
     @Modifying
-    @Query("DELETE FROM LifecyclePracticeRoom l WHERE l.moum.id = :moumId AND l.id = :practiceRoomId")
-    void deleteByMoumIdAndPracticeRoomId(@Param("moumId") int moumId, @Param("practiceRoomId") int practiceRoomId);
+    @Query("DELETE FROM LifecyclePracticeRoom l WHERE l.moum.id = :moumId AND l.id = :id")
+    void deleteByIdAndMoumId(@Param("id") int id, @Param("moumId") int moumId);
 }
