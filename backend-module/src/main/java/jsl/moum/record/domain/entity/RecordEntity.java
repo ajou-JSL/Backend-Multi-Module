@@ -56,9 +56,29 @@ public class RecordEntity {
     }
 
     public void updateRecord(RecordDto.Request request) {
-        this.recordName = request.getRecordName();
-        this.startDate = request.getStartDate();
-        this.endDate = request.getEndDate();
+        if (request != null) {
+            updateRecordName(request.getRecordName());
+            updateStartDate(request.getStartDate());
+            updateEndDate(request.getEndDate());
+        }
+    }
+
+    private void updateRecordName(String recordName) {
+        if (recordName != null) {
+            this.recordName = recordName;
+        }
+    }
+
+    private void updateStartDate(LocalDate startDate) {
+        if (startDate != null) {
+            this.startDate = startDate;
+        }
+    }
+
+    private void updateEndDate(LocalDate endDate) {
+        if (endDate != null) {
+            this.endDate = endDate;
+        }
     }
 
 }

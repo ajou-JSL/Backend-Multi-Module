@@ -111,22 +111,45 @@ public class TeamEntity {
     }
 
     public void updateTeamInfo(TeamDto.UpdateRequest requestDto) {
-        if(requestDto.getTeamName() != null){
-            this.teamName = requestDto.getTeamName();
-        }
-        if(requestDto.getDescription() != null){
-            this.description = requestDto.getDescription();
-        }
-        if(requestDto.getGenre() != null){
-            this.genre = requestDto.getGenre();
-        }
-        if(requestDto.getLocation() != null){
-            this.location = requestDto.getLocation();
-        }
-        if(requestDto.getVideoUrl() != null){
-            this.videoUrl = requestDto.getVideoUrl();
+        if (requestDto != null) {
+            updateTeamName(requestDto.getTeamName());
+            updateDescription(requestDto.getDescription());
+            updateGenre(requestDto.getGenre());
+            updateLocation(requestDto.getLocation());
+            updateVideoUrl(requestDto.getVideoUrl());
         }
     }
+
+    private void updateTeamName(String teamName) {
+        if (teamName != null) {
+            this.teamName = teamName;
+        }
+    }
+
+    private void updateDescription(String description) {
+        if (description != null) {
+            this.description = description;
+        }
+    }
+
+    private void updateGenre(MusicGenre genre) {
+        if (genre != null) {
+            this.genre = genre;
+        }
+    }
+
+    private void updateLocation(String location) {
+        if (location != null) {
+            this.location = location;
+        }
+    }
+
+    private void updateVideoUrl(String videoUrl) {
+        if (videoUrl != null) {
+            this.videoUrl = videoUrl;
+        }
+    }
+
 
     public void updateProfileImage(String newUrl){
         this.fileUrl = newUrl;

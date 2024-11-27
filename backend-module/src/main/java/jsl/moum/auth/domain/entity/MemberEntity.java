@@ -170,33 +170,103 @@ public class MemberEntity {
         this.profileImageUrl = newUrl;
     }
 
+//    public void updateMemberInfo(ProfileDto.UpdateRequest updateRequest) {
+//        if (updateRequest.getName() != null) {
+//            this.name = updateRequest.getName();
+//        }
+//        if (updateRequest.getUsername() != null) {
+//            this.username = updateRequest.getUsername();
+//        }
+//        if (updateRequest.getProfileDescription() != null) {
+//            this.profileDescription = updateRequest.getProfileDescription();
+//        }
+//        if (updateRequest.getEmail() != null) {
+//            this.email = updateRequest.getEmail();
+//        }
+//        if (updateRequest.getProficiency() != null) {
+//            this.proficiency = updateRequest.getProficiency();
+//        }
+//        if (updateRequest.getInstrument() != null) {
+//            this.instrument = updateRequest.getInstrument();
+//        }
+//        if (updateRequest.getAddress() != null) {
+//            this.address = updateRequest.getAddress();
+//        }
+//        if (updateRequest.getGenres() != null) {
+//            this.genres = updateRequest.getGenres();
+//        }
+//        if(updateRequest.getVideoUrl() != null){
+//            this.videoUrl = updateRequest.getVideoUrl();;
+//        }
+//    }
     public void updateMemberInfo(ProfileDto.UpdateRequest updateRequest) {
-        if (updateRequest.getName() != null) {
-            this.name = updateRequest.getName();
+        if (updateRequest == null) {
+            return;
         }
-        if (updateRequest.getUsername() != null) {
-            this.username = updateRequest.getUsername();
+
+        updateName(updateRequest.getName());
+        updateUsername(updateRequest.getUsername());
+        updateProfileDescription(updateRequest.getProfileDescription());
+        updateEmail(updateRequest.getEmail());
+        updateProficiency(updateRequest.getProficiency());
+        updateInstrument(updateRequest.getInstrument());
+        updateAddress(updateRequest.getAddress());
+        updateGenres(updateRequest.getGenres());
+        updateVideoUrl(updateRequest.getVideoUrl());
+    }
+
+    private void updateName(String name) {
+        if (name != null) {
+            this.name = name;
         }
-        if (updateRequest.getProfileDescription() != null) {
-            this.profileDescription = updateRequest.getProfileDescription();
+    }
+
+    private void updateUsername(String username) {
+        if (username != null) {
+            this.username = username;
         }
-        if (updateRequest.getEmail() != null) {
-            this.email = updateRequest.getEmail();
+    }
+
+    private void updateProfileDescription(String profileDescription) {
+        if (profileDescription != null) {
+            this.profileDescription = profileDescription;
         }
-        if (updateRequest.getProficiency() != null) {
-            this.proficiency = updateRequest.getProficiency();
+    }
+
+    private void updateEmail(String email) {
+        if (email != null) {
+            // 이메일 검증 추가 가능
+            this.email = email;
         }
-        if (updateRequest.getInstrument() != null) {
-            this.instrument = updateRequest.getInstrument();
+    }
+
+    private void updateProficiency(String proficiency) {
+        if (proficiency != null) {
+            this.proficiency = proficiency;
         }
-        if (updateRequest.getAddress() != null) {
-            this.address = updateRequest.getAddress();
+    }
+
+    private void updateInstrument(String instrument) {
+        if (instrument != null) {
+            this.instrument = instrument;
         }
-        if (updateRequest.getGenres() != null) {
-            this.genres = updateRequest.getGenres();
+    }
+
+    private void updateAddress(String address) {
+        if (address != null) {
+            this.address = address;
         }
-        if(updateRequest.getVideoUrl() != null){
-            this.videoUrl = updateRequest.getVideoUrl();;
+    }
+
+    private void updateGenres(List<MusicGenre> genres) {
+        if (genres != null) {
+            this.genres = genres;
+        }
+    }
+
+    private void updateVideoUrl(String videoUrl) {
+        if (videoUrl != null) {
+            this.videoUrl = videoUrl;
         }
     }
 

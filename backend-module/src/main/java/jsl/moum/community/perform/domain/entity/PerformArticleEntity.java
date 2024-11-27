@@ -86,29 +86,63 @@ public class PerformArticleEntity {
     }
 
     public void updatePerformArticle(PerformArticleUpdateDto.Request updateDto) {
-        if (updateDto.getPerformanceName() != null) {
-            this.performanceName = updateDto.getPerformanceName();
+        if (updateDto != null) {
+            updatePerformanceName(updateDto.getPerformanceName());
+            updatePerformanceDescription(updateDto.getPerformanceDescription());
+            updatePerformanceLocation(updateDto.getPerformanceLocation());
+            updatePerformanceStartDate(updateDto.getPerformanceStartDate());
+            updatePerformanceEndDate(updateDto.getPerformanceEndDate());
+            updatePerformancePrice(updateDto.getPerformancePrice());
+            updatePerformanceImageUrl(updateDto.getPerformanceImageUrl());
+            updateGenre(updateDto.getGenre());
         }
-        if (updateDto.getPerformanceDescription() != null) {
-            this.performanceDescription = updateDto.getPerformanceDescription();
+    }
+
+    private void updatePerformanceName(String performanceName) {
+        if (performanceName != null) {
+            this.performanceName = performanceName;
         }
-        if (updateDto.getPerformanceLocation() != null) {
-            this.performanceLocation = updateDto.getPerformanceLocation();
+    }
+
+    private void updatePerformanceDescription(String performanceDescription) {
+        if (performanceDescription != null) {
+            this.performanceDescription = performanceDescription;
         }
-        if (updateDto.getPerformanceStartDate() != null) {
-            this.performanceStartDate = updateDto.getPerformanceStartDate();
+    }
+
+    private void updatePerformanceLocation(String performanceLocation) {
+        if (performanceLocation != null) {
+            this.performanceLocation = performanceLocation;
         }
-        if (updateDto.getPerformanceEndDate() != null) {
-            this.performanceEndDate = updateDto.getPerformanceEndDate();
+    }
+
+    private void updatePerformanceStartDate(Date performanceStartDate) {
+        if (performanceStartDate != null) {
+            this.performanceStartDate = performanceStartDate;
         }
-        if (updateDto.getPerformancePrice() != null) {
-            this.performancePrice = updateDto.getPerformancePrice();
+    }
+
+    private void updatePerformanceEndDate(Date performanceEndDate) {
+        if (performanceEndDate != null) {
+            this.performanceEndDate = performanceEndDate;
         }
-        if (updateDto.getPerformanceImageUrl() != null) {
-            this.performanceImageUrl = updateDto.getPerformanceImageUrl();
+    }
+
+    private void updatePerformancePrice(Integer performancePrice) {
+        if (performancePrice != null) {
+            this.performancePrice = performancePrice;
         }
-        if (updateDto.getGenre() != null) {
-            this.genre = updateDto.getGenre();
+    }
+
+    private void updatePerformanceImageUrl(String performanceImageUrl) {
+        if (performanceImageUrl != null) {
+            this.performanceImageUrl = performanceImageUrl;
+        }
+    }
+
+    private void updateGenre(MusicGenre genre) {
+        if (genre != null) {
+            this.genre = genre;
         }
     }
 

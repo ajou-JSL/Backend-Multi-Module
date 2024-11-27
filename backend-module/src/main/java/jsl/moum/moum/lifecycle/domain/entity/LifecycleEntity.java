@@ -114,31 +114,59 @@ public class LifecycleEntity {
         this.imageUrls.clear();
         this.imageUrls.addAll(newUrls);
     }
-
-    public void updateLifecycleInfo(LifecycleDto.Request updateRequest){
-        if(updateRequest.getGenre() != null){
-            this.genre = updateRequest.getGenre();
-        }
-        if (updateRequest.getMoumName() != null) {
-            this.lifecycleName = updateRequest.getMoumName();
-        }
-        if (updateRequest.getPrice() != null) {
-            this.price = updateRequest.getPrice();
-        }
-        if (updateRequest.getMoumDescription() != null) {
-            this.lifecycleDescription = updateRequest.getMoumDescription();
-        }
-        if (updateRequest.getPerformLocation() != null) {
-            this.performLocation = updateRequest.getPerformLocation();
-        }
-        if (updateRequest.getEndDate() != null) {
-            this.endDate = updateRequest.getEndDate();
-        }
-        if (updateRequest.getMusic() != null) {
-            this.music = updateRequest.getMusic();
+    public void updateLifecycleInfo(LifecycleDto.Request updateRequest) {
+        if (updateRequest != null) {
+            updateGenre(updateRequest.getGenre());
+            updateLifecycleName(updateRequest.getMoumName());
+            updatePrice(updateRequest.getPrice());
+            updateLifecycleDescription(updateRequest.getMoumDescription());
+            updatePerformLocation(updateRequest.getPerformLocation());
+            updateEndDate(updateRequest.getEndDate());
+            updateMusic(updateRequest.getMusic());
         }
     }
 
+    private void updateGenre(MusicGenre genre) {
+        if (genre != null) {
+            this.genre = genre;
+        }
+    }
+
+    private void updateLifecycleName(String lifecycleName) {
+        if (lifecycleName != null) {
+            this.lifecycleName = lifecycleName;
+        }
+    }
+
+    private void updatePrice(Integer price) {
+        if (price != null) {
+            this.price = price;
+        }
+    }
+
+    private void updateLifecycleDescription(String lifecycleDescription) {
+        if (lifecycleDescription != null) {
+            this.lifecycleDescription = lifecycleDescription;
+        }
+    }
+
+    private void updatePerformLocation(String performLocation) {
+        if (performLocation != null) {
+            this.performLocation = performLocation;
+        }
+    }
+
+    private void updateEndDate(LocalDate endDate) {
+        if (endDate != null) {
+            this.endDate = endDate;
+        }
+    }
+
+    private void updateMusic(List<Music> music) {
+        if (music != null) {
+            this.music = music;
+        }
+    }
 
     // 양방향이라 서로간 저장-삭제 신경 써줘야함 : GPT
     public void updateRecords(List<RecordEntity> updatedRecords) {

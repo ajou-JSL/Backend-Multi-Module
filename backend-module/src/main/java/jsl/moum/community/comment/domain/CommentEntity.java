@@ -42,6 +42,8 @@ public class CommentEntity {
         this.createdAt = LocalDateTime.now();
     }
     public void updateComment(String newContent){
-        this.content = newContent;
+        if(newContent != null){
+            this.content = newContent;
+        }
     }
 }

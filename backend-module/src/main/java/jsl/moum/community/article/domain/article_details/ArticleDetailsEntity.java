@@ -33,12 +33,15 @@ public class ArticleDetailsEntity {
     private List<CommentEntity> comments = new ArrayList<>();
 
     public void updateArticleImage(String newUrl){
-        this.fileUrl = newUrl;
+        if(newUrl != null){
+            this.fileUrl = newUrl;
+        }
     }
 
     public void updateArticleDetails(String newContent){
-
-        this.content = newContent;
+        if(newContent != null){
+            this.content = newContent;
+        }
     }
 
 }

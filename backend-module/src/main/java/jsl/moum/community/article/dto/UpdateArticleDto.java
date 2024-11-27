@@ -23,5 +23,6 @@ public class UpdateArticleDto {
         @NotEmpty @NotNull private ArticleEntity.ArticleCategories category;
         private String content;
         private MusicGenre genre;
+        private String fileUrl;
     }
 }

@@ -139,6 +139,7 @@ public class ArticleService {
                 .genre(articleDetailsRequestDto.getGenre())
                 .title(articleDetailsRequestDto.getTitle())
                 .category(articleDetailsRequestDto.getCategory())
+                .fileUrl(articleDetailsRequestDto.getFileUrl())
                 .build();
 
         // 로그인유저 == 작성자 여부 체크

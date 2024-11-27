@@ -82,18 +82,55 @@ public class ArticleEntity {
     public void updateLikesCount(int num) { this.likesCount += num; }
     public void commentsCountUp(){this.commentsCount += 1;}
 
-    public void updateArticle(UpdateArticleDto.Request updateArticleDto) {
-        if (updateArticleDto.getTitle() != null) {
-            this.title = updateArticleDto.getTitle();
-        }
-        if (updateArticleDto.getGenre() != null) {
-            this.genre = updateArticleDto.getGenre();
-        }
-        if (updateArticleDto.getCategory() != null) {
-            this.category = updateArticleDto.getCategory();
-        }
-        this.updatedAt = LocalDateTime.now();
+//    public void updateArticle(UpdateArticleDto.Request updateArticleDto) {
+//        if (updateArticleDto.getTitle() != null) {
+//            this.title = updateArticleDto.getTitle();
+//        }
+//        if (updateArticleDto.getGenre() != null) {
+//            this.genre = updateArticleDto.getGenre();
+//        }
+//        if (updateArticleDto.getCategory() != null) {
+//            this.category = updateArticleDto.getCategory();
+//        }
+//        this.updatedAt = LocalDateTime.now();
+//    }
+public void updateArticle(UpdateArticleDto.Request updateArticleDto) {
+    if (updateArticleDto == null) {
+        return;
     }
+
+    updateTitle(updateArticleDto.getTitle());
+    updateGenre(updateArticleDto.getGenre());
+    updateCategory(updateArticleDto.getCategory());
+    updateFileUrl(updateArticleDto.getFileUrl());
+
+    this.updatedAt = LocalDateTime.now();  // 공통된 업데이트 시간 처리
+}
+
+    private void updateTitle(String title) {
+        if (title != null) {
+            this.title = title;
+        }
+    }
+
+    private void updateGenre(MusicGenre genre) {
+        if (genre != null) {
+            this.genre = genre;
+        }
+    }
+
+    private void updateCategory(ArticleCategories category) {
+        if (category != null) {
+            this.category = category;
+        }
+    }
+
+    private void updateFileUrl(String fileUrl) {
+        if (fileUrl != null) {
+            this.fileUrl = fileUrl;
+        }
+    }
+
 
     @Getter
     @AllArgsConstructor
