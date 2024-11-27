@@ -81,6 +81,7 @@ public class ArticleService {
         }
 
         ArticleDetailsDto.Request articleDetailsRequestDto = ArticleDetailsDto.Request.builder()
+                .articleId(newArticle.getId())
                 .content(articleRequestDto.getContent())
                 .fileUrl(fileUrl)
                 .build();

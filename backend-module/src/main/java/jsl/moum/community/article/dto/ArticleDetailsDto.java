@@ -19,7 +19,7 @@ public class ArticleDetailsDto {
     @AllArgsConstructor
     @Getter
     public static class Request{
-        private int id;
+        private int articleId;
 
         private ArticleEntity.ArticleCategories category;
         private String title;
@@ -30,7 +30,7 @@ public class ArticleDetailsDto {
 
         public ArticleDetailsEntity toEntity(){
             return ArticleDetailsEntity.builder()
-                    .id(id)
+                    .articleId(articleId)
                     .content(content)
                     .fileUrl(fileUrl)
                     .build();
