@@ -1,6 +1,5 @@
 package jsl.moum.community.perform.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jsl.moum.auth.domain.entity.MemberEntity;
 import jsl.moum.auth.domain.repository.MemberRepository;
@@ -12,12 +11,11 @@ import jsl.moum.community.perform.dto.PerformArticleDto;
 import jsl.moum.community.perform.dto.PerformArticleUpdateDto;
 import jsl.moum.global.error.ErrorCode;
 import jsl.moum.global.error.exception.CustomException;
-import jsl.moum.moum.lifecycle.domain.LifecycleEntity;
-import jsl.moum.moum.lifecycle.domain.LifecycleRepository;
+import jsl.moum.moum.lifecycle.domain.entity.LifecycleEntity;
+import jsl.moum.moum.lifecycle.domain.repository.LifecycleRepository;
 import jsl.moum.moum.team.domain.TeamEntity;
 import jsl.moum.moum.team.domain.TeamMemberRepositoryCustom;
 import jsl.moum.moum.team.domain.TeamRepository;
-import jsl.moum.moum.team.dto.TeamDto;
 import jsl.moum.objectstorage.StorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +31,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 

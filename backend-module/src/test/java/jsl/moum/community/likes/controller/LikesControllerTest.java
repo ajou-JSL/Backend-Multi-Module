@@ -111,10 +111,7 @@ public class LikesControllerTest {
         // given
         LikesDto.Response likesResponse = new LikesDto.Response(mockLikes);
         Mockito.when(likesService.deleteLikes(anyString(), anyInt())).thenReturn(likesResponse);
-<<<<<<< HEAD
         Mockito.when(memberRepository.findByUsername(anyString())).thenReturn(mockAuthor);
-=======
->>>>>>> 99ffebd (✨ #33 공연게시글 좋아요,조회수 적용)
 
         // when & then
         mockMvc.perform(delete("/api/articles/likes/{articleId}", 1)
@@ -132,10 +129,7 @@ public class LikesControllerTest {
         // given
         LikesDto.Response likesResponse = new LikesDto.Response(mockLikes);
         Mockito.when(likesService.createPerformLikes(anyString(), anyInt())).thenReturn(likesResponse);
-<<<<<<< HEAD
         Mockito.when(memberRepository.findByUsername(anyString())).thenReturn(mockAuthor);
-=======
->>>>>>> 99ffebd (✨ #33 공연게시글 좋아요,조회수 적용)
 
         // when & then
         mockMvc.perform(post("/api/performs/likes/{performArticleId}", 1)
@@ -153,10 +147,7 @@ public class LikesControllerTest {
         // given
         LikesDto.Response likesResponse = new LikesDto.Response(mockLikes);
         Mockito.when(likesService.deletePerformLikes(anyString(), anyInt())).thenReturn(likesResponse);
-<<<<<<< HEAD
         Mockito.when(memberRepository.findByUsername(anyString())).thenReturn(mockAuthor);
-=======
->>>>>>> 99ffebd (✨ #33 공연게시글 좋아요,조회수 적용)
 
         // when & then
         mockMvc.perform(delete("/api/performs/likes/{performArticleId}", 1)

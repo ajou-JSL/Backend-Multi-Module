@@ -2,9 +2,9 @@ package jsl.moum.moum.settlement.service;
 
 import jsl.moum.global.error.ErrorCode;
 import jsl.moum.global.error.exception.CustomException;
-import jsl.moum.moum.lifecycle.domain.LifecycleEntity;
-import jsl.moum.moum.lifecycle.domain.LifecycleRepository;
-import jsl.moum.moum.lifecycle.domain.LifecycleRepositoryCustom;
+import jsl.moum.moum.lifecycle.domain.entity.LifecycleEntity;
+import jsl.moum.moum.lifecycle.domain.repository.LifecycleRepository;
+import jsl.moum.moum.lifecycle.domain.entity.LifecycleRepositoryCustom;
 import jsl.moum.moum.settlement.domain.entity.SettlementEntity;
 import jsl.moum.moum.settlement.domain.repository.SettlementRepository;
 import jsl.moum.moum.settlement.dto.SettlementDto;

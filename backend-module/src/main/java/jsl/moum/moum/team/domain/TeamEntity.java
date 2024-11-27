@@ -2,14 +2,12 @@ package jsl.moum.moum.team.domain;
 
 import jakarta.persistence.*;
 import jsl.moum.auth.dto.MusicGenre;
-import jsl.moum.moum.lifecycle.domain.LifecycleEntity;
 import jsl.moum.moum.team.dto.TeamDto;
 import jsl.moum.rank.Rank;
 import jsl.moum.record.domain.entity.RecordEntity;
 import jsl.moum.chatroom.domain.Chatroom;
 import jsl.moum.report.domain.TeamReport;
 import lombok.*;
-import org.springframework.security.core.parameters.P;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

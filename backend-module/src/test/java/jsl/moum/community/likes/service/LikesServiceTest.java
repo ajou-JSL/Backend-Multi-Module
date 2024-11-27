@@ -3,8 +3,7 @@ package jsl.moum.community.likes.service;
 import jsl.moum.community.likes.domain.LikesRepositoryCustom;
 import jsl.moum.community.perform.domain.entity.PerformArticleEntity;
 import jsl.moum.community.perform.domain.repository.PerformArticleRepository;
-import jsl.moum.custom.WithAuthUser;
-import jsl.moum.moum.lifecycle.domain.LifecycleEntity;
+import jsl.moum.moum.lifecycle.domain.entity.LifecycleEntity;
 import jsl.moum.moum.team.domain.TeamEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -210,11 +209,7 @@ public class LikesServiceTest {
 
         // when & then
         assertThrows(CustomException.class, () -> {
-<<<<<<< HEAD
-            likesService.deleteLikes(memberName,anotherUserLikes.getId());
-=======
             likesService.deleteLikes(memberName,anotherUserLikes.getId()); // 자신의 좋아요가 아님
->>>>>>> 99ffebd (✨ #33 공연게시글 좋아요,조회수 적용)
         });
 
         // likesRepository.deleteById(1)가 호출되지 않았는지 확인

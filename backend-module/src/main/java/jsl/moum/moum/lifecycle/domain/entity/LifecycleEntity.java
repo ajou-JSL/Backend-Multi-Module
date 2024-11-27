@@ -1,7 +1,9 @@
-package jsl.moum.moum.lifecycle.domain;
+package jsl.moum.moum.lifecycle.domain.entity;
 
 import jakarta.persistence.*;
 import jsl.moum.auth.dto.MusicGenre;
+import jsl.moum.moum.lifecycle.domain.Music;
+import jsl.moum.moum.lifecycle.domain.Process;
 import jsl.moum.moum.lifecycle.dto.LifecycleDto;
 import jsl.moum.moum.team.domain.TeamEntity;
 

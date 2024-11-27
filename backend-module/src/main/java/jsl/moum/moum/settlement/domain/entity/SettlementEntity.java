@@ -1,7 +1,6 @@
 package jsl.moum.moum.settlement.domain.entity;
 
 import jakarta.persistence.*;
-import jsl.moum.moum.lifecycle.domain.LifecycleEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

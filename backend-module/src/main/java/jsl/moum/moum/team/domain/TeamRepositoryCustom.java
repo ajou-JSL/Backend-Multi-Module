@@ -62,10 +62,11 @@ public class TeamRepositoryCustom {
 
         JPAQuery<Long> countQuery = jpaQueryFactory
                 .select(teamEntity.count())
+                .from(teamEntity)
                 .leftJoin(teamMemberEntity).on(teamMemberEntity.team.id.eq(teamEntity.id))
                 .where(
                         whereConditions(dto)
-                );
+                ).groupBy(teamEntity.id);
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }

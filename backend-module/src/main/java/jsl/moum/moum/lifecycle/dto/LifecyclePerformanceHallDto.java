@@ -1,6 +1,6 @@
 package jsl.moum.moum.lifecycle.dto;
 
-import jsl.moum.moum.lifecycle.domain.LifecyclePerformanceHall;
+import jsl.moum.moum.lifecycle.domain.entity.LifecyclePerformanceHall;
 import lombok.*;
 
 @Builder

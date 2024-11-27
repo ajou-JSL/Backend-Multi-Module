@@ -1,5 +1,6 @@
-package jsl.moum.moum.lifecycle.domain;
+package jsl.moum.moum.lifecycle.domain.repository;
 
+import jsl.moum.moum.lifecycle.domain.entity.LifecyclePerformanceHall;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

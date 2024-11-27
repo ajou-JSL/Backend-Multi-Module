@@ -3,7 +3,7 @@ package jsl.moum.community.perform.domain.entity;
 import jakarta.persistence.*;
 import jsl.moum.auth.dto.MusicGenre;
 import jsl.moum.community.perform.dto.PerformArticleUpdateDto;
-import jsl.moum.moum.lifecycle.domain.LifecycleEntity;
+import jsl.moum.moum.lifecycle.domain.entity.LifecycleEntity;
 import jsl.moum.moum.team.domain.TeamEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

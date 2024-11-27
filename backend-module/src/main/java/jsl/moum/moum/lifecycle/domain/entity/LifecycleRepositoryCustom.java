@@ -1,8 +1,7 @@
-package jsl.moum.moum.lifecycle.domain;
+package jsl.moum.moum.lifecycle.domain.entity;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import jsl.moum.moum.lifecycle.dto.LifecycleDto;
-import jsl.moum.moum.team.dto.TeamDto;
+import jsl.moum.moum.lifecycle.domain.entity.LifecycleEntity;
 import jsl.moum.record.domain.entity.RecordEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -10,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 import static jsl.moum.auth.domain.entity.QMemberEntity.memberEntity;
-import static jsl.moum.moum.lifecycle.domain.QLifecycleEntity.lifecycleEntity;
+import static jsl.moum.moum.lifecycle.domain.entity.QLifecycleEntity.lifecycleEntity;
 import static jsl.moum.moum.team.domain.QTeamEntity.teamEntity;
 import static jsl.moum.moum.team.domain.QTeamMemberEntity.teamMemberEntity;
 import static jsl.moum.record.domain.entity.QRecordEntity.recordEntity;

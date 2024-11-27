@@ -1,17 +1,14 @@
 package jsl.moum.moum.team.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jsl.moum.auth.domain.entity.MemberEntity;
 import jsl.moum.auth.domain.repository.MemberRepository;
 import jsl.moum.auth.dto.MemberDto;
-import jsl.moum.community.article.domain.article.ArticleEntity;
-import jsl.moum.community.article.dto.ArticleDto;
 import jsl.moum.global.error.ErrorCode;
 import jsl.moum.global.error.exception.CustomException;
-import jsl.moum.moum.lifecycle.domain.LifecycleEntity;
-import jsl.moum.moum.lifecycle.domain.LifecycleRepository;
-import jsl.moum.moum.lifecycle.domain.LifecycleRepositoryCustom;
+import jsl.moum.moum.lifecycle.domain.entity.LifecycleEntity;
+import jsl.moum.moum.lifecycle.domain.repository.LifecycleRepository;
+import jsl.moum.moum.lifecycle.domain.entity.LifecycleRepositoryCustom;
 import jsl.moum.moum.team.domain.*;
 import jsl.moum.objectstorage.StorageService;
 import jsl.moum.record.domain.dto.RecordDto;
@@ -33,7 +30,6 @@ import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 

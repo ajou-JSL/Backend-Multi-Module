@@ -1,6 +1,7 @@
-package jsl.moum.moum.lifecycle.domain;
+package jsl.moum.moum.lifecycle.domain.entity;
 
 import jakarta.persistence.*;
+import jsl.moum.moum.lifecycle.domain.entity.LifecycleEntity;
 import lombok.*;
 
 @Builder

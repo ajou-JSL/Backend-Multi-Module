@@ -2,12 +2,9 @@ package jsl.moum.moum.lifecycle.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jsl.moum.auth.domain.entity.MemberEntity;
-import jsl.moum.custom.WithNoAuthUser;
-import jsl.moum.global.error.ErrorCode;
-import jsl.moum.global.error.exception.CustomException;
 import jsl.moum.global.error.exception.NeedLoginException;
 import jsl.moum.global.response.ResponseCode;
-import jsl.moum.moum.lifecycle.domain.LifecycleEntity;
+import jsl.moum.moum.lifecycle.domain.entity.LifecycleEntity;
 import jsl.moum.moum.lifecycle.dto.LifecycleDto;
 import jsl.moum.moum.lifecycle.dto.ProcessDto;
 import jsl.moum.moum.team.domain.TeamEntity;
@@ -32,7 +29,6 @@ import jsl.moum.moum.lifecycle.service.LifecycleService;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

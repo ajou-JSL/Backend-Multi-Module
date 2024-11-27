@@ -3,7 +3,6 @@ package jsl.moum.record.domain.repository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jsl.moum.global.error.ErrorCode;
 import jsl.moum.global.error.exception.CustomException;
-import jsl.moum.moum.lifecycle.domain.LifecycleEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

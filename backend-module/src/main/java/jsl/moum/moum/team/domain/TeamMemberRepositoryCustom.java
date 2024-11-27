@@ -11,7 +11,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static jsl.moum.moum.lifecycle.domain.QLifecycleEntity.lifecycleEntity;
 import static jsl.moum.moum.team.domain.QTeamMemberEntity.teamMemberEntity;
 
 

@@ -2,7 +2,7 @@ package jsl.moum.record.domain.entity;
 
 import jakarta.persistence.*;
 import jsl.moum.auth.domain.entity.MemberEntity;
-import jsl.moum.moum.lifecycle.domain.LifecycleEntity;
+import jsl.moum.moum.lifecycle.domain.entity.LifecycleEntity;
 import lombok.*;
 
 @Builder
