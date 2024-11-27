@@ -20,7 +20,6 @@ public class ArticleDetailsDto {
     @Getter
     public static class Request{
         private int articleId;
-
         private ArticleEntity.ArticleCategories category;
         private String title;
         private String content;

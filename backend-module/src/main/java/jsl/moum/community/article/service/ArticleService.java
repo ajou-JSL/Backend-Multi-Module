@@ -93,7 +93,6 @@ public class ArticleService {
         author.updateMemberExpAndRank(1);
 
         return new ArticleDto.Response(newArticle);
-
     }
 
     /**

@@ -20,7 +20,6 @@ public class ArticleDetailsEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    // ArticleEntity랑 one to one 매핑 안걸고 논리적 매핑
     @Column(name = "article_id")
     private int articleId;
 
