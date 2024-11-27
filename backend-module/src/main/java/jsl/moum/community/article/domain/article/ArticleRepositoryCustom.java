@@ -8,7 +8,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jsl.moum.community.article.dto.ArticleDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
@@ -18,12 +17,42 @@ import java.util.List;
 
 import static jsl.moum.community.article.domain.article.QArticleEntity.articleEntity;
 import static jsl.moum.community.comment.domain.QCommentEntity.commentEntity;
+import static jsl.moum.community.likes.domain.QLikesEntity.likesEntity;
 
 @Repository
 @RequiredArgsConstructor
 public class ArticleRepositoryCustom {
 
     private final JPAQueryFactory jpaQueryFactory;
+
+
+    /**
+        // 사용자가 좋아요를 누른 게시글 목록 조회
+        select a.*
+        from article a
+        inner join likes l
+            on a.id = l.article_id
+        where l.member_id = ?;
+    */
+    public Page<ArticleEntity> findLikedArticlesByMember(int memberId, Pageable pageable) {
+
+        List<ArticleEntity> content = jpaQueryFactory
+                .selectFrom(articleEntity)
+                .innerJoin(likesEntity).on(articleEntity.id.eq(likesEntity.article.id))
+                .where(likesEntity.member.id.eq(memberId))
+                .orderBy(articleEntity.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        JPAQuery<Long> countQuery = jpaQueryFactory
+                .select(articleEntity.count())
+                .from(articleEntity)
+                .innerJoin(likesEntity).on(articleEntity.id.eq(likesEntity.article.id))
+                .where(likesEntity.member.id.eq(memberId));
+
+        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
+    }
 
     /**
         실시간 인기 게시글 조회
@@ -49,9 +78,16 @@ public class ArticleRepositoryCustom {
                 .limit(pageable.getPageSize())
                 .fetch();
 
+//        JPAQuery<Long> countQuery = jpaQueryFactory
+//                .select(articleEntity.count())
+//                .from(articleEntity);
+
         JPAQuery<Long> countQuery = jpaQueryFactory
-                .select(articleEntity.count())
-                .from(articleEntity);
+                .select(articleEntity.id.count()) // 그룹화된 ID의 개수를 세기
+                .from(articleEntity)
+                .leftJoin(commentEntity).on(articleEntity.id.eq(commentEntity.articleDetails.articleId))
+                .groupBy(articleEntity.id); // content 쿼리와 동일한 groupBy 적용
+
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }
@@ -60,8 +96,8 @@ public class ArticleRepositoryCustom {
     /**
      * 필터링으로 게시글 목록 조회하기
      */
-    public List<ArticleEntity> searchArticlesWithFiltering(ArticleDto.SearchDto dto, int page, int size) {
-        List<ArticleEntity> articles = jpaQueryFactory
+    public Page<ArticleEntity> searchArticlesWithFiltering(ArticleDto.SearchDto dto, Pageable pageable) {
+        List<ArticleEntity> content = jpaQueryFactory
                 .selectFrom(articleEntity)
                 .where(
                         whereConditions(dto)
@@ -70,10 +106,16 @@ public class ArticleRepositoryCustom {
                         //orderByConditions(dto)
                         orderByConditions(dto).toArray(new OrderSpecifier[0])
                 )
-                .offset((long) page * size)
-                .limit(size)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
-        return articles;
+
+        JPAQuery<Long> countQuery = jpaQueryFactory
+                .select(articleEntity.count())
+                .from(articleEntity)
+                .where(whereConditions(dto));
+
+        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }
 
     private BooleanExpression whereConditions(ArticleDto.SearchDto dto) {

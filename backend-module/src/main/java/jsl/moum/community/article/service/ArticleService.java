@@ -221,12 +221,13 @@ public class ArticleService {
      */
     @Transactional(readOnly = true)
     public List<ArticleDto.Response> getArticlesByCategory(ArticleEntity.ArticleCategories category, int page, int size) {
-        List<ArticleEntity> articles;
+        Page<ArticleEntity> articles;
 
+        Pageable pageable = PageRequest.of(page,size);
         if (category == ArticleEntity.ArticleCategories.FREE_TALKING_BOARD) {
-            articles = articleDetailsRepositoryCustom.findFreeTalkingArticles(page, size);
+            articles = articleDetailsRepositoryCustom.findFreeTalkingArticles(pageable);
         } else if (category == ArticleEntity.ArticleCategories.RECRUIT_BOARD) {
-            articles = articleDetailsRepositoryCustom.findRecruitingdArticles(page, size);
+            articles = articleDetailsRepositoryCustom.findRecruitingArticles(pageable);
         } else {
             throw new CustomException(ErrorCode.ARTICLE_NOT_FOUND);
         }
@@ -241,7 +242,8 @@ public class ArticleService {
      */
     @Transactional(readOnly = true)
     public List<ArticleDto.Response> getArticleWithTitleSearch(String keyword, String category,int page, int size) {
-        List<ArticleEntity> articles = articleDetailsRepositoryCustom.searchArticlesByTitleKeyword(keyword, category, page, size);
+        Pageable pageable = PageRequest.of(page,size);
+        Page<ArticleEntity> articles = articleDetailsRepositoryCustom.searchArticlesByTitleKeyword(keyword, category, pageable);
 
         List<ArticleDto.Response> articleResponseList = articles.stream()
                 .map(ArticleDto.Response::new)
@@ -258,7 +260,8 @@ public class ArticleService {
 //        List<ArticleEntity> articles = articleRepositoryCustom.searchArticlesByTitleKeyword(keyword, category, page, size);
         int memberId = memberRepository.findByUsername(memberName).getId();
 
-        List<ArticleEntity> articles = articleRepository.findLikedArticles(memberId);
+        Pageable pageable = PageRequest.of(page,size);
+        Page<ArticleEntity> articles = articleRepositoryCustom.findLikedArticlesByMember(memberId, pageable);
 
         List<ArticleDto.Response> articleResponseList = articles.stream()
                 .map(ArticleDto.Response::new)
@@ -287,7 +290,8 @@ public class ArticleService {
 //                 throw new CustomException(ErrorCode.BASE64_PROCESS_FAIL);
 //            }
 //        }
-        List<ArticleEntity> articles = articleRepositoryCustom.searchArticlesWithFiltering(searchDto, page, size);
+        Pageable pageable = PageRequest.of(page,size);
+        Page<ArticleEntity> articles = articleRepositoryCustom.searchArticlesWithFiltering(searchDto, pageable);
 
         List<ArticleDto.Response> articleResponseList = articles.stream()
                 .map(ArticleDto.Response::new)

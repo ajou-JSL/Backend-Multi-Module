@@ -1,10 +1,14 @@
 package jsl.moum.community.article.domain.article_details;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import jsl.moum.community.article.domain.article.ArticleEntity;
+import org.springframework.data.domain.Page;
 
 
 import java.util.List;
@@ -29,14 +33,21 @@ public class ArticleDetailsRepositoryCustom {
      *
      * @return 자유게시판 게시글 리스트
      */
-    public List<ArticleEntity> findFreeTalkingArticles(int page, int size) {
-        return jpaQueryFactory
+    public Page<ArticleEntity> findFreeTalkingArticles(Pageable pageable) {
+        List<ArticleEntity> content = jpaQueryFactory
                 .selectFrom(articleEntity)
                 .where(articleEntity.category.eq(ArticleEntity.ArticleCategories.FREE_TALKING_BOARD))
                 .orderBy(articleEntity.createdAt.desc())
-                .offset(page * size) // 페이지에 따른 오프셋 계산
-                .limit(size)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
+
+        JPAQuery<Long> countQuery = jpaQueryFactory
+                .select(articleEntity.count())
+                .from(articleEntity)
+                .where(articleEntity.category.eq(ArticleEntity.ArticleCategories.FREE_TALKING_BOARD));
+
+        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }
 
 
@@ -50,15 +61,23 @@ public class ArticleDetailsRepositoryCustom {
 
      * @return 모집게시판 게시글 리스트
      */
-    public List<ArticleEntity> findRecruitingdArticles(int page, int size) {
-        return jpaQueryFactory
+    public Page<ArticleEntity> findRecruitingArticles(Pageable pageable) {
+        List<ArticleEntity> content = jpaQueryFactory
                 .selectFrom(articleEntity)
                 .where(articleEntity.category.eq(ArticleEntity.ArticleCategories.RECRUIT_BOARD))
-                .offset(page * size) // 페이지에 따른 오프셋 계산
-                .limit(size)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .orderBy(articleEntity.createdAt.desc())
                 .fetch();
+
+        JPAQuery<Long> countQuery = jpaQueryFactory
+                .select(articleEntity.count())
+                .from(articleEntity)
+                .where(articleEntity.category.eq(ArticleEntity.ArticleCategories.RECRUIT_BOARD));
+
+        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }
+
 
     /**
      * 검색 조회(제목, 카테고리)
@@ -67,17 +86,29 @@ public class ArticleDetailsRepositoryCustom {
      *  where lower(a.title) like lower('%:keyword%') and category = :category;
      *
      */
-    public List<ArticleEntity> searchArticlesByTitleKeyword(String keyword, String category,int page, int size) {
-        return jpaQueryFactory
+    public Page<ArticleEntity> searchArticlesByTitleKeyword(String keyword, String category, Pageable pageable) {
+        List<ArticleEntity> content = jpaQueryFactory
                 .selectFrom(articleEntity)
                 .where(
                         articleEntity.title.containsIgnoreCase(keyword),
                         isCategory(category)
                 )
-                .offset(page * size) // 페이지에 따른 오프셋 계산
-                .limit(size)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
+
+        // countQuery를 통해 총 데이터 개수 계산
+        JPAQuery<Long> countQuery = jpaQueryFactory
+                .select(articleEntity.count())
+                .from(articleEntity)
+                .where(
+                        articleEntity.title.containsIgnoreCase(keyword),
+                        isCategory(category)
+                );
+
+        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }
+
 
     private BooleanExpression isCategory(String category) {
         return hasText(category) ? articleEntity.category.eq(ArticleEntity.ArticleCategories.valueOf(category)) : null;
