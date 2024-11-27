@@ -3,17 +3,23 @@ package jsl.moum.moum.team.domain;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jsl.moum.community.article.domain.article.ArticleEntity;
 import jsl.moum.community.article.dto.ArticleDto;
+import jsl.moum.community.perform.domain.entity.PerformArticleEntity;
 import jsl.moum.moum.team.dto.TeamDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static jsl.moum.community.article.domain.article.QArticleEntity.articleEntity;
+import static jsl.moum.community.perform.domain.entity.QPerformArticleEntity.performArticleEntity;
 import static jsl.moum.moum.team.domain.QTeamEntity.teamEntity;
 import static jsl.moum.moum.team.domain.QTeamMemberEntity.teamMemberEntity;
 
@@ -39,8 +45,8 @@ public class TeamRepositoryCustom {
     /**
      * 팀 목록 필터링 조회하기 : 랭킹순조회, 멤버수순조회, 검색조회(팀이름+팀설명), 장르별, 지역별
      */
-    public List<TeamEntity> searchTeamsWithFiltering(TeamDto.SearchDto dto, int page, int size) {
-        List<TeamEntity> teams = jpaQueryFactory
+    public Page<TeamEntity> searchTeamsWithFiltering(TeamDto.SearchDto dto, Pageable pageable) {
+        List<TeamEntity> content = jpaQueryFactory
                 .selectFrom(teamEntity)
                 .leftJoin(teamMemberEntity).on(teamMemberEntity.team.id.eq(teamEntity.id))
                 .where(
@@ -50,10 +56,18 @@ public class TeamRepositoryCustom {
                 .orderBy(
                         orderByConditions(dto).toArray(new OrderSpecifier[0])
                 )
-                .offset((long) page * size)
-                .limit(size)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
-        return teams;
+
+        JPAQuery<Long> countQuery = jpaQueryFactory
+                .select(teamEntity.count())
+                .leftJoin(teamMemberEntity).on(teamMemberEntity.team.id.eq(teamEntity.id))
+                .where(
+                        whereConditions(dto)
+                );
+
+        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }
 
     private BooleanExpression whereConditions(TeamDto.SearchDto dto) {

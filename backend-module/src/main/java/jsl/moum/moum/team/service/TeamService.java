@@ -20,7 +20,9 @@ import jsl.moum.record.domain.repository.RecordRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -362,7 +364,8 @@ public class TeamService {
 //                throw new CustomException(ErrorCode.BASE64_PROCESS_FAIL);
 //            }
 //        }
-        List<TeamEntity> teams = teamRepositoryCustom.searchTeamsWithFiltering(searchDto, page, size);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<TeamEntity> teams = teamRepositoryCustom.searchTeamsWithFiltering(searchDto, pageable);
 
         List<TeamDto.Response> teamsResponseList = teams.stream()
                 .map(TeamDto.Response::new)
