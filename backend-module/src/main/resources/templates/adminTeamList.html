@@ -160,9 +160,7 @@
                         <tr>
                             <td>${(currentPage - 1) * itemsPerPage + index + 1}</td>
                             <td>${team.teamName}</td>
-                            <td>
-                                ${team.genres?.length ? team.genres.map(genre => genre).join(', ') : 'No genres'}
-                            </td>
+                            <td>${team.genre}</td>
                             <td>${team.location}</td>
                             <td>
                                 <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#teamModal"
@@ -212,12 +210,8 @@
                 <p><strong>Leader ID:</strong> ${data.leaderId}</p>
                 <p><strong>Team Name:</strong> ${data.teamName}</p>
                 <p><strong>Description:</strong> ${data.description || "N/A"}</p>
-                <p><strong>Genres:</strong></p>
-                <ul>
-                    ${data.genres?.length ? data.genres.map(genre => `
-                        <li>${genre}</li>
-                    `).join('') : '<p>No genres.</p>'}
-                </ul>
+                <p><strong>Genre:</strong></p>
+                <p><strong>Description:</strong> ${data.genre || "N/A"}</p>
                 <p><strong>Location:</strong> ${data.location}</p>
                 <p><strong>Created At:</strong> ${new Date(data.createdAt).toLocaleString()}</p>
                 <p><strong>Team Image:</strong></p>

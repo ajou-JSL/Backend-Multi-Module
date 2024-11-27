@@ -220,10 +220,8 @@
                 <p><strong>Likes:</strong> ${data.likeCounts}</p>
                 <p><strong>Created At:</strong> ${new Date(data.createdAt).toLocaleString()}</p>
                 <p><strong>Updated At:</strong> ${new Date(data.updatedAt).toLocaleString()}</p>
-                <h5>Genres</h5>
-                <ul>
-                    ${data.genres?.map(genre => `<li>${genre}</li>`).join('') || '<p>No genres available.</p>'}
-                </ul>
+                <p><strong>Genre :</strong> ${data.genre}</p>
+
             `;
             })
             .catch(error => {
