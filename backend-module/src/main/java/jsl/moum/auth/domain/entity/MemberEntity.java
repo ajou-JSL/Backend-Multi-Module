@@ -195,6 +195,9 @@ public class MemberEntity {
         if (updateRequest.getGenres() != null) {
             this.genres = updateRequest.getGenres();
         }
+        if(updateRequest.getVideoUrl() != null){
+            this.videoUrl = updateRequest.getVideoUrl();;
+        }
     }
 
 
