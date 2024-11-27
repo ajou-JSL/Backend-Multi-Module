@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import jsl.moum.moum.team.dto.TeamDto;
@@ -69,7 +70,11 @@ public class TeamService {
     @Transactional(readOnly = true)
     public List<TeamDto.Response> getTeamList(int page, int size) {
 
-        List<TeamEntity> teams = teamRepository.findAll(PageRequest.of(page, size)).getContent();
+//        List<TeamEntity> teams = teamRepository.findAll(PageRequest.of(page, size, Sort.sort(c))).getContent();
+        List<TeamEntity> teams = teamRepository.findAll(
+                PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"))
+        ).getContent();
+
 
         List<TeamDto.Response> teamsList = teams.stream()
                 .map(TeamDto.Response::new)
