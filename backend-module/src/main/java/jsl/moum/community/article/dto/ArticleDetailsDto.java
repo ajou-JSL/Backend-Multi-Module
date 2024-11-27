@@ -24,14 +24,14 @@ public class ArticleDetailsDto {
         private String title;
         private String content;
 
-        private String fileUrl;
+        private List<String> fileUrls;
         private MusicGenre genre;
 
         public ArticleDetailsEntity toEntity(){
             return ArticleDetailsEntity.builder()
                     .articleId(articleId)
                     .content(content)
-                    .fileUrl(fileUrl)
+                    .imageUrls(fileUrls)
                     .build();
         }
     }
@@ -47,7 +47,7 @@ public class ArticleDetailsDto {
         private final int commentsCounts;
         private final int likeCounts;
         private final String author;
-        private final String fileUrl;
+        private final List<String> fileUrls;
         private final List<CommentDto.Response> comments;
         private final LocalDateTime createdAt;
         private final LocalDateTime updatedAt;
@@ -61,7 +61,7 @@ public class ArticleDetailsDto {
             this.commentsCounts = article.getCommentsCount();
             this.likeCounts = article.getLikesCount();
             this.content = articleDetails.getContent();
-            this.fileUrl = articleDetails.getFileUrl();
+            this.fileUrls = articleDetails.getImageUrls();
             this.comments = articleDetails.getComments().stream()
                     .map(CommentDto.Response::new)
                     .collect(Collectors.toList());

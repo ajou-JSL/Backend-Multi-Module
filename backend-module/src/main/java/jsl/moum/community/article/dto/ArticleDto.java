@@ -58,7 +58,7 @@ public class ArticleDto {
         public Response(ArticleEntity article){
             this.id = article.getId();
             this.title = article.getTitle();
-            this.fileUrl = article.getFileUrl();
+            this.fileUrl = article.getImageUrl();
             this.category = article.getCategory();
             this.author = article.getAuthor().getUsername();
             this.viewCounts = article.getViewCount();

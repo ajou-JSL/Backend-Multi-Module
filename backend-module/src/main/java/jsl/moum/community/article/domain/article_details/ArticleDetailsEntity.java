@@ -26,16 +26,20 @@ public class ArticleDetailsEntity {
     @Column(name = "content")
     private String content;
 
-    @Column(name = "file_url")
-    private String fileUrl;
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "article_details_images", joinColumns = @JoinColumn(name = "article_details_id"))
+    @Column(name = "image_url")
+    private List<String> imageUrls = new ArrayList<>();
 
     @OneToMany(mappedBy = "articleDetails", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<CommentEntity> comments = new ArrayList<>();
 
-    public void updateArticleImage(String newUrl){
-        if(newUrl != null){
-            this.fileUrl = newUrl;
+    public void updateFileUrls(List<String> newUrls) {
+        if(this.imageUrls == null){
+            this.imageUrls = new ArrayList<>();
         }
+        this.imageUrls.clear();
+        this.imageUrls.addAll(newUrls);
     }
 
     public void updateArticleDetails(String newContent){

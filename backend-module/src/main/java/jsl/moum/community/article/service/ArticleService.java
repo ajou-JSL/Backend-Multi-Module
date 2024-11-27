@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +37,7 @@ import jsl.moum.global.error.exception.NoAuthorityException;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -61,7 +63,7 @@ public class ArticleService {
      * 게시글 작성(생성)
      */
     @Transactional
-    public ArticleDto.Response postArticle(ArticleDto.Request articleRequestDto, MultipartFile file, String memberName) throws IOException {
+    public ArticleDto.Response postArticle(ArticleDto.Request articleRequestDto, List<MultipartFile> files, String memberName) throws IOException {
         MemberEntity author = memberRepository.findByUsername(memberName);
 
         // article 테이블 -> title 작성
@@ -75,21 +77,18 @@ public class ArticleService {
         ArticleEntity newArticle = articleRequest.toEntity();
         articleRepository.save(newArticle);
 
-        String fileUrl = "";
-        if(file != null || !file.isEmpty()){
-            fileUrl = uploadFile(newArticle.getId(), file);
-        }
+        List<String> newUrls = uploadFiles(files, newArticle.getId());
 
         ArticleDetailsDto.Request articleDetailsRequestDto = ArticleDetailsDto.Request.builder()
                 .articleId(newArticle.getId())
                 .content(articleRequestDto.getContent())
-                .fileUrl(fileUrl)
+                .fileUrls(newUrls)
                 .build();
 
         ArticleDetailsEntity newArticleDetails = articleDetailsRequestDto.toEntity();
         articleDetailsRepository.save(newArticleDetails);
 
-        newArticle.setFileUrl(fileUrl);
+        newArticle.setImageUrl(newUrls.get(0));
         author.updateMemberExpAndRank(1);
 
         return new ArticleDto.Response(newArticle);
@@ -114,7 +113,9 @@ public class ArticleService {
     @Transactional(readOnly = true)
     public List<ArticleDto.Response> getArticleList(int page, int size) {
 
-        List<ArticleEntity> articles = articleRepository.findAll(PageRequest.of(page, size)).getContent();
+        List<ArticleEntity> articles = articleRepository
+                .findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt")))
+                .getContent();
 
         List<ArticleDto.Response> articleResponseList = articles.stream()
                 .map(ArticleDto.Response::new)
@@ -129,7 +130,7 @@ public class ArticleService {
     @Transactional
     public ArticleDetailsDto.Response updateArticleDetails(int articleDetailsId,
                                                            ArticleDetailsDto.Request articleDetailsRequestDto,
-                                                           MultipartFile file,
+                                                           List<MultipartFile> files,
                                                            String memberName) throws IOException {
 
         ArticleDetailsEntity articleDetails = getArticleDetails(articleDetailsId);
@@ -139,7 +140,7 @@ public class ArticleService {
                 .genre(articleDetailsRequestDto.getGenre())
                 .title(articleDetailsRequestDto.getTitle())
                 .category(articleDetailsRequestDto.getCategory())
-                .fileUrl(articleDetailsRequestDto.getFileUrl())
+                .fileUrl(articleDetailsRequestDto.getFileUrls().get(0))
                 .build();
 
         // 로그인유저 == 작성자 여부 체크
@@ -149,19 +150,14 @@ public class ArticleService {
         String newContent = articleDetailsRequestDto.getContent();
         ArticleEntity.ArticleCategories newCategory = articleDetailsRequestDto.getCategory();
 
-        String existingFileUrl = articleDetails.getFileUrl();
-
-        // 새로운 파일이 있을 경우 처리
-        if (file != null || !file.isEmpty()) {
-            if (existingFileUrl != null && !existingFileUrl.isEmpty()) {
-                String existingFileName = existingFileUrl.replace("https://kr.object.ncloudstorage.com/" + bucket + "/", "");
-                storageService.deleteFile(existingFileName); // S3에서 기존 파일 삭제
-            }
-
-            String newUrl = uploadFile(articleDetailsId, file);
-//            String newFileName = "articles/" + articleDetailsId + "/" + file.getOriginalFilename(); // 폴더 구조에 맞게 설정
-//            String newFileUrl = storageService.uploadFile(newFileName, file); // S3에 파일 업로드
-            articleDetails.updateArticleImage(newUrl);
+        List<String> existingFileUrls = articleDetails.getImageUrls();
+        if(files == null){
+            throw new CustomException(ErrorCode.FILE_UPDATE_FAIL);
+        } else if(files.get(0).getSize() != 0){
+            log.info("if(files.get(0).getSize() != 0 || files != null)");
+            deleteExistingFiles(existingFileUrls);
+            List<String> newFileUrls = uploadFiles(files, articleDetailsId);
+            articleDetails.updateFileUrls(newFileUrls);
         }
 
         // article_details, article 둘 다 update
@@ -188,13 +184,9 @@ public class ArticleService {
         String articleAuthor = article.getAuthor().getUsername();
         checkAuthor(memberName, articleAuthor);
 
-        String fileUrl = articleDetails.getFileUrl();
-        if (fileUrl != null || !fileUrl.isEmpty()) {
-            // S3에서의 파일 경로 제거해서 key 추출하기 -> 경로 : /articles/{id}/{fileName} 이런식임
-            String fileName = fileUrl.replace("https://kr.object.ncloudstorage.com/" + bucket + "/", "");
-            fileName = URLDecoder.decode(fileName, StandardCharsets.UTF_8); // URL 디코딩
-            storageService.deleteFile(fileName); // S3에서 파일 삭제
-        }
+        List<String> existingFileUrls = articleDetails.getImageUrls();
+        deleteExistingFiles(existingFileUrls);
+
         // article_details, article 테이블 둘 다 삭제
         articleDetailsRepository.deleteById(articleDetailsId);
         articleRepository.deleteById(articleDetailsId);
@@ -318,11 +310,32 @@ public class ArticleService {
         }
     }
 
-    private String uploadFile(int targetId, MultipartFile file) throws IOException {
+
+    private List<String> uploadFiles(List<MultipartFile> files, int targetId) throws IOException {
+        List<String> newFileUrls = new ArrayList<>();
+
         // "articles/{articleId}/{originalFileName}"
-        String originalFilename = file.getOriginalFilename();
-        String key = "articles/" + targetId + "/" + originalFilename;
-        return storageService.uploadFile(key, file);
+        if (files != null && !files.isEmpty() && files.size() != 0) {
+            for (MultipartFile file : files) {
+                String originalFilename = file.getOriginalFilename();
+                String key = "articles/" + targetId + "/" + originalFilename;
+                String fileUrl = storageService.uploadFile(key, file);
+                log.info("================= 파일 리스트 업로드");
+                newFileUrls.add(fileUrl);
+            }
+        }
+        return newFileUrls;
+    }
+
+    private void deleteExistingFiles(List<String> existingFileUrls) {
+        if(existingFileUrls == null || existingFileUrls.isEmpty()){
+            existingFileUrls = new ArrayList<>();
+        }
+        for (String existingFileUrl : existingFileUrls) {
+            String existingFileName = existingFileUrl.replace("https://kr.object.ncloudstorage.com/" + bucket + "/", "");
+            log.info("================= 기존 파일 리스트 삭제");
+            storageService.deleteFile(existingFileName);
+        }
     }
 
 }

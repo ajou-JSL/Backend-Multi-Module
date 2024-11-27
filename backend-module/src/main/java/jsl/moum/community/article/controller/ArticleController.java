@@ -55,14 +55,14 @@ public class ArticleController {
     @PostMapping("/api/articles")
     public ResponseEntity<ResultResponse> postArticle(
             @Valid @RequestPart(value = "articleRequestDto") ArticleDto.Request articleRequestDto,
-            @RequestPart(value = "file", required = false) MultipartFile file, // MultipartFile 추가
+            @RequestPart(value = "file", required = false) List<MultipartFile> files, // MultipartFile 추가
             @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
 
         if (customUserDetails.getUsername() == null) {
             throw new NeedLoginException();
         }
 
-        ArticleDto.Response articleResponse = articleService.postArticle(articleRequestDto, file, customUserDetails.getUsername());
+        ArticleDto.Response articleResponse = articleService.postArticle(articleRequestDto, files, customUserDetails.getUsername());
 
         ResultResponse response = ResultResponse.of(ResponseCode.ARTICLE_POST_SUCCESS, articleResponse);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -76,10 +76,10 @@ public class ArticleController {
     public ResponseEntity<ResultResponse> updateArticle(
             @PathVariable int id,
             @Valid @RequestPart ArticleDetailsDto.Request articleDetailsRequestDto,
-            @RequestPart(value = "file", required = false) MultipartFile file, // MultipartFile 추가
+            @RequestPart(value = "file", required = false) List<MultipartFile> files, // MultipartFile 추가
             @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
 
-        ArticleDetailsDto.Response articleResponse = articleService.updateArticleDetails(id, articleDetailsRequestDto, file, customUserDetails.getUsername());
+        ArticleDetailsDto.Response articleResponse = articleService.updateArticleDetails(id, articleDetailsRequestDto, files, customUserDetails.getUsername());
         ResultResponse response = ResultResponse.of(ResponseCode.ARTICLE_UPDATE_SUCCESS, articleResponse);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }

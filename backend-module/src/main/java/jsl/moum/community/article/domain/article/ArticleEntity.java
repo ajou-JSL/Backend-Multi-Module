@@ -65,7 +65,7 @@ public class ArticleEntity {
     private LocalDateTime updatedAt;
 
     @Column(name = "fileUrl")
-    private String fileUrl;
+    private String imageUrl;
 
     @OneToMany(mappedBy = "article", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ArticleReport> articleReports = new ArrayList<>();
@@ -125,12 +125,11 @@ public void updateArticle(UpdateArticleDto.Request updateArticleDto) {
         }
     }
 
-    private void updateFileUrl(String fileUrl) {
-        if (fileUrl != null) {
-            this.fileUrl = fileUrl;
+    private void updateFileUrl(String newUrl) {
+        if (newUrl != null) {
+            this.imageUrl = newUrl;
         }
     }
-
 
     @Getter
     @AllArgsConstructor
