@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import jsl.moum.community.article.domain.article_details.ArticleDetailsEntity;
 import jsl.moum.community.comment.domain.CommentEntity;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -15,6 +16,7 @@ public class CommentDto {
 
     @Builder
     @AllArgsConstructor
+    @NoArgsConstructor
     @Getter
     public static class Request{
 

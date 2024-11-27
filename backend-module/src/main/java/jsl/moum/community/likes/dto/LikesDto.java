@@ -7,11 +7,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import jsl.moum.community.likes.domain.LikesEntity;
+import lombok.NoArgsConstructor;
 
 public class LikesDto {
 
     @Builder
     @AllArgsConstructor
+    @NoArgsConstructor
     @Getter
     public static class Request{
         private MemberEntity member;
