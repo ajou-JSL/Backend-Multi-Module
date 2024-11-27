@@ -38,6 +38,8 @@ public class SettlementService {
                 .moumId(settlementRequestDto.getMoumId())
                 .build().toEntity();
 
+        settlementRepository.save(newSettlement);
+
         moum.setSettlementId(newSettlement.getId());
         return new SettlementDto.Response(newSettlement);
     }
