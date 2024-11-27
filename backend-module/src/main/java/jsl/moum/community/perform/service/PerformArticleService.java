@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -184,7 +185,9 @@ public class PerformArticleService {
     */
     @Transactional(readOnly = true)
     public List<PerformArticleDto.Response> getAllPerformArticle(int page, int size){
-        List<PerformArticleEntity> performArticles = performArticleRepository.findAll(PageRequest.of(page, size)).getContent();
+        List<PerformArticleEntity> performArticles = performArticleRepository.findAll(
+                PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"))
+        ).getContent();
 
         List<PerformArticleDto.Response> responseList = performArticles.stream()
                 .map(PerformArticleDto.Response::new)
@@ -252,7 +255,8 @@ public class PerformArticleService {
 //                throw new CustomException(ErrorCode.BASE64_PROCESS_FAIL);
 //            }
 //        }
-        List<PerformArticleEntity> teams = performArticleRepositoryCustom.searchPerformArticlesWithFiltering(searchDto, page, size);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<PerformArticleEntity> teams = performArticleRepositoryCustom.searchPerformArticlesWithFiltering(searchDto, pageable);
 
         List<PerformArticleDto.Response> performArticleList = teams.stream()
                 .map(PerformArticleDto.Response::new)

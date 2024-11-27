@@ -87,8 +87,8 @@ public class PerformArticleRepositoryCustom {
     /**
      * 필터링으로 공연 게시글 목록 조회하기
      */
-    public List<PerformArticleEntity> searchPerformArticlesWithFiltering(PerformArticleDto.SearchDto dto, int page, int size) {
-        List<PerformArticleEntity> performArticles = jpaQueryFactory
+    public Page<PerformArticleEntity> searchPerformArticlesWithFiltering(PerformArticleDto.SearchDto dto, Pageable pageable) {
+        List<PerformArticleEntity> content = jpaQueryFactory
                 .selectFrom(performArticleEntity)
                 .where(
                         whereConditions(dto)
@@ -97,10 +97,18 @@ public class PerformArticleRepositoryCustom {
                         //orderByConditions(dto)
                         orderByConditions(dto).toArray(new OrderSpecifier[0])
                 )
-                .offset((long) page * size)
-                .limit(size)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
-        return performArticles;
+
+        JPAQuery<Long> countQuery = jpaQueryFactory
+                .select(performArticleEntity.count())
+                .from(performArticleEntity)
+                .where(
+                        whereConditions(dto)
+                );
+
+        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }
 
     // 공연게시글 : 최신순조회, 검색조회(이름+설명), 좋아요순, 조회수순
