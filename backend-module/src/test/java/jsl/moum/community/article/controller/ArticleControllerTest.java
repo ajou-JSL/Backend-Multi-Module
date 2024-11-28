@@ -25,8 +25,7 @@ import jsl.moum.custom.WithAuthUser;
 
 import jsl.moum.global.response.ResponseCode;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 import java.util.ArrayList;
@@ -186,7 +185,8 @@ class ArticleControllerTest {
         String category = "FREE_TALKING_BOARD";
         List<ArticleDto.Response> mockResponse = List.of(new ArticleDto.Response(mockArticle));
 
-        when(articleService.getArticleWithTitleSearch(keyword, category,0,10)).thenReturn(mockResponse);
+        //when(articleService.getArticleWithTitleSearch(keyword, category,0,10)).thenReturn(mockResponse);
+        when(articleService.getArticleWithTitleSearch(anyString(), anyString(),anyInt(),anyInt())).thenReturn(mockResponse);
 
         mockMvc.perform(get("/api/articles/search?keyword=" + keyword + "&category=" + category))
                 .andExpect(status().isOk())

@@ -7,8 +7,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 import jsl.moum.auth.domain.entity.MemberEntity;
 import jsl.moum.auth.domain.repository.MemberRepository;
@@ -78,8 +80,8 @@ class ArticleServiceTest {
                 .build();
     }
     @Test
-    @DisplayName("게시글 생성 테스트 - 로그인 사용자")
-    void createArticleSuccess_LoggedInUser() throws IOException {
+    @DisplayName("게시글 생성 테스트 - 로그인 사용자 (복수 파일 등록)")
+    void createArticleSuccess_MultipleFiles_LoggedInUser() throws IOException {
         // given: Article 생성
         ArticleDto.Request request = ArticleDto.Request.builder()
                 .category(ArticleEntity.ArticleCategories.FREE_TALKING_BOARD)
@@ -87,22 +89,32 @@ class ArticleServiceTest {
                 .title("test title")
                 .build();
 
-        // Mock MultipartFile
-        MultipartFile mockFile = Mockito.mock(MultipartFile.class);
-        when(mockFile.getOriginalFilename()).thenReturn("testFile.jpg");
-        when(mockFile.getContentType()).thenReturn("image/jpeg");
-        when(mockFile.getInputStream()).thenReturn(new ByteArrayInputStream("test content".getBytes()));
-        when(mockFile.getSize()).thenReturn((long) "test content".length());
+        MultipartFile mockFile1 = Mockito.mock(MultipartFile.class);
+        MultipartFile mockFile2 = Mockito.mock(MultipartFile.class);
+
+        when(mockFile1.getOriginalFilename()).thenReturn("testFile1.jpg");
+        when(mockFile1.getContentType()).thenReturn("image/jpeg");
+        when(mockFile1.getInputStream()).thenReturn(new ByteArrayInputStream("test content 1".getBytes()));
+        when(mockFile1.getSize()).thenReturn((long) "test content 1".length());
+
+        when(mockFile2.getOriginalFilename()).thenReturn("testFile2.jpg");
+        when(mockFile2.getContentType()).thenReturn("image/jpeg");
+        when(mockFile2.getInputStream()).thenReturn(new ByteArrayInputStream("test content 2".getBytes()));
+        when(mockFile2.getSize()).thenReturn((long) "test content 2".length());
+
+        List<MultipartFile> mockFiles = List.of(mockFile1, mockFile2);
 
         when(memberRepository.findByUsername(author.getUsername())).thenReturn(author);
         when(articleRepository.findById(anyInt())).thenReturn(Optional.of(mockArticle));
 
         // when
-        ArticleDto.Response actualResponse = articleService.postArticle(request, mockFile, author.getUsername());
+        ArticleDto.Response actualResponse = articleService.postArticle(request, mockFiles, author.getUsername());
 
         // then
         assertEquals("test title", actualResponse.getTitle());
         assertEquals(ArticleEntity.ArticleCategories.FREE_TALKING_BOARD, actualResponse.getCategory());
+        verify(mockFile1, atLeastOnce()).getOriginalFilename();
+        verify(mockFile2, atLeastOnce()).getOriginalFilename();
     }
 
     @Test
@@ -121,7 +133,7 @@ class ArticleServiceTest {
                 .content("test content")
                 .comments(new ArrayList<>())
                 .articleId(article.getId())
-                .fileUrl("file url")
+                .imageUrls(List.of("file url1","file url2"))
                 .build();
 
         // Mock 동작
@@ -136,14 +148,14 @@ class ArticleServiceTest {
         assertEquals(1, response.getId());
         assertEquals("test title", response.getTitle());
         assertEquals("test content", response.getContent());
-        assertEquals("file url", response.getFileUrl());
+        assertEquals("file url1", response.getFileUrls().get(0));
     }
 
     @Test
     @DisplayName("게시글 목록 조회 테스트")
     void getArticleList() {
         // given : 게시글 리스트 생성
-        List<ArticleEntity> mockArticle = List.of(
+        List<ArticleEntity> mockArticles = List.of(
                 ArticleEntity.builder()
                         .id(1)
                         .title("test title 1")
@@ -156,14 +168,13 @@ class ArticleServiceTest {
                         .build()
         );
 
-        // Mock 동작 (페이지 요청에 대한 Mock)
-        when(articleRepository.findAll(PageRequest.of(0, 10))).thenReturn(new PageImpl<>(mockArticle));
+        when(articleRepository.findAll(PageRequest.of(0, 10))).thenReturn(new PageImpl<>(mockArticles));
 
         // when
         List<ArticleDto.Response> responseList = articleService.getArticleList(0, 10);
 
         // then
-        assertEquals(2, responseList.size()); // list 크기
+        assertEquals(2, responseList.size());
         assertEquals("test title 1", responseList.get(0).getTitle());
         assertEquals("test title 2", responseList.get(1).getTitle());
     }
@@ -173,6 +184,8 @@ class ArticleServiceTest {
     void updateArticleWithoutAuthorization() throws IOException {
         // given
         MultipartFile mockFile = mock(MultipartFile.class);
+        MultipartFile mockFile2 = mock(MultipartFile.class);
+        List<MultipartFile> files = List.of(mockFile,mockFile2);
         ArticleEntity article = ArticleEntity.builder()
                 .id(1)
                 .title("title")
@@ -185,23 +198,22 @@ class ArticleServiceTest {
                 .content("content")
                 .comments(new ArrayList<>())
                 .articleId(article.getId())
-                .fileUrl("fileUrl")
+                .imageUrls(List.of("fileUrl","filrUrl2"))
                 .build();
 
         // given : update request dto 생성, details에서 title 수정 가능해야함
         ArticleDetailsDto.Request updateArticleDetailsRequest = ArticleDetailsDto.Request.builder()
-                .id(1)
                 .title("updated title")
                 .content("updated content")
                 .category(ArticleEntity.ArticleCategories.RECRUIT_BOARD)
-                .fileUrl("fileUrl")
+                .fileUrls(List.of("fileUrl","fileUrl2"))
                 .build();
 
         when(articleRepository.findById(1)).thenReturn(Optional.of(article));
         when(articleDetailsRepository.findById(1)).thenReturn(Optional.of(articleDetails));
 
         // when
-        ArticleDetailsDto.Response response = articleService.updateArticleDetails(1, updateArticleDetailsRequest, mockFile ,author.getUsername());
+        ArticleDetailsDto.Response response = articleService.updateArticleDetails(1, updateArticleDetailsRequest, files ,author.getUsername());
 
         // then
         assertNotNull(response);
@@ -233,7 +245,7 @@ class ArticleServiceTest {
                 .content("content")
                 .comments(new ArrayList<>())
                 .articleId(article.getId())
-                .fileUrl("fileUrl")
+                .imageUrls(List.of("fileUrl","fileUrl2"))
                 .build();
 
         // Mock 동작 : repository 에서 탐색
@@ -258,7 +270,7 @@ class ArticleServiceTest {
     @DisplayName("카테고리에 따른 게시글 목록 조회 테스트")
     void getArticlesByCategory() {
         // given : 게시글 리스트 생성
-        List<ArticleEntity> mockArticle = List.of(
+        List<ArticleEntity> mockArticleList = List.of(
                 ArticleEntity.builder()
                         .id(1)
                         .title("test title 1")
@@ -285,16 +297,18 @@ class ArticleServiceTest {
                         .build()
         );
 
+        Page<ArticleEntity> mockArticles = new PageImpl<>(mockArticleList);
+
         // Mock 동작
-        when(articleDetailsRepositoryCustom.findFreeTalkingArticles(0,10)).thenReturn(mockArticle); // 자유게시판
-        when(articleDetailsRepositoryCustom.findRecruitingdArticles(0,10)).thenReturn(mockArticle); // 모집게시판
+        when(articleDetailsRepositoryCustom.findFreeTalkingArticles(any(Pageable.class))).thenReturn(mockArticles); // 자유게시판
+        when(articleDetailsRepositoryCustom.findRecruitingArticles(any(Pageable.class))).thenReturn(mockArticles); // 모집게시판
 
         // when
         List<ArticleDto.Response> Freearticles = articleService.getArticlesByCategory(ArticleEntity.ArticleCategories.FREE_TALKING_BOARD,0,10);
         List<ArticleDto.Response> Recruitarticles = articleService.getArticlesByCategory(ArticleEntity.ArticleCategories.RECRUIT_BOARD,0,10);
 
         // then
-        assertEquals(4, mockArticle.size());
+        assertEquals(4, mockArticles.getSize());
         assertEquals("test title 1", Freearticles.get(0).getTitle());
         assertEquals(ArticleEntity.ArticleCategories.FREE_TALKING_BOARD, Freearticles.get(0).getCategory());
         assertEquals("test title 3", Recruitarticles.get(2).getTitle());
@@ -345,8 +359,10 @@ class ArticleServiceTest {
                         article.getCategory() == ArticleEntity.ArticleCategories.FREE_TALKING_BOARD)
                 .collect(Collectors.toList());
 
-        when(articleDetailsRepositoryCustom.searchArticlesByTitleKeyword(keyword, "FREE_TALKING_BOARD",0,10))
-                .thenReturn(articleList);
+        Page<ArticleEntity> mockArticles = new PageImpl<>(articleList);
+
+        when(articleDetailsRepositoryCustom.searchArticlesByTitleKeyword(keyword, "FREE_TALKING_BOARD",any(Pageable.class)))
+                .thenReturn(mockArticles);
 
         // when
         List<ArticleDto.Response> response = articleService.getArticleWithTitleSearch(keyword, "FREE_TALKING_BOARD",0,10);

@@ -20,6 +20,7 @@ import org.mockito.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -240,8 +241,8 @@ class PerformArticleServiceTest {
                 .moum(mockMoum)
                 .build();
 
-        List<PerformArticleEntity> mockArticles = List.of(mockArticle1, mockArticle2);
-        when(performArticleRepositoryCustom.getThisMonthPerformArticles(anyInt(), anyInt()))
+        Page<PerformArticleEntity> mockArticles = new PageImpl<>(List.of(mockArticle1, mockArticle2));
+        when(performArticleRepositoryCustom.getThisMonthPerformArticles(any(Pageable.class)))
                 .thenReturn(mockArticles);
         when(teamRepository.findById(anyInt())).thenReturn(Optional.of(mockTeam));
 
