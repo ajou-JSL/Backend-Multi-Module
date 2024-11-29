@@ -26,7 +26,7 @@ public class TeamController {
     private final TeamService teamService;
 
     /**
-     * 팀 조회 API
+     * 팀 조회(ID로) API
      */
     @GetMapping("/api/teams/{teamId}")
     public ResponseEntity<ResultResponse> getTeamById(@AuthenticationPrincipal CustomUserDetails customUserDetails,
@@ -34,6 +34,19 @@ public class TeamController {
 
         loginCheck(customUserDetails.getUsername());
         TeamDto.Response teamResponseDto = teamService.getTeamById(teamId);
+        ResultResponse response = ResultResponse.of(ResponseCode.GET_TEAM_SUCCESS, teamResponseDto);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+    }
+
+    /**
+     * 팀 조회(이름으로) API
+     */
+    @GetMapping("/api/teams/{teamName}")
+    public ResponseEntity<ResultResponse> getTeamByTeamName(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                                      @PathVariable String teamName){
+
+        loginCheck(customUserDetails.getUsername());
+        TeamDto.Response teamResponseDto = teamService.getTeamByTeamName(teamName);
         ResultResponse response = ResultResponse.of(ResponseCode.GET_TEAM_SUCCESS, teamResponseDto);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }

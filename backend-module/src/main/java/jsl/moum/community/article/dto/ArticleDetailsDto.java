@@ -47,6 +47,7 @@ public class ArticleDetailsDto {
         private final int commentsCounts;
         private final int likeCounts;
         private final String author;
+        private final int authorId;
         private final List<String> fileUrls;
         private final List<CommentDto.Response> comments;
         private final LocalDateTime createdAt;
@@ -57,6 +58,7 @@ public class ArticleDetailsDto {
             this.title = article.getTitle();
             this.category = article.getCategory().toString();
             this.author = article.getAuthor().getUsername();
+            this.authorId = article.getAuthor().getId();
             this.viewCounts = article.getViewCount();
             this.commentsCounts = article.getCommentsCount();
             this.likeCounts = article.getLikesCount();

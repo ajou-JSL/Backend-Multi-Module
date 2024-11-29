@@ -34,7 +34,7 @@ public class TeamEntity {
     @Column(name = "leader_id")
     private int leaderId;
 
-    @Column(name = "team_name")
+    @Column(name = "team_name", unique = true)
     private String teamName;
 
     @Column(name = "description")

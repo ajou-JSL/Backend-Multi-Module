@@ -63,6 +63,16 @@ public class TeamService {
     }
 
     /**
+     * 팀 정보 조회
+     **/
+    @Transactional(readOnly = true)
+    public TeamDto.Response getTeamByTeamName(String teamName) {
+
+        TeamEntity team = teamRepository.findByTeamName(teamName);
+        return new TeamDto.Response(team);
+    }
+
+    /**
      * 팀 리스트 조회
      **/
     @Transactional(readOnly = true)
