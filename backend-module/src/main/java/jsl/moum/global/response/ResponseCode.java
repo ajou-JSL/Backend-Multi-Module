@@ -13,6 +13,8 @@ public enum ResponseCode {
     REISSUE_SUCCESS(200, "S-M003", "재발급 되었습니다."),
     LOGOUT_SUCCESS(200, "S-M004", "로그아웃 되었습니다."),
     GET_MY_INFO_SUCCESS(200, "S-M005", "내 정보 조회 완료"),
+    SIGN_OUT_SUCCESS(200, "S-M006", "회원 탈퇴 완료"),
+    REJOIN_SUCCESS(201, "S-M007", "재가입 완료"),
 
     // TEAM
     CREATE_TEAM_SUCCESS(201, "S-T001", "팀 생성 성공."),

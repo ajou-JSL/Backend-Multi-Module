@@ -7,6 +7,7 @@ import jsl.moum.auth.jwt.CustomLogoutFilter;
 import jsl.moum.auth.jwt.JwtFilter;
 import jsl.moum.auth.jwt.JwtUtil;
 import jsl.moum.auth.jwt.LoginFilter;
+import jsl.moum.common.CommonService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -35,6 +36,7 @@ public class SecurityConfig {
     private final JwtUtil jwtUtil;
     private final RefreshRepository refreshRepository;
     private final MemberRepository memberRepository;
+    private final CommonService commonService;
 
     //AuthenticationManager Bean 등록
     @Bean

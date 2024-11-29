@@ -148,4 +148,11 @@ public class MemberDto {
         }
     }
 
+    @NoArgsConstructor
+    @Getter
+    public static class RejoinRequest{
+        @NotEmpty @NotNull private String username;
+        @NotEmpty @NotNull private String email;
+    }
+
 }

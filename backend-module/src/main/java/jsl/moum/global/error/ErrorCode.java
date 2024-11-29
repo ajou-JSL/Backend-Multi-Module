@@ -29,6 +29,7 @@ public enum ErrorCode {
     NEED_LOGIN(401, "F-M004", "로그인을 해야합니다."),
     AUTHENTICATION_NOT_FOUND(401, "F-M005", "인증되지 않은 회원입니다."),
     MEMBER_ALREADY_LOGOUT(400, "F-M006", "이미 로그아웃 하였습니다. 먼저 로그인을 해주세요."),
+    SIGN_OUT_MEMBER(400, "F-M007", "탈퇴한 회원입니다. 재가입이 필요합니다."),
 
     // Auth
     LOGIN_FAIL(400, "F-A001", "아이디 또는 비밀번호가 유효하지 않습니다."),

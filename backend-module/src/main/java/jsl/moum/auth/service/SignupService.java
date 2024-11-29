@@ -2,6 +2,7 @@ package jsl.moum.auth.service;
 
 import jsl.moum.auth.domain.entity.MemberEntity;
 import jsl.moum.auth.domain.repository.MemberRepository;
+import jsl.moum.common.CommonService;
 import jsl.moum.email.service.EmailService;
 import jsl.moum.record.domain.dto.RecordDto;
 import jsl.moum.record.domain.entity.RecordEntity;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import jsl.moum.auth.dto.MemberDto;
 import jsl.moum.objectstorage.StorageService;
@@ -32,12 +34,18 @@ public class SignupService {
     private final RedisUtil redisUtil;
     private final StorageService storageService;
     private final RecordRepository recordRepository;
+    private final CommonService commonService;
 
-    public void signupMember(MemberDto.Request memberRequestDto, MultipartFile file) throws IOException {
+    public String signupMember(MemberDto.Request memberRequestDto, MultipartFile file) throws IOException {
 
-        Boolean isExist = memberRepository.existsByUsername(memberRequestDto.getUsername());
-        if (isExist) {
+        MemberEntity existMember = memberRepository.findByUsername(memberRequestDto.getUsername());
+        if (existMember != null) {
             throw new DuplicateUsernameException();
+        }
+
+        if(!existMember.getActiveStatus()){
+            return "회원 탈퇴한 계정입니다. 가입 이메일 : " + existMember.getEmail() +
+                    "\n 가입 이름 : " + existMember.getUsername();
         }
 
         String verifyCode = redisUtil.getData(memberRequestDto.getEmail());
@@ -78,6 +86,14 @@ public class SignupService {
             recordRepository.saveAll(recordList);
         }
 
+        return newMember.getUsername();
+    }
+
+    @Transactional
+    public MemberDto.Response rejoinMember(String username){
+        MemberEntity member = commonService.findMemberByUsername(username);
+        member.changeActiveStatus();
+        return new MemberDto.Response(member);
     }
 
 

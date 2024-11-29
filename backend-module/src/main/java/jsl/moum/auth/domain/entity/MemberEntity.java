@@ -120,8 +120,15 @@ public class MemberEntity {
     @Column(name = "tier", nullable = false)
     private Rank tier = Rank.BRONZE;
 
+    @Column(name = "active_status", nullable = false)
+    private Boolean activeStatus = false;
+
     @Transient
     private int totalRecordCount;
+
+    public void changeActiveStatus(){
+        this.activeStatus = !activeStatus;
+    }
 
     public void updateMemberExpAndRank(int newExp) {
         if (this.exp == null) {

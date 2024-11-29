@@ -10,6 +10,7 @@ import jsl.moum.auth.domain.entity.MemberEntity;
 import jsl.moum.auth.domain.entity.RefreshEntity;
 import jsl.moum.auth.domain.repository.MemberRepository;
 import jsl.moum.auth.domain.repository.RefreshRepository;
+import jsl.moum.common.CommonService;
 import jsl.moum.global.error.exception.CustomException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -68,27 +69,36 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             .orElseThrow(()-> new CustomException(ErrorCode.MEMBER_NOT_EXIST));
     String name = loginUser.getName();
 
-    Map<String, String> userInfo = new HashMap<>();
-    userInfo.put("id", String.valueOf(userId));
-    userInfo.put("name", name);
+    if(!loginUser.getActiveStatus()){
+        ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.SIGN_OUT_MEMBER);
+        response.setHeader("access", null);
+        response.addCookie(createCookie("refresh", null));
+        response.setStatus(errorResponse.getStatus());
+        response.setContentType("application/json;charset=UTF-8");
+        response.getWriter().write(new ObjectMapper().writeValueAsString(errorResponse));
+    }else{
+        Map<String, String> userInfo = new HashMap<>();
+        userInfo.put("id", String.valueOf(userId));
+        userInfo.put("name", name);
 
-    Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-    Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
-    GrantedAuthority auth = iterator.next();
-    String role = auth.getAuthority();
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
+        GrantedAuthority auth = iterator.next();
+        String role = auth.getAuthority();
 
-    String access = jwtUtil.createJwt("access", username, role, 36000000L);
-    String refresh = jwtUtil.createJwt("refresh", username, role, 842000L);
+        String access = jwtUtil.createJwt("access", username, role, 36000000L);
+        String refresh = jwtUtil.createJwt("refresh", username, role, 842000L);
 
 
-    addRefreshEntity(username, refresh, 842000L);
+        addRefreshEntity(username, refresh, 842000L);
 
-    ResultResponse resultResponse = ResultResponse.of(ResponseCode.LOGIN_SUCCESS, userInfo);
-    response.setHeader("access", access);
-    response.addCookie(createCookie("refresh", refresh));
-    response.setStatus(resultResponse.getStatus());
-    response.setContentType("application/json;charset=UTF-8");
-    response.getWriter().write(new ObjectMapper().writeValueAsString(resultResponse));
+        ResultResponse resultResponse = ResultResponse.of(ResponseCode.LOGIN_SUCCESS, userInfo);
+        response.setHeader("access", access);
+        response.addCookie(createCookie("refresh", refresh));
+        response.setStatus(resultResponse.getStatus());
+        response.setContentType("application/json;charset=UTF-8");
+        response.getWriter().write(new ObjectMapper().writeValueAsString(resultResponse));
+        }
     }
 
     void addRefreshEntity(String username, String refresh, long expiredMs) {
@@ -106,6 +116,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     // 로그인 실패시
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
+        log.info("unsuccessfulAuthentication response : {}", response);
         ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.LOGIN_FAIL);
         response.setStatus(HttpStatus.BAD_REQUEST.value());
         response.setContentType("application/json;charset=UTF-8");
