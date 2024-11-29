@@ -92,7 +92,7 @@ public class SignupService {
     @Transactional
     public MemberDto.Response rejoinMember(String username){
         MemberEntity member = commonService.findMemberByUsername(username);
-        member.changeActiveStatus();
+        member.changeActiveStatusTrue();
         return new MemberDto.Response(member);
     }
 

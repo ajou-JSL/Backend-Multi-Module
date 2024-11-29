@@ -25,7 +25,7 @@ public class SignoutService {
             throw new CustomException(ErrorCode.MEMBER_NOT_EXIST);
         }
 
-        member.changeActiveStatus();
+        member.changeActiveStatusFalse();
         return new MemberDto.Response(member);
     }
 }

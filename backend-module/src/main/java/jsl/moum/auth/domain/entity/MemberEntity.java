@@ -126,8 +126,11 @@ public class MemberEntity {
     @Transient
     private int totalRecordCount;
 
-    public void changeActiveStatus(){
-        this.activeStatus = !activeStatus;
+    public void changeActiveStatusFalse(){
+        this.activeStatus = false;
+    }
+    public void changeActiveStatusTrue(){
+        this.activeStatus = true;
     }
 
     public void updateMemberExpAndRank(int newExp) {
