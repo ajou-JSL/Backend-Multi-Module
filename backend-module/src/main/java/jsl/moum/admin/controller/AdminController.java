@@ -73,6 +73,7 @@ public class AdminController {
 
         model.addAttribute("memberCount", adminService.getMemberCount());
         model.addAttribute("memberReportCount", adminService.getMemberReportCount());
+        model.addAttribute("bannedMemberCount", adminService.getBannedMemberCount());
         return "adminMemberDashboard";
     }
 
@@ -143,6 +144,45 @@ public class AdminController {
         MemberReportDto.Response report = reportService.deleteMemberReport(id);
         ResultResponse resultResponse = ResultResponse.of(ResponseCode.DELETE_REPORT_MEMBER_SUCCESS, report);
         return ResponseEntity.ok(resultResponse);
+    }
+
+    @GetMapping("/member/banned/list")
+    public String getBannedMemberList(Model model){
+        log.info("AdminController getBannedMemberList");
+
+        model.addAttribute("bannedMemberCount", adminService.getBannedMemberCount());
+        model.addAttribute("bannedMembers", adminService.getBannedMembers());
+        return "adminMemberBannedList";
+    }
+
+    @PostMapping("/member/{id}/ban")
+    public ResponseEntity<ResultResponse> banMember(@PathVariable(name = "id") Integer id) {
+        MemberDto.Response member = adminService.banMember(id);
+        ResultResponse resultResponse = ResultResponse.of(ResponseCode.BAN_MEMBER_SUCCESS, member);
+        return ResponseEntity.ok(resultResponse);
+    }
+
+    @PostMapping("/member/{id}/unban")
+    public ResponseEntity<ResultResponse> unbanMember(@PathVariable(name = "id") Integer id) {
+        MemberDto.Response member = adminService.unbanMember(id);
+        ResultResponse resultResponse = ResultResponse.of(ResponseCode.UNBAN_MEMBER_SUCCESS, member);
+        return ResponseEntity.ok(resultResponse);
+    }
+
+    @GetMapping("/member/banned")
+    public ResponseEntity<Map<String, Object>> getBannedMembers(
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
+        PageRequest pageRequest = PageRequest.of(page - 1, size);
+        Page<MemberDto.Response> membersPage = adminService.getBannedMembersPaged(pageRequest);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("members", membersPage.getContent());
+        response.put("currentPage", membersPage.getNumber() + 1);
+        response.put("totalPages", membersPage.getTotalPages());
+        response.put("totalMembers", membersPage.getTotalElements());
+
+        return ResponseEntity.ok(response);
     }
 
     /**

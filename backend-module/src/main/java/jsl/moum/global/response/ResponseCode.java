@@ -15,6 +15,8 @@ public enum ResponseCode {
     GET_MY_INFO_SUCCESS(200, "S-M005", "내 정보 조회 완료"),
     SIGN_OUT_SUCCESS(200, "S-M006", "회원 탈퇴 완료"),
     REJOIN_SUCCESS(201, "S-M007", "재가입 완료"),
+    BAN_MEMBER_SUCCESS(200, "S-M008", "회원 밴 조치 완료"),
+    UNBAN_MEMBER_SUCCESS(200, "S-M009", "회원 밴 해제 완료"),
 
     // TEAM
     CREATE_TEAM_SUCCESS(201, "S-T001", "팀 생성 성공."),
