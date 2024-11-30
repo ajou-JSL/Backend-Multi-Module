@@ -43,6 +43,9 @@ public class SignupService {
         if (member != null) {
             if (member.getActiveStatus()) {
                 throw new DuplicateUsernameException();
+            } else if(member.getBanStatus()){
+                return "밴 당한 계정입니다. 가입 이메일: " + member.getEmail() +
+                        "\n가입 이름: " + member.getUsername();
             } else {
                 return "회원 탈퇴한 계정입니다. 가입 이메일: " + member.getEmail() +
                         "\n가입 이름: " + member.getUsername();

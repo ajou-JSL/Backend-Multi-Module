@@ -138,6 +138,13 @@ public class AdminController {
         return adminService.getMemberReportById(id);
     }
 
+    @DeleteMapping("/member/report/delete/{id}")
+    public ResponseEntity<ResultResponse> deleteMemberReport(@PathVariable(name = "id") Integer id) {
+        MemberReportDto.Response report = reportService.deleteMemberReport(id);
+        ResultResponse resultResponse = ResultResponse.of(ResponseCode.DELETE_REPORT_MEMBER_SUCCESS, report);
+        return ResponseEntity.ok(resultResponse);
+    }
+
     /**
      *
      * Team Dashboard APIs
@@ -215,6 +222,13 @@ public class AdminController {
         return adminService.getTeamReportById(id);
     }
 
+    @DeleteMapping("/team/report/delete/{id}")
+    public ResponseEntity<ResultResponse> deleteTeamReport(@PathVariable(name = "id") Integer id) {
+        TeamReportDto.Response report = reportService.deleteTeamReport(id);
+        ResultResponse resultResponse = ResultResponse.of(ResponseCode.DELETE_REPORT_TEAM_SUCCESS, report);
+        return ResponseEntity.ok(resultResponse);
+    }
+
     /**
      *
      * Article Dashboard APIs
@@ -290,6 +304,13 @@ public class AdminController {
     @ResponseBody
     public ArticleReportDto.Response getArticleReportDetails(@PathVariable(name = "id") int id) {
         return adminService.getArticleReportById(id);
+    }
+
+    @DeleteMapping("/article/report/delete/{id}")
+    public ResponseEntity<ResultResponse> deleteArticleReport(@PathVariable(name = "id") Integer id) {
+        ArticleReportDto.Response report = reportService.deleteArticleReport(id);
+        ResultResponse resultResponse = ResultResponse.of(ResponseCode.DELETE_REPORT_ARTICLE_SUCCESS, report);
+        return ResponseEntity.ok(resultResponse);
     }
 
     /**

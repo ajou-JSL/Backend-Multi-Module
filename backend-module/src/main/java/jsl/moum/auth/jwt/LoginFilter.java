@@ -76,7 +76,14 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         response.setStatus(errorResponse.getStatus());
         response.setContentType("application/json;charset=UTF-8");
         response.getWriter().write(new ObjectMapper().writeValueAsString(errorResponse));
-    }else{
+    } else if(loginUser.getBanStatus()){
+        ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.BANNED_MEMBER);
+        response.setHeader("access", null);
+        response.addCookie(createCookie("refresh", null));
+        response.setStatus(errorResponse.getStatus());
+        response.setContentType("application/json;charset=UTF-8");
+        response.getWriter().write(new ObjectMapper().writeValueAsString(errorResponse));
+    } else{
         Map<String, String> userInfo = new HashMap<>();
         userInfo.put("id", String.valueOf(userId));
         userInfo.put("name", name);

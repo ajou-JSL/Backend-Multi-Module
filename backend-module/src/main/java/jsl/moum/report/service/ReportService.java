@@ -30,6 +30,9 @@ public class ReportService {
     private final TeamRepository teamRepository;
     private final ArticleRepository articleRepository;
 
+    /**
+     * Member Reports
+     */
 
     public MemberReportDto.Response reportMember(Integer memberId, MemberReportDto.Request request) {
 
@@ -73,6 +76,17 @@ public class ReportService {
         return memberReports.map(MemberReportDto.Response::new);
     }
 
+    public MemberReportDto.Response deleteMemberReport(Integer reportId) {
+        MemberReport memberReport = memberReportRepository.findById(reportId)
+                .orElseThrow(() -> new CustomException(ErrorCode.REPORT_NOT_FOUND));
+        memberReportRepository.delete(memberReport);
+        return new MemberReportDto.Response(memberReport);
+    }
+
+    /**
+     * Team Reports
+     */
+
     public TeamReportDto.Response reportTeam(Integer teamId, TeamReportDto.Request request) {
 
         TeamReport teamReport = buildTeamReport(teamId, request);
@@ -115,6 +129,16 @@ public class ReportService {
         return teamReports.map(TeamReportDto.Response::new);
     }
 
+    public TeamReportDto.Response deleteTeamReport(Integer reportId) {
+        TeamReport teamReport = teamReportRepository.findById(reportId)
+                .orElseThrow(() -> new CustomException(ErrorCode.REPORT_NOT_FOUND));
+        teamReportRepository.delete(teamReport);
+        return new TeamReportDto.Response(teamReport);
+    }
+
+    /**
+     * Article Reports
+     */
 
     public ArticleReportDto.Response reportArticle(Integer articleId, ArticleReportDto.Request request) {
         ArticleReport articleReport = buildArticleReport(articleId, request);
@@ -157,6 +181,12 @@ public class ReportService {
         return articleReports.map(ArticleReportDto.Response::new);
     }
 
+    public ArticleReportDto.Response deleteArticleReport(Integer reportId) {
+        ArticleReport articleReport = articleReportRepository.findById(reportId)
+                .orElseThrow(() -> new CustomException(ErrorCode.REPORT_NOT_FOUND));
+        articleReportRepository.delete(articleReport);
+        return new ArticleReportDto.Response(articleReport);
+    }
 
     /**
      *

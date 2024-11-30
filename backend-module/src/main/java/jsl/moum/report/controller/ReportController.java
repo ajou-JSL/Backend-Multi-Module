@@ -21,6 +21,10 @@ public class ReportController {
 
     private final ReportService reportService;
 
+    /**
+     * Member report
+     */
+
     @PostMapping("/member/{id}")
     public ResponseEntity<ResultResponse> reportMember(@PathVariable(name = "id") Integer id,
                                                        @RequestBody MemberReportDto.Request request) {
@@ -74,6 +78,10 @@ public class ReportController {
         return ResponseEntity.ok(resultResponse);
     }
 
+    /**
+     * Team report
+     */
+
     @PostMapping("/team/{id}")
     public ResponseEntity<ResultResponse> reportTeam(@PathVariable(name = "id") Integer id,
                                                      @RequestBody TeamReportDto.Request request) {
@@ -99,6 +107,10 @@ public class ReportController {
         return ResponseEntity.ok(resultResponse);
     }
 
+    /**
+     * Article report
+     */
+
 
     @PostMapping("/article/{id}")
     public ResponseEntity<ResultResponse> reportArticle(@PathVariable(name = "id") Integer id,
@@ -106,7 +118,7 @@ public class ReportController {
 
         ArticleReportDto.Response report = reportService.reportArticle(id, request);
 
-        ResultResponse resultResponse = ResultResponse.of(ResponseCode.REPORT_MEMBER_REPLY_SUCCESS, report);
+        ResultResponse resultResponse = ResultResponse.of(ResponseCode.REPORT_ARTICLE_SUCCESS, report);
         return ResponseEntity.ok(resultResponse);
     }
 
@@ -126,5 +138,8 @@ public class ReportController {
         return ResponseEntity.ok(resultResponse);
     }
 
+    /**
+     *
+     */
 
 }
