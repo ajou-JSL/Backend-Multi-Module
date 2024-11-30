@@ -57,6 +57,9 @@ dependencies {
     implementation 'com.google.zxing:core:3.5.2'
     implementation 'com.google.zxing:javase:3.5.2'
 
+    // Apache Tika file checker
+    implementation 'org.apache.tika:tika-core:3.0.0'
+
 }
 
 tasks.named('test') {

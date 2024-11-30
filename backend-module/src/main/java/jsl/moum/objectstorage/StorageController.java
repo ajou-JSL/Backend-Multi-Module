@@ -22,6 +22,16 @@ public class StorageController {
     }
 
     /**
+     * 이미지 업로드 API
+     */
+    @PostMapping("/storage/upload/image")
+    public String uploadImage(@RequestPart("file") MultipartFile multipartFile) throws Exception {
+        String filename = multipartFile.getOriginalFilename();
+        storageService.uploadImage(filename, multipartFile);
+        return "Image uploaded successfully!";
+    }
+
+    /**
      * 파일 다운로드 API
      */
     @GetMapping("/storage/download/{filename}")

@@ -417,7 +417,7 @@ public class LifecycleService {
             for (MultipartFile file : files) {
                 String originalFilename = file.getOriginalFilename();
                 String key = "moums/" + moumName + "/" + originalFilename;
-                String fileUrl = storageService.uploadFile(key, file);
+                String fileUrl = storageService.uploadImage(key, file);
                 log.info("================= 파일 리스트 업로드");
                 newFileUrls.add(fileUrl);
             }

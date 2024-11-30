@@ -283,7 +283,7 @@ public class ChatroomService {
         }
         String originalFilename = chatroomImageFile.getOriginalFilename();
         String key = "chatrooms/" + chatroomName + "/" + originalFilename;
-        String fileUrl = storageService.uploadFile(key, chatroomImageFile);
+        String fileUrl = storageService.uploadImage(key, chatroomImageFile);
         return fileUrl;
     }
 

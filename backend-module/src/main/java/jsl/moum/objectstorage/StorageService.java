@@ -1,6 +1,9 @@
 package jsl.moum.objectstorage;
 
+import jsl.moum.global.error.ErrorCode;
+import jsl.moum.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
+import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,6 +25,7 @@ import java.util.UUID;
 public class StorageService {
 
     private final S3Client s3Client;
+    private final List<String> allowedImageTypes = List.of("image/jpeg", "image/png", "image/gif", "image/bmp", "image/tiff", "image/webp", "image/heic");
 
     @Value("${ncp.object-storage.bucket}")
     private String bucket;
@@ -43,8 +47,16 @@ public class StorageService {
         return "https://kr.object.ncloudstorage.com/" + bucket + "/" + key;
     }
 
+    public String uploadImage(String key, MultipartFile multipartFile) throws IOException {
+        if(!isValidImageType(multipartFile)){
+            throw new CustomException(ErrorCode.INVALID_FILE_TYPE);
+        }
+        String fileUrl = uploadFile(key, multipartFile);
+        return fileUrl;
+    }
+
     /**
-     * S3에 업로드
+     * S3에 QR 이미지 업로드 전용
      */
     public String uploadFile(String key, File file, String contentType) throws IOException {
         s3Client.putObject(
@@ -97,5 +109,15 @@ public class StorageService {
                         .key(key)
                         .build()
         );
+    }
+
+    private boolean isValidImageType(MultipartFile file){
+        Tika tika = new Tika();
+        try {
+            String detectedMimeType = tika.detect(file.getInputStream()).toLowerCase();
+            return allowedImageTypes.contains(detectedMimeType);
+        } catch (IOException e) {
+            throw new CustomException(ErrorCode.INVALID_FILE_TYPE);
+        }
     }
 }

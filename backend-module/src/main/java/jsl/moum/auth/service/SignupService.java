@@ -111,6 +111,6 @@ public class SignupService {
 
         String originalFilename = file.getOriginalFilename();
         String key = "profiles/" + memberName + "/" + originalFilename;
-        return storageService.uploadFile(key, file);
+        return storageService.uploadImage(key, file);
     }
 }

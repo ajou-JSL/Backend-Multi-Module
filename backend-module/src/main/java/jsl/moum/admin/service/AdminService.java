@@ -283,7 +283,7 @@ public class AdminService {
             for(MultipartFile file : images){
                 String originalFilename = file.getOriginalFilename();
                 String key = "practiceRoom/" + targetId + "/" + originalFilename;
-                String imageUrl = storageService.uploadFile(key, file);
+                String imageUrl = storageService.uploadImage(key, file);
                 imageUrls.add(imageUrl);
             }
         }
@@ -355,7 +355,7 @@ public class AdminService {
             for(MultipartFile file : images){
                 String originalFilename = file.getOriginalFilename();
                 String key = "practiceRoom/" + targetId + "/" + originalFilename;
-                String imageUrl = storageService.uploadFile(key, file);
+                String imageUrl = storageService.uploadImage(key, file);
                 imageUrls.add(imageUrl);
             }
         }

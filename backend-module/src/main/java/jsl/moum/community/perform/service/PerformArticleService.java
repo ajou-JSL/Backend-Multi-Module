@@ -301,7 +301,7 @@ public class PerformArticleService {
     public String uploadImage(String performanceName, MultipartFile file) throws IOException {
         String originalFilename = file.getOriginalFilename();
         String key = "performs/" + performanceName+ "/" + originalFilename;
-        return storageService.uploadFile(key, file);
+        return storageService.uploadImage(key, file);
     }
 
 }

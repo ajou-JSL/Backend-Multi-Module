@@ -97,7 +97,7 @@ public class ProfileService {
 
             String originalFilename = file.getOriginalFilename();
             String key = "profiles/" + request.getUsername() + "/" + originalFilename; // 키 생성
-            String fileUrl = storageService.uploadFile(key, file); // 업로드 메서드 호출
+            String fileUrl = storageService.uploadImage(key, file); // 업로드 메서드 호출
             memberEntity.updateProfileImage(fileUrl);
         }
 

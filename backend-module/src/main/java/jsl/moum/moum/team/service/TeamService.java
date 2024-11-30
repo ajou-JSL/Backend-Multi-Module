@@ -111,7 +111,7 @@ public class TeamService {
             // "teams/{teamName}/{originalFileName}"
             String originalFilename = file.getOriginalFilename();
             String key = "teams/" + teamRequestDto.getTeamName() + "/" + originalFilename;
-            fileUrl = storageService.uploadFile(key, file);
+            fileUrl = storageService.uploadImage(key, file);
         }
 
         TeamDto.Request request = TeamDto.Request.builder()
@@ -214,7 +214,7 @@ public class TeamService {
 
             // 새로운 파일 업로드
             String newFileName = "teams/" + team.getTeamName() + "/" + file.getOriginalFilename();
-            String newFileUrl = storageService.uploadFile(newFileName, file);
+            String newFileUrl = storageService.uploadImage(newFileName, file);
             team.updateProfileImage(newFileUrl);
         }
 
