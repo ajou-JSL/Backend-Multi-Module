@@ -130,6 +130,7 @@
             <div class="modal-footer">
                 <textarea id="replyMessage" class="form-control" rows="3" placeholder="Write your reply here..."></textarea>
                 <button type="button" class="btn btn-success" onclick="replyToReport()">Reply</button>
+                <button type="button" class="btn btn-danger" onclick="deleteArticleReport()">Delete Report</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
@@ -174,7 +175,7 @@
                                 View
                             </button>
                         </td>
-                        <td>${report.isResolved ? 'Yes' : 'No'}</td>
+                        <td>${report.resolved ? 'Yes' : 'No'}</td>
                     </tr>
                 `;
                     reportsTable.innerHTML += row;
@@ -220,7 +221,7 @@
                     <p><strong>Type:</strong> ${data.type}</p>
                     <p><strong>Details:</strong> ${data.details || "N/A"}</p>
                     <p><strong>Reply:</strong> ${data.reply || "No reply yet"}</p>
-                    <p><strong>Resolved:</strong> ${data.isResolved ? "Yes" : "No"}</p>
+                    <p><strong>Resolved:</strong> ${data.resolved ? "Yes" : "No"}</p>
                 `;
             })
             .catch(error => {
@@ -261,6 +262,44 @@
                 console.error("Error:", error);
                 alert("Failed to submit reply. Please try again.");
             });
+    }
+
+    function deleteArticleReport() {
+        // Get the report ID (you'll need to set this dynamically when opening the modal)
+        const reportId = document.getElementById("reportDetails").getAttribute("data-report-id");
+
+        if (!reportId) {
+            alert("No report selected for deletion.");
+            return;
+        }
+
+        const url = `/admin/article/report/delete/${reportId}`;
+
+        if (confirm("Are you sure you want to delete this article report?")) {
+            fetch(url, {
+                method: 'DELETE',
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Failed to delete report: ${response.status} - ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(result => {
+                    alert("Report deleted successfully.");
+                    // Optionally refresh the page or close the modal
+                    // Hide the modal
+                    const modalElement = document.getElementById('reportModal');
+                    const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                    modalInstance.hide();
+
+                    // Refresh the reports list dynamically
+                    loadReports(currentPage);
+                })
+                .catch(error => {
+                    console.error("Error deleting report:", error);
+                });
+        }
     }
 
     // Initial load

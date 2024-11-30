@@ -95,6 +95,9 @@ public enum ResponseCode {
     VIEW_REPORT_MEMBER_SUCCESS(200,"S-RP022","사용자 신고 조회 성공"),
     VIEW_REPORT_TEAM_SUCCESS(200,"S-RP023","음악단체 신고 조회 성공"),
     VIEW_REPORT_ARTICLE_SUCCESS(200,"S-RP024","게시글 신고 조회 성공"),
+    DELETE_REPORT_MEMBER_SUCCESS(200,"S-RP032","사용자 신고 삭제 성공"),
+    DELETE_REPORT_TEAM_SUCCESS(200,"S-RP033","음악단체 신고 삭제 성공"),
+    DELETE_REPORT_ARTICLE_SUCCESS(200,"S-RP034","게시글 신고 삭제 성공"),
 
     // Business
     REGISTER_PRACTICE_ROOM_SUCCESS(201,"S-B001","연습실 등록 성공"),

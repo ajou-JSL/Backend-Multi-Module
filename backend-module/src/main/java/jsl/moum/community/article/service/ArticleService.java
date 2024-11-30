@@ -15,6 +15,7 @@ import jsl.moum.community.article.dto.UpdateArticleDto;
 import jsl.moum.global.response.ResponseCode;
 import jsl.moum.global.response.ResultResponse;
 import jsl.moum.objectstorage.StorageService;
+import jsl.moum.report.domain.ArticleReportRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -55,6 +56,7 @@ public class ArticleService {
     private final ArticleRepositoryCustom articleRepositoryCustom;
 
     private final ObjectMapper objectMapper;
+    private final ArticleReportRepository articleReportRepository;
 
     @Value("${ncp.object-storage.bucket}")
     private String bucket;
@@ -187,10 +189,12 @@ public class ArticleService {
         List<String> existingFileUrls = articleDetails.getImageUrls();
         deleteExistingFiles(existingFileUrls);
 
+        // 관련 article_reports 삭제
         // article_details, article 테이블 둘 다 삭제
+        articleReportRepository.deleteAll(article.getArticleReports());
         articleDetailsRepository.deleteById(articleDetailsId);
         articleRepository.deleteById(articleDetailsId);
-
+        
         article.getAuthor().updateMemberExpAndRank(-1);
 
         return new ArticleDto.Response(article);

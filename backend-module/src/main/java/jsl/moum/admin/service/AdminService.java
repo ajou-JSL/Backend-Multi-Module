@@ -68,7 +68,7 @@ public class AdminService {
     }
 
     public Long getArticleCount(){
-        return articleReportRepository.count();
+        return articleRepository.count();
     }
 
     public Long getChatroomCount() {

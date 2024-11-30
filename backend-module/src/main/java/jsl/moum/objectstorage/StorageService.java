@@ -48,6 +48,9 @@ public class StorageService {
     }
 
     public String uploadImage(String key, MultipartFile multipartFile) throws IOException {
+        if(multipartFile.isEmpty()){
+            return null;
+        }
         if(!isValidImageType(multipartFile)){
             throw new CustomException(ErrorCode.INVALID_FILE_TYPE);
         }

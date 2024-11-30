@@ -123,6 +123,9 @@ public class MemberEntity {
     @Column(name = "active_status", nullable = false)
     private Boolean activeStatus = false;
 
+    @Column(name = "ban_status", nullable = false)
+    private Boolean banStatus = false;
+
     @Transient
     private int totalRecordCount;
 
