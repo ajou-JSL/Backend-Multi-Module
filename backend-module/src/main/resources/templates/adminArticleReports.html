@@ -131,6 +131,7 @@
                 <textarea id="replyMessage" class="form-control" rows="3" placeholder="Write your reply here..."></textarea>
                 <button type="button" class="btn btn-success" onclick="replyToReport()">Reply</button>
                 <button type="button" class="btn btn-danger" onclick="deleteArticleReport()">Delete Report</button>
+                <button type="button" class="btn btn-danger" onclick="deleteArticle()">Delete Article</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
@@ -301,6 +302,63 @@
                 });
         }
     }
+
+    function deleteArticle() {
+        // Get the report ID (dynamically set in the modal)
+        const reportId = document.getElementById("reportDetails").getAttribute("data-report-id");
+
+        if (!reportId) {
+            alert("No report selected for deletion.");
+            return;
+        }
+
+        // Fetch the article report details to get the article ID
+        fetch(`/admin/article/report/view/${reportId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Failed to fetch article report details.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                const articleId = data.articleId;
+
+                if (!articleId) {
+                    throw new Error("No article ID found in the report details.");
+                }
+
+                // Confirm before deleting the article
+                if (confirm("Are you sure you want to delete the article? This action cannot be undone.")) {
+                    return fetch(`/api/articles/${articleId}`, {
+                        method: 'DELETE',
+                    });
+                } else {
+                    throw new Error("Article deletion cancelled by the user.");
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Failed to delete article: ${response.status} - ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(result => {
+                alert("Article deleted successfully.");
+
+                // Hide the modal
+                const modalElement = document.getElementById('reportModal');
+                const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                modalInstance.hide();
+
+                // Refresh the report list
+                loadReports(currentPage);
+            })
+            .catch(error => {
+                console.error("Error deleting article:", error);
+                alert("Failed to delete the article. Please try again.");
+            });
+    }
+
 
     // Initial load
     loadReports(1);
