@@ -38,15 +38,15 @@ public class SignupService {
 
     public String signupMember(MemberDto.Request memberRequestDto, MultipartFile file) throws IOException {
 
-        Boolean isExist = memberRepository.existsByUsername(memberRequestDto.getUsername());
-        if (isExist) {
-            throw new DuplicateUsernameException();
-        }
+        MemberEntity member = memberRepository.findByUsername(memberRequestDto.getUsername());
 
-        MemberEntity optionalMember = memberRepository.findByUsername(memberRequestDto.getUsername());
-        if (optionalMember!=null && !optionalMember.getActiveStatus()) {
-            return "회원 탈퇴한 계정입니다. 가입 이메일: " + optionalMember.getEmail() +
-                    "\n가입 이름: " + optionalMember.getUsername();
+        if (member != null) {
+            if (member.getActiveStatus()) {
+                throw new DuplicateUsernameException();
+            } else {
+                return "회원 탈퇴한 계정입니다. 가입 이메일: " + member.getEmail() +
+                        "\n가입 이름: " + member.getUsername();
+            }
         }
 
         verifyEmailCode(memberRequestDto);
