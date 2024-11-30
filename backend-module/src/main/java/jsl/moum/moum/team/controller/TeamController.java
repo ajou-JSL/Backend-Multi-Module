@@ -41,7 +41,7 @@ public class TeamController {
     /**
      * 팀 조회(이름으로) API
      */
-    @GetMapping("/api/teams/{teamName}")
+    @GetMapping("/api/teams/name/{teamName}")
     public ResponseEntity<ResultResponse> getTeamByTeamName(@AuthenticationPrincipal CustomUserDetails customUserDetails,
                                                       @PathVariable String teamName){
 
