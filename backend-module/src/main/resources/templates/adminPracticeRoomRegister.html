@@ -441,8 +441,13 @@
                 }
             })
             .catch(error => {
-                console.error("Error uploading images:", error);
-                alert("Failed to upload images. Please try again.");
+                if(error.status === 415){
+                    console.error("Invalid image file type:", error);
+                    alert("Invalid image file type");
+                } else{
+                    console.error("Error uploading images:", error);
+                    alert("Failed to upload images. Please try again.");
+                }
             });
     }
 
