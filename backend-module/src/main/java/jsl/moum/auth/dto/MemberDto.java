@@ -68,12 +68,14 @@ public class MemberDto {
         private String videoUrl;
 
         private List<MusicGenre> genres;
+        private Boolean activeStatus;
 
 
         public MemberEntity toEntity(){
             return MemberEntity.builder()
                     .id(id)
                     .username(username)
+                    .activeStatus(true)
                     .email(email)
                     .password(password)
                     .address(address)
