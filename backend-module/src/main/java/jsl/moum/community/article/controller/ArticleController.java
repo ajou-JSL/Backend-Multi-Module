@@ -89,7 +89,7 @@ public class ArticleController {
      */
     @DeleteMapping("/api/articles/{id}")
     public ResponseEntity<ResultResponse> deleteArticle(
-            @PathVariable int id,
+            @PathVariable(name = "id") int id,
             @AuthenticationPrincipal CustomUserDetails customUserDetails){
 
         ArticleDto.Response articleResponse = articleService.deleteArticleDetails(id, customUserDetails.getUsername());

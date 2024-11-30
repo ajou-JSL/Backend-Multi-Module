@@ -130,7 +130,8 @@
             <div class="modal-footer">
                 <textarea id="replyMessage" class="form-control" rows="3" placeholder="Write your reply here..."></textarea>
                 <button type="button" class="btn btn-success" onclick="replyToReport()">Reply</button>
-                <button type="button" class="btn btn-danger" onclick="deleteMemberReport()">Delete</button>
+                <button type="button" class="btn btn-danger" onclick="deleteMemberReport()">Delete Report</button>
+                <button type="button" class="btn btn-danger" onclick="banMember()">Ban Member</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
@@ -305,6 +306,63 @@
                 });
         }
     }
+
+    function banMember() {
+        // Get the report ID (dynamically set in the modal)
+        const reportId = document.getElementById("reportDetails").getAttribute("data-report-id");
+
+        if (!reportId) {
+            alert("No report selected for deletion.");
+            return;
+        }
+
+        // Fetch the member report details to get the member ID
+        fetch(`/admin/member/report/view/${reportId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Failed to fetch member report details.");
+                }a
+                return response.json();
+            })
+            .then(data => {
+                const memberId = data.memberId;
+
+                if (!memberId) {
+                    throw new Error("No member ID found in the report details.");
+                }
+
+                // Confirm before banning the member
+                if (confirm("Are you sure you want to ban this member? This action cannot be undone.")) {
+                    return fetch(`/admin/member/${memberId}/ban`, {
+                        method: 'POST',
+                    });
+                } else {
+                    throw new Error("Member ban cancelled by the user.");
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Failed to ban member: ${response.status} - ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(result => {
+                alert("Member banned successfully.");
+
+                // Hide the modal
+                const modalElement = document.getElementById('reportModal');
+                const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                modalInstance.hide();
+
+                // Refresh the report list
+                loadReports(currentPage);
+            })
+            .catch(error => {
+                console.error("Error while banning member:", error);
+                alert("Failed to ban this member. Please try again.");
+            });
+    }
+
 
     // Initial load
     loadReports(1);

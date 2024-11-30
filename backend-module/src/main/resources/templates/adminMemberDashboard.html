@@ -105,6 +105,19 @@
             <!-- 사용자 신고 관리 Button -->
             <a href="#" th:href="@{/admin/member/report/list}" class="btn btn-danger btn-block mt-2" style="padding: 10px 10px; width: 77%;">사용자 신고 관리</a>
         </div>
+
+        <!-- Total Banned Members -->
+        <div class="col-md-4">
+            <div class="card text-white bg-danger mb-3" style="max-width: 18rem;">
+                <div class="card-header">Banned Member Count</div>
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${bannedMemberCount}">0</h5>
+                    <p class="card-text">총 밴 사용자 수</p>
+                </div>
+            </div>
+            <!-- 사용자 신고 관리 Button -->
+            <a href="#" th:href="@{/admin/member/banned/list}" class="btn btn-danger btn-block mt-2" style="padding: 10px 10px; width: 77%;">밴 사용자 관리</a>
+        </div>
     </div>
 </div>
 

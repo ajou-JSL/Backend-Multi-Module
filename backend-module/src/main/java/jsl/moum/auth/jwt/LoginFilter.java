@@ -96,7 +96,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String access = jwtUtil.createJwt("access", username, role, 36000000L);
         String refresh = jwtUtil.createJwt("refresh", username, role, 842000L);
 
-
         addRefreshEntity(username, refresh, 842000L);
 
         ResultResponse resultResponse = ResultResponse.of(ResponseCode.LOGIN_SUCCESS, userInfo);

@@ -95,6 +95,10 @@ public class AdminService {
         return articleReportRepository.count();
     }
 
+    public Long getBannedMemberCount(){
+        return memberRepository.countByBanStatus(true);
+    }
+
     /**
      *
      * Member Dashboard
@@ -127,6 +131,30 @@ public class AdminService {
         MemberReport report = memberReportRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 신고 내역이 존재하지 않습니다."));
         return new MemberReportDto.Response(report);
+    }
+
+    public MemberDto.Response banMember(int id){
+        MemberEntity member = memberRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 회원 정보가 존재하지 않습니다."));
+        member.setBanStatus(true);
+        member = memberRepository.save(member);
+        return new MemberDto.Response(member);
+    }
+
+    public MemberDto.Response unbanMember(int id){
+        MemberEntity member = memberRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 회원 정보가 존재하지 않습니다."));
+        member.setBanStatus(false);
+        member = memberRepository.save(member);
+        return new MemberDto.Response(member);
+    }
+
+    public List<MemberDto.Response> getBannedMembers(){
+        return memberRepository.findAllByBanStatus(true).stream().map(MemberDto.Response::new).toList();
+    }
+
+    public Page<MemberDto.Response> getBannedMembersPaged(PageRequest pageRequest){
+        return memberRepository.findAllByBanStatusPaged(true, pageRequest).map(MemberDto.Response::new);
     }
 
     /**
