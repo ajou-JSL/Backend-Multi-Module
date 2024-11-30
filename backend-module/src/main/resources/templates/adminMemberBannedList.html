@@ -122,9 +122,13 @@
             </div>
             <div class="modal-body">
                 <!-- Member details will be dynamically inserted here -->
-                <div id="memberDetails" class="p-3">
+                <div id="memberDetails" class="p-3" data-member-id="">
                     <p>Loading...</p>
                 </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" onclick="unbanMember()">Unban Member</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -197,6 +201,9 @@
         const memberId = button.getAttribute("data-member-id");
         const memberDetailsDiv = document.getElementById("memberDetails");
 
+        // Set the member ID in the modal for unban functionality
+        memberDetailsDiv.setAttribute("data-member-id", memberId);
+
         // Make an AJAX request to fetch member details
         fetch(`/admin/member/view/${memberId}`)
             .then(response => {
@@ -246,6 +253,46 @@
                 console.error(error);
             });
     }
+
+    function unbanMember() {
+        // Get the member ID from the modal
+        const memberId = document.getElementById("memberDetails").getAttribute("data-member-id");
+
+        if (!memberId) {
+            alert("No member selected for unbanning.");
+            return;
+        }
+
+        const url = `/admin/member/${memberId}/unban`;
+
+        if (confirm("Are you sure you want to unban this member?")) {
+            fetch(url, {
+                method: 'POST',
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Failed to unban member: ${response.status} - ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(result => {
+                    alert("Member unbanned successfully.");
+
+                    // Hide the modal
+                    const modalElement = document.getElementById('memberModal');
+                    const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                    modalInstance.hide();
+
+                    // Refresh the members list dynamically
+                    loadMembers(currentPage); // Reload the current page of members
+                })
+                .catch(error => {
+                    console.error("Error unbanning member:", error);
+                    alert("Failed to unban the member. Please try again.");
+                });
+        }
+    }
+
 
     // Initial load
     loadMembers(1);
