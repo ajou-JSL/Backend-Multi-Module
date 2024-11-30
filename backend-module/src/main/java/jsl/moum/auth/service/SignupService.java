@@ -3,7 +3,6 @@ package jsl.moum.auth.service;
 import jsl.moum.auth.domain.entity.MemberEntity;
 import jsl.moum.auth.domain.repository.MemberRepository;
 import jsl.moum.common.CommonService;
-import jsl.moum.email.service.EmailService;
 import jsl.moum.record.domain.dto.RecordDto;
 import jsl.moum.record.domain.entity.RecordEntity;
 import jsl.moum.record.domain.repository.RecordRepository;
@@ -22,6 +21,7 @@ import jsl.moum.config.redis.util.RedisUtil;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,24 +38,37 @@ public class SignupService {
 
     public String signupMember(MemberDto.Request memberRequestDto, MultipartFile file) throws IOException {
 
-        MemberEntity existMember = memberRepository.findByUsername(memberRequestDto.getUsername());
-        if (existMember != null) {
+        Boolean isExist = memberRepository.existsByUsername(memberRequestDto.getUsername());
+        if (isExist) {
             throw new DuplicateUsernameException();
         }
 
-        if(!existMember.getActiveStatus()){
-            return "회원 탈퇴한 계정입니다. 가입 이메일 : " + existMember.getEmail() +
-                    "\n 가입 이름 : " + existMember.getUsername();
+        MemberEntity optionalMember = memberRepository.findByUsername(memberRequestDto.getUsername());
+        if (optionalMember!=null && !optionalMember.getActiveStatus()) {
+            return "회원 탈퇴한 계정입니다. 가입 이메일: " + optionalMember.getEmail() +
+                    "\n가입 이름: " + optionalMember.getUsername();
         }
 
+        verifyEmailCode(memberRequestDto);
+        String fileUrl = uploadMemberImage(memberRequestDto.getUsername(), file);
+
+        MemberEntity newMember = buildMemberEntity(memberRequestDto, fileUrl);
+        memberRepository.save(newMember);
+
+        saveMemberRecords(memberRequestDto, newMember);
+
+        return newMember.getUsername();
+    }
+
+    private void verifyEmailCode(MemberDto.Request memberRequestDto) {
         String verifyCode = redisUtil.getData(memberRequestDto.getEmail());
         if (verifyCode == null || !verifyCode.equals(memberRequestDto.getVerifyCode())) {
             throw new CustomException(ErrorCode.EMAIL_VERIFY_FAILED);
         }
+    }
 
-        String fileUrl = uploadMemberImage(memberRequestDto.getUsername(), file);
-
-        MemberDto.Request request = MemberDto.Request.builder()
+    private MemberEntity buildMemberEntity(MemberDto.Request memberRequestDto, String fileUrl) {
+        return MemberDto.Request.builder()
                 .name(memberRequestDto.getName())
                 .username(memberRequestDto.getUsername())
                 .email(memberRequestDto.getEmail())
@@ -68,25 +81,19 @@ public class SignupService {
                 .profileImageUrl(fileUrl)
                 .genres(memberRequestDto.getGenres())
                 .videoUrl(memberRequestDto.getVideoUrl())
-                .build();
+                .build()
+                .toEntity();
+    }
 
-        MemberEntity newMember = request.toEntity();
-        log.info("user role : {}",newMember.getRole());
-        memberRepository.save(newMember);
-
+    private void saveMemberRecords(MemberDto.Request memberRequestDto, MemberEntity newMember) {
         if (memberRequestDto.getRecords() != null && !memberRequestDto.getRecords().isEmpty()) {
             List<RecordEntity> recordList = memberRequestDto.getRecords().stream()
                     .map(RecordDto.Request::toEntity)
                     .collect(Collectors.toList());
 
-            log.info("newMember.assignRecord(recordList) - 1");
             newMember.assignRecord(recordList);
-            log.info("newMember.assignRecord(recordList) - 2");
-
             recordRepository.saveAll(recordList);
         }
-
-        return newMember.getUsername();
     }
 
     @Transactional
