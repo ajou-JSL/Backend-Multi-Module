@@ -100,7 +100,7 @@ public class AdminController {
             @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "size", defaultValue = "10") int size) {
         PageRequest pageRequest = PageRequest.of(page - 1, size);
-        Page<MemberDto.Response> membersPage = adminService.getMembersPaged(pageRequest);
+        Page<MemberDto.Info> membersPage = adminService.getMembersPaged(pageRequest);
 
         Map<String, Object> response = new HashMap<>();
         response.put("members", membersPage.getContent());
@@ -129,7 +129,7 @@ public class AdminController {
 
     @GetMapping("/member/view/{id}")
     @ResponseBody
-    public MemberDto.Response getMemberDetails(@PathVariable(name = "id") int id) {
+    public MemberDto.Info getMemberDetails(@PathVariable(name = "id") int id) {
         return adminService.getMemberById(id);
     }
 
@@ -157,14 +157,14 @@ public class AdminController {
 
     @PostMapping("/member/{id}/ban")
     public ResponseEntity<ResultResponse> banMember(@PathVariable(name = "id") Integer id) {
-        MemberDto.Response member = adminService.banMember(id);
+        MemberDto.Info member = adminService.banMember(id);
         ResultResponse resultResponse = ResultResponse.of(ResponseCode.BAN_MEMBER_SUCCESS, member);
         return ResponseEntity.ok(resultResponse);
     }
 
     @PostMapping("/member/{id}/unban")
     public ResponseEntity<ResultResponse> unbanMember(@PathVariable(name = "id") Integer id) {
-        MemberDto.Response member = adminService.unbanMember(id);
+        MemberDto.Info member = adminService.unbanMember(id);
         ResultResponse resultResponse = ResultResponse.of(ResponseCode.UNBAN_MEMBER_SUCCESS, member);
         return ResponseEntity.ok(resultResponse);
     }
@@ -174,7 +174,7 @@ public class AdminController {
             @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "size", defaultValue = "10") int size) {
         PageRequest pageRequest = PageRequest.of(page - 1, size);
-        Page<MemberDto.Response> membersPage = adminService.getBannedMembersPaged(pageRequest);
+        Page<MemberDto.Info> membersPage = adminService.getBannedMembersPaged(pageRequest);
 
         Map<String, Object> response = new HashMap<>();
         response.put("members", membersPage.getContent());
@@ -183,6 +183,20 @@ public class AdminController {
         response.put("totalMembers", membersPage.getTotalElements());
 
         return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/member/{id}/role-admin")
+    public ResponseEntity<ResultResponse> setRoleAdmin(@PathVariable(name = "id") Integer id) {
+        MemberDto.Info member = adminService.setRoleAdmin(id);
+        ResultResponse resultResponse = ResultResponse.of(ResponseCode.SET_ROLE_ADMIN_SUCCESS, member);
+        return ResponseEntity.ok(resultResponse);
+    }
+
+    @PatchMapping("/member/{id}/role-user")
+    public ResponseEntity<ResultResponse> setRoleUser(@PathVariable(name = "id") Integer id) {
+        MemberDto.Info member = adminService.setRoleUser(id);
+        ResultResponse resultResponse = ResultResponse.of(ResponseCode.SET_ROLE_USER_SUCCESS, member);
+        return ResponseEntity.ok(resultResponse);
     }
 
     /**

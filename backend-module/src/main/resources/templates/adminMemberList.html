@@ -87,7 +87,7 @@
                     <th>#</th>
                     <th>사용자 ID</th>
                     <th>닉네임</th>
-                    <th>티어</th>
+                    <th>권한</th>
                     <th>상세</th>
                 </tr>
                 </thead>
@@ -126,6 +126,11 @@
                     <p>Loading...</p>
                 </div>
             </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-warning" onclick="setRoleAdmin()">Set as Admin</button>
+                <button type="button" class="btn btn-warning" onclick="setRoleUser()">Remove Admin</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
         </div>
     </div>
 </div>
@@ -162,7 +167,7 @@
                             <td>${(currentPage - 1) * itemsPerPage + index + 1}</td>
                             <td>${member.username}</td>
                             <td>${member.name}</td>
-                            <td>${member.tier}</td>
+                            <td>${member.role}</td>
                             <td>
                                 <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#memberModal"
                                         data-member-id="${member.id}" onclick="fetchMemberDetails(event, this)">
@@ -197,6 +202,9 @@
         const memberId = button.getAttribute("data-member-id");
         const memberDetailsDiv = document.getElementById("memberDetails");
 
+        // Set the member ID in the modal for role update and other operations
+        memberDetailsDiv.setAttribute("data-member-id", memberId);
+
         // Make an AJAX request to fetch member details
         fetch(`/admin/member/view/${memberId}`)
             .then(response => {
@@ -210,6 +218,8 @@
                 memberDetailsDiv.innerHTML = `
                 <p><strong>Username:</strong> ${data.username}</p>
                 <p><strong>Nickname:</strong> ${data.name}</p>
+                <p><strong>Email:</strong> ${data.email}</p>
+                <p><strong>Role:</strong> ${data.role}</p>
                 <p><strong>Profile Description:</strong> ${data.profileDescription || "N/A"}</p>
                 <p><strong>Profile Image:</strong></p>
                 <img src="${data.profileImageUrl || '/public/blank_profile.png'}"
@@ -239,12 +249,91 @@
                         </li>
                     `).join('') || '<p>No moum records available.</p>'}
                 </ul>
+                <p><strong>Active Status:</strong> ${data.activeStatus}</p>
+                <p><strong>Ban Status:</strong> ${data.banStatus}</p>
+
             `;
             })
             .catch(error => {
                 memberDetailsDiv.innerHTML = `<p class="text-danger">Failed to load member details. Please try again.</p>`;
                 console.error(error);
             });
+    }
+
+    function setRoleAdmin() {
+        // Get the member ID from the modal
+        const memberId = document.getElementById("memberDetails").getAttribute("data-member-id");
+
+        if (!memberId) {
+            alert("No member selected for role update.");
+            return;
+        }
+
+        const url = `/admin/member/${memberId}/role-admin`;
+
+        if (confirm("Are you sure you want set ADMIN role for this user?")) {
+            fetch(url, {
+                method: 'PATCH',
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Failed to update role: ${response.status} - ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(result => {
+                    alert("Member role updated to ADMIN successfully.");
+
+                    // Hide the modal
+                    const modalElement = document.getElementById('memberModal');
+                    const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                    modalInstance.hide();
+
+                    // Refresh the report list
+                    loadMembers(currentPage);
+                })
+                .catch(error => {
+                    console.error("Error updating role:", error);
+                });
+        }
+    }
+
+    function setRoleUser() {
+        // Get the member ID from the modal
+        const memberId = document.getElementById("memberDetails").getAttribute("data-member-id");
+
+        if (!memberId) {
+            alert("No member selected for role update.");
+            return;
+        }
+
+        const url = `/admin/member/${memberId}/role-user`;
+
+        if (confirm("Are you sure you want to remove ADMIN role from this member?")) {
+            fetch(url, {
+                method: 'PATCH',
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Failed to update role: ${response.status} - ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(result => {
+                    alert("Member role updated to USER successfully.");
+
+                    // Hide the modal
+                    const modalElement = document.getElementById('memberModal');
+                    const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                    modalInstance.hide();
+
+                    // Refresh the report list
+                    loadMembers(currentPage);
+                })
+                .catch(error => {
+                    console.error("Error updating role:", error);
+                });
+        }
     }
 
     // Initial load

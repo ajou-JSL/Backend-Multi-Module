@@ -113,18 +113,18 @@ public class AdminService {
         return memberReportRepository.findAll().stream().map(MemberReportDto.Response::new).toList();
     }
 
-    public Page<MemberDto.Response> getMembersPaged(PageRequest pageRequest){
-        return memberRepository.findAll(pageRequest).map(MemberDto.Response::new);
+    public Page<MemberDto.Info> getMembersPaged(PageRequest pageRequest){
+        return memberRepository.findAll(pageRequest).map(MemberDto.Info::new);
     }
 
     public Page<MemberReportDto.Response> getMemberReportsPaged(PageRequest pageRequest){
         return memberReportRepository.findAll(pageRequest).map(MemberReportDto.Response::new);
     }
 
-    public MemberDto.Response getMemberById(int id){
+    public MemberDto.Info getMemberById(int id){
         MemberEntity member = memberRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 회원 정보가 존재하지 않습니다."));
-        return new MemberDto.Response(member);
+        return new MemberDto.Info(member);
     }
 
     public MemberReportDto.Response getMemberReportById(int id){
@@ -133,28 +133,44 @@ public class AdminService {
         return new MemberReportDto.Response(report);
     }
 
-    public MemberDto.Response banMember(int id){
+    public MemberDto.Info banMember(int id){
         MemberEntity member = memberRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 회원 정보가 존재하지 않습니다."));
         member.setBanStatus(true);
         member = memberRepository.save(member);
-        return new MemberDto.Response(member);
+        return new MemberDto.Info(member);
     }
 
-    public MemberDto.Response unbanMember(int id){
+    public MemberDto.Info unbanMember(int id){
         MemberEntity member = memberRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 회원 정보가 존재하지 않습니다."));
         member.setBanStatus(false);
         member = memberRepository.save(member);
-        return new MemberDto.Response(member);
+        return new MemberDto.Info(member);
     }
 
     public List<MemberDto.Response> getBannedMembers(){
         return memberRepository.findAllByBanStatus(true).stream().map(MemberDto.Response::new).toList();
     }
 
-    public Page<MemberDto.Response> getBannedMembersPaged(PageRequest pageRequest){
-        return memberRepository.findAllByBanStatusPaged(true, pageRequest).map(MemberDto.Response::new);
+    public Page<MemberDto.Info> getBannedMembersPaged(PageRequest pageRequest){
+        return memberRepository.findAllByBanStatusPaged(true, pageRequest).map(MemberDto.Info::new);
+    }
+
+    public MemberDto.Info setRoleAdmin(int id){
+        MemberEntity member = memberRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_EXIST));
+        member.setRole("ROLE_ADMIN");
+        member = memberRepository.save(member);
+        return new MemberDto.Info(member);
+    }
+
+    public MemberDto.Info setRoleUser(int id){
+        MemberEntity member = memberRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_EXIST));
+        member.setRole("ROLE_USER");
+        member = memberRepository.save(member);
+        return new MemberDto.Info(member);
     }
 
     /**

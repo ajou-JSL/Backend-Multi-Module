@@ -69,6 +69,7 @@ public class MemberDto {
 
         private List<MusicGenre> genres;
         private Boolean activeStatus;
+        private Boolean banStatus;
 
 
         public MemberEntity toEntity(){
@@ -95,6 +96,8 @@ public class MemberDto {
                     .genres(genres)
                     .exp(0)
                     .tier(Rank.BRONZE)
+                    .activeStatus(activeStatus)
+                    .banStatus(banStatus)
                     .build();
         }
     }
@@ -124,6 +127,65 @@ public class MemberDto {
             this.videoUrl = member.getVideoUrl();
             this.exp = member.getExp();
             this.tier = member.getTier();
+//            this.memberRecords = member.getRecords().stream()
+//                    .map(RecordDto.Response::new)
+//                    .collect(Collectors.toList());
+//            this.moumRecords = member.getMoumMemberRecords().stream()
+//                    .map(MoumMemberRecordEntity::getRecord)
+//                    .map(RecordDto.Response::new)
+//                    .collect(Collectors.toList());
+
+            this.genres = (member.getGenres() != null)
+                    ? member.getGenres() : null;
+
+            this.memberRecords = (member.getRecords() != null)
+                    ? member.getRecords().stream()
+                    .map(RecordDto.Response::new)
+                    .collect(Collectors.toList())
+                    : null;
+
+            this.moumRecords = (member.getMoumMemberRecords() != null)
+                    ? member.getMoumMemberRecords().stream()
+                    .map(MoumMemberRecordEntity::getRecord)
+                    .map(RecordDto.Response::new)
+                    .collect(Collectors.toList())
+                    : null;
+        }
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class Info{
+        private final int id;
+        private final String name;
+        private final String username;
+        private final String email;
+        private final String role;
+        private final String profileDescription;
+        private final String profileImageUrl;
+        private final Integer exp;
+        private final List<MusicGenre> genres;
+        private final Rank tier;
+        private final String videoUrl;
+        private final List<RecordDto.Response> memberRecords;
+        private final List<RecordDto.Response> moumRecords;
+        private final Boolean activeStatus;
+        private final Boolean banStatus;
+
+
+        public Info(MemberEntity member){
+            this.id = member.getId();
+            this.name = member.getName();
+            this.username = member.getUsername();
+            this.email = member.getEmail();
+            this.role = member.getRole();
+            this.profileDescription = member.getProfileDescription();
+            this.profileImageUrl = member.getProfileImageUrl();
+            this.videoUrl = member.getVideoUrl();
+            this.exp = member.getExp();
+            this.tier = member.getTier();
+            this.activeStatus = member.getActiveStatus();
+            this.banStatus = member.getBanStatus();
 //            this.memberRecords = member.getRecords().stream()
 //                    .map(RecordDto.Response::new)
 //                    .collect(Collectors.toList());

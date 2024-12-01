@@ -217,6 +217,8 @@
                 memberDetailsDiv.innerHTML = `
                 <p><strong>Username:</strong> ${data.username}</p>
                 <p><strong>Nickname:</strong> ${data.name}</p>
+                <p><strong>Email:</strong> ${data.email}</p>
+                <p><strong>Role:</strong> ${data.role}</p>
                 <p><strong>Profile Description:</strong> ${data.profileDescription || "N/A"}</p>
                 <p><strong>Profile Image:</strong></p>
                 <img src="${data.profileImageUrl || '/public/blank_profile.png'}"
@@ -245,7 +247,9 @@
                             <p><strong>Record Date:</strong> ${new Date(record.date).toLocaleDateString()}</p>
                         </li>
                     `).join('') || '<p>No moum records available.</p>'}
-                </ul>
+                </ul>'
+                <p><strong>Active Status:</strong> ${data.activeStatus}</p>
+                <p><strong>Ban Status:</strong> ${data.banStatus}</p>
             `;
             })
             .catch(error => {

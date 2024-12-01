@@ -17,6 +17,8 @@ public enum ResponseCode {
     REJOIN_SUCCESS(201, "S-M007", "재가입 완료"),
     BAN_MEMBER_SUCCESS(200, "S-M008", "회원 밴 조치 완료"),
     UNBAN_MEMBER_SUCCESS(200, "S-M009", "회원 밴 해제 완료"),
+    SET_ROLE_ADMIN_SUCCESS(200, "S-M010", "관리자 권한 부여 완료"),
+    SET_ROLE_USER_SUCCESS(200, "S-M011", "일반 사용자 권한 부여 완료"),
 
     // TEAM
     CREATE_TEAM_SUCCESS(201, "S-T001", "팀 생성 성공."),
