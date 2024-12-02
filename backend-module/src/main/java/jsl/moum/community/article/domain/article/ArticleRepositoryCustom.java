@@ -83,7 +83,7 @@ public class ArticleRepositoryCustom {
 //                .from(articleEntity);
 
         JPAQuery<Long> countQuery = jpaQueryFactory
-                .select(articleEntity.id.count())
+                .select(articleEntity.id.countDistinct())
                 .from(articleEntity)
                 .leftJoin(commentEntity).on(articleEntity.id.eq(commentEntity.articleDetails.articleId))
                 .groupBy(articleEntity.id);
