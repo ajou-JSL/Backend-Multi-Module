@@ -85,8 +85,8 @@ public class ArticleRepositoryCustom {
         JPAQuery<Long> countQuery = jpaQueryFactory
                 .select(articleEntity.id.countDistinct())
                 .from(articleEntity)
-                .leftJoin(commentEntity).on(articleEntity.id.eq(commentEntity.articleDetails.articleId))
-                .groupBy(articleEntity.id);
+                .leftJoin(commentEntity).on(articleEntity.id.eq(commentEntity.articleDetails.articleId));
+//                .groupBy(articleEntity.id);
 
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
@@ -111,7 +111,7 @@ public class ArticleRepositoryCustom {
                 .fetch();
 
         JPAQuery<Long> countQuery = jpaQueryFactory
-                .select(articleEntity.count())
+                .select(articleEntity.countDistinct())
                 .from(articleEntity)
                 .where(whereConditions(dto));
 

@@ -61,7 +61,7 @@ public class TeamRepositoryCustom {
                 .fetch();
 
         JPAQuery<Long> countQuery = jpaQueryFactory
-                .select(teamEntity.count())
+                .select(teamEntity.countDistinct())
                 .from(teamEntity)
                 .leftJoin(teamMemberEntity).on(teamMemberEntity.team.id.eq(teamEntity.id))
                 .where(

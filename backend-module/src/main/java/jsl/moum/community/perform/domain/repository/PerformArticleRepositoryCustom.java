@@ -49,7 +49,7 @@ public class PerformArticleRepositoryCustom {
                 .fetch();
 
         JPAQuery<Long> countQuery = jpaQueryFactory
-                .select(performArticleEntity.count())
+                .select(performArticleEntity.countDistinct())
                 .from(performArticleEntity)
                 .where(
                         performArticleEntity.performanceStartDate.after(java.sql.Date.valueOf(startOfMonth))
@@ -102,7 +102,7 @@ public class PerformArticleRepositoryCustom {
                 .fetch();
 
         JPAQuery<Long> countQuery = jpaQueryFactory
-                .select(performArticleEntity.count())
+                .select(performArticleEntity.countDistinct())
                 .from(performArticleEntity)
                 .where(
                         whereConditions(dto)
