@@ -84,6 +84,7 @@ public class SignupService {
                 .profileImageUrl(fileUrl)
                 .genres(memberRequestDto.getGenres())
                 .videoUrl(memberRequestDto.getVideoUrl())
+                .activeStatus(true)
                 .build()
                 .toEntity();
     }

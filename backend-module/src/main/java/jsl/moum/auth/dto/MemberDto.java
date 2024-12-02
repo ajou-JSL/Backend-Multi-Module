@@ -93,7 +93,7 @@ public class MemberDto {
                     .genres(genres)
                     .exp(0)
                     .tier(Rank.BRONZE)
-                    .activeStatus(activeStatus)
+                    .activeStatus(true)
                     .banStatus(banStatus)
                     .build();
         }
