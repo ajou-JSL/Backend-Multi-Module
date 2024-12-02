@@ -58,7 +58,7 @@ public class ChatroomService {
             ChatroomDto chatroomDto = new ChatroomDto(cm.getChatroom());
             // If personal chat - Get 'receiver' where memberId != current memberId
             if(chatroomDto.getType() == 0){
-                String receiverProfileImageUrl = getReceiverProfileImageUrl(chatroomDto.getId(), memberId);
+                String receiverProfileImageUrl = getReceiverProfileImageUrlBySenderId(chatroomDto.getId(), memberId);
                 chatroomDto.setFileUrl(receiverProfileImageUrl);
             }
             chatroomList.add(chatroomDto);
@@ -67,13 +67,14 @@ public class ChatroomService {
         return chatroomList;
     }
 
-    private String getReceiverProfileImageUrl(Integer chatroomId, Integer senderId){
+    private String getReceiverProfileImageUrlBySenderId(Integer chatroomId, Integer senderId){
         List<ChatroomMemberInfoDto> chatroomMemberList = getChatroomMemberList(chatroomId);
         for(ChatroomMemberInfoDto member : chatroomMemberList){
             if(member.getId() != senderId){
                 return member.getProfileImageUrl();
             }
         }
+        return null;
     }
 
     public List<ChatroomMemberInfoDto> getChatroomMemberList(Integer chatroomId) throws CustomException {
