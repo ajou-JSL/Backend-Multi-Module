@@ -32,14 +32,19 @@ import org.springframework.security.core.Authentication;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class LoginFilterTest {
+
+    @InjectMocks
+    private LoginFilter loginFilter;
 
     @Mock
     private AuthenticationManager authenticationManager;
@@ -61,9 +66,6 @@ class LoginFilterTest {
 
     @Mock
     private FilterChain filterChain;
-
-    @InjectMocks
-    private LoginFilter loginFilter;
 
     private String validUsername = "testUser";
     private String validPassword = "testPassword";
@@ -89,17 +91,37 @@ class LoginFilterTest {
     }
 
     @Test
-    @DisplayName("로그인 성공시 access 토큰과 refresh 토큰 발급 및 응답 설정")
-    void successfulAuthentication_whenValidCredentials_thenGenerateTokensAndSetResponse() throws IOException {
+    @DisplayName("로그인 성공 시 access 토큰과 refresh 토큰 발급 및 응답 설정")
+    void successfulAuthentication_whenValidCredentials_thenGenerateTokensAndSetResponse() throws Exception {
         // Given
+        String validUsername = "testUser";
+        String validToken = "mockedToken";
+        int userId = 1;
+
+        MemberEntity memberEntity = new MemberEntity();
+        memberEntity.setId(userId);
+        memberEntity.setUsername(validUsername);
+
         Authentication authentication = mock(Authentication.class);
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        FilterChain filterChain = mock(FilterChain.class);
+
         when(authentication.getName()).thenReturn(validUsername);
         when(authentication.getPrincipal()).thenReturn(new CustomUserDetails(memberEntity));
+        when(memberRepository.findByUsername(anyString())).thenReturn(memberEntity);
 
+        JwtUtil jwtUtil = mock(JwtUtil.class);
         when(jwtUtil.createJwt("access", validUsername, "ROLE_USER", 36000000L)).thenReturn(validToken);
         when(jwtUtil.createJwt("refresh", validUsername, "ROLE_USER", 842000L)).thenReturn(validToken);
 
-        when(memberRepository.findById(userId)).thenReturn(java.util.Optional.of(memberEntity));
+        MemberRepository memberRepository = mock(MemberRepository.class);
+        when(memberRepository.findById(userId)).thenReturn(Optional.of(memberEntity));
+
+        // Mock response writer
+        StringWriter responseWriter = new StringWriter();
+        PrintWriter writer = new PrintWriter(responseWriter);
+        when(response.getWriter()).thenReturn(writer);
 
         // When
         loginFilter.successfulAuthentication(request, response, filterChain, authentication);
@@ -109,16 +131,13 @@ class LoginFilterTest {
         verify(response).addCookie(any(Cookie.class));
         verify(response).setStatus(HttpServletResponse.SC_OK);
 
-        ArgumentCaptor<String> jsonCaptor = ArgumentCaptor.forClass(String.class);
-        verify(response).getWriter().write(jsonCaptor.capture());
-
-        String responseBody = jsonCaptor.getValue();
-        ResultResponse resultResponse = new ObjectMapper().readValue(responseBody, ResultResponse.class);
+        String responseBody = responseWriter.toString();
+        ObjectMapper objectMapper = new ObjectMapper();
+        ResultResponse resultResponse = objectMapper.readValue(responseBody, ResultResponse.class);
 
         assertEquals(ResponseCode.LOGIN_SUCCESS.getCode(), resultResponse.getCode());
         assertNotNull(resultResponse.getData());
     }
-
 
     @Test
     @DisplayName("로그인 실패 시 에러 응답")

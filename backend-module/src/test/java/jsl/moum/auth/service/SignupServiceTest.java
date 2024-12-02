@@ -1,5 +1,6 @@
 package jsl.moum.auth.service;
 
+import jsl.moum.common.CommonService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,7 @@ import jsl.moum.config.redis.util.RedisUtil;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -37,42 +39,92 @@ class SignupServiceTest {
     private StorageService storageService;
 
     @Mock
+    private CommonService commonService;
+
+    @Mock
     private RedisUtil redisUtil;
 
     @InjectMocks
     private SignupService signupService;
 
+    private MemberDto.Request memberRequestDto;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        memberRequestDto = MemberDto.Request.builder()
+                .id(1)
+                .username("newUser")
+                .password("password123")
+                .email("test@example.com")
+                .verifyCode("123456")
+                .build();
     }
 
     @Test
-    @DisplayName("회원가입 실패 테스트 - 중복된 유저네임")
+    @DisplayName("회원가입 실패 테스트 - 중복된 유저네임(활성화된 계정)")
     void SignupFail_UsernameAlreadyExists() {
-        // Given
-        MemberDto.Request memberRequestDto = MemberDto.Request.builder()
-                .id(1)
-                .username("existingUser")
-                .password("password123")
-                .build();
+        // given
+        String username = "existingUser";
 
-        // When
-        when(memberRepository.existsByUsername(memberRequestDto.getUsername())).thenReturn(true);
+        // when
+        MemberEntity existingMember = new MemberEntity();
+        existingMember.setUsername(username);
+        existingMember.setActiveStatus(true);
 
-        // Then
+        when(memberRepository.findByUsername(memberRequestDto.getUsername())).thenReturn(existingMember);
+
+        // then
         DuplicateUsernameException thrown = assertThrows(DuplicateUsernameException.class, () -> {
             signupService.signupMember(memberRequestDto, any());
         });
 
-        // Check the exception message
-        assertEquals(ErrorCode.USER_NAME_ALREADY_EXISTS, thrown.getErrorCode());
+        assertThat(thrown.getMessage()).isEqualTo("이미 존재하는 아이디입니다.");
+    }
+
+    @Test
+    @DisplayName("회원가입 실패 테스트 - 밴된 계정")
+    void SignupFail_BannedAccount() throws IOException {
+        // given
+        String username = "bannedUser";
+
+        // when
+        MemberEntity bannedMember = new MemberEntity();
+        bannedMember.setUsername(username);
+        bannedMember.setBanStatus(true);
+
+        when(memberRepository.findByUsername(memberRequestDto.getUsername())).thenReturn(bannedMember);
+
+        // then
+        String result = signupService.signupMember(memberRequestDto, any());
+
+        assertTrue(result.contains("밴 당한 계정입니다."));
+    }
+
+    @Test
+    @DisplayName("회원가입 실패 테스트 - 탈퇴한 계정")
+    void SignupFail_DeletedAccount() throws IOException {
+        // given
+        String username = "deletedUser";
+
+        // when
+        MemberEntity deletedMember = new MemberEntity();
+        deletedMember.setUsername(username);
+        deletedMember.setActiveStatus(false);
+
+        when(memberRepository.findByUsername(memberRequestDto.getUsername())).thenReturn(deletedMember);
+
+        // then
+        String result = signupService.signupMember(memberRequestDto, any());
+
+        assertTrue(result.contains("회원 탈퇴한 계정입니다."));
     }
 
     @Test
     @DisplayName("회원가입 실패 테스트 - 이메일 인증 코드 불일치")
     void SignupFail_EmailVerifyFailed() {
-        // Given
+        // given
+        String wrongCode = "654321";
         MemberDto.Request memberRequestDto = MemberDto.Request.builder()
                 .id(2)
                 .username("newUser")
@@ -81,55 +133,50 @@ class SignupServiceTest {
                 .verifyCode("123456")
                 .build();
 
-        // Mock username not existing
-        when(memberRepository.existsByUsername(memberRequestDto.getUsername())).thenReturn(false);
-        // Redis에서 잘못된 인증 코드 반환
-        when(redisUtil.getData(memberRequestDto.getEmail())).thenReturn("654321");
+        when(memberRepository.findByUsername(memberRequestDto.getUsername())).thenReturn(null);
+        when(redisUtil.getData(memberRequestDto.getEmail())).thenReturn(wrongCode);
 
-        // Then
+        // then
         CustomException thrown = assertThrows(CustomException.class, () -> {
-            signupService.signupMember(memberRequestDto,any());
+            signupService.signupMember(memberRequestDto, any());
         });
 
         assertEquals(ErrorCode.EMAIL_VERIFY_FAILED, thrown.getErrorCode());
     }
 
     @Test
-    @DisplayName("회원가입 성공 테스트 - 인증 코드 일치")
-    void SignupSuccess_EmailVerifySuccess_And_NewUsername() throws IOException {
-        // Given
+    @DisplayName("회원가입 성공 테스트 - 프로필 이미지 업로드 포함")
+    void signup_success_with_file() throws IOException {
+        // given
+        String verifyCode = "123456";
         MemberDto.Request memberRequestDto = MemberDto.Request.builder()
                 .username("newUser")
                 .password("password123")
                 .email("test@example.com")
-                .verifyCode("123456")
+                .verifyCode(verifyCode)
                 .records(new ArrayList<>())
                 .build();
 
-        // Mock username check, Redis 인증 코드, 비밀번호 인코딩
-        when(memberRepository.existsByUsername(memberRequestDto.getUsername())).thenReturn(false);
-        when(redisUtil.getData(memberRequestDto.getEmail())).thenReturn("123456");
+        when(memberRepository.findByUsername(memberRequestDto.getUsername())).thenReturn(null);
+        when(redisUtil.getData(memberRequestDto.getEmail())).thenReturn(verifyCode);
         when(bCryptPasswordEncoder.encode(memberRequestDto.getPassword())).thenReturn("encodedPassword");
 
         MemberEntity savedMemberEntity = MemberEntity.builder()
                 .username(memberRequestDto.getUsername())
                 .password("encodedPassword")
                 .email(memberRequestDto.getEmail())
-                //.role("ROLE_USER")
                 .build();
 
-        // Mock 저장 동작
         when(memberRepository.save(any(MemberEntity.class))).thenReturn(savedMemberEntity);
 
-        // Mock MultipartFile 생성
+        // file
         MultipartFile file = mock(MultipartFile.class);
         when(file.getOriginalFilename()).thenReturn("profile.jpg");
-        when(file.getBytes()).thenReturn("test file content".getBytes()); // Mocking file content
+        when(file.getBytes()).thenReturn("test file content".getBytes());
 
-        // When
-        signupService.signupMember(memberRequestDto, file); // 파일을 포함한 회원가입 호출
+        // when
+        signupService.signupMember(memberRequestDto, file);
 
-        // Verify 저장된 엔티티 정보
         ArgumentCaptor<MemberEntity> memberEntityCaptor = ArgumentCaptor.forClass(MemberEntity.class);
         verify(memberRepository).save(memberEntityCaptor.capture());
         MemberEntity capturedMemberEntity = memberEntityCaptor.getValue();
@@ -137,11 +184,80 @@ class SignupServiceTest {
         assertEquals("newUser", capturedMemberEntity.getUsername());
         assertEquals("encodedPassword", capturedMemberEntity.getPassword());
         assertEquals("test@example.com", capturedMemberEntity.getEmail());
-//        assertEquals("ROLE_USER", capturedMemberEntity.getRole());
 
-        // Redis에서 인증 코드가 호출되었는지 확인
         verify(redisUtil).getData(memberRequestDto.getEmail());
-        // 비밀번호 인코딩이 호출되었는지 확인
         verify(bCryptPasswordEncoder).encode(memberRequestDto.getPassword());
     }
+
+    @Test
+    @DisplayName("회원가입 성공 테스트 - 프로필 이미지 업로드 없이")
+    void signup_success_without_file() throws IOException {
+        // given
+        String verifyCode = "123456";
+        MemberDto.Request memberRequestDto = MemberDto.Request.builder()
+                .username("newUserWithoutImage")
+                .password("password123")
+                .email("noimage@example.com")
+                .verifyCode(verifyCode)
+                .build();
+
+        when(memberRepository.findByUsername(memberRequestDto.getUsername())).thenReturn(null);
+        when(redisUtil.getData(memberRequestDto.getEmail())).thenReturn(verifyCode);
+        when(bCryptPasswordEncoder.encode(memberRequestDto.getPassword())).thenReturn("encodedPassword");
+
+        MemberEntity savedMemberEntity = MemberEntity.builder()
+                .username(memberRequestDto.getUsername())
+                .password("encodedPassword")
+                .email(memberRequestDto.getEmail())
+                .build();
+
+        when(memberRepository.save(any(MemberEntity.class))).thenReturn(savedMemberEntity);
+
+        // when
+        signupService.signupMember(memberRequestDto, null);
+
+        ArgumentCaptor<MemberEntity> memberEntityCaptor = ArgumentCaptor.forClass(MemberEntity.class);
+        verify(memberRepository).save(memberEntityCaptor.capture());
+        MemberEntity capturedMemberEntity = memberEntityCaptor.getValue();
+
+        assertEquals("newUserWithoutImage", capturedMemberEntity.getUsername());
+        assertEquals("encodedPassword", capturedMemberEntity.getPassword());
+        assertEquals("noimage@example.com", capturedMemberEntity.getEmail());
+    }
+
+    @Test
+    @DisplayName("재가입 실패 테스트 - 멤버 없음")
+    void rejoin_fail_memberNotFound() {
+        // given
+        String username = "nonExistentUser";
+        when(commonService.findMemberByUsername(username)).thenReturn(null);
+
+        // when & then
+        CustomException thrown = assertThrows(CustomException.class, () -> {
+            signupService.rejoinMember(username);
+        });
+
+        assertEquals(ErrorCode.MEMBER_NOT_EXIST, thrown.getErrorCode());
+    }
+
+    @Test
+    @DisplayName("재가입 성공 테스트")
+    void rejoin_success() {
+        // given
+        String username = "existingUser";
+        MemberEntity member = new MemberEntity();
+        member.setUsername(username);
+        member.setActiveStatus(false);
+
+        when(commonService.findMemberByUsername(username)).thenReturn(member);
+
+        // when
+        MemberDto.Response response = signupService.rejoinMember(username);
+
+        // then
+        assertNotNull(response);
+        assertEquals(member.getActiveStatus(), true);
+        assertEquals(username, response.getUsername());
+    }
+
 }

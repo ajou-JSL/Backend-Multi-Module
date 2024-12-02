@@ -9,10 +9,7 @@ import jsl.moum.rank.Rank;
 import jsl.moum.record.domain.dto.RecordDto;
 import jsl.moum.record.domain.entity.MoumMemberRecordEntity;
 import jsl.moum.record.domain.entity.RecordEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -213,6 +210,7 @@ public class MemberDto {
     }
 
     @NoArgsConstructor
+    @AllArgsConstructor
     @Getter
     public static class RejoinRequest{
         @NotEmpty @NotNull private String username;

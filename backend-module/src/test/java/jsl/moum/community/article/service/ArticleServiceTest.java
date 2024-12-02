@@ -1,5 +1,7 @@
 package jsl.moum.community.article.service;
 
+import jsl.moum.report.domain.ArticleReport;
+import jsl.moum.report.domain.ArticleReportRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -56,6 +58,9 @@ class ArticleServiceTest {
 
     @Mock
     private ArticleDetailsRepositoryCustom articleDetailsRepositoryCustom;
+
+    @Mock
+    private ArticleReportRepository articleReportRepository;
 
     private MemberEntity author;
     private ArticleEntity mockArticle;
@@ -168,10 +173,11 @@ class ArticleServiceTest {
                         .build()
         );
 
-        when(articleRepository.findAll(PageRequest.of(0, 10))).thenReturn(new PageImpl<>(mockArticles));
+        Pageable pageable = PageRequest.of(0,10);
+        when(articleRepository.findAll(pageable)).thenReturn(new PageImpl<>(mockArticles));
 
         // when
-        List<ArticleDto.Response> responseList = articleService.getArticleList(0, 10);
+        List<ArticleDto.Response> responseList = articleService.getArticleList(1, 10);
 
         // then
         assertEquals(2, responseList.size());
@@ -248,9 +254,15 @@ class ArticleServiceTest {
                 .imageUrls(List.of("fileUrl","fileUrl2"))
                 .build();
 
+        ArticleReport articleReport = ArticleReport.builder()
+                .id(1)
+                .article(article)
+                .build();
+
         // Mock 동작 : repository 에서 탐색
         when(articleRepository.findById(1)).thenReturn(Optional.of(article));
         when(articleDetailsRepository.findById(1)).thenReturn(Optional.of(articleDetails));
+        when(articleReportRepository.findById(1)).thenReturn(Optional.of(articleReport));
 
         // when
         ArticleDto.Response response = articleService.deleteArticleDetails(1, author.getUsername());
@@ -361,7 +373,7 @@ class ArticleServiceTest {
 
         Page<ArticleEntity> mockArticles = new PageImpl<>(articleList);
 
-        when(articleDetailsRepositoryCustom.searchArticlesByTitleKeyword(keyword, "FREE_TALKING_BOARD",any(Pageable.class)))
+        when(articleDetailsRepositoryCustom.searchArticlesByTitleKeyword(anyString(), anyString(),any(Pageable.class)))
                 .thenReturn(mockArticles);
 
         // when
