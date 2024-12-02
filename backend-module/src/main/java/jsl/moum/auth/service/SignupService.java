@@ -85,6 +85,7 @@ public class SignupService {
                 .genres(memberRequestDto.getGenres())
                 .videoUrl(memberRequestDto.getVideoUrl())
                 .activeStatus(true)
+                .banStatus(false)
                 .build()
                 .toEntity();
     }
