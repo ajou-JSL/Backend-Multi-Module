@@ -55,10 +55,25 @@ public class ChatroomService {
         }
 
         for(ChatroomMember cm : chatroomMembers){
-            chatroomList.add(new ChatroomDto(cm.getChatroom()));
+            ChatroomDto chatroomDto = new ChatroomDto(cm.getChatroom());
+            // If personal chat - Get 'receiver' where memberId != current memberId
+            if(chatroomDto.getType() == 0){
+                String receiverProfileImageUrl = getReceiverProfileImageUrl(chatroomDto.getId(), memberId);
+                chatroomDto.setFileUrl(receiverProfileImageUrl);
+            }
+            chatroomList.add(chatroomDto);
         }
 
         return chatroomList;
+    }
+
+    private String getReceiverProfileImageUrl(Integer chatroomId, Integer senderId){
+        List<ChatroomMemberInfoDto> chatroomMemberList = getChatroomMemberList(chatroomId);
+        for(ChatroomMemberInfoDto member : chatroomMemberList){
+            if(member.getId() != senderId){
+                return member.getProfileImageUrl();
+            }
+        }
     }
 
     public List<ChatroomMemberInfoDto> getChatroomMemberList(Integer chatroomId) throws CustomException {
