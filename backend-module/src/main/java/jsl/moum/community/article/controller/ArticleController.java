@@ -42,8 +42,8 @@ public class ArticleController {
      * 게시글 상세 조회 API
      */
     @GetMapping("/api/articles/{id}")
-    public ResponseEntity<ResultResponse> getArticleById(@PathVariable int id){
-        ArticleDetailsDto.Response articleDetailsResponse = articleService.getArticleById(id);
+    public ResponseEntity<ResultResponse> getArticleById(@PathVariable int id, @AuthenticationPrincipal CustomUserDetails customUserDetails){
+        ArticleDetailsDto.Response articleDetailsResponse = articleService.getArticleById(id, customUserDetails.getUsername());
         ResultResponse response = ResultResponse.of(ResponseCode.ARTICLE_GET_SUCCESS, articleDetailsResponse);
 
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));

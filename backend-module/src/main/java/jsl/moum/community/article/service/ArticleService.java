@@ -100,11 +100,13 @@ public class ArticleService {
      * 게시글 조회
      */
     @Transactional
-    public ArticleDetailsDto.Response getArticleById(int articleId){
+    public ArticleDetailsDto.Response getArticleById(int articleId, String loginUserName){
         ArticleEntity article = getArticle(articleId);
         ArticleDetailsEntity articleDetails = getArticleDetails(articleId);
 
-        article.viewCountUp(); // 조회수 증가
+        if(!loginUserName.equals(article.getAuthor().getUsername())){
+            article.viewCountUp(); // 조회수 증가
+        }
 
         return new ArticleDetailsDto.Response(articleDetails, article);
     }
