@@ -83,10 +83,10 @@ public class ArticleRepositoryCustom {
 //                .from(articleEntity);
 
         JPAQuery<Long> countQuery = jpaQueryFactory
-                .select(articleEntity.id.count()) // 그룹화된 ID의 개수를 세기
+                .select(articleEntity.id.count())
                 .from(articleEntity)
                 .leftJoin(commentEntity).on(articleEntity.id.eq(commentEntity.articleDetails.articleId))
-                .groupBy(articleEntity.id); // content 쿼리와 동일한 groupBy 적용
+                .groupBy(articleEntity.id);
 
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);

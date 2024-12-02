@@ -30,7 +30,7 @@ public class SignupController {
         return new ResponseEntity<>(resultResponse, HttpStatus.valueOf(resultResponse.getStatus()));
     }
 
-    @PatchMapping("/api/re-join")
+    @PatchMapping("/re-join")
     public ResponseEntity<ResultResponse> reJoin(@RequestBody MemberDto.RejoinRequest rejoinRequestDto){
 
         MemberDto.Response responseDto = signupService.rejoinMember(rejoinRequestDto.getUsername());
