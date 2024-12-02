@@ -51,6 +51,7 @@ public class ArticleDto {
         private final MusicGenre genre;
         private final int likeCounts;
         private final String author;
+        private final String authorName;
         private final LocalDateTime createdAt;
         private final LocalDateTime updatedAt;
 
@@ -61,6 +62,7 @@ public class ArticleDto {
             this.fileUrl = article.getImageUrl();
             this.category = article.getCategory();
             this.author = article.getAuthor().getUsername();
+            this.authorName = article.getAuthor().getName();
             this.viewCounts = article.getViewCount();
             this.commentsCounts = article.getCommentsCount();
             this.genre = article.getGenre();
