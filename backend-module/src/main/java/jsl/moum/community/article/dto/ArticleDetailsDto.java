@@ -64,9 +64,11 @@ public class ArticleDetailsDto {
             this.likeCounts = article.getLikesCount();
             this.content = articleDetails.getContent();
             this.fileUrls = articleDetails.getImageUrls();
-            this.comments = articleDetails.getComments().stream()
+            this.comments = articleDetails.getComments() != null ?
+                    articleDetails.getComments().stream()
                     .map(CommentDto.Response::new)
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toList()) : null;
+
             this.createdAt = article.getCreatedAt();
             this.updatedAt = article.getUpdatedAt();
 

@@ -3,7 +3,10 @@ package jsl.moum.community.article.domain.article_details;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import jsl.moum.global.error.ErrorCode;
+import jsl.moum.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
@@ -12,15 +15,36 @@ import org.springframework.data.domain.Page;
 
 
 import java.util.List;
+import java.util.Optional;
 
 import static io.jsonwebtoken.lang.Strings.hasText;
 import static jsl.moum.community.article.domain.article.QArticleEntity.*;
+import static jsl.moum.community.article.domain.article_details.QArticleDetailsEntity.articleDetailsEntity;
 
 @Repository
 @RequiredArgsConstructor
+@Slf4j
 public class ArticleDetailsRepositoryCustom {
 
     private final JPAQueryFactory jpaQueryFactory;
+
+    /**
+
+     */
+    public ArticleDetailsEntity findArticleDetailsByArticleId(int articleId) {
+
+        ArticleDetailsEntity articleDetails = jpaQueryFactory
+                .selectFrom(articleDetailsEntity)
+                .where(articleDetailsEntity.articleId.eq(articleId))
+                .fetchOne();
+
+        if(articleDetails == null){
+            log.info(" findArticleDetailsByArticleId 메소드 : articleDetails == null");
+            throw new CustomException(ErrorCode.ARTICLE_DETAILS_NOT_FOUND);
+        }
+
+        return articleDetails;
+    }
 
 
     /**

@@ -44,6 +44,7 @@ public enum ErrorCode {
 
     // Article
     ARTICLE_NOT_FOUND(404,"F-AT001","게시글을 찾을 수 없습니다."),
+    ARTICLE_DETAILS_NOT_FOUND(404,"F-AT001","게시글 상세 내용을 찾을 수 없습니다."),
     ARTICLE_ALREADY_DELETED(404,"F-AT002","이미 삭제된 게시글입니다."),
 
     // PerForm Article

@@ -100,10 +100,9 @@ public class ArticleService {
      * 게시글 조회
      */
     @Transactional
-    public ArticleDetailsDto.Response getArticleById(int articleDetailsId){
-        ArticleEntity article = getArticle(articleDetailsId);
-        ArticleDetailsEntity articleDetails = getArticleDetails(article.getId());
-
+    public ArticleDetailsDto.Response getArticleById(int articleId){
+        ArticleEntity article = getArticle(articleId);
+        ArticleDetailsEntity articleDetails = getArticleDetails(articleId);
 
         article.viewCountUp(); // 조회수 증가
 
@@ -299,9 +298,9 @@ public class ArticleService {
     }
 
 
-    private ArticleDetailsEntity getArticleDetails(int articleDetailsId) {
-        return articleDetailsRepository.findById(articleDetailsId)
-                .orElseThrow(() -> new CustomException(ErrorCode.ARTICLE_NOT_FOUND));
+    private ArticleDetailsEntity getArticleDetails(int articleId) {
+        return articleDetailsRepositoryCustom.findArticleDetailsByArticleId(articleId);
+                /*.orElseThrow(() -> new CustomException(ErrorCode.ARTICLE_DETAILS_NOT_FOUND));*/
     }
 
     private ArticleEntity getArticle(int articleId) {

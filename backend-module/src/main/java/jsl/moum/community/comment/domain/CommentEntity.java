@@ -28,7 +28,7 @@ public class CommentEntity {
     private MemberEntity author;
 
     @JoinColumn(name = "fk_article_details_id")
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @ManyToOne(fetch = FetchType.LAZY)
     private ArticleDetailsEntity articleDetails;
 
     @Column(name = "content")
