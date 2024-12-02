@@ -101,8 +101,9 @@ public class ArticleService {
      */
     @Transactional
     public ArticleDetailsDto.Response getArticleById(int articleDetailsId){
-        ArticleDetailsEntity articleDetails = getArticleDetails(articleDetailsId);
         ArticleEntity article = getArticle(articleDetailsId);
+        ArticleDetailsEntity articleDetails = getArticleDetails(article.getId());
+
 
         article.viewCountUp(); // 조회수 증가
 
