@@ -94,7 +94,7 @@ public class PracticeRoomRepositoryImpl implements PracticeRoomRepositoryCustom 
             return null;
         } else{
             // [Haversine Formula]
-            double range = 0.1; // 10km range
+            double range = 0.5; // 50km range
             return practiceRoom.latitude.between(latitude - range, latitude + range)
                 .and(practiceRoom.longitude.between(longitude - range, longitude + range));
         }
