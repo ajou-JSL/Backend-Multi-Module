@@ -5,6 +5,7 @@ import jsl.moum.auth.domain.CustomUserDetails;
 import jsl.moum.auth.dto.MemberSortDto;
 import jsl.moum.member_profile.service.ProfileService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -61,7 +62,7 @@ public class ProfileController {
                                                          @RequestParam(defaultValue = "10") int size){
 
         loginCheck(customUserDetails.getUsername());
-        List<MemberSortDto.ExpResponse> responseDto = profileService.getProfilesSortByExp(page, size);
+        Page<MemberSortDto.ExpResponse> responseDto = profileService.getProfilesSortByExp(page, size);
         ResultResponse response = ResultResponse.of(ResponseCode.GET_PROFILE_SUCCESS, responseDto);
         return new ResponseEntity<>(response, HttpStatusCode.valueOf(response.getStatus()));
     }

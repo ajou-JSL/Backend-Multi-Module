@@ -8,6 +8,7 @@ import jsl.moum.record.domain.entity.RecordEntity;
 import jsl.moum.record.domain.repository.RecordRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -48,10 +49,19 @@ public class ProfileService {
      프로필 리스트 조회(필터링 - 랭킹 순)
      */
     @Transactional
-    public List<MemberSortDto.ExpResponse> getProfilesSortByExp(int page, int size) {
-        return memberRepositoryCustom.getMembersSortByExp(page, size);
-    }
+    public Page<MemberSortDto.ExpResponse> getProfilesSortByExp(int page, int size) {
+        Page<MemberEntity> memberEntities = memberRepositoryCustom.getMembersSortByExp(page, size);
 
+        return memberEntities.map(member ->
+                new MemberSortDto.ExpResponse(
+                        member.getId(),
+                        member.getName(),
+                        member.getUsername(),
+                        member.getExp(),
+                        member.getTier().toString()
+                )
+        );
+    }
     /**
      프로필 리스트 조회(필터링 - 이력 개수 순)
      */
