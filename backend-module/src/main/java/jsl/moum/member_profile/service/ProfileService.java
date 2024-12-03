@@ -57,6 +57,7 @@ public class ProfileService {
                         member.getId(),
                         member.getName(),
                         member.getUsername(),
+                        member.getProfileImageUrl(),
                         member.getExp(),
                         member.getTier().toString()
                 )

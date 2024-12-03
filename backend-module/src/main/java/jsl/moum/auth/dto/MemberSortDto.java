@@ -20,6 +20,7 @@ public class MemberSortDto {
         private Integer memberId;
         private String memberName;
         private String memberUsername;
+        private String fileUrl;
         private int exp;
         private String tier;
     }
