@@ -16,7 +16,6 @@ import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
 
-import static jsl.moum.business.domain.QPracticeRoom.practiceRoom;
 import static jsl.moum.business.domain.QPerformanceHall.performanceHall;
 
 @RequiredArgsConstructor
@@ -95,7 +94,7 @@ public class PerformanceHallRepositoryImpl implements PerformanceHallRepositoryC
             return null;
         } else{
             // [Haversine Formula]
-            double range = 0.1; // 10km range
+            double range = 0.5; // 50km range
             return performanceHall.latitude.between(latitude - range, latitude + range)
                     .and(performanceHall.longitude.between(longitude - range, longitude + range));
         }
@@ -140,11 +139,11 @@ public class PerformanceHallRepositoryImpl implements PerformanceHallRepositoryC
 
     private BooleanExpression standBetweenOrMinMax(Integer minStand, Integer maxStand){
         if(minStand != null && maxStand != null){
-            return practiceRoom.stand.between(minStand, maxStand);
+            return performanceHall.stand.between(minStand, maxStand);
         } else if(minStand != null){
-            return practiceRoom.stand.goe(minStand);
+            return performanceHall.stand.goe(minStand);
         } else if(maxStand != null){
-            return practiceRoom.stand.loe(maxStand);
+            return performanceHall.stand.loe(maxStand);
         } else{
             return null;
         }
@@ -153,7 +152,7 @@ public class PerformanceHallRepositoryImpl implements PerformanceHallRepositoryC
         if(hasPiano == null){
             return null;
         } else{
-            return practiceRoom.hasPiano.eq(hasPiano);
+            return performanceHall.hasPiano.eq(hasPiano);
         }
     }
 
@@ -161,7 +160,7 @@ public class PerformanceHallRepositoryImpl implements PerformanceHallRepositoryC
         if(hasAmp == null){
             return null;
         } else{
-            return practiceRoom.hasAmp.eq(hasAmp);
+            return performanceHall.hasAmp.eq(hasAmp);
         }
     }
 
@@ -169,7 +168,7 @@ public class PerformanceHallRepositoryImpl implements PerformanceHallRepositoryC
         if(hasSpeaker == null){
             return null;
         } else{
-            return practiceRoom.hasSpeaker.eq(hasSpeaker);
+            return performanceHall.hasSpeaker.eq(hasSpeaker);
         }
     }
 
@@ -177,7 +176,7 @@ public class PerformanceHallRepositoryImpl implements PerformanceHallRepositoryC
         if(hasMic == null){
             return null;
         } else{
-            return practiceRoom.hasMic.eq(hasMic);
+            return performanceHall.hasMic.eq(hasMic);
         }
     }
 
@@ -185,7 +184,7 @@ public class PerformanceHallRepositoryImpl implements PerformanceHallRepositoryC
         if(hasDrums == null){
             return null;
         } else{
-            return practiceRoom.hasDrums.eq(hasDrums);
+            return performanceHall.hasDrums.eq(hasDrums);
         }
     }
 
