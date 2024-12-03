@@ -235,7 +235,7 @@ public class PerformArticleService {
         필터링으로 공연 게시글 조회
      */
     @Transactional
-    public List<PerformArticleDto.Response> getPerformArticleWithFiltering(PerformArticleDto.SearchDto searchDto, int page, int size) {
+    public Page<PerformArticleDto.Response> getPerformArticleWithFiltering(PerformArticleDto.SearchDto searchDto, int page, int size) {
 
 //        PerformArticleDto.SearchDto searchDto = null;
 //        log.info("encodedString : {}", encodedString);
@@ -254,9 +254,8 @@ public class PerformArticleService {
         Pageable pageable = PageRequest.of(page, size);
         Page<PerformArticleEntity> teams = performArticleRepositoryCustom.searchPerformArticlesWithFiltering(searchDto, pageable);
 
-        List<PerformArticleDto.Response> performArticleList = teams.stream()
-                .map(PerformArticleDto.Response::new)
-                .collect(Collectors.toList());
+        Page<PerformArticleDto.Response> performArticleList = teams
+                .map(PerformArticleDto.Response::new);
 
         return performArticleList;
     }

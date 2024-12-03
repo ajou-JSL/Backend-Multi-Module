@@ -125,7 +125,7 @@ public class PerformArticleController {
                                                                 @RequestParam(defaultValue = "10") int size)
     {
         loginCheck(customUserDetails.getUsername());
-        List<PerformArticleDto.Response> responseDto = performArticleService.getPerformArticleWithFiltering(searchDto, page, size);
+        Page<PerformArticleDto.Response> responseDto = performArticleService.getPerformArticleWithFiltering(searchDto, page, size);
         ResultResponse response = ResultResponse.of(ResponseCode.GET_PERFORM_ARTICLE_SUCCESS,responseDto);
         return new ResponseEntity<>(response, HttpStatusCode.valueOf(response.getStatus()));
     }

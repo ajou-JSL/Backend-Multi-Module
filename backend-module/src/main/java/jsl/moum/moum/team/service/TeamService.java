@@ -354,7 +354,7 @@ public class TeamService {
      * 필터링으로 팀 목록 조회
      */
     @Transactional
-    public List<TeamDto.Response> getTeamsWithFiltering(TeamDto.SearchDto searchDto, int page, int size) {
+    public Page<TeamDto.Response> getTeamsWithFiltering(TeamDto.SearchDto searchDto, int page, int size) {
 
 //        TeamDto.SearchDto searchDto = null;
 //        log.info("encodedString : {}", encodedString);
@@ -373,9 +373,8 @@ public class TeamService {
         Pageable pageable = PageRequest.of(page, size);
         Page<TeamEntity> teams = teamRepositoryCustom.searchTeamsWithFiltering(searchDto, pageable);
 
-        List<TeamDto.Response> teamsResponseList = teams.stream()
-                .map(TeamDto.Response::new)
-                .collect(Collectors.toList());
+        Page<TeamDto.Response> teamsResponseList = teams
+                .map(TeamDto.Response::new);
 
         return teamsResponseList;
     }

@@ -6,6 +6,7 @@ import jsl.moum.community.article.dto.ArticleDetailsDto;
 import jsl.moum.community.article.dto.ArticleDto;
 import jsl.moum.community.article.service.ArticleService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -175,7 +176,7 @@ public class ArticleController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
-        List<ArticleDto.Response> articleList = articleService.getArticlesByFiltering(searchDto,page,size);
+        Page<ArticleDto.Response> articleList = articleService.getArticlesByFiltering(searchDto,page,size);
 
         ResultResponse response = ResultResponse.of(ResponseCode.ARTICLE_LIST_GET_SUCCESS, articleList);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));

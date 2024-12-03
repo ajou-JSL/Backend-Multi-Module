@@ -273,7 +273,7 @@ public class ArticleService {
      * 필터링으로 게시글 목록 조회
      */
     @Transactional(readOnly = true)
-    public List<ArticleDto.Response> getArticlesByFiltering(ArticleDto.SearchDto searchDto, int page, int size) {
+    public Page<ArticleDto.Response> getArticlesByFiltering(ArticleDto.SearchDto searchDto, int page, int size) {
 
 //        ArticleDto.SearchDto searchDto = null;
 //        log.info("encodedString : {}", encodedString);
@@ -292,9 +292,8 @@ public class ArticleService {
         Pageable pageable = PageRequest.of(page,size);
         Page<ArticleEntity> articles = articleRepositoryCustom.searchArticlesWithFiltering(searchDto, pageable);
 
-        List<ArticleDto.Response> articleResponseList = articles.stream()
-                .map(ArticleDto.Response::new)
-                .collect(Collectors.toList());
+        Page<ArticleDto.Response> articleResponseList = articles
+                .map(ArticleDto.Response::new);
 
         return articleResponseList;
     }

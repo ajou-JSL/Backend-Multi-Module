@@ -8,6 +8,7 @@ import jsl.moum.global.response.ResponseCode;
 import jsl.moum.global.response.ResultResponse;
 import jsl.moum.moum.team.service.TeamService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -200,7 +201,7 @@ public class TeamController {
                                                             @RequestParam(defaultValue = "10") int size)
     {
         loginCheck(customUserDetails.getUsername());
-        List<TeamDto.Response> responseDto = teamService.getTeamsWithFiltering(searchDto, page, size);
+        Page<TeamDto.Response> responseDto = teamService.getTeamsWithFiltering(searchDto, page, size);
         ResultResponse response = ResultResponse.of(ResponseCode.GET_TEAM_LIST_SUCCESS,responseDto);
         return new ResponseEntity<>(response, HttpStatusCode.valueOf(response.getStatus()));
     }
