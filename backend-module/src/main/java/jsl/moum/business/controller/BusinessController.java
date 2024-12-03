@@ -129,7 +129,7 @@ public class BusinessController {
                                                                  @RequestParam(name = "size", defaultValue = "10") int size,
                                                                  @RequestParam(name = "sortBy", defaultValue = "distance") String sortBy,
                                                                  @RequestParam(name = "orderBy", defaultValue = "asc") String orderBy,
-                                                                 @RequestParam(name = "name", required = false, defaultValue = "NULL") String name,
+                                                                 @RequestParam(name = "name", required = false) String name,
                                                                  @RequestParam(name = "latitude", required = false) Double latitude,
                                                                  @RequestParam(name = "longitude", required = false) Double longitude,
                                                                  @RequestParam(name = "minPrice", required = false) Integer minPrice,

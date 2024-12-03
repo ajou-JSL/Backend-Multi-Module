@@ -60,11 +60,6 @@ public class BusinessService {
     }
 
     public Page<PerformanceHallDto.Response> searchPerformanceHalls(PageRequest pageRequest, PerformanceHallDto.Search searchParams){
-
-        /**
-         * TODO
-         */
-
         return performanceHallRepository.findAllBySearchParams(pageRequest, searchParams).map(PerformanceHallDto.Response::new);
     }
 
