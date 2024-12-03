@@ -6,8 +6,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TestController {
 
-    @GetMapping("/test")
+    @GetMapping("/api/test")
     public String test(){
         return "server is alive";
+    }
+
+    @GetMapping("/api/chat/test")
+    public String chattest(){
+        return "chat server is alive";
     }
 }
