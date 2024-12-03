@@ -198,8 +198,8 @@ public class PerformArticleService {
     */
     @Transactional(readOnly = true)
     public List<PerformArticleDto.Response> getAllThisMonthPerformArticles(int page, int size){
-        Pageable pageable = PageRequest.of(page,size);
-        Page<PerformArticleEntity> performArticles = performArticleRepositoryCustom.getThisMonthPerformArticles(pageable);
+        //Pageable pageable = PageRequest.of(page,size);
+        Page<PerformArticleEntity> performArticles = performArticleRepositoryCustom.getThisMonthPerformArticles(page,size);
 
         List<PerformArticleDto.Response> responseList = performArticles.stream()
                 .map(PerformArticleDto.Response::new)

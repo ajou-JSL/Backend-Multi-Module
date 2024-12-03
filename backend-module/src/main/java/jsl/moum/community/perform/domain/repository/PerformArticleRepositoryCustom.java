@@ -9,6 +9,7 @@ import jsl.moum.community.perform.domain.entity.PerformArticleEntity;
 import jsl.moum.community.perform.dto.PerformArticleDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
@@ -33,7 +34,8 @@ public class PerformArticleRepositoryCustom {
      * WHERE performance_start_date BETWEEN DATE_FORMAT(NOW(), '%Y-%m-01') AND LAST_DAY(NOW())
      * ORDER BY created_at DESC;
      */
-    public Page<PerformArticleEntity> getThisMonthPerformArticles(Pageable pageable) {
+    public Page<PerformArticleEntity> getThisMonthPerformArticles(int page, int size) {
+        Pageable pageable = PageRequest.of(page,size);
         LocalDate startOfMonth = LocalDate.now().withDayOfMonth(1);
         LocalDate endOfMonth = startOfMonth.withDayOfMonth(startOfMonth.lengthOfMonth());
 
