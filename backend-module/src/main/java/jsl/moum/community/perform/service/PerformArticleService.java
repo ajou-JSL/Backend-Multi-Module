@@ -197,13 +197,12 @@ public class PerformArticleService {
         이달의 공연 게시글 리스트 조회
     */
     @Transactional(readOnly = true)
-    public List<PerformArticleDto.Response> getAllThisMonthPerformArticles(int page, int size){
-        //Pageable pageable = PageRequest.of(page,size);
-        Page<PerformArticleEntity> performArticles = performArticleRepositoryCustom.getThisMonthPerformArticles(page,size);
+    public Page<PerformArticleDto.Response> getAllThisMonthPerformArticles(int page, int size){
+        Pageable pageable = PageRequest.of(page,size);
+        Page<PerformArticleEntity> performArticles = performArticleRepositoryCustom.getThisMonthPerformArticles(pageable);
 
-        List<PerformArticleDto.Response> responseList = performArticles.stream()
-                .map(PerformArticleDto.Response::new)
-                .toList();
+        Page<PerformArticleDto.Response> responseList = performArticles
+                .map(PerformArticleDto.Response::new);
 
         return responseList;
     }

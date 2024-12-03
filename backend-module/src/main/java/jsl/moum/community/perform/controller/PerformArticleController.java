@@ -9,6 +9,7 @@ import jsl.moum.global.response.ResponseCode;
 import jsl.moum.global.response.ResultResponse;
 import jsl.moum.moum.team.dto.TeamDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -97,7 +98,7 @@ public class PerformArticleController {
                                                                @RequestParam(defaultValue = "0") int page,
                                                                @RequestParam(defaultValue = "10") int size){
         loginCheck(customUserDetails.getUsername());
-        List<PerformArticleDto.Response> responseDto = performArticleService.getAllThisMonthPerformArticles(page, size);
+        Page<PerformArticleDto.Response> responseDto = performArticleService.getAllThisMonthPerformArticles(page, size);
         ResultResponse result = ResultResponse.of(ResponseCode.GET_THIS_MONTH_PERFORM_ARTICLE_SUCCESS,responseDto);
         return new ResponseEntity<>(result, HttpStatusCode.valueOf(result.getStatus()));
     }
