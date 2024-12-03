@@ -8,6 +8,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PerformanceHallRepository extends JpaRepository<PerformanceHall, Integer>, PerformanceHallRepositoryCustom {
-
-    Page<PerformanceHall> findAllBySearchParams(Pageable pageable, PerformanceHallDto.Search searchParams);
 }
