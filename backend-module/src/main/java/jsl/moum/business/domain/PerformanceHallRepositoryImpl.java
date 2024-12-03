@@ -205,6 +205,8 @@ public class PerformanceHallRepositoryImpl implements PerformanceHallRepositoryC
                 return isAscending ? distance.asc() : distance.desc();
             case "price":
                 return isAscending ? performanceHall.price.asc() : performanceHall.price.desc();
+            case "size":
+                return isAscending ? performanceHall.size.asc() : performanceHall.size.desc();
             case "capacity":
                 return isAscending ? performanceHall.capacity.asc() : performanceHall.capacity.desc();
             case "stand":
