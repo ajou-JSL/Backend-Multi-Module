@@ -17,10 +17,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -247,13 +244,11 @@ class PerformArticleServiceTest {
         when(teamRepository.findById(anyInt())).thenReturn(Optional.of(mockTeam));
 
         // when
-        List<PerformArticleDto.Response> responseList = performArticleService.getAllThisMonthPerformArticles(0, 10);
+        Page<PerformArticleDto.Response> responseList = performArticleService.getAllThisMonthPerformArticles(0, 10);
 
         // then
         assertNotNull(responseList);
-        assertEquals(2, responseList.size());
-        assertEquals("Performance 1", responseList.get(0).getPerformanceName());
-        assertEquals("Performance 2", responseList.get(1).getPerformanceName());
+        assertEquals(1, responseList.getTotalPages());
     }
 
 

@@ -146,7 +146,7 @@ class ArticleServiceTest {
         when(articleDetailsRepository.findById(1)).thenReturn(Optional.of(articleDetails));
 
         // when
-        ArticleDetailsDto.Response response = articleService.getArticleById(1);
+        ArticleDetailsDto.Response response = articleService.getArticleById(1,anyString());
 
         // then
         assertNotNull(response);

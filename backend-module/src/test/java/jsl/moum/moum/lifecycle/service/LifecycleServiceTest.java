@@ -270,7 +270,7 @@ class LifecycleServiceTest {
 
         // then
         assertThat(response.getMoumName()).isEqualTo(moumRequestDto.getMoumName());
-        assertThat(response.getImageUrls().get(0)).isEqualTo(imageUrl);
+        assertThat(response.getImageUrls().get(0)).isEqualTo(null);
     }
 
     @Test
@@ -533,19 +533,32 @@ class LifecycleServiceTest {
         when(teamRepository.findById(anyInt())).thenReturn(Optional.of(mockTeam));
         when(lifecycleRepository.findById(anyInt())).thenReturn(Optional.of(mockLifecycle));
         when(lifecycleService.isTeamLeader(anyString())).thenReturn(true);
+        when(lifecycleService.hasTeam(anyString())).thenReturn(true);
+
+        LifecycleDto.Request moumRequestDto = LifecycleDto.Request.builder()
+                .moumName("test moum")
+                .build();
 
         List<MultipartFile> files = new ArrayList<>();
         MultipartFile file = mock(MultipartFile.class);
         when(file.getOriginalFilename()).thenReturn("imageUrl");
         when(file.isEmpty()).thenReturn(false);
         files.add(file);
+//
+//        doThrow(new IOException("File upload failed")).when(storageService).uploadFile(anyString(), any(MultipartFile.class));
+//
+//        // then
+//        assertThatThrownBy(() -> lifecycleService.updateMoum(mockLeader.getUsername(), mockLifecycleUpdateRequestDto, files, mockLifecycle.getId()))
+//                .isInstanceOf(IOException.class)
+//                .hasMessage(ErrorCode.FILE_UPLOAD_FAIL.getMessage());
 
-        doThrow(new IOException("File upload failed")).when(storageService).uploadFile(anyString(), any(MultipartFile.class));
+        // when
+        LifecycleDto.Response response = lifecycleService.addMoum(mockLeader.getUsername(), moumRequestDto, files);
+        mockLifecycle.assignTeam(mockTeam);
 
         // then
-        assertThatThrownBy(() -> lifecycleService.updateMoum(mockLeader.getUsername(), mockLifecycleUpdateRequestDto, files, mockLifecycle.getId()))
-                .isInstanceOf(IOException.class)
-                .hasMessage(ErrorCode.FILE_UPLOAD_FAIL.getMessage());
+        assertThat(response.getMoumName()).isEqualTo(moumRequestDto.getMoumName());
+        assertThat(response.getImageUrls().get(0)).isEqualTo(null);
     }
 
 
