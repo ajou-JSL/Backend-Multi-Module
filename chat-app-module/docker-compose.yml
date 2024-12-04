@@ -29,7 +29,7 @@ services:
 
   mysql:
     image: mysql:8.0
-    container_name: mysql-container
+    container_name: mysql-chat-container
     environment:
       MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
       MYSQL_DATABASE: "${MYSQL_DATABASE}"
@@ -60,4 +60,5 @@ services:
 
 networks:
   app-network:
-    driver: bridge
+    #    driver: bridge
+    external: true
