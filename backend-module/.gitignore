@@ -8,7 +8,7 @@ build/
 ### yml ignore
 #src/main/resources/application.yml
 #application.yml
-
+.env
 src/main/generated
 
 ### STS ###

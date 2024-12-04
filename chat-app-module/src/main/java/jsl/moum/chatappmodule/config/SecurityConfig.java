@@ -36,7 +36,7 @@ public class SecurityConfig {
                 .formLogin(formLoginSpec -> formLoginSpec.disable());
 
         http.authorizeExchange(exchange -> exchange
-                .pathMatchers("/api/chat/test**").permitAll()
+                .pathMatchers("/api/chat/test**","/api/chat/health-check").permitAll()
                 .pathMatchers("/api/**").authenticated()
                 .anyExchange().authenticated());
 
