@@ -23,12 +23,50 @@ public class LikesController {
     private final LikesService likesService;
     private final MemberRepository memberRepository;
 
+    @GetMapping("/api/articles/member/{memberId}/likes/{articleId}")
+    public ResponseEntity<ResultResponse> getLikes(@PathVariable(name = "memberId") int memberId, @PathVariable(name = "articleId") int articleId){
+        boolean isLikedArticle = likesService.isMemberLikesArticle(memberId, articleId);
+        ResultResponse response = ResultResponse.of(ResponseCode.LIKES_GET_SUCCESS, isLikedArticle);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+    }
+
+    @GetMapping("/api/performs/member/{memberId}/likes/{performArticleId}")
+    public ResponseEntity<ResultResponse> getPerformLikes(@PathVariable(name = "memberId") int memberId, @PathVariable(name = "performArticleId") int performArticleId){
+        boolean isLikedPerformArticle = likesService.isMemberLikesPerformArticle(memberId, performArticleId);
+        ResultResponse response = ResultResponse.of(ResponseCode.LIKES_GET_SUCCESS, isLikedPerformArticle);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+    }
+
+    @PutMapping("/api/articles/member/{memberId}/likes/{articleId}")
+    public ResponseEntity<ResultResponse> createLikes(@PathVariable(name = "memberId") int memberId, @PathVariable(name = "articleId") int articleId){
+        boolean isLikedArticle = likesService.toggleArticleLikes(memberId, articleId);
+        ResultResponse response;
+        if(isLikedArticle == true){
+            response = ResultResponse.of(ResponseCode.LIKES_CREATE_SUCCESS, isLikedArticle);
+        } else {
+            response = ResultResponse.of(ResponseCode.LIKES_DELETE_SUCCESS, isLikedArticle);
+        }
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+    }
+
+    @PutMapping("/api/performs/member/{memberId}/likes/{performArticleId}")
+    public ResponseEntity<ResultResponse> createPerformLikes(@PathVariable(name = "memberId") int memberId, @PathVariable(name = "performArticleId") int performArticleId){
+        boolean isLikedPerformArticle = likesService.togglePerformArticleLikes(memberId, performArticleId);
+        ResultResponse response;
+        if(isLikedPerformArticle == true){
+            response = ResultResponse.of(ResponseCode.LIKES_CREATE_SUCCESS, isLikedPerformArticle);
+        } else {
+            response = ResultResponse.of(ResponseCode.LIKES_DELETE_SUCCESS, isLikedPerformArticle);
+        }
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
+    }
+
     /**
      * 일반 게시글 좋아요 등록 API
      */
     @PostMapping("/api/articles/likes/{articleId}")
     public ResponseEntity<ResultResponse> createLikes(@AuthenticationPrincipal CustomUserDetails customUserDetails,
-                                                      @PathVariable int articleId){
+                                                      @PathVariable(name = "articleId") int articleId){
 
         String loginUserName = loginCheck(customUserDetails.getUsername());
         LikesDto.Response likesResponse = likesService.createLikes(loginUserName,articleId);
@@ -42,7 +80,7 @@ public class LikesController {
      */
     @DeleteMapping("/api/articles/likes/{articleId}")
     public ResponseEntity<ResultResponse> deleteLikes(@AuthenticationPrincipal CustomUserDetails customUserDetails,
-                                                      @PathVariable int articleId){
+                                                      @PathVariable(name = "articleId") int articleId){
 
         String loginUserName = loginCheck(customUserDetails.getUsername());
         LikesDto.Response likesResponse = likesService.deleteLikes(loginUserName,articleId);
@@ -56,7 +94,7 @@ public class LikesController {
      */
     @PostMapping("/api/performs/likes/{performArticleId}")
     public ResponseEntity<ResultResponse> createPerformLikes(@AuthenticationPrincipal CustomUserDetails customUserDetails,
-                                                      @PathVariable int performArticleId){
+                                                      @PathVariable(name = "performArticleId") int performArticleId){
 
         String loginUserName = loginCheck(customUserDetails.getUsername());
         LikesDto.Response likesResponse = likesService.createPerformLikes(loginUserName,performArticleId);
@@ -70,7 +108,7 @@ public class LikesController {
      */
     @DeleteMapping("/api/performs/likes/{performArticleId}")
     public ResponseEntity<ResultResponse> deletePerformLikes(@AuthenticationPrincipal CustomUserDetails customUserDetails,
-                                                      @PathVariable int performArticleId){
+                                                      @PathVariable(name = "performArticleId") int performArticleId){
 
         String loginUserName = loginCheck(customUserDetails.getUsername());
         LikesDto.Response likesResponse = likesService.deletePerformLikes(loginUserName,performArticleId);
