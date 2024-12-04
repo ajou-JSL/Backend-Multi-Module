@@ -3,13 +3,13 @@ version: '3.8'
 services:
   backendmodule:
     image: openjdk:17-jdk-slim
-    container_name: backendmodule-container-blue
+    container_name: backendmodule-container
     working_dir: /backendmodule
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8082:8080" # Blue 환경에서는 별도 포트 사용 가능
+      - "${BACKENDMODULE_PORT}:8080"
     environment:
       SPRING_DATASOURCE_URL: "${SPRING_DATASOURCE_URL}"
       SPRING_DATASOURCE_USERNAME: "${SPRING_DATASOURCE_USERNAME}"
@@ -36,7 +36,7 @@ services:
 
   mysql:
     image: mysql:8.0
-    container_name: mysql-container-blue
+    container_name: mysql-container
     environment:
       MYSQL_ROOT_PASSWORD: "${SPRING_DATASOURCE_PASSWORD}"
       MYSQL_DATABASE: moum
@@ -47,7 +47,7 @@ services:
 
   redis:
     image: redis:latest
-    container_name: redis-container-blue
+    container_name: redis-container
     ports:
       - "${REDIS_PORT}:6379"
     networks:

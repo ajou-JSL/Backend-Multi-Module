@@ -1,13 +1,15 @@
+version: '3.1'
+
 services:
   chatmodule:
     image: openjdk:17-jdk-slim
-    container_name: chatmodule-container-green
+    container_name: chatmodule-container
     working_dir: /chatmodule
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8071:8070"
+      - "${CHATMODULE_PORT}:8070"
     environment:
       SPRING_PROFILES_ACTIVE: "${SPRING_PROFILES_ACTIVE}"
       SPRING_R2DBC_URL: "${SPRING_R2DBC_URL}"
@@ -27,7 +29,7 @@ services:
 
   mysql:
     image: mysql:8.0
-    container_name: mysql-container-green
+    container_name: mysql-container
     environment:
       MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
       MYSQL_DATABASE: "${MYSQL_DATABASE}"
@@ -38,7 +40,7 @@ services:
 
   redis:
     image: redis:latest
-    container_name: redis-container-green
+    container_name: redis-container
     ports:
       - "${REDIS_PORT}:6379"
     networks:
@@ -46,7 +48,7 @@ services:
 
   chatdb:
     image: mongo:latest
-    container_name: mongo-container-green
+    container_name: mongo-container
     environment:
       MONGO_INITDB_ROOT_USERNAME: "${SPRING_DATA_MONGODB_USERNAME}"
       MONGO_INITDB_ROOT_PASSWORD: "${SPRING_DATA_MONGODB_PASSWORD}"
