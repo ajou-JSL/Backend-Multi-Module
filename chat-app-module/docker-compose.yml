@@ -9,7 +9,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "${CHATMODULE_PORT}:8070"
+      - "8071:8070"
     environment:
       SPRING_PROFILES_ACTIVE: "${SPRING_PROFILES_ACTIVE}"
       SPRING_R2DBC_URL: "${SPRING_R2DBC_URL}"
