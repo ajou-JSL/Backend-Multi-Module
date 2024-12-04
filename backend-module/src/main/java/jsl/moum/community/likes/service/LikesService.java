@@ -26,6 +26,116 @@ public class LikesService {
     private final PerformArticleRepository performArticleRepository;
     private final LikesRepositoryCustom likesRepositoryCustom;
 
+    public boolean isMemberLikesArticle(int memberId, int articleId){
+        return likesRepositoryCustom.isAlreadyLikesOnArticle(memberId, articleId);
+    }
+
+    public boolean isMemberLikesPerformArticle(int memberId, int performArticleId){
+        return likesRepositoryCustom.isAlreadyLikesOnPerformArticle(memberId, performArticleId);
+    }
+
+    public boolean toggleArticleLikes(int memberId, int articleId){
+        if(isMemberLikesArticle(memberId, articleId)){
+            return deleteLikesByMemberId(memberId, articleId);
+        }else{
+            return createLikesByMemberId(memberId, articleId);
+        }
+    }
+
+    public boolean togglePerformArticleLikes(int memberId, int performArticleId){
+        if(isMemberLikesPerformArticle(memberId, performArticleId)){
+            return deletePerformLikesByMemberId(memberId, performArticleId);
+        }else{
+            return createPerformLikesByMemberId(memberId, performArticleId);
+        }
+    }
+
+    public boolean createLikesByMemberId(int memberId, int articleId){
+        MemberEntity member = findMemberByMemberId(memberId);
+        ArticleEntity article = findArticle(articleId);
+
+        LikesDto.Request likesRequest = LikesDto.Request.builder()
+                .member(member)
+                .article(article)
+                .build();
+
+        LikesEntity newLikes = likesRequest.toEntity();
+        likesRepository.save(newLikes);
+
+        // 유저이름이 게시글작성자랑 똑같으면 에러
+        if(memberId == article.getAuthor().getId()){
+            throw new CustomException(ErrorCode.CANNOT_CREATE_SELF_LIKES);
+        }
+
+        // 좋아요 +1 후 저장
+        article.updateLikesCount(1);
+        articleRepository.save(article);
+
+        article.getAuthor().updateMemberExpAndRank(1);
+
+        return true;
+    }
+
+    public boolean deleteLikesByMemberId(int memberId, int articleId){
+        ArticleEntity article = findArticle(articleId);
+
+        LikesEntity likesEntity = likesRepository.findByArticleIdAndMemberId(articleId, memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.LIKES_NOT_FOUND));
+
+        // 좋아요 삭제
+        likesRepository.deleteById(likesEntity.getId());
+
+        // 게시글 좋아요 수 감소 및 저장
+        article.updateLikesCount(-1);
+        articleRepository.save(article);
+
+        article.getAuthor().updateMemberExpAndRank(-1);
+
+        return false;
+    }
+
+    public boolean createPerformLikesByMemberId(int memberId, int performArticleId){
+        MemberEntity member = findMemberByMemberId(memberId);
+        PerformArticleEntity performArticle = findPerformArticle(performArticleId);
+
+        LikesDto.Request likesRequest = LikesDto.Request.builder()
+                .member(member)
+                .performArticle(performArticle)
+                .build();
+
+        LikesEntity newLikes = likesRequest.toEntity();
+        likesRepository.save(newLikes);
+
+        // 좋아요 +1 후 저장
+        performArticle.updateLikesCount(1);
+        performArticleRepository.save(performArticle);
+
+        performArticle.getTeam().updateTeamExpAndRank(1);
+
+        return true;
+    }
+
+    public boolean deletePerformLikesByMemberId(int memberId, int performArticleId){
+        PerformArticleEntity performArticle = findPerformArticle(performArticleId);
+
+        LikesEntity likesEntity = likesRepository.findByPerformArticleIdAndMemberId(performArticleId, memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.LIKES_NOT_FOUND));
+
+        // 좋아요 삭제
+        likesRepository.deleteById(likesEntity.getId());
+
+        // 게시글 좋아요 수 감소 및 저장
+        performArticle.updateLikesCount(-1);
+        performArticleRepository.save(performArticle);
+
+        performArticle.getTeam().updateTeamExpAndRank(-1);
+
+        return false;
+    }
+
+
+
+
     /**
      일반 게시글 좋아요 등록(생성)
      */
@@ -33,7 +143,7 @@ public class LikesService {
     public LikesDto.Response createLikes(String memberName, int articleId) {
 
         ArticleEntity article = findArticle(articleId);
-        MemberEntity member = findMember(memberName);
+        MemberEntity member = findMemberByUsername(memberName);
 
         LikesDto.Request likesRequest = LikesDto.Request.builder()
                 .member(member)
@@ -68,7 +178,7 @@ public class LikesService {
     @Transactional
     public LikesDto.Response deleteLikes(String memberName, int articleId) {
 
-        MemberEntity member = findMember(memberName);
+        MemberEntity member = findMemberByUsername(memberName);
 
         // 해당 게시글에 대해 이 멤버가 누른 좋아요 찾기
         LikesEntity likesEntity = likesRepository.findByArticleIdAndMemberId(articleId, member.getId())
@@ -100,7 +210,7 @@ public class LikesService {
     public LikesDto.Response createPerformLikes(String memberName, int performArticleId) {
 
         PerformArticleEntity performArticle = findPerformArticle(performArticleId);
-        MemberEntity member = findMember(memberName);
+        MemberEntity member = findMemberByUsername(memberName);
 
         LikesDto.Request likesRequest = LikesDto.Request.builder()
                 .member(member)
@@ -130,7 +240,7 @@ public class LikesService {
     @Transactional
     public LikesDto.Response deletePerformLikes(String memberName, int performArticleId) {
 
-        MemberEntity member = findMember(memberName);
+        MemberEntity member = findMemberByUsername(memberName);
 
         // 해당 게시글에 대해 이 멤버가 누른 좋아요 찾기
         LikesEntity likesEntity = likesRepository.findByPerformArticleIdAndMemberId(performArticleId, member.getId())
@@ -164,12 +274,17 @@ public class LikesService {
                 .orElseThrow(()-> new CustomException(ErrorCode.PERFORM_ARTICLE_NOT_FOUND));
     }
 
-    public MemberEntity findMember(String memberName){
+    public MemberEntity findMemberByUsername(String memberName){
 
         if(memberRepository.findByUsername(memberName) == null){
             throw new CustomException(ErrorCode.MEMBER_NOT_EXIST);
         }
         return memberRepository.findByUsername(memberName);
+    }
+
+    public MemberEntity findMemberByMemberId(Integer memberId){
+        return memberRepository.findById(memberId)
+                .orElseThrow(()-> new CustomException(ErrorCode.MEMBER_NOT_EXIST));
     }
 
 }

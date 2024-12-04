@@ -53,6 +53,7 @@ public enum ResponseCode {
     // Likes
     LIKES_CREATE_SUCCESS(201,"S-L001","좋아요 등록 성공"),
     LIKES_DELETE_SUCCESS(200,"S-L002","좋아요 삭제 성공"),
+    LIKES_GET_SUCCESS(200,"S-L003","좋아요 조회 성공"),
 
     // Records
     RECORD_ADD_SUCCESS(201,"S-R001","이력 등록 성공"),
