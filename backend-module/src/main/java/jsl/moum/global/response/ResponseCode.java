@@ -49,6 +49,7 @@ public enum ResponseCode {
     COMMENT_CREATE_SUCCESS(201,"S-C001","댓글 작성 성공"),
     COMMENT_UPDATE_SUCCESS(201,"S-C002","댓글 수정 성공"),
     COMMENT_DELETE_SUCCESS(200,"S-C003","댓글 삭제 성공"),
+    COMMENT_LIST_GET_SUCCESS(200,"S-C004","댓글 목록 조회 성공"),
 
     // Likes
     LIKES_CREATE_SUCCESS(201,"S-L001","좋아요 등록 성공"),

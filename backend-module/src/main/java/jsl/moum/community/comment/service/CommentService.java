@@ -2,6 +2,7 @@ package jsl.moum.community.comment.service;
 
 import jsl.moum.auth.domain.entity.MemberEntity;
 import jsl.moum.auth.domain.repository.MemberRepository;
+import jsl.moum.community.article.dto.ArticleDetailsDto;
 import jsl.moum.community.comment.domain.CommentEntity;
 import jsl.moum.community.comment.domain.CommentRepository;
 import jsl.moum.community.comment.dto.CommentDto;
@@ -16,6 +17,8 @@ import jsl.moum.global.error.ErrorCode;
 import jsl.moum.global.error.exception.CustomException;
 import jsl.moum.global.error.exception.MemberNotExistException;
 import jsl.moum.global.error.exception.NoAuthorityException;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -116,5 +119,17 @@ public class CommentService {
         if (!memberName.equals(author)) {
             throw new NoAuthorityException();
         }
+    }
+
+    /**
+     * 댓글 목록 조회
+     */
+
+    public List<CommentDto.Response> getCommentsByArticleId(int articleId){
+        ArticleDetailsEntity articleDetails = getArticleDetails(articleId);
+        List<CommentEntity> comments = articleDetails.getComments();
+        return comments.stream()
+                .map(CommentDto.Response::new)
+                .toList();
     }
 }
