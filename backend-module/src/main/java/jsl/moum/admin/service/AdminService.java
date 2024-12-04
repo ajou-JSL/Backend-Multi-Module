@@ -308,6 +308,36 @@ public class AdminService {
         }
     }
 
+    public PracticeRoomDto updatePracticeRoom(int roomId, PracticeRoomDto.Update updateDto) {
+        PracticeRoom room = practiceRoomRepository.findById(roomId)
+                .orElseThrow(() -> new CustomException(ErrorCode.PRACTICE_ROOM_NOT_FOUND));
+        room.setName(updateDto.getName());
+        room.setAddress(updateDto.getAddress());
+        room.setOwner(updateDto.getOwner());
+        room.setPhone(updateDto.getPhone());
+        room.setEmail(updateDto.getEmail());
+        room.setPrice(updateDto.getPrice());
+        room.setCapacity(updateDto.getCapacity());
+        room.setType(updateDto.getType());
+        room.setStand(updateDto.getStand());
+        room.setHasPiano(updateDto.isHasPiano());
+        room.setHasAmp(updateDto.isHasAmp());
+        room.setHasSpeaker(updateDto.isHasSpeaker());
+        room.setHasMic(updateDto.isHasMic());
+        room.setHasDrums(updateDto.isHasDrums());
+        room.setDetails(updateDto.getDetails());
+
+        room = practiceRoomRepository.save(room);
+        return new PracticeRoomDto(room);
+    }
+
+    public boolean deletePracticeRoom(int roomId) {
+        PracticeRoom room = practiceRoomRepository.findById(roomId)
+                .orElseThrow(() -> new CustomException(ErrorCode.PRACTICE_ROOM_NOT_FOUND));
+        practiceRoomRepository.delete(room);
+        return true;
+    }
+
     private boolean requiredFieldsCheckPracticeRoom(PracticeRoomDto.Register registerDto){
         return registerDto.getName() != null
                 && registerDto.getAddress() != null
@@ -378,6 +408,37 @@ public class AdminService {
             log.error("공연장 이미지 등록 중 오류 발생", e);
             throw new CustomException(ErrorCode.FILE_UPLOAD_FAIL);
         }
+    }
+
+    public PerformanceHallDto updatePerformanceHall(int hallId, PerformanceHallDto.Update updateDto) {
+        PerformanceHall hall = performanceHallRepository.findById(hallId)
+                .orElseThrow(() -> new CustomException(ErrorCode.PERFORMANCE_HALL_NOT_FOUND));
+        hall.setName(updateDto.getName());
+        hall.setPrice(updateDto.getPrice());
+        hall.setSize(updateDto.getSize());
+        hall.setCapacity(updateDto.getCapacity());
+        hall.setAddress(updateDto.getAddress());
+        hall.setOwner(updateDto.getOwner());
+        hall.setPhone(updateDto.getPhone());
+        hall.setEmail(updateDto.getEmail());
+        hall.setType(updateDto.getType());
+        hall.setStand(updateDto.getStand());
+        hall.setHasPiano(updateDto.isHasPiano());
+        hall.setHasAmp(updateDto.isHasAmp());
+        hall.setHasSpeaker(updateDto.isHasSpeaker());
+        hall.setHasMic(updateDto.isHasMic());
+        hall.setHasDrums(updateDto.isHasDrums());
+        hall.setDetails(updateDto.getDetails());
+
+        hall = performanceHallRepository.save(hall);
+        return new PerformanceHallDto(hall);
+    }
+
+    public boolean deletePerformanceHall(int hallId) {
+        PerformanceHall hall = performanceHallRepository.findById(hallId)
+                .orElseThrow(() -> new CustomException(ErrorCode.PERFORMANCE_HALL_NOT_FOUND));
+        performanceHallRepository.delete(hall);
+        return true;
     }
 
     private boolean requiredFieldsCheckPerformanceHall(PerformanceHallDto.Register registerDto){

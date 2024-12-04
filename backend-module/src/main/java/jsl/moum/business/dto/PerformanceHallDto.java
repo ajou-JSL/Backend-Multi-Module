@@ -181,7 +181,6 @@ public class PerformanceHallDto {
         private String owner;
         private String phone;
         private String email;
-        private String mapUrl;
         private int price;
         private int size;
         private int capacity;
@@ -193,8 +192,6 @@ public class PerformanceHallDto {
         private boolean hasMic;
         private boolean hasDrums;
         private String details;
-        private Double latitude;
-        private Double longitude;
 
         public PerformanceHall toEntity(PerformanceHall hall){
             hall.setName(name);
@@ -205,7 +202,6 @@ public class PerformanceHallDto {
             hall.setOwner(owner);
             hall.setPhone(phone);
             hall.setEmail(email);
-            hall.setMapUrl(mapUrl);
             hall.setType(type);
             hall.setStand(stand);
             hall.setHasPiano(hasPiano);
@@ -214,8 +210,6 @@ public class PerformanceHallDto {
             hall.setHasMic(hasMic);
             hall.setHasDrums(hasDrums);
             hall.setDetails(details);
-            hall.setLatitude(latitude);
-            hall.setLongitude(longitude);
             return hall;
         }
     }
