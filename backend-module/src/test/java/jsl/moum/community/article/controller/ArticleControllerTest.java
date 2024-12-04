@@ -166,7 +166,7 @@ class ArticleControllerTest {
 
 
         // when
-        when(articleService.getArticleById(1)).thenReturn(mockResponse);
+        when(articleService.getArticleById(anyInt(),anyString())).thenReturn(mockResponse);
 
         // then
         mockMvc.perform(get("/api/articles/1"))

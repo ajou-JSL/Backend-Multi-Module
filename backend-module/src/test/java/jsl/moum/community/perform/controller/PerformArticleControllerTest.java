@@ -21,6 +21,7 @@ import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
@@ -258,7 +259,7 @@ class PerformArticleControllerTest {
         );
 
         // when: 서비스에서 이번 달 공연만 반환하도록 설정
-        when(performArticleService.getAllThisMonthPerformArticles(0, 10)).thenReturn(responseList);
+        when(performArticleService.getAllThisMonthPerformArticles(0, 10)).thenReturn((Page<PerformArticleDto.Response>) responseList);
 
         // then: 이번 달 공연 게시글만 조회되는지 확인
         mockMvc.perform(MockMvcRequestBuilders.get("/api/performs-all/this-month")
