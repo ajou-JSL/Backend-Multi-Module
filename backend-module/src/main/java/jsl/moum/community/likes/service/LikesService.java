@@ -84,6 +84,11 @@ public class LikesService {
         MemberEntity member = findMemberByMemberId(memberId);
         ArticleEntity article = findArticle(articleId);
 
+        // 유저이름이 게시글작성자랑 똑같으면 에러
+        if(memberId == article.getAuthor().getId()){
+            throw new CustomException(ErrorCode.CANNOT_CREATE_SELF_LIKES);
+        }
+
         LikesDto.Request likesRequest = LikesDto.Request.builder()
                 .member(member)
                 .article(article)
@@ -91,11 +96,6 @@ public class LikesService {
 
         LikesEntity newLikes = likesRequest.toEntity();
         likesRepository.save(newLikes);
-
-        // 유저이름이 게시글작성자랑 똑같으면 에러
-        if(memberId == article.getAuthor().getId()){
-            throw new CustomException(ErrorCode.CANNOT_CREATE_SELF_LIKES);
-        }
 
         // 좋아요 +1 후 저장
         article.updateLikesCount(1);
