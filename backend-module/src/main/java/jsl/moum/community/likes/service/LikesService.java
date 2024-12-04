@@ -26,20 +26,27 @@ public class LikesService {
     private final PerformArticleRepository performArticleRepository;
     private final LikesRepositoryCustom likesRepositoryCustom;
 
-    public boolean isMemberLikesArticle(int memberId, int articleId){
-        return likesRepositoryCustom.isAlreadyLikesOnArticle(memberId, articleId);
+    public LikesDto.Toggle isMemberLikesArticle(int memberId, int articleId){
+        boolean isLikedArticle = likesRepositoryCustom.isAlreadyLikesOnArticle(memberId, articleId);
+        ArticleEntity article = findArticle(articleId);
+        int likesCount = article.getLikesCount();
+        return new LikesDto.Toggle(isLikedArticle, likesCount);
     }
 
-    public boolean isMemberLikesPerformArticle(int memberId, int performArticleId){
-        return likesRepositoryCustom.isAlreadyLikesOnPerformArticle(memberId, performArticleId);
+    public LikesDto.Toggle isMemberLikesPerformArticle(int memberId, int performArticleId){
+        boolean isLikedArticle = likesRepositoryCustom.isAlreadyLikesOnPerformArticle(memberId, performArticleId);
+        PerformArticleEntity performArticle = findPerformArticle(performArticleId);
+        int likesCount = performArticle.getLikesCount();
+        return new LikesDto.Toggle(isLikedArticle, likesCount);
     }
 
-    public boolean toggleArticleLikes(int memberId, int articleId){
+    public LikesDto.Toggle toggleArticleLikes(int memberId, int articleId){
         LikesEntity likesEntity = likesRepository.findByArticleIdAndMemberId(articleId, memberId)
                 .orElse(null);
 
         if(likesEntity == null){
             return createLikesByMemberId(memberId, articleId);
+
         } else{
             ArticleEntity article = findArticle(articleId);
 
@@ -50,11 +57,11 @@ public class LikesService {
             article.updateLikesCount(-1);
             articleRepository.save(article);
             article.getAuthor().updateMemberExpAndRank(-1);
-            return false;
+            return new LikesDto.Toggle(false, article.getLikesCount());
         }
     }
 
-    public boolean togglePerformArticleLikes(int memberId, int performArticleId){
+    public LikesDto.Toggle togglePerformArticleLikes(int memberId, int performArticleId){
         LikesEntity likesEntity = likesRepository.findByPerformArticleIdAndMemberId(performArticleId, memberId)
                 .orElse(null);
         if(likesEntity == null){
@@ -69,11 +76,11 @@ public class LikesService {
             performArticle.updateLikesCount(-1);
             performArticleRepository.save(performArticle);
             performArticle.getTeam().updateTeamExpAndRank(-1);
-            return false;
+            return new LikesDto.Toggle(false, performArticle.getLikesCount());
         }
     }
 
-    private boolean createLikesByMemberId(int memberId, int articleId){
+    private LikesDto.Toggle createLikesByMemberId(int memberId, int articleId){
         MemberEntity member = findMemberByMemberId(memberId);
         ArticleEntity article = findArticle(articleId);
 
@@ -94,10 +101,10 @@ public class LikesService {
         article.updateLikesCount(1);
         articleRepository.save(article);
         article.getAuthor().updateMemberExpAndRank(1);
-        return true;
+        return new LikesDto.Toggle(true, article.getLikesCount());
     }
 
-    private boolean createPerformLikesByMemberId(int memberId, int performArticleId){
+    private LikesDto.Toggle createPerformLikesByMemberId(int memberId, int performArticleId){
         MemberEntity member = findMemberByMemberId(memberId);
         PerformArticleEntity performArticle = findPerformArticle(performArticleId);
 
@@ -115,7 +122,7 @@ public class LikesService {
 
         performArticle.getTeam().updateTeamExpAndRank(1);
 
-        return true;
+        return new LikesDto.Toggle(true, performArticle.getLikesCount());
     }
 
 

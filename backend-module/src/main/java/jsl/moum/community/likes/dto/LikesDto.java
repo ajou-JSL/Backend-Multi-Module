@@ -3,11 +3,8 @@ package jsl.moum.community.likes.dto;
 import jsl.moum.auth.domain.entity.MemberEntity;
 import jsl.moum.community.article.domain.article.ArticleEntity;
 import jsl.moum.community.perform.domain.entity.PerformArticleEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 import jsl.moum.community.likes.domain.LikesEntity;
-import lombok.NoArgsConstructor;
 
 public class LikesDto {
 
@@ -31,6 +28,14 @@ public class LikesDto {
     }
 
     @Getter
+    @Setter
+    @AllArgsConstructor
+    public static class Toggle{
+        private boolean isLiked;
+        private int likesCount;
+    }
+
+    @Getter
     @AllArgsConstructor
     public static class Response{
         private final int likesId;
@@ -46,4 +51,6 @@ public class LikesDto {
         }
 
     }
+
+
 }

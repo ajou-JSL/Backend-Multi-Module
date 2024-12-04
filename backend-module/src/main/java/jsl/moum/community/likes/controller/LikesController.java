@@ -25,23 +25,23 @@ public class LikesController {
 
     @GetMapping("/api/articles/member/{memberId}/likes/{articleId}")
     public ResponseEntity<ResultResponse> getLikes(@PathVariable(name = "memberId") int memberId, @PathVariable(name = "articleId") int articleId){
-        boolean isLikedArticle = likesService.isMemberLikesArticle(memberId, articleId);
+        LikesDto.Toggle isLikedArticle = likesService.isMemberLikesArticle(memberId, articleId);
         ResultResponse response = ResultResponse.of(ResponseCode.LIKES_GET_SUCCESS, isLikedArticle);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
 
     @GetMapping("/api/performs/member/{memberId}/likes/{performArticleId}")
     public ResponseEntity<ResultResponse> getPerformLikes(@PathVariable(name = "memberId") int memberId, @PathVariable(name = "performArticleId") int performArticleId){
-        boolean isLikedPerformArticle = likesService.isMemberLikesPerformArticle(memberId, performArticleId);
+        LikesDto.Toggle isLikedPerformArticle = likesService.isMemberLikesPerformArticle(memberId, performArticleId);
         ResultResponse response = ResultResponse.of(ResponseCode.LIKES_GET_SUCCESS, isLikedPerformArticle);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatus()));
     }
 
     @PutMapping("/api/articles/member/{memberId}/likes/{articleId}")
     public ResponseEntity<ResultResponse> createLikes(@PathVariable(name = "memberId") int memberId, @PathVariable(name = "articleId") int articleId){
-        boolean isLikedArticle = likesService.toggleArticleLikes(memberId, articleId);
+        LikesDto.Toggle isLikedArticle = likesService.toggleArticleLikes(memberId, articleId);
         ResultResponse response;
-        if(isLikedArticle == true){
+        if(isLikedArticle.isLiked() == true){
             response = ResultResponse.of(ResponseCode.LIKES_CREATE_SUCCESS, isLikedArticle);
         } else {
             response = ResultResponse.of(ResponseCode.LIKES_DELETE_SUCCESS, isLikedArticle);
@@ -51,9 +51,9 @@ public class LikesController {
 
     @PutMapping("/api/performs/member/{memberId}/likes/{performArticleId}")
     public ResponseEntity<ResultResponse> createPerformLikes(@PathVariable(name = "memberId") int memberId, @PathVariable(name = "performArticleId") int performArticleId){
-        boolean isLikedPerformArticle = likesService.togglePerformArticleLikes(memberId, performArticleId);
+        LikesDto.Toggle isLikedPerformArticle = likesService.togglePerformArticleLikes(memberId, performArticleId);
         ResultResponse response;
-        if(isLikedPerformArticle == true){
+        if(isLikedPerformArticle.isLiked() == true){
             response = ResultResponse.of(ResponseCode.LIKES_CREATE_SUCCESS, isLikedPerformArticle);
         } else {
             response = ResultResponse.of(ResponseCode.LIKES_DELETE_SUCCESS, isLikedPerformArticle);
