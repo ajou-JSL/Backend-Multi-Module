@@ -35,22 +35,45 @@ public class LikesService {
     }
 
     public boolean toggleArticleLikes(int memberId, int articleId){
-        if(isMemberLikesArticle(memberId, articleId)){
-            return deleteLikesByMemberId(memberId, articleId);
-        }else{
+        LikesEntity likesEntity = likesRepository.findByArticleIdAndMemberId(articleId, memberId)
+                .orElse(null);
+
+        if(likesEntity == null){
             return createLikesByMemberId(memberId, articleId);
+        } else{
+            ArticleEntity article = findArticle(articleId);
+
+            // 좋아요 삭제
+            likesRepository.deleteById(likesEntity.getId());
+
+            // 게시글 좋아요 수 감소 및 저장
+            article.updateLikesCount(-1);
+            articleRepository.save(article);
+            article.getAuthor().updateMemberExpAndRank(-1);
+            return false;
         }
     }
 
     public boolean togglePerformArticleLikes(int memberId, int performArticleId){
-        if(isMemberLikesPerformArticle(memberId, performArticleId)){
-            return deletePerformLikesByMemberId(memberId, performArticleId);
-        }else{
+        LikesEntity likesEntity = likesRepository.findByPerformArticleIdAndMemberId(performArticleId, memberId)
+                .orElse(null);
+        if(likesEntity == null){
             return createPerformLikesByMemberId(memberId, performArticleId);
+        } else{
+            PerformArticleEntity performArticle = findPerformArticle(performArticleId);
+
+            // 좋아요 삭제
+            likesRepository.deleteById(likesEntity.getId());
+
+            // 게시글 좋아요 수 감소 및 저장
+            performArticle.updateLikesCount(-1);
+            performArticleRepository.save(performArticle);
+            performArticle.getTeam().updateTeamExpAndRank(-1);
+            return false;
         }
     }
 
-    public boolean createLikesByMemberId(int memberId, int articleId){
+    private boolean createLikesByMemberId(int memberId, int articleId){
         MemberEntity member = findMemberByMemberId(memberId);
         ArticleEntity article = findArticle(articleId);
 
@@ -70,31 +93,11 @@ public class LikesService {
         // 좋아요 +1 후 저장
         article.updateLikesCount(1);
         articleRepository.save(article);
-
         article.getAuthor().updateMemberExpAndRank(1);
-
         return true;
     }
 
-    public boolean deleteLikesByMemberId(int memberId, int articleId){
-        ArticleEntity article = findArticle(articleId);
-
-        LikesEntity likesEntity = likesRepository.findByArticleIdAndMemberId(articleId, memberId)
-                .orElseThrow(() -> new CustomException(ErrorCode.LIKES_NOT_FOUND));
-
-        // 좋아요 삭제
-        likesRepository.deleteById(likesEntity.getId());
-
-        // 게시글 좋아요 수 감소 및 저장
-        article.updateLikesCount(-1);
-        articleRepository.save(article);
-
-        article.getAuthor().updateMemberExpAndRank(-1);
-
-        return false;
-    }
-
-    public boolean createPerformLikesByMemberId(int memberId, int performArticleId){
+    private boolean createPerformLikesByMemberId(int memberId, int performArticleId){
         MemberEntity member = findMemberByMemberId(memberId);
         PerformArticleEntity performArticle = findPerformArticle(performArticleId);
 
@@ -114,26 +117,6 @@ public class LikesService {
 
         return true;
     }
-
-    public boolean deletePerformLikesByMemberId(int memberId, int performArticleId){
-        PerformArticleEntity performArticle = findPerformArticle(performArticleId);
-
-        LikesEntity likesEntity = likesRepository.findByPerformArticleIdAndMemberId(performArticleId, memberId)
-                .orElseThrow(() -> new CustomException(ErrorCode.LIKES_NOT_FOUND));
-
-        // 좋아요 삭제
-        likesRepository.deleteById(likesEntity.getId());
-
-        // 게시글 좋아요 수 감소 및 저장
-        performArticle.updateLikesCount(-1);
-        performArticleRepository.save(performArticle);
-
-        performArticle.getTeam().updateTeamExpAndRank(-1);
-
-        return false;
-    }
-
-
 
 
     /**
