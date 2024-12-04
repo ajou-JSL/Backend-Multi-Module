@@ -187,4 +187,27 @@ public class PracticeRoomDto {
         private Boolean hasDrums;
 
     }
+
+    @Builder
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Update{
+        private String name;
+        private String address;
+        private String owner;
+        private String phone;
+        private String email;
+        private int price;
+        private int capacity;
+        private int type;
+        private int stand;
+        private boolean hasPiano;
+        private boolean hasAmp;
+        private boolean hasSpeaker;
+        private boolean hasMic;
+        private boolean hasDrums;
+        private String details;
+    }
 }

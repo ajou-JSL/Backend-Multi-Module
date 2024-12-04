@@ -130,6 +130,11 @@
                     <p>Loading...</p>
                 </div>
             </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-warning" onclick="showEditPracticeRoomModal()">Edit</button>
+                <button type="button" class="btn btn-danger" onclick="deletePracticeRoom()">Delete</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
         </div>
     </div>
 </div>
@@ -145,6 +150,84 @@
     </div>
 </div>
 
+<!-- Modal for Editing Practice Room -->
+<div class="modal fade" id="editPracticeRoomModal" tabindex="-1" aria-labelledby="editPracticeRoomModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editPracticeRoomModalLabel">Edit Practice Room</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editPracticeRoomForm">
+                    <input type="hidden" id="editRoomId">
+                    <div class="mb-3">
+                        <label for="editRoomName" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="editRoomName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editRoomAddress" class="form-label">Address</label>
+                        <input type="text" class="form-control" id="editRoomAddress" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editOwner" class="form-label">Owner</label>
+                        <input type="text" class="form-control" id="editOwner" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editPhone" class="form-label">Phone</label>
+                        <input type="text" class="form-control" id="editPhone" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editEmail" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="editEmail" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editPrice" class="form-label">Price</label>
+                        <input type="number" class="form-control" id="editPrice" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editCapacity" class="form-label">Capacity</label>
+                        <input type="number" class="form-control" id="editCapacity" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editType" class="form-label">Capacity</label>
+                        <input type="number" class="form-control" id="editType" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editStand" class="form-label">Stand</label>
+                        <input type="number" class="form-control" id="editStand" required>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="editPianoYes">
+                        <label class="form-check-label" for="editPianoYes">Has Piano</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="editAmpYes">
+                        <label class="form-check-label" for="editAmpYes">Has Amp</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="editSpeakerYes">
+                        <label class="form-check-label" for="editSpeakerYes">Has Speaker</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="editMicYes">
+                        <label class="form-check-label" for="editMicYes">Has Mic</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="editDrumsYes">
+                        <label class="form-check-label" for="editDrumsYes">Has Drums</label>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editDetails" class="form-label">Details</label>
+                        <textarea class="form-control" id="editDetails" rows="3" required></textarea>
+                    </div>
+                    <button type="button" class="btn btn-success" onclick="editPracticeRoom()">Save Changes</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- JavaScript -->
 <script>
@@ -298,6 +381,128 @@
         fullSizeImageElement.src = imageUrl;
         fullSizeImageModal.show();
     }
+
+    function showEditPracticeRoomModal() {
+        const practiceRoomDetailsDiv = document.getElementById("practiceRoomDetails");
+
+        // Ensure the modal is displaying details and the data-room-id attribute is set
+        const roomId = practiceRoomDetailsDiv.querySelector("p:nth-child(1)").textContent.split(": ")[1];
+        if (!roomId) {
+            alert("Failed to retrieve practice room ID.");
+            return;
+        }
+
+        // Helper function to extract numeric value from text
+        const extractNumber = (text) => {
+            return parseInt(text.replace(/[^0-9]/g, ""), 10);
+        };
+
+        // Populate the form fields with existing data
+        document.getElementById("editRoomId").value = roomId;
+        document.getElementById("editRoomName").value = practiceRoomDetailsDiv.querySelector("p:nth-child(2)").textContent.split(": ")[1].trim();
+        document.getElementById("editRoomAddress").value = practiceRoomDetailsDiv.querySelector("p:nth-child(3)").textContent.split(": ")[1].trim();
+        document.getElementById("editOwner").value = practiceRoomDetailsDiv.querySelector("p:nth-child(4)").textContent.split(": ")[1].trim();
+        document.getElementById("editPhone").value = practiceRoomDetailsDiv.querySelector("p:nth-child(5)").textContent.split(": ")[1].trim();
+        document.getElementById("editEmail").value = practiceRoomDetailsDiv.querySelector("p:nth-child(6)").textContent.split(": ")[1].trim();
+        document.getElementById("editPrice").value = extractNumber(practiceRoomDetailsDiv.querySelector("p:nth-child(8)").textContent.split(": ")[1]);
+        document.getElementById("editCapacity").value = extractNumber(practiceRoomDetailsDiv.querySelector("p:nth-child(9)").textContent.split(": ")[1]);
+        document.getElementById("editType").value = extractNumber(practiceRoomDetailsDiv.querySelector("p:nth-child(10)").textContent.split(": ")[1]);
+        document.getElementById("editStand").value = extractNumber(practiceRoomDetailsDiv.querySelector("p:nth-child(11)").textContent.split(": ")[1]);
+        document.getElementById("editPianoYes").checked = practiceRoomDetailsDiv.querySelector("p:nth-child(12)").textContent.split(": ")[1] === "Yes";
+        document.getElementById("editAmpYes").checked = practiceRoomDetailsDiv.querySelector("p:nth-child(13)").textContent.split(": ")[1] === "Yes";
+        document.getElementById("editSpeakerYes").checked = practiceRoomDetailsDiv.querySelector("p:nth-child(14)").textContent.split(": ")[1] === "Yes";
+        document.getElementById("editMicYes").checked = practiceRoomDetailsDiv.querySelector("p:nth-child(15)").textContent.split(": ")[1] === "Yes";
+        document.getElementById("editDrumsYes").checked = practiceRoomDetailsDiv.querySelector("p:nth-child(16)").textContent.split(": ")[1] === "Yes";
+        document.getElementById("editDetails").value = practiceRoomDetailsDiv.querySelector("p:nth-child(17)").textContent.split(": ")[1].trim();
+
+        // Show the edit modal
+        const editModal = new bootstrap.Modal(document.getElementById("editPracticeRoomModal"));
+        editModal.show();
+    }
+
+    function editPracticeRoom() {
+        const roomId = document.getElementById("editRoomId").value.trim();
+
+        // Construct the updated data object
+        const updatedData = {
+            name: document.getElementById("editRoomName").value.trim(),
+            address: document.getElementById("editRoomAddress").value.trim(),
+            owner: document.getElementById("editOwner").value.trim(),
+            phone: document.getElementById("editPhone").value.trim(),
+            email: document.getElementById("editEmail").value.trim(),
+            price: parseInt(document.getElementById("editPrice").value.trim(), 10),
+            capacity: parseInt(document.getElementById("editCapacity").value.trim(), 10),
+            type: parseInt(document.getElementById("editType").value.trim(), 10),
+            stand: parseInt(document.getElementById("editStand").value.trim(), 10),
+            hasPiano: document.getElementById("editPianoYes").checked,
+            hasAmp: document.getElementById("editAmpYes").checked,
+            hasSpeaker: document.getElementById("editSpeakerYes").checked,
+            hasMic: document.getElementById("editMicYes").checked,
+            hasDrums: document.getElementById("editDrumsYes").checked,
+            details: document.getElementById("editDetails").value.trim(),
+        };
+
+        // Validate the required fields (if necessary)
+        if (!updatedData.name || !updatedData.address || !updatedData.owner || !updatedData.phone || !updatedData.email) {
+            alert("Please fill out all required fields.");
+            return;
+        }
+
+        // Perform the API call to update the practice room
+        fetch(`/admin/practice-room/${roomId}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updatedData)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Failed to update practice room details.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert("Practice room updated successfully.");
+                location.reload(); // Refresh the page to reflect the updated list
+            })
+            .catch(error => {
+                console.error("Error updating practice room:", error);
+            });
+    }
+
+    function deletePracticeRoom() {
+        const practiceRoomDetailsDiv = document.getElementById("practiceRoomDetails");
+
+        // Extract the practice room ID
+        const roomId = practiceRoomDetailsDiv.querySelector("p:nth-child(1)").textContent.split(": ")[1];
+
+        if (!roomId) {
+            alert("Failed to retrieve practice room ID.");
+            return;
+        }
+
+        if (confirm("Are you sure you want to delete this practice room? This action cannot be undone.")) {
+            fetch(`/admin/practice-room/${roomId}`, {
+                method: 'DELETE',
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Failed to delete the practice room.");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert("Practice room deleted successfully.");
+                    location.reload(); // Refresh the page to reflect the updated list
+                })
+                .catch(error => {
+                    console.error("Error deleting practice room:", error);
+                });
+        }
+    }
+
+
 </script>
 
 <!-- Bootstrap Bundle with Popper -->

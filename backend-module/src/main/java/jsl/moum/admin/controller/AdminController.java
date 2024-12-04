@@ -464,6 +464,23 @@ public class AdminController {
         return ResponseEntity.ok(resultResponse);
     }
 
+    @PatchMapping("/practice-room/{id}")
+    public ResponseEntity<ResultResponse> updatePracticeRoom(@PathVariable(name = "id") Integer id,
+                                                             @RequestBody PracticeRoomDto.Update updateDto) {
+        PracticeRoomDto practiceRoom = adminService.updatePracticeRoom(id, updateDto);
+
+        ResultResponse resultResponse = ResultResponse.of(ResponseCode.UPDATE_PRACTICE_ROOM_SUCCESS, practiceRoom);
+        return ResponseEntity.ok(resultResponse);
+    }
+
+    @DeleteMapping("/practice-room/{id}")
+    public ResponseEntity<ResultResponse> deletePracticeRoom(@PathVariable(name = "id") Integer id) {
+        boolean isDeleted = adminService.deletePracticeRoom(id);
+
+        ResultResponse resultResponse = ResultResponse.of(ResponseCode.DELETE_PRACTICE_ROOM_SUCCESS, isDeleted);
+        return ResponseEntity.ok(resultResponse);
+    }
+
     /**
      *
      * Performance Hall Dashboard APIs
@@ -524,8 +541,22 @@ public class AdminController {
         return ResponseEntity.ok(resultResponse);
     }
 
+    @PatchMapping("/performance-hall/{id}")
+    public ResponseEntity<ResultResponse> updatePerformanceHall(@PathVariable(name = "id") Integer id,
+                                                                @RequestBody PerformanceHallDto.Update updateDto) {
+        PerformanceHallDto performanceHall = adminService.updatePerformanceHall(id, updateDto);
 
+        ResultResponse resultResponse = ResultResponse.of(ResponseCode.UPDATE_PERFORMANCE_HALL_SUCCESS, performanceHall);
+        return ResponseEntity.ok(resultResponse);
+    }
 
+    @DeleteMapping("/performance-hall/{id}")
+    public ResponseEntity<ResultResponse> deletePerformanceHall(@PathVariable(name = "id") Integer id) {
+        boolean isDeleted = adminService.deletePerformanceHall(id);
+
+        ResultResponse resultResponse = ResultResponse.of(ResponseCode.DELETE_PERFORMANCE_HALL_SUCCESS, isDeleted);
+        return ResponseEntity.ok(resultResponse);
+    }
 
     @GetMapping("/logout")
     public String logout(){
