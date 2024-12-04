@@ -15,5 +15,4 @@ public class TestController {
     public String backendModuleCheck(){
         return "GET: /api/health-check \n";
     }
-
 }
