@@ -34,7 +34,7 @@ services:
       MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
       MYSQL_DATABASE: "${MYSQL_DATABASE}"
     ports:
-      - "${MYSQL_PORT}:3306"
+      - "3302:3306"
     networks:
       - app-network
 
@@ -42,7 +42,7 @@ services:
     image: redis:latest
     container_name: redis-container-blue
     ports:
-      - "${REDIS_PORT}:6379"
+      - "6372:6379"
     networks:
       - app-network
 
@@ -54,7 +54,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: "${SPRING_DATA_MONGODB_PASSWORD}"
       MONGO_INITDB_DATABASE: chatdb
     ports:
-      - "${MONGO_PORT}:27017"
+      - "27012:27017"
     networks:
       - app-network
 
