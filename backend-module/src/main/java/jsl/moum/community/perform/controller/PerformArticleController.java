@@ -1,6 +1,7 @@
 package jsl.moum.community.perform.controller;
 
 import jsl.moum.auth.domain.CustomUserDetails;
+import jsl.moum.auth.dto.MusicGenre;
 import jsl.moum.community.perform.dto.PerformArticleDto;
 import jsl.moum.community.perform.dto.PerformArticleUpdateDto;
 import jsl.moum.community.perform.service.PerformArticleService;
@@ -10,6 +11,7 @@ import jsl.moum.global.response.ResultResponse;
 import jsl.moum.moum.team.dto.TeamDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -120,19 +123,33 @@ public class PerformArticleController {
      */
     @GetMapping("/api/performs-all/search")
     public ResponseEntity<ResultResponse> getPerformArticlesWithFiltering(@AuthenticationPrincipal CustomUserDetails customUserDetails,
-                                                                @RequestBody(required = false) PerformArticleDto.SearchDto searchDto,
-                                                                @RequestParam(defaultValue = "0") int page,
-                                                                @RequestParam(defaultValue = "10") int size)
-    {
-        loginCheck(customUserDetails.getUsername());
-        Page<PerformArticleDto.Response> responseDto = performArticleService.getPerformArticleWithFiltering(searchDto, page, size);
-        ResultResponse response = ResultResponse.of(ResponseCode.GET_PERFORM_ARTICLE_SUCCESS,responseDto);
-        return new ResponseEntity<>(response, HttpStatusCode.valueOf(response.getStatus()));
+                                                                          @RequestParam(required = false) Boolean filterByCreatedAt,
+                                                                          @RequestParam(required = false) Boolean filterByLikesCount,
+                                                                          @RequestParam(required = false) Boolean filterByViewCount,
+                                                                          @RequestParam(required = false) String keyword,
+                                                                          @RequestParam(required = false) MusicGenre genre,
+                                                                          @RequestParam(required = false) String location,
+                                                                          @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+                                                                          @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate,
+                                                                          @RequestParam(defaultValue = "0") int page,
+                                                                          @RequestParam(defaultValue = "10") int size) {
+
+        {
+            PerformArticleDto.SearchDto searchDto = PerformArticleDto.SearchDto.builder()
+                    .genre(genre)
+                    .location(location)
+                    .keyword(keyword)
+                    .startDate(startDate)
+                    .endDate(endDate)
+                    .build();
+            loginCheck(customUserDetails.getUsername());
+            Page<PerformArticleDto.Response> responseDto = performArticleService.getPerformArticleWithFiltering(searchDto, page, size);
+            ResultResponse response = ResultResponse.of(ResponseCode.GET_PERFORM_ARTICLE_SUCCESS, responseDto);
+            return new ResponseEntity<>(response, HttpStatusCode.valueOf(response.getStatus()));
+        }
+
+
     }
-
-
-
-
     public String loginCheck(String username){
         if(username == null){
             throw new NeedLoginException();

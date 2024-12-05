@@ -158,6 +158,7 @@ public class TeamDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @Getter
+    @Builder
     public static class SearchDto {
         private final Boolean filterByExp = false;
         private final Boolean filterByMembersCount = false;

@@ -120,6 +120,7 @@ public class PerformArticleDto {
     @NoArgsConstructor
     @AllArgsConstructor
     @Getter
+    @Builder
     public static class SearchDto {
         private Boolean filterByCreatedAt;
         private Boolean filterByLikesCount;
