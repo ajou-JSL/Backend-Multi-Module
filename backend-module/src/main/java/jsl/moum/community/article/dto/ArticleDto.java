@@ -75,6 +75,7 @@ public class ArticleDto {
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
+    @Builder
     public static class SearchDto {
         private String keyword;
         private final Boolean filterByLikesCount = false;

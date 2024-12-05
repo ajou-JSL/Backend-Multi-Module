@@ -3,6 +3,7 @@ package jsl.moum.moum.team.controller;
 import jakarta.validation.Valid;
 import jsl.moum.auth.domain.CustomUserDetails;
 import jsl.moum.auth.dto.MemberDto;
+import jsl.moum.auth.dto.MusicGenre;
 import jsl.moum.global.error.exception.NeedLoginException;
 import jsl.moum.global.response.ResponseCode;
 import jsl.moum.global.response.ResultResponse;
@@ -196,11 +197,18 @@ public class TeamController {
      */
     @GetMapping("/api/teams/search")
     public ResponseEntity<ResultResponse> getTeamsWithFiltering(@AuthenticationPrincipal CustomUserDetails customUserDetails,
-                                                            @RequestBody(required = false) TeamDto.SearchDto searchDto,
+                                                            @RequestParam(required = false) String keyword, @RequestParam(required = false) MusicGenre genre,
+                                                            @RequestParam(required = false) String location, @RequestParam(required = false) Boolean filterByExp,
+                                                                @RequestParam(required = false) Boolean filterByMembersCount,
                                                             @RequestParam(defaultValue = "0") int page,
                                                             @RequestParam(defaultValue = "10") int size)
     {
         loginCheck(customUserDetails.getUsername());
+        TeamDto.SearchDto searchDto = TeamDto.SearchDto.builder()
+                .keyword(keyword)
+                .location(location)
+                .genre(genre)
+                .build();
         Page<TeamDto.Response> responseDto = teamService.getTeamsWithFiltering(searchDto, page, size);
         ResultResponse response = ResultResponse.of(ResponseCode.GET_TEAM_LIST_SUCCESS,responseDto);
         return new ResponseEntity<>(response, HttpStatusCode.valueOf(response.getStatus()));

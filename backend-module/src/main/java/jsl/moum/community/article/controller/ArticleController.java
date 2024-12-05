@@ -2,11 +2,13 @@ package jsl.moum.community.article.controller;
 
 import jakarta.validation.Valid;
 import jsl.moum.auth.domain.CustomUserDetails;
+import jsl.moum.auth.dto.MusicGenre;
 import jsl.moum.community.article.dto.ArticleDetailsDto;
 import jsl.moum.community.article.dto.ArticleDto;
 import jsl.moum.community.article.service.ArticleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,6 +21,7 @@ import jsl.moum.global.response.ResponseCode;
 import jsl.moum.global.response.ResultResponse;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -170,12 +173,25 @@ public class ArticleController {
     /**
      * 필터링으로 게시글 목록 조회
      */
-    @PatchMapping("/api/articles/search")
+    @GetMapping("/api/articles/search")
     public ResponseEntity<ResultResponse> getArticlesByFiltering(
-            @RequestBody(required = false) ArticleDto.SearchDto searchDto,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) Boolean filterByLikesCount,
+            @RequestParam(required = false) Boolean filterByViewCount,
+            @RequestParam(required = false) Boolean filterByCommentsCount,
+            @RequestParam(required = false) Boolean filterByCreatedAt,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime createdAt,
+            @RequestParam(required = false) ArticleEntity.ArticleCategories category,
+            @RequestParam(required = false) MusicGenre genre,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
+        ArticleDto.SearchDto searchDto = ArticleDto.SearchDto.builder()
+                .keyword(keyword)
+                .genre(genre)
+                .category(category)
+                .createdAt(createdAt)
+                .build();
         Page<ArticleDto.Response> articleList = articleService.getArticlesByFiltering(searchDto,page,size);
 
         ResultResponse response = ResultResponse.of(ResponseCode.ARTICLE_LIST_GET_SUCCESS, articleList);
