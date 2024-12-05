@@ -41,6 +41,12 @@ public class ProfileService {
     public ProfileDto.Response getProfile(int targetMemberId) {
 
         MemberEntity targetMemberEntity = findMember(targetMemberId);
+        if(!targetMemberEntity.getActiveStatus()){
+            throw new CustomException(ErrorCode.SIGN_OUT_MEMBER);
+        }
+        if(targetMemberEntity.getBanStatus()){
+            throw new CustomException(ErrorCode.BANNED_MEMBER);
+        }
 
         return new ProfileDto.Response(targetMemberEntity);
     }
