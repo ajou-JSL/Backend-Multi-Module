@@ -13,7 +13,7 @@ services:
     environment:
       SPRING_DATASOURCE_URL: "${SPRING_DATASOURCE_URL}"
       SPRING_DATASOURCE_USERNAME: "${SPRING_DATASOURCE_USERNAME}"
-      SPRING_DATASOURCE_PASSWORD: "zpzzgjdg@$^^1"
+      SPRING_DATASOURCE_PASSWORD: "zpzzgjdg@$$^1"
       SPRING_JWT_SECRET: "${SPRING_JWT_SECRET}"
       SPRING_MAIL_HOST: "${SPRING_MAIL_HOST}"
       SPRING_MAIL_PORT: "${SPRING_MAIL_PORT}"
@@ -38,7 +38,7 @@ services:
     image: mysql:8.0
     container_name: mysql-container-blue
     environment:
-      MYSQL_ROOT_PASSWORD: "zpzzgjdg@$^^1"
+      MYSQL_ROOT_PASSWORD: "zpzzgjdg@$$^1"
       MYSQL_DATABASE: moum
     ports:
       - "3302:3306"
