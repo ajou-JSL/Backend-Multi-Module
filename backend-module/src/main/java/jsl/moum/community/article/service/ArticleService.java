@@ -90,9 +90,13 @@ public class ArticleService {
         ArticleDetailsEntity newArticleDetails = articleDetailsRequestDto.toEntity();
         articleDetailsRepository.save(newArticleDetails);
 
-        newArticle.setImageUrl(newUrls.get(0));
-        author.updateMemberExpAndRank(1);
+        if(newUrls != null && !newUrls.isEmpty()){
+            newArticle.setImageUrl(newUrls.get(0));
+        } else {
+            newArticle.setImageUrl(null);
+        }
 
+        author.updateMemberExpAndRank(1);
         return new ArticleDto.Response(newArticle);
     }
 
