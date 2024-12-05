@@ -33,6 +33,8 @@ services:
       MYSQL_DATABASE: "${MYSQL_DATABASE}"
     ports:
       - "3301:3306"
+    volumes:
+      - mysql_data_blue:/var/lib/mysql
     networks:
       - app-network
 
@@ -59,3 +61,6 @@ services:
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  mysql_data_blue:
