@@ -170,7 +170,7 @@ public class ArticleController {
     /**
      * 필터링으로 게시글 목록 조회
      */
-    @GetMapping("/api/articles/search")
+    @PatchMapping("/api/articles/search")
     public ResponseEntity<ResultResponse> getArticlesByFiltering(
             @RequestBody(required = false) ArticleDto.SearchDto searchDto,
             @RequestParam(defaultValue = "0") int page,
