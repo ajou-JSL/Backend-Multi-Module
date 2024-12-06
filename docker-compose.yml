@@ -1,6 +1,39 @@
 version: '3.1'
 
 services:
+  backendmodule:
+    image: openjdk:17-jdk-slim
+    container_name: backendmodule-container
+    working_dir: /backendmodule
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${BACKENDMODULE_PORT}:8080"
+    environment:
+      SPRING_DATASOURCE_URL: "${SPRING_DATASOURCE_URL}"
+      SPRING_DATASOURCE_USERNAME: "${SPRING_DATASOURCE_USERNAME}"
+      SPRING_DATASOURCE_PASSWORD: "${SPRING_DATASOURCE_PASSWORD}"
+      SPRING_JWT_SECRET: "${SPRING_JWT_SECRET}"
+      SPRING_MAIL_HOST: "${SPRING_MAIL_HOST}"
+      SPRING_MAIL_PORT: "${SPRING_MAIL_PORT}"
+      SPRING_MAIL_USERNAME: "${SPRING_MAIL_USERNAME}"
+      SPRING_MAIL_PASSWORD: "${SPRING_MAIL_PASSWORD}"
+      SPRING_REDIS_HOST: "${SPRING_REDIS_HOST}"
+      SPRING_NCP_OBJECT_STORAGE_ENDPOINT: "${SPRING_NCP_OBJECT_STORAGE_ENDPOINT}"
+      SPRING_NCP_OBJECT_STORAGE_REGION: "${SPRING_NCP_OBJECT_STORAGE_REGION}"
+      SPRING_NCP_OBJECT_STORAGE_ACCESS_KEY: "${SPRING_NCP_OBJECT_STORAGE_ACCESS_KEY}"
+      SPRING_NCP_OBJECT_STORAGE_SECRET_KEY: "${SPRING_NCP_OBJECT_STORAGE_SECRET_KEY}"
+      SPRING_NCP_OBJECT_STORAGE_BUCKET: "${SPRING_NCP_OBJECT_STORAGE_BUCKET}"
+      SPRING_NAVER_API_KEY_ID: "${SPRING_NAVER_API_KEY_ID}"
+      SPRING_NAVER_API_KEY: "${SPRING_NAVER_API_KEY}"
+      SPRING_NAVER_MAPS_API_URL: "${SPRING_NAVER_MAPS_API_URL}"
+    depends_on:
+      - mysql  # 동일한 MySQL 컨테이너를 공유
+      - redis
+    networks:
+      - app-network
+
   chatmodule:
     image: openjdk:17-jdk-slim
     container_name: chatmodule-container
@@ -22,7 +55,7 @@ services:
       SPRING_DATA_MONGODB_AUTHENTICATION_DATABASE: "${SPRING_DATA_MONGODB_AUTHENTICATION_DATABASE}"
       SPRING_JWT_SECRET: "${SPRING_JWT_SECRET}"
     depends_on:
-      - mysql
+      - mysql  # MySQL 컨테이너를 공유
       - redis
     networks:
       - app-network
@@ -32,7 +65,7 @@ services:
     container_name: mysql-chat-container
     environment:
       MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
-      MYSQL_DATABASE: "${MYSQL_DATABASE}"
+      MYSQL_DATABASE: moum  # 동일한 데이터베이스 사용
     ports:
       - "${MYSQL_PORT}:3306"
     networks:
@@ -60,5 +93,4 @@ services:
 
 networks:
   app-network:
-    #    driver: bridge
     external: true

@@ -63,7 +63,7 @@ spring:
 
   data:
     redis:
-      host: 127.0.0.1
+      host: redis-backend-container
       port: 6379
       repositories:
         enabled: false

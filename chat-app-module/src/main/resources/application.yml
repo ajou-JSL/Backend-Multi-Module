@@ -22,8 +22,8 @@ spring:
     allow-bean-definition-overriding: true
 
   r2dbc:
-    url: r2dbc:mysql://localhost:3306/moum?useSSL=false&characterEncoding=UTF-8&allowPublicKeyRetrieval=true
-    host: localhost
+    url: r2dbc:mysql://mysql-backend-container:3306/moum?useSSL=false&characterEncoding=UTF-8&allowPublicKeyRetrieval=true
+    host: mysql-backend-container
     port: 3306
     database: moum
     username: root
@@ -58,7 +58,7 @@ spring:
         validate-query: { "ping": 1 }
 
     redis:
-      host: localhost
+      host: redis-chat-container
       port: 6379
       timeout: 60000
       lettuce:
