@@ -50,12 +50,6 @@ public class ChatController {
     public Flux<ChatDto> getChatStream(@PathVariable(name = "id") Integer id){
         log.info("ChatController GET /{id} API");
 
-        /**
-         * Add RedisService to save connected users
-         * Add RedisService to remove connected users when the user disconnects (.doFinally)
-         * This is to know who to ping on Firebase alarms when a new message is sent
-         */
-
         Flux<ChatDto> recentChats = chatService.getChatsRecentByChatroomId(id);
         Flux<ChatDto> chatFluxStream = chatStreamService.getNewChatStream(id);
         return recentChats.concatWith(chatFluxStream)
