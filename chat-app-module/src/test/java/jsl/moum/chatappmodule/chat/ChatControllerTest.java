@@ -12,25 +12,17 @@ import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
-import org.springframework.security.test.context.support.ReactorContextTestExecutionListener;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
-import reactor.util.context.Context;
+
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ChatControllerTest {
-
-    @InjectMocks
-    private ChatController chatController;
-
-    @InjectMocks
-    private AuthService authService;
 
     @InjectMocks
     private ChatService chatService;
@@ -124,6 +116,31 @@ class ChatControllerTest {
 
     @Test
     void getChatsBeforeTimestamp() {
+        Chat.Request request = new Chat.Request();
+        request.setMessage("message1");
+        Chat chat1 = chatService.buildChat(request, "sender1", 0);
+        chat1.setTimestamp(LocalDateTime.parse("2010-09-01T00:00:00"));
 
+        request.setMessage("message2");
+        Chat chat2 = chatService.buildChat(request, "sender2", 0);
+        chat2.setTimestamp(LocalDateTime.parse("2023-09-01T00:00:00"));
+
+        request.setMessage("message3");
+        Chat chat3 = chatService.buildChat(request, "sender3", 0);
+        chat3.setTimestamp(LocalDateTime.parse("2012-09-01T00:00:00"));
+
+        Flux<Chat> recentChats = Flux.just(chat1, chat2, chat3);
+
+        StepVerifier.create(recentChats.filter(chat -> chat.getTimestamp().isBefore(LocalDateTime.parse("2023-09-01T00:00:00"))))
+                .expectNextMatches(chatDto -> {
+                    assertEquals("message1", chatDto.getMessage());
+                    return true; // Ensure the test continues
+                })
+                .expectNextMatches(chatDto -> {
+                    assertEquals("message3", chatDto.getMessage());
+                    return true; // Ensure the test continues
+                })
+                .expectNextCount(0)
+                .verifyComplete();
     }
 }
