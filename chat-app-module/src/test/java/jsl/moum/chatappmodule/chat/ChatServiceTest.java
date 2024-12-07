@@ -1,5 +1,6 @@
 package jsl.moum.chatappmodule.chat;
 
+import jsl.moum.chatappmodule.TestSecurityConfig;
 import jsl.moum.chatappmodule.auth.service.AuthService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.TestingAuthenticationToken;
@@ -25,6 +27,7 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
+@Import(TestSecurityConfig.class)
 class ChatServiceTest {
 
     @InjectMocks
