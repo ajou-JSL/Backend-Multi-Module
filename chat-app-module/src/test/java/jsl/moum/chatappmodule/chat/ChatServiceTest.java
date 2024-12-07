@@ -23,7 +23,6 @@ import reactor.test.StepVerifier;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static reactor.core.publisher.Mono.when;
 
 @ExtendWith(MockitoExtension.class)
 class ChatServiceTest {
@@ -40,9 +39,7 @@ class ChatServiceTest {
     @Mock
     private Mono<Authentication> authMono;
 
-    @Mock
     private LocalDateTime mockChatTimestamp = LocalDateTime.of(2024, 1, 1, 12, 0, 0, 0);
-
     private Chat mockChat = Chat.builder()
             .id("0")
             .sender("kimajou")
@@ -51,13 +48,22 @@ class ChatServiceTest {
             .timestamp(mockChatTimestamp)
             .build();
 
-    LocalDateTime mockChat2Timestamp = LocalDateTime.of(2024, 1, 1, 12, 2, 0, 0);
-    Chat mockChat2 = Chat.builder()
+    private LocalDateTime mockChat2Timestamp = LocalDateTime.of(2024, 1, 1, 12, 2, 0, 0);
+    private Chat mockChat2 = Chat.builder()
             .id("1")
             .sender("kimajou")
             .message("Second message")
             .chatroomId(0)
             .timestamp(mockChat2Timestamp)
+            .build();
+
+    private LocalDateTime mockChat3Timestamp = LocalDateTime.of(2024, 1, 1, 12, 4, 0, 0);
+    private Chat mockChat3 = Chat.builder()
+            .id("2")
+            .sender("kimajou")
+            .message("Third message")
+            .chatroomId(0)
+            .timestamp(mockChat3Timestamp)
             .build();
 
     private Chatroom mockChatroom = Chatroom.builder()
@@ -145,10 +151,11 @@ class ChatServiceTest {
         PageRequest pageRequest = PageRequest.of(0, PAGE_SIZE, Sort.by(Sort.Direction.DESC, "timestamp"));
 
         Mockito.when(chatRepository.findByChatroomId(mockChatroom.getId(), pageRequest))
-                .thenReturn(Flux.just(mockChat2, mockChat));
+                .thenReturn(Flux.just(mockChat, mockChat2, mockChat3));
 
         assertEquals(mockChat.getTimestamp(), LocalDateTime.of(2024, 1, 1, 12, 0, 0, 0));
         assertEquals(mockChat2.getTimestamp(), LocalDateTime.of(2024, 1, 1, 12, 2, 0, 0));
+        assertEquals(mockChat3.getTimestamp(), LocalDateTime.of(2024, 1, 1, 12, 4, 0, 0));
 
         Flux<ChatDto> result = chatService.getChatsRecentByChatroomId(mockChatroom.getId());
 
@@ -166,6 +173,12 @@ class ChatServiceTest {
                     assertEquals(mockChat2.getTimestamp(), LocalDateTime.parse(chatDto.getTimestamp()));
                     return true; // Ensure the test continues
                 })
+                .expectNextMatches(chatDto -> {
+                    // Validate the third emitted ChatDto (mockChat3)
+                    assertEquals(mockChat3.getMessage(), chatDto.getMessage());
+                    assertEquals(mockChat3.getTimestamp(), LocalDateTime.parse(chatDto.getTimestamp()));
+                    return true; // Ensure the test continues
+                })
                 .expectNextCount(0)
                 .verifyComplete(); // Ensure the Flux completes successfully
     }
@@ -173,14 +186,14 @@ class ChatServiceTest {
     @Test
     void getChatsBeforeTimestampByChatroomId() {
         // Define the test timestamp
-        LocalDateTime testTimestamp = LocalDateTime.of(2024, 1, 1, 12, 1, 0, 0);
+        LocalDateTime testTimestamp = LocalDateTime.of(2024, 1, 1, 12, 3, 0, 0);
 
         // Define the PageRequests
         PageRequest pageRequest = PageRequest.of(0, PAGE_SIZE, Sort.by(Sort.Direction.DESC, "timestamp"));
 
         // Mock the repository method to return a Flux of Chats
         Mockito.when(chatRepository.findChatsBeforeTimestampByChatroomId(1, testTimestamp, pageRequest))
-                .thenReturn(Flux.just(mockChat));
+                .thenReturn(Flux.just(mockChat, mockChat2));
 
         // Call the service method
         Flux<ChatDto> result = chatService.getChatsBeforeTimestampByChatroomId(1, testTimestamp);
@@ -191,6 +204,12 @@ class ChatServiceTest {
                     // Validate the first ChatDto (mockChat1)
                     assertEquals(mockChat.getMessage(), chatDto.getMessage());
                     assertEquals(mockChat.getTimestamp(), LocalDateTime.parse(chatDto.getTimestamp()));
+                    return true;
+                })
+                .expectNextMatches(chatDto -> {
+                    // Validate the second ChatDto (mockChat2)
+                    assertEquals(mockChat2.getMessage(), chatDto.getMessage());
+                    assertEquals(mockChat2.getTimestamp(), LocalDateTime.parse(chatDto.getTimestamp()));
                     return true;
                 })
                 .expectNextCount(0)
