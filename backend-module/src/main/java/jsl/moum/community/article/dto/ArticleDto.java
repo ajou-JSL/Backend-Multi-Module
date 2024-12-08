@@ -78,10 +78,10 @@ public class ArticleDto {
     @Builder
     public static class SearchDto {
         private String keyword;
-        private final Boolean filterByLikesCount = false;
-        private final Boolean filterByViewCount = false;
-        private final Boolean filterByCommentsCount = false;
-        private final Boolean filterByCreatedAt = false;
+        private Boolean filterByLikesCount;
+        private Boolean filterByViewCount;
+        private Boolean filterByCommentsCount;
+        private Boolean filterByCreatedAt;
         private LocalDateTime createdAt;
         private ArticleEntity.ArticleCategories category;
         private MusicGenre genre;

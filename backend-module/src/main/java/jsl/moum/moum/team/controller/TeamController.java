@@ -208,6 +208,8 @@ public class TeamController {
                 .keyword(keyword)
                 .location(location)
                 .genre(genre)
+                .filterByExp(filterByExp)
+                .filterByMembersCount(filterByMembersCount)
                 .build();
         Page<TeamDto.Response> responseDto = teamService.getTeamsWithFiltering(searchDto, page, size);
         ResultResponse response = ResultResponse.of(ResponseCode.GET_TEAM_LIST_SUCCESS,responseDto);
