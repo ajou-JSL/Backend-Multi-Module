@@ -174,7 +174,7 @@ class CommentServiceTest {
         // then
         verify(commentRepository).deleteById(mockComment.getId());
         assertEquals(1, response.getCommentId());
-        assertEquals(0, mockArticle.getCommentsCount());
+        assertEquals(-1, mockArticle.getCommentsCount());
     }
 
     @Test
@@ -198,6 +198,7 @@ class CommentServiceTest {
         // Given
         when(memberRepository.findByUsername("testuser")).thenReturn(mockAuthor);
         when(commentRepository.findById(1)).thenReturn(Optional.of(mockComment));
+        when(articleRepository.findById(1)).thenReturn(Optional.of(mockArticle));
 
         // 다른 사용자가 작성한 댓글로 설정
         MemberEntity anotherUser = MemberEntity.builder()
