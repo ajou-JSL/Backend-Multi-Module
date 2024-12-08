@@ -26,7 +26,11 @@ jobs:
           timeout 3m bash -c '
             sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=30 $SSH_USER@$SSH_HOST "
               ./v5_deploy.sh > deploy.log 2>&1 &
-              tail -f deploy.log | grep -m 1 \"Started MoumApplication\"
+              tail -f deploy.log | tee -a action_deploy.log | grep -m 1 \"Started MoumApplication\"
             "
           ' && echo "MoumApplication build detected. Deployment completed successfully." \
           || echo "3-minute timeout reached. Assuming deployment completed successfully."
+
+      - name: Display deployment logs
+        if: always()
+        run: cat action_deploy.log || echo "No logs were captured."
