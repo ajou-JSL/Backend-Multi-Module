@@ -23,22 +23,7 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
         run: |
-          (
-            sshpass -p "$SSH_PASSWORD" ssh -v -o StrictHostKeyChecking=no -o ServerAliveInterval=30 $SSH_USER@$SSH_HOST "
-              ./v5_deploy.sh > deploy.log 2>&1 &
-              tail -f deploy.log | tee action_deploy.log | grep -m 1 \"Started MoumApplication\" && echo \"Detected: MoumApplication has started successfully.\"
-            "
-          ) &
-          pid=$!
-          timeout 3m bash -c '
-            while kill -0 $pid 2>/dev/null; do
-              sleep 1
-            done
-          '
-          if [ $? -eq 124 ]; then
-            echo "3-minute timeout reached. Deployment assumed successful."
-          fi
-
-      - name: Display deployment logs
-        if: always()
-        run: cat action_deploy.log || echo "No logs were captured."
+          timeout 3m sshpass -p "$SSH_PASSWORD" ssh -v -o StrictHostKeyChecking=no -o ServerAliveInterval=30 $SSH_USER@$SSH_HOST '
+            ./v5_deploy.sh > deploy.log 2>&1 &
+            tail -f deploy.log | grep -m 1 "Started MoumApplication" && echo "Detected: MoumApplication has started successfully."
+          ' || true
