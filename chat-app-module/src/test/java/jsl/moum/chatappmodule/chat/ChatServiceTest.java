@@ -23,7 +23,6 @@ import reactor.test.StepVerifier;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static reactor.core.publisher.Mono.when;
 
 @ExtendWith(MockitoExtension.class)
 class ChatServiceTest {
