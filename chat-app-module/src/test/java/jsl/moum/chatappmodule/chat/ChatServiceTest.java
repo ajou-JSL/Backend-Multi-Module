@@ -187,7 +187,6 @@ class ChatServiceTest {
         // Validate the results using StepVerifier
         StepVerifier.create(result)
                 .expectNextMatches(chatDto -> {
-                    // Validate the first ChatDto (mockChat1)
                     assertEquals(mockChat.getMessage(), chatDto.getMessage());
                     assertEquals(mockChat.getTimestamp(), LocalDateTime.parse(chatDto.getTimestamp()));
                     return true;
