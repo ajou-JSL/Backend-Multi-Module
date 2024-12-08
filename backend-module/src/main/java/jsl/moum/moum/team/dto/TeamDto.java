@@ -160,8 +160,8 @@ public class TeamDto {
     @Getter
     @Builder
     public static class SearchDto {
-        private final Boolean filterByExp = false;
-        private final Boolean filterByMembersCount = false;
+        private Boolean filterByExp;
+        private Boolean filterByMembersCount;
         private String keyword;
         private MusicGenre genre;
         private String location;

@@ -141,6 +141,9 @@ public class PerformArticleController {
                     .keyword(keyword)
                     .startDate(startDate)
                     .endDate(endDate)
+                    .filterByCreatedAt(filterByCreatedAt)
+                    .filterByLikesCount(filterByLikesCount)
+                    .filterByViewCount(filterByViewCount)
                     .build();
             loginCheck(customUserDetails.getUsername());
             Page<PerformArticleDto.Response> responseDto = performArticleService.getPerformArticleWithFiltering(searchDto, page, size);

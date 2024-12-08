@@ -7,6 +7,7 @@ import jsl.moum.community.article.dto.ArticleDetailsDto;
 import jsl.moum.community.article.dto.ArticleDto;
 import jsl.moum.community.article.service.ArticleService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class ArticleController {
 
     private final ArticleService articleService;
@@ -191,7 +193,24 @@ public class ArticleController {
                 .genre(genre)
                 .category(category)
                 .createdAt(createdAt)
+                .filterByCommentsCount(filterByCommentsCount)
+                .filterByCreatedAt(filterByCreatedAt)
+                .filterByLikesCount(filterByLikesCount)
+                .filterByViewCount(filterByViewCount)
                 .build();
+
+        log.info("SearchDto details: keyword={}, genre={}, category={}, createdAt={}, getFilterByCommentsCount={}," +
+                        "getFilterByViewCount={}, getFilterByLikesCount={}, getFilterByCreatedAt={}",
+                searchDto.getKeyword(),
+                searchDto.getGenre(),
+                searchDto.getCategory(),
+                searchDto.getCreatedAt(),
+                searchDto.getFilterByCommentsCount(),
+                searchDto.getFilterByViewCount(),
+                searchDto.getFilterByLikesCount(),
+                searchDto.getFilterByCreatedAt()
+        );
+
         Page<ArticleDto.Response> articleList = articleService.getArticlesByFiltering(searchDto,page,size);
 
         ResultResponse response = ResultResponse.of(ResponseCode.ARTICLE_LIST_GET_SUCCESS, articleList);
