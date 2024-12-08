@@ -23,4 +23,4 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
         run: |
-          sshpass -p "$SSH_PASSWORD" ssh -v -o StrictHostKeyChecking=no -o ServerAliveInterval=30 $SSH_USER@$SSH_HOST './v5_deploy.sh'
+          timeout 3m sshpass -p "$SSH_PASSWORD" ssh -v -o StrictHostKeyChecking=no -o ServerAliveInterval=30 $SSH_USER@$SSH_HOST './v5_deploy.sh' || true
