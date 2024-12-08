@@ -1,0 +1,26 @@
+name: Run Command on Remote Server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  execute-remote-command:
+    name: Execute Command on Remote Server
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install SSHpass
+        run: sudo apt-get update && sudo apt-get install -y sshpass
+
+      - name: Run command on remote server
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
+        run: |
+          sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST 'touch ~/test.txt'
