@@ -29,7 +29,7 @@ services:
     image: mysql:8.0
     container_name: mysql-container-green
     environment:
-      MYSQL_ROOT_PASSWORD: "zpzzgjdg@$$^1"
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
       MYSQL_DATABASE: "${MYSQL_DATABASE}"
     ports:
       - "3301:3306"

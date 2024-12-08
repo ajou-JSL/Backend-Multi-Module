@@ -95,6 +95,10 @@ public class CommentService {
         CommentEntity comment = commentRepository.findById(commentId)
                 .orElseThrow(()->new CustomException(ErrorCode.COMMENT_ALREADY_DELETED));
 
+        int articleId = comment.getArticleDetails().getArticleId();
+        ArticleEntity article = getArticle(articleId);
+        article.commentsCountDown();
+
         // 작성자-로그인유저 일치 여부 확인
         checkAuthor(username, comment.getAuthor().getUsername());
 

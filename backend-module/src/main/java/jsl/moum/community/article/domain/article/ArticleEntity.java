@@ -81,6 +81,7 @@ public class ArticleEntity {
     }
     public void updateLikesCount(int num) { this.likesCount += num; }
     public void commentsCountUp(){this.commentsCount += 1;}
+    public void commentsCountDown(){this.commentsCount -= 1;}
 
 //    public void updateArticle(UpdateArticleDto.Request updateArticleDto) {
 //        if (updateArticleDto.getTitle() != null) {
