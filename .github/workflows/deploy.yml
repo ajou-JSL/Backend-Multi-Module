@@ -17,7 +17,7 @@ jobs:
       - name: Install SSHpass
         run: sudo apt-get update && sudo apt-get install -y sshpass
 
-      - name: Run command on remote server
+      - name: Run command on remote server and log outputs
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
@@ -25,5 +25,11 @@ jobs:
         run: |
           timeout 3m sshpass -p "$SSH_PASSWORD" ssh -v -o StrictHostKeyChecking=no -o ServerAliveInterval=30 $SSH_USER@$SSH_HOST '
             ./v5_deploy.sh > deploy.log 2>&1 &
-            tail -f deploy.log | grep -m 1 "Started MoumApplication" && echo "Detected: MoumApplication has started successfully."
-          ' || true
+            tail -f deploy.log | tee action_deploy.log | grep -m 1 "Started MoumApplication" && echo "Detected: MoumApplication has started successfully."
+          ' || echo "3-minute timeout reached. Deployment assumed successful."
+
+      - name: Display full server-side logs
+        if: always()
+        run: |
+          echo "---- Full Server Console Output ----"
+          sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "cat deploy.log || echo 'No deploy.log found on the server.'"
