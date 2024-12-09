@@ -1,6 +1,6 @@
 package jsl.moum.chatappmodule.config;
 
-import jsl.moum.chatappmodule.redis.ConnectedUser;
+import jsl.moum.chatappmodule.chat.RedisConnectedUser;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,14 +34,14 @@ public class RedisConfig {
      */
 
     @Bean
-    ReactiveRedisTemplate<String, ConnectedUser> redisOperations(ReactiveRedisConnectionFactory connectionFactory){
-        Jackson2JsonRedisSerializer<ConnectedUser> serializer = new Jackson2JsonRedisSerializer<>(ConnectedUser.class);
+    ReactiveRedisTemplate<String, RedisConnectedUser> redisOperations(ReactiveRedisConnectionFactory connectionFactory){
+        Jackson2JsonRedisSerializer<RedisConnectedUser> serializer = new Jackson2JsonRedisSerializer<>(RedisConnectedUser.class);
 
         // Jackson JSON serializers for objects to ensure "ConnectedUser" can be serialized/deserialized properly
-        RedisSerializationContext.RedisSerializationContextBuilder<String, ConnectedUser> builder =
+        RedisSerializationContext.RedisSerializationContextBuilder<String, RedisConnectedUser> builder =
                 RedisSerializationContext.newSerializationContext(new StringRedisSerializer());
 
-        RedisSerializationContext<String, ConnectedUser> context = builder.value(serializer).build();
+        RedisSerializationContext<String, RedisConnectedUser> context = builder.value(serializer).build();
 
         return new ReactiveRedisTemplate<>(connectionFactory, context);
     }
