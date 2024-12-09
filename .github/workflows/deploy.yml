@@ -1,0 +1,33 @@
+name: Run Command on Remote Server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  execute-remote-command:
+    name: Execute Command on Remote Server
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install SSHpass
+        run: sudo apt-get update && sudo apt-get install -y sshpass
+
+      - name: Run command on remote server
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
+        run: |
+          timeout 3m sshpass -p "$SSH_PASSWORD" ssh -v -o StrictHostKeyChecking=no -o ServerAliveInterval=30 $SSH_USER@$SSH_HOST '
+            ./v5_deploy.sh > deploy.log 2>&1 &
+            tail -f deploy.log | grep -m 1 "Started MoumApplication" && echo "Detected: MoumApplication has started successfully."
+          '
+          if [ $? -eq 124 ]; then
+            echo "3-minute timeout reached. Deployment failed." >&2
+            exit 1
+          fi
