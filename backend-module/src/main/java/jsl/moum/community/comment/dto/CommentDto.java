@@ -43,6 +43,7 @@ public class CommentDto {
         private final int articleDetailsId;
         private final String author;
         private final int authorId;
+        private final String authorProfileImage;
         private final String content;
         private final LocalDateTime createdAt;
 
@@ -52,6 +53,7 @@ public class CommentDto {
             this.content = comment.getContent();
             this.author = comment.getAuthor().getUsername();
             this.authorId = comment.getAuthor().getId();
+            this.authorProfileImage = comment.getAuthor().getProfileImageUrl();
             this.createdAt = comment.getCreatedAt();
         }
     }
