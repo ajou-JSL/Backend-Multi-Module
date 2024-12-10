@@ -51,7 +51,7 @@ public class CommentDto {
             this.commentId = comment.getId();
             this.articleDetailsId = comment.getArticleDetails().getId();
             this.content = comment.getContent();
-            this.author = comment.getAuthor().getUsername();
+            this.author = comment.getAuthor().getName();
             this.authorId = comment.getAuthor().getId();
             this.authorProfileImage = comment.getAuthor().getProfileImageUrl();
             this.createdAt = comment.getCreatedAt();
