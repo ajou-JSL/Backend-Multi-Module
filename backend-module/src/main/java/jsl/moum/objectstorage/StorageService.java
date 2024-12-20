@@ -7,15 +7,11 @@ import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -30,21 +26,33 @@ public class StorageService {
     @Value("${ncp.object-storage.bucket}")
     private String bucket;
 
+    private final String localStorage = "backend-module/src/main/resources/static/public/files/";
     /**
      * S3에 업로드
      */
     public String uploadFile(String key, MultipartFile multipartFile) throws IOException {
-        s3Client.putObject(
-                PutObjectRequest.builder()
-                        .bucket(bucket)
-                        .key(key)
-                        .contentType(multipartFile.getContentType())
-                        .acl("public-read")
-                        .build(),
-                RequestBody.fromInputStream(multipartFile.getInputStream(), multipartFile.getSize())
-        );
-        // NCP에서 파일 URL 반환
-        return "https://kr.object.ncloudstorage.com/" + bucket + "/" + key;
+//        s3Client.putObject(
+//                PutObjectRequest.builder()
+//                        .bucket(bucket)
+//                        .key(key)
+//                        .contentType(multipartFile.getContentType())
+//                        .acl("public-read")
+//                        .build(),
+//                RequestBody.fromInputStream(multipartFile.getInputStream(), multipartFile.getSize())
+//        );
+//        // NCP에서 파일 URL 반환
+//        return "https://kr.object.ncloudstorage.com/" + bucket + "/" + key;
+
+        File directory = new File(localStorage);
+        if(!directory.exists()){
+            directory.mkdirs();
+        }
+        String filePath = localStorage + key;
+
+        File file = new File(filePath);
+        multipartFile.transferTo(file);
+
+        return "/public/files/" + key;
     }
 
     public String uploadImage(String key, MultipartFile multipartFile) throws IOException {
@@ -61,18 +69,39 @@ public class StorageService {
     /**
      * S3에 QR 이미지 업로드 전용
      */
-    public String uploadFile(String key, File file, String contentType) throws IOException {
-        s3Client.putObject(
-                PutObjectRequest.builder()
-                        .bucket(bucket)
-                        .key(key)
-                        .contentType(contentType) // Automatically determine content type
-                        .acl("public-read")
-                        .build(),
-                RequestBody.fromFile(file)
-        );
-        // NCP에서 파일 URL 반환
-        return "https://kr.object.ncloudstorage.com/" + bucket + "/" + key;
+    public String uploadFile(String key, File tempfile, String contentType) throws IOException {
+
+        File directory = new File(localStorage);
+        if (!directory.exists()) {
+            directory.mkdirs(); // Create the directory if it doesn't exist
+        }
+
+        // Construct the full path for the file to be saved
+        String filePath = localStorage + key;
+
+        // Create a new file instance at the target path
+        File destinationFile = new File(filePath);
+
+        // Ensure the parent directories exist
+        File parentDirectory = destinationFile.getParentFile();
+        if (parentDirectory != null && !parentDirectory.exists()) {
+            if (!parentDirectory.mkdirs()) {
+                throw new IOException("Failed to create directories for: " + parentDirectory.getAbsolutePath());
+            }
+        }
+
+        // Copy the tempfile to the destination
+        try (InputStream inputStream = new FileInputStream(tempfile);
+             OutputStream outputStream = new FileOutputStream(destinationFile)) {
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+        }
+
+        // Return the relative path to the saved file
+        return "/public/files/" + key;
     }
 
     /**

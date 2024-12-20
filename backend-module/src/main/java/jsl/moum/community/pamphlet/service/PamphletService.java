@@ -104,6 +104,8 @@ public class PamphletService {
             BufferedImage qrCodeBufferedImage = ImageIO.read(qrCodeStream);
             File qrCodeImageFile = File.createTempFile("image", ".png");
 
+            log.info("qrCodeImageFile : {}", qrCodeImageFile);
+
             if(!ImageIO.write(qrCodeBufferedImage, "png", qrCodeImageFile)){
                 throw new CustomException(ErrorCode.QR_GENERATE_FAIL);
             }

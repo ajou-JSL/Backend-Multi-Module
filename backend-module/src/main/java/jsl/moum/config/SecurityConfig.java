@@ -69,6 +69,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/login", "/test/**","/", "/join","/reissue","/send-mail","verify-code","/re-join","/api/health-check","/actuator/**").permitAll()
                         .requestMatchers("/storage/upload").permitAll()
+                        .requestMatchers("/public/files/**").permitAll()
                         .requestMatchers("/public/**").permitAll()
                         .requestMatchers("*/favicon.ico").permitAll()
                         .requestMatchers("/admin/login", "/admin/logout").permitAll()
