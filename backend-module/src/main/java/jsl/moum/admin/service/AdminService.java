@@ -459,7 +459,7 @@ public class AdminService {
         if(images != null && !images.isEmpty() && images.size() != 0){
             for(MultipartFile file : images){
                 String originalFilename = file.getOriginalFilename();
-                String key = "practiceRoom/" + targetId + "/" + originalFilename;
+                String key = "performanceHall/" + targetId + "/" + originalFilename;
                 String imageUrl = storageService.uploadImage(key, file);
                 imageUrls.add(imageUrl);
             }

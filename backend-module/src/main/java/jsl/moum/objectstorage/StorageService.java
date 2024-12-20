@@ -3,6 +3,7 @@ package jsl.moum.objectstorage;
 import jsl.moum.global.error.ErrorCode;
 import jsl.moum.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class StorageService {
 
     private final S3Client s3Client;
@@ -31,18 +33,7 @@ public class StorageService {
      * S3에 업로드
      */
     public String uploadFile(String key, MultipartFile multipartFile) throws IOException {
-//        s3Client.putObject(
-//                PutObjectRequest.builder()
-//                        .bucket(bucket)
-//                        .key(key)
-//                        .contentType(multipartFile.getContentType())
-//                        .acl("public-read")
-//                        .build(),
-//                RequestBody.fromInputStream(multipartFile.getInputStream(), multipartFile.getSize())
-//        );
-//        // NCP에서 파일 URL 반환
-//        return "https://kr.object.ncloudstorage.com/" + bucket + "/" + key;
-
+        log.info("storageService uploadFile");
         File directory = new File(localStorage);
         if(!directory.exists()){
             directory.mkdirs();
@@ -50,9 +41,27 @@ public class StorageService {
         String filePath = localStorage + key;
 
         File file = new File(filePath);
-        multipartFile.transferTo(file);
 
-        return "/public/files/" + key;
+        File parentDirectory = file.getParentFile();
+        if (parentDirectory != null && !parentDirectory.exists()) {
+            if (!parentDirectory.mkdirs()) {
+                throw new IOException("Failed to create directories for: " + parentDirectory.getAbsolutePath());
+            }
+        }
+
+        log.info("filename = {}", multipartFile.getOriginalFilename());
+        // Save the file manually
+        try (InputStream inputStream = multipartFile.getInputStream();
+             OutputStream outputStream = new FileOutputStream(file)) {
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+        }
+
+        // Return the relative path for reference
+        return "http://localhost:8080/public/files/" + key;
     }
 
     public String uploadImage(String key, MultipartFile multipartFile) throws IOException {
